@@ -1,41 +1,42 @@
 package Handlers
 
 import (
+	"Kaban/Dto"
 	"Kaban/Service/Uttiltesss"
+	"context"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go/aws"
-
 	"log/slog"
 	"os"
 )
 
-func Delete(nameOfKey string) {
+func DeleteFile(Name string) {
 
-	slog.Info("I'm here ")
-	s, err := Uttiltesss.Inzelire2()
-	if err != nil {
-		slog.Error("Eror in func Delete file", "err", err)
+	nameOfFile := Name
+
+	if s, _ := Dto.MapForFile[nameOfFile]; s.IsStartDownload == true {
 		return
 	}
-	ctx, canclet := Uttiltesss.Contexte()
-	defer canclet()
 
-	params := s3.DeleteObjectInput{
+	cfgs, err := Uttiltesss.Inzelire2()
+	if err != nil {
+		slog.Error("can't connect to S3 server", "Err", err)
+		return
+	}
+
+	s := &s3.DeleteObjectInput{
 		Bucket: aws.String(os.Getenv("BUCKET")),
-		Key:    aws.String(nameOfKey),
+		Key:    &nameOfFile,
 	}
-	_, err = s.DeleteObject(ctx, &params)
+
+	_, err = cfgs.DeleteObject(context.Background(), s)
 	if err != nil {
-		slog.Error("Error in Delete file 2", err)
+		slog.Error("Error in delete func", err)
 		return
+
 	}
 
-	if _, ok := Nonce[nameOfKey]; ok {
-		delete(Nonce, nameOfKey)
-
-	} else {
-		slog.Info("Result", "Delete", false)
-	}
-
-	slog.Info("Result", "Delete", true)
+	slog.Info("", slog.Group("Info about process"),
+		slog.String("Name of file", nameOfFile),
+		slog.Bool("Status", true))
 }

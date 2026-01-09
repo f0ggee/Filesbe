@@ -2,24 +2,31 @@ package Controller
 
 import (
 	"Kaban/Service/Handlers"
-	"fmt"
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"log/slog"
 	"net/http"
 )
 
+const JAson = "application/json"
+
 func CookiGetInControllerDownloaderNoEnc(w http.ResponseWriter, r *http.Request) bool {
-	session, err := store.Get(r, "token1")
+	store := Store()
+
+	session, err := store.Get(r, "token6")
 	if err != nil {
 		slog.Error("cookie don't send", err)
-		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
 		return false
 	}
 
-	_, ok := session.Values["cookie"]
-	if !ok {
-		http.Redirect(w, r, "/login", http.StatusFound)
+	rt := session.Values["RT"].(string)
+	jwtToken := session.Values["JWT"].(string)
 
+	_, _, err, _ = Auth(rt, jwtToken, session)
+	if err != nil {
+		slog.Error("Error in file upload",
+			"Err", err)
+		return false
 	}
 
 	return true
@@ -32,10 +39,20 @@ func getNameFromUrl2(r *http.Request) string {
 	return name
 
 }
-func DownloadWithNonEcnrypt(w http.ResponseWriter, r *http.Request) {
-
+func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request) {
+	type JsonAnser struct {
+		StatusOperation string   `json:"StatusOperation"`
+		Error           []string `json:"Error"`
+	}
 	if r.Method != http.MethodGet {
-		http.Error(w, "Status method don't allow", http.StatusBadRequest)
+
+		w.Header().Set("Content-Type", JAson)
+		w.WriteHeader(http.StatusBadRequest)
+
+		if err := json.NewEncoder(w).Encode(JsonAnser{StatusOperation: "BREAK", Error: []string{"Method don't allow "}}); err != nil {
+			slog.Error("Erro parse json in answer", err)
+			return
+		}
 		return
 	}
 
@@ -46,16 +63,9 @@ func DownloadWithNonEcnrypt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := Handlers.SDownloadWithNonEncrypt(w, name)
+	err := Handlers.DownloadWithNonEncrypt(w, name, r.Context())
 	if err != nil {
-		_, err = fmt.Fprintf(w, "Can't dowload file")
-		http.Error(w, "Error because"+fmt.Sprint(err), http.StatusBadRequest)
-		if err != nil {
-			slog.Error("Error writing a message", err)
-			return
-		}
 		return
-
 	}
 
 }

@@ -15,7 +15,7 @@ import (
 func config() *pgxpool.Config {
 
 	const Maxconns = int32(5)
-	const Mincons = int32(1)
+	const Mincons = int32(2)
 	const Lifetime = time.Hour
 	const IdelTime = time.Minute * 20
 	const Health = time.Minute

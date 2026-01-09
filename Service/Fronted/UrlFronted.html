@@ -9,208 +9,170 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0a0a0a;
-      --panel:#000;
-      --text:#e5fff4;
-      --muted:#89f0c2;
-      --border:#0f3a2e;
-      --primary:#10b981;
-      --primary-press:#059669;
-      --focus:#22c55e;
-      --danger:#dc2626;
+      --bg:#0a0a0a; --panel:#000; --text:#e5fff4; --muted:#34d399; --border:#0f3a2e;
+      --primary:#10b981; --focus:#22c55e;
     }
     *,*::before,*::after{ box-sizing:border-box; }
     html,body{
-      height:100%;
-      background:var(--bg);
-      color:var(--text);
-      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      height:100%; margin:0; background:var(--bg); color:var(--text);
+      font-family:"Inter",system-ui, sans-serif;
     }
-    a{ color:var(--muted); text-decoration:none; }
-    a:hover{ color:var(--text); }
 
-    .container{ max-width:980px; margin:0 auto; padding:24px 16px 64px; }
+    /* AUTO-SIZE: Контейнер */
+    .container{
+      max-width:980px;
+      margin:0 auto;
+      padding: clamp(16px, 4vw, 24px) clamp(12px, 3vw, 16px) 64px;
+    }
 
-    .header{
-      display:flex; align-items:center; justify-content:space-between;
-      margin-bottom:24px;
-    }
-    .brand{
-      font-weight:700; color:var(--primary); font-size:20px;
-      letter-spacing:.4px;
-    }
-    .btn-outline{
-      padding:10px 14px; border:1px solid var(--border); border-radius:10px;
-      background:#07110e; color:var(--text); font-weight:600; font-size:14px;
-      transition:border-color .15s ease, background .15s ease;
-    }
-    .btn-outline:hover{ border-color:var(--focus); }
-    .btn-primary{
-      padding:14px 18px; border:none; border-radius:12px; font-weight:700;
-      background:var(--primary); color:#00150e; cursor:pointer; font-size:16px;
-      transition:background .15s ease, transform .06s ease;
-    }
-    .btn-primary:hover{ background:var(--primary-press); }
-    .btn-primary:active{ transform:translateY(1px); }
-    .btn-primary[disabled]{ opacity:.7; cursor:not-allowed; }
+    .header{ display:flex; align-items:center; margin-bottom: clamp(16px, 4vw, 24px); }
+    .brand{ font-weight:700; color:var(--primary); font-size: clamp(18px, 4vw, 20px); letter-spacing:.4px; }
 
+    /* AUTO-SIZE: Карточка */
     .card{
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:16px; padding:24px;
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:16px;
+      padding: clamp(24px, 6vw, 48px) clamp(16px, 4vw, 32px);
       box-shadow:0 0 28px rgba(16,185,129,.12);
     }
-    .title{ color:var(--primary); margin:0 0 8px; font-size:26px; font-weight:700; }
-    .sub{ color:var(--muted); margin:0 0 18px; }
 
-    .center-wrap{
-      display:flex; align-items:center; justify-content:center;
-      min-height:50vh;
+    .title{
+      color:var(--primary); margin:0 0 8px;
+      font-size: clamp(22px, 5vw, 26px); font-weight:700;
     }
-    .field{
-      display:grid; gap:12px;
+    .sub{
+      color:var(--muted); margin:0 0 24px;
+      font-size: clamp(13px, 3vw, 15px);
     }
-    .label{
-      font-weight:600; color:var(--muted); font-size:14px;
-    }
-    .input-row{
-      display:grid; grid-template-columns: 1fr auto auto; gap:10px;
-    }
+
+    .center-wrap{ display:flex; align-items:center; justify-content:center; min-height:60vh; }
+    .field{ display:grid; gap:12px; width:min(600px, 100%); }
+    .label{ font-weight:600; color:var(--muted); font-size:14px; }
+
+    /* AUTO-SIZE: Ввод и кнопка */
+    .input-row{ display:flex; gap:12px; }
+
     .input{
-      padding:16px 14px; border-radius:12px; border:1px solid var(--border);
-      background:#06130f; color:var(--text); font-size:16px; width:100%;
+      padding: clamp(14px, 3vw, 16px);
+      border-radius:12px; border:1px solid var(--border);
+      background:#06130f; color:var(--text);
+      font-size:16px; /* 16px предотвращает зум на iPhone */
+      width:100%; outline: none;
+      cursor: pointer; transition: border-color 0.2s;
+      text-overflow: ellipsis;
     }
-    .input[readonly]{ cursor:text; }
-    .hint{ font-size:13px; color:var(--muted); }
+    .input:hover { border-color: var(--primary); }
+
+    .btn-outline{
+      padding: 10px 20px; border:1px solid var(--border); border-radius:10px;
+      background:#07110e; color:var(--text); font-weight:600;
+      font-size: clamp(13px, 3vw, 14px); cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-outline:hover{ border-color:var(--focus); background: #0c221a; }
+
     .message{
-      margin-top:14px; padding:12px; border-radius:10px;
-      border:1px solid var(--border); background:#061b14; color:var(--muted); display:none;
+      margin-top:16px; padding:12px 16px; border-radius:10px;
+      border:1px solid var(--border); background:#061b14; color:var(--muted);
+      display:none; font-size: 14px;
     }
     .message.show{ display:block; }
     .message.error{ color:#ffb4b4; border-color:#6b1111; background:#3b0b0b; }
 
-    .notice{
-      margin-top:12px; font-size:13px; color:var(--muted);
-      border:1px dashed var(--border); border-radius:10px; padding:10px;
-      background:#07110e;
-    }
+    .footer{ margin-top:32px; text-align:center; font-size:12px; color:var(--muted); opacity:.6; }
 
-    .footer{ margin-top:28px; text-align:center; font-size:12px; color:var(--muted); opacity:.8; }
+    /* MOBILE: Кнопка под инпутом на очень узких экранах */
+    @media (max-width:480px){
+      .input-row { flex-direction: column; }
+      .btn-outline { width: 100%; padding: 14px; }
+      .center-wrap { min-height: auto; padding-top: 20px; }
+    }
   </style>
 </head>
 <body>
 <div class="container">
-  <header class="header" aria-label="Site header">
-    <div class="brand">Filesb</div>
-    <nav aria-label="Navigation">
-      <a class="btn-outline" href="/profile">Profile</a>
-    </nav>
-  </header>
+  <header class="header"><div class="brand">Filesb</div></header>
 
-  <main class="card center-wrap" aria-labelledby="dl-title">
-    <section class="field" style="width:min(780px, 100%);">
-      <h1 id="dl-title" class="title">Download your file</h1>
-      <p class="sub">The link is generated automatically based on your URL path.</p>
-
-      <label for="linkInput" class="label">Direct download link</label>
+  <main class="card center-wrap">
+    <section class="field">
+      <h1 class="title" data-i18n="dlTitle">Your Download Link</h1>
+      <p class="sub" data-i18n="dlSub">Click the input field to open the file.</p>
+      <label for="linkInput" class="label" data-i18n="directLabel">Direct Link</label>
       <div class="input-row">
-        <input id="linkInput" class="input" type="url" inputmode="url" placeholder="https://example.com/file.zip" aria-label="Download link" readonly />
-        <button id="copyBtn" class="btn-outline" type="button" aria-label="Copy link">Copy</button>
-        <button id="downloadBtn" class="btn-primary" type="button" aria-label="Download file" disabled>Download</button>
+        <input id="linkInput" class="input" type="url" readonly placeholder="..." />
+        <button id="copyBtn" class="btn-outline" type="button" data-i18n="copy">Copy</button>
       </div>
-
-      <div class="hint">This link is fetched automatically from /doUrl/api using your parameters from the path /URL/{name}/{bool}.</div>
-
-      <div id="message" class="message" role="status" aria-live="polite"></div>
+      <div id="message" class="message" role="status"></div>
     </section>
   </main>
-
-  <div class="footer">© 2025 Filesb</div>
+  <div class="footer">© 2026 Filesb</div>
 </div>
 
 <script>
-  const LINK_ENDPOINT = '/doUrl/api';
+  // Скрипты и переводы оставлены без изменений
+  const translations = {
+    en: {
+      copy: "Copy", copied: "Copied!", dlTitle: "Your Download Link",
+      dlSub: "Click the input field to download or use the copy button.",
+      directLabel: "Direct Link", ready: "Link is ready.",
+      paramError: "Parameters not found.", fetchError: "Error loading link.", noCopy: "Nothing to copy."
+    },
+    ru: {
+      copy: "Копировать", copied: "Готово!", dlTitle: "Ваша ссылка на файл",
+      dlSub: "Нажмите на поле для скачивания или кнопку копирования.",
+      directLabel: "Прямая ссылка", ready: "Ссылка готова.",
+      paramError: "Параметры не найдены.", fetchError: "Ошибка загрузки.", noCopy: "Нечего копировать."
+    }
+  };
+
+  const currentLang = localStorage.getItem('userLanguage') || 'en';
+
+  function applyLanguage() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[currentLang][key]) {
+        el.textContent = translations[currentLang][key];
+      }
+    });
+  }
 
   const input = document.getElementById('linkInput');
   const copyBtn = document.getElementById('copyBtn');
-  const downloadBtn = document.getElementById('downloadBtn');
   const message = document.getElementById('message');
 
-  function showMessage(text, isError = false) {
-    message.textContent = text;
+  function showMessage(key, isError = false) {
+    message.textContent = translations[currentLang][key] || key;
     message.className = 'message show' + (isError ? ' error' : '');
   }
 
-  // Извлекаем name и bool из пути /URL/{name}/{bool}
-  function getParamsFromPath() {
-    const match = window.location.pathname.match(/\/URL\/([^\/?#]+)\/([^\/?#]+)/i);
-    return match
-            ? { name: decodeURIComponent(match[1]), bool: decodeURIComponent(match[2]) }
-            : { name: '', bool: '' };
-  }
+  input.onclick = () => { if (input.value) window.open(input.value, '_blank'); };
+
+  copyBtn.onclick = async () => {
+    if (!input.value.trim()) return showMessage('noCopy', true);
+    try {
+      await navigator.clipboard.writeText(input.value);
+      copyBtn.textContent = translations[currentLang].copied;
+      setTimeout(() => copyBtn.textContent = translations[currentLang].copy, 1500);
+      showMessage('copied');
+    } catch { showMessage('fetchError', true); }
+  };
 
   async function fetchLink() {
+    const match = window.location.pathname.match(/\/URL\/([^\/?#]+)\/([^\/?#]+)/i);
+    if (!match) return showMessage('paramError', true);
     try {
-      const { name, bool } = getParamsFromPath();
-
-      if (!name) return showMessage('Parameter "name" not found in URL.', true);
-      if (!bool) return showMessage('Parameter "bool" not found in URL.', true);
-
-      const endpoint =
-              `${LINK_ENDPOINT}?name=${encodeURIComponent(name)}&bool=${encodeURIComponent(bool)}`;
-
-      const res = await fetch(endpoint, {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' }
-      });
-
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-
+      const res = await fetch(`/doUrl/api?name=${encodeURIComponent(match[1])}&bool=${encodeURIComponent(match[2])}`);
       const data = await res.json();
-      const url = (data && data.Url) || '';
-
-      if (typeof url !== 'string' || url.trim() === '') {
-        showMessage('I cannot verify this.', true);
-        return;
-      }
-
-      input.value = url;
-      downloadBtn.disabled = false;
-      showMessage('Link is ready.');
-    } catch (e) {
-      showMessage('Failed to load the link.', true);
-    }
+      if (data && data.Url) { input.value = data.Url; showMessage('ready'); }
+      else showMessage('fetchError', true);
+    } catch (e) { showMessage('fetchError', true); }
   }
 
-  copyBtn.addEventListener('click', async () => {
-    const val = input.value.trim();
-    if (!val) return showMessage('No link to copy.', true);
-
-    try {
-      await navigator.clipboard.writeText(val);
-      showMessage('Link copied to clipboard.');
-    } catch {
-      showMessage('Copy failed.', true);
-    }
+  document.addEventListener('DOMContentLoaded', () => {
+    applyLanguage();
+    fetchLink();
   });
-
-  downloadBtn.addEventListener('click', () => {
-    const url = input.value.trim();
-    if (!url) return showMessage('No link to download.', true);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.download = '';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-    showMessage('Download started (if the link is valid).');
-  });
-
-  fetchLink();
 </script>
 </body>
 </html>

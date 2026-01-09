@@ -1,21 +1,70 @@
 package Controller
 
 import (
-	"github.com/gorilla/sessions"
 	"log/slog"
 	"net"
 	"net/http"
+	"time"
 )
 
-var store = sessions.NewCookieStore([]byte("KEY"))
+func LoggingRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 
-func Get_From(w http.ResponseWriter, r *http.Request) {
+		formatForOutput := "01/02/2006 03:04 PM"
+
+		t := time.Now()
+		slog.Info("Info",
+			slog.Group("Request"),
+			slog.String("URL", request.URL.Path),
+			slog.String("Time", t.Format(formatForOutput)),
+			slog.String("Ip", request.RemoteAddr),
+		)
+		next.ServeHTTP(writer, request)
+	})
+}
+
+func CheckJwtTokenLifyTime(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+
+		next.ServeHTTP(writer, request)
+
+	})
+
+}
+
+func GetFrom(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodGet {
-		http.Error(w, "cant' treate", http.StatusNotFound)
-		slog.Info("notfoud")
+		http.Error(w, "Cant' treat", http.StatusNotFound)
+		slog.Info("Not found")
 		return
 	}
+
+	store := Store()
+	seSession, err := store.Get(r, "token6")
+	if err != nil {
+		slog.Error("Error check", "Err", err)
+
+		return
+
+	}
+	rtToken, _ := seSession.Values["RT"].(string)
+
+	jwts, _ := seSession.Values["JWT"].(string)
+	s1, s2, err, ok := Auth(rtToken, jwts, seSession)
+	slog.Info("Data", s1, s2)
+
+	if err != nil {
+		slog.Error("as")
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+
+		return
+	}
+	if !ok {
+		return
+	}
+
+	http.Redirect(w, r, "/main", http.StatusMovedPermanently)
 
 	clientIP := r.RemoteAddr
 
@@ -25,22 +74,5 @@ func Get_From(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	clientIP = host
-
-	session, err := store.Get(r, "token1")
-	if err != nil {
-		slog.Error("cookie don't send", err)
-		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
-	}
-	if session.Options.MaxAge == 0 {
-		http.Redirect(w, r, "/login", http.StatusFound)
-	}
-
-	sa, ok := session.Values["cookie"]
-	if ok {
-
-		slog.Info("Cookie of user", sa)
-		http.Redirect(w, r, "/main", http.StatusMovedPermanently)
-
-	}
 
 }

@@ -3,20 +3,16 @@ package Handlers
 import (
 	"Kaban/Dto"
 	"Kaban/InfrastructureLayer"
-	"Kaban/Service/Connect_to_BD"
 	"Kaban/Service/Uttiltesss"
 	"context"
-	"crypto/rand"
-	"encoding/hex"
-	"github.com/gorilla/sessions"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"log/slog"
-	"net/http"
+	"os"
 	"time"
 )
 
-func Login_Check(password string, hash_of_password string) error {
+func LoginCheck(password string, hash_of_password string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash_of_password), []byte(password))
 	if err != nil {
 		slog.Error("Err", "err", err)
@@ -27,88 +23,92 @@ func Login_Check(password string, hash_of_password string) error {
 
 }
 
-func Generate_Cookie(ctx context.Context, db *pgxpool.Pool, unic_Id int, r *http.Request, w http.ResponseWriter) error {
-
-	b := make([]byte, 16)
-	_, err := rand.Read(b)
-	if err != nil {
-		slog.Error("Error generating id", err)
-		return err
-
-	}
-
-	Cookie := hex.EncodeToString(b)
-
-	app := Di(db)
-
-	scrypt, err := app.Re.UpDateCookie(ctx, Cookie, unic_Id)
-	if err != nil {
-		return err
-	}
-	session, err := store.Get(r, "token1")
-	if err != nil {
-		slog.Error("cookie don't send", err)
-		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
-		return err
-	}
-	session.Values["cookie"] = Cookie
-	slog.Info("Key", "", scrypt)
-	session.Values["SC"] = scrypt
-
-	session.Options = &sessions.Options{
-		Path:     "/",
-		MaxAge:   int((24 * time.Hour).Seconds()),
-		Secure:   false,
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-	}
-
-	if err := session.Save(r, w); err != nil {
-		slog.Error("Cokie can't send", err)
-		return err
-
-	}
-	return nil
-
-}
-
-func Di(db *pgxpool.Pool) *InfrastructureLayer.ConnectToBd {
-	S := &InfrastructureLayer.DB{Db: db}
-	app := InfrastructureLayer.NewUserService(S)
+func SetSettingsTest(db string) *InfrastructureLayer.ConnectToBdTests {
+	S := &InfrastructureLayer.DbForTests{DbTest: db}
+	app := InfrastructureLayer.NewUserServiceTest(S)
 	return app
 }
 
-func Login_Service(s *Dto.Handler_Login, w http.ResponseWriter, r *http.Request) {
-	db, err := Connect_to_BD.Connect()
-	if err != nil {
-		slog.Error("Err for connect to bd in login", err)
-		return
-	}
-	ctx, canclel := Uttiltesss.Contexte()
-	defer canclel()
+func LoginService(s Dto.User, ctx context.Context) (string, string, error) {
 
-	var (
-		Unic_id  int
-		password string
-	)
+	app := SetSettings()
 
-	err = db.QueryRow(context.Background(), `SELECT unic_id ,password FROM person WHERE email=$1`, s.Email).Scan(&Unic_id, &password)
-	err = Uttiltesss.Err_Treate(err, w)
+	ctx, cancel := Uttiltesss.Contexte(ctx)
+	defer cancel()
+
+	UnicId, password, err := app.Re.GetIdPassowrd(s.Email)
 	if err != nil {
-		slog.Error("Func login 1 ", err)
-		return
+		slog.Error("Error in GetIdPassword")
+		return "", "", err
 	}
 
-	err = Login_Check(s.Password, password)
+	err = LoginCheck(s.Password, password)
 	if err != nil {
 		slog.Error("func login 2", "err", err)
-		return
+		return "", "", err
 	}
-	err = Generate_Cookie(ctx, db, Unic_id, r, w)
-	if err != nil {
-		slog.Error("func login 3", "err", err)
-		return
-	}
-	http.Redirect(w, r, "/main", http.StatusFound)
 
+	scrypt, err := app.Re.GeTScrypt(ctx, UnicId)
+	if err != nil {
+		slog.Error("Error in GeScrypt", "Err", err)
+		return "", "", err
+	}
+
+	JWtToken, err := JWT(UnicId, scrypt)
+	if err != nil {
+		return "", "", err
+	}
+	RT, err := RFT(UnicId, scrypt)
+	if err != nil {
+		return "", "", err
+	}
+
+	return JWtToken, RT, nil
+
+}
+
+func JWT(UnicId int, scrypt string) (string, error) {
+
+	claims := Dto.MyCustomCookie{
+		UserID: UnicId,
+		Sc:     scrypt,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			Issuer:    "Admin",
+		},
+	}
+	token1 := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	sd := []byte(os.Getenv("KEYFORJWT"))
+
+	tokenString, err := token1.SignedString(sd)
+	if err != nil {
+		slog.Error("Error sign cookie jwt", err)
+		return "", err
+	}
+
+	return tokenString, nil
+}
+
+func RFT(UnicId int, scrypt string) (string, error) {
+	claims := Dto.MyCustomCookie{
+		UserID: UnicId,
+		Sc:     scrypt,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(5 * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			Issuer:    "Admin",
+		},
+	}
+	token1 := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	sd := []byte(os.Getenv("KEYFORJWT"))
+	tokenString, err := token1.SignedString(sd)
+	if err != nil {
+		slog.Error("Error sign cookie", err)
+		return "", err
+	}
+
+	return tokenString, nil
 }

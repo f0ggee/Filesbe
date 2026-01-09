@@ -2,17 +2,19 @@ package Handlers
 
 import (
 	"Kaban/Service/Uttiltesss"
+	"context"
+	"errors"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go/aws"
 	"log/slog"
 	"mime/multipart"
 	"net/http"
+	"time"
 )
 
 func FileUploaderNoEncr(w http.ResponseWriter, r *http.Request) (string, error) {
-	ctx, cancel := Uttiltesss.Contexte()
-	defer cancel()
 
 	file, sizeAndName, err := r.FormFile("file")
 	if err != nil {
@@ -20,6 +22,14 @@ func FileUploaderNoEncr(w http.ResponseWriter, r *http.Request) (string, error) 
 		http.Error(w, "Error", http.StatusNotFound)
 		return "", err
 	}
+	ctx, cancel, err := CheckFileSize2(r.Context(), sizeAndName)
+
+	if err != nil {
+		slog.Error("Error in Check File size", err)
+		return "", err
+	}
+	defer cancel()
+
 	defer func() {
 		err = file.Close()
 		if err != nil {
@@ -27,12 +37,12 @@ func FileUploaderNoEncr(w http.ResponseWriter, r *http.Request) (string, error) 
 			return
 		}
 	}()
+	timeS := time.Now()
 
-	err = CheckFileSize2(w, sizeAndName, err)
-	if err != nil {
-		slog.Error("Error in Check File size", err)
-		return "", err
-	}
+	defer func() {
+		sa := time.Since(timeS)
+		fmt.Println(sa)
+	}()
 
 	cfg, err := Uttiltesss.Inzelire2()
 	if err != nil {
@@ -43,8 +53,8 @@ func FileUploaderNoEncr(w http.ResponseWriter, r *http.Request) (string, error) 
 	bucket := "0c8f1ea9-b07f5996-b392-4227-961b-14d2a71a53dc"
 	uploader := manager.NewUploader(cfg, func(uploader *manager.Uploader) {
 		uploader.MaxUploadParts = 1000
-		uploader.PartSize = 10 * 1024 * 1024
-		uploader.Concurrency = 25
+		uploader.PartSize = 5 * 1024 * 1024
+		uploader.Concurrency = 20
 	})
 
 	_, err = uploader.Upload(ctx, &s3.PutObjectInput{
@@ -59,15 +69,32 @@ func FileUploaderNoEncr(w http.ResponseWriter, r *http.Request) (string, error) 
 
 	slog.Info("File success upload :)")
 
+	fmt.Println(sizeAndName.Filename)
 	return sizeAndName.Filename, nil
 
 }
 
-func CheckFileSize2(w http.ResponseWriter, sizeAndName *multipart.FileHeader, err error) error {
-	if sizeAndName.Size > 2000000000 {
-		http.Error(w, "File can't be treating", http.StatusUnauthorized)
-		slog.Error("Error in file it's too big  Uploader 2 ", err)
-		return err
+func CheckFileSize2(incomingRequest context.Context, sizeAndName *multipart.FileHeader) (context.Context, context.CancelFunc, error) {
+
+	sizeFile := sizeAndName.Size
+	switch {
+	case sizeFile >= 100000000 && sizeFile <= 500000000:
+		ctx, c := Uttiltesss.Context2(incomingRequest, 5*time.Minute)
+
+		return ctx, c, nil
+
+	case sizeFile >= 500000000 && sizeFile < 1000000000:
+		ctx, c := Uttiltesss.Context2(incomingRequest, 5*time.Minute)
+
+		return ctx, c, nil
+
+	case sizeFile > 1000000000:
+		return nil, nil, errors.New("file too big")
+
+	default:
+		ctx, c := Uttiltesss.Contexte(incomingRequest)
+		return ctx, c, nil
+
 	}
-	return nil
+
 }

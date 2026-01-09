@@ -11,7 +11,7 @@ var store = sessions.NewCookieStore([]byte("KEY"))
 
 func F(w http.ResponseWriter, r *http.Request) {
 
-	session, err := store.Get(r, "token1")
+	session, err := store.Get(r, "token6")
 	if err != nil {
 		slog.Error("cookie don't send", err)
 		http.Error(w, "Cookie dont sent", http.StatusUnauthorized)

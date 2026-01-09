@@ -2,7 +2,8 @@ package Handlers
 
 import (
 	"Kaban/Service/Uttiltesss"
-	"crypto/aes"
+	"context"
+	"errors"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -14,20 +15,21 @@ import (
 	"os"
 )
 
-func SDownloadWithNonEncrypt(w http.ResponseWriter, name string) error {
+func DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext context.Context) error {
 
-	ctx, cancle := Uttiltesss.Contexte()
+	ctx, cancle := Uttiltesss.Contexte(IncomeContext)
 	defer cancle()
 
 	bucket := os.Getenv("BUCKET")
 
 	sees, err := Uttiltesss.Inzelire()
 	if err != nil {
-		slog.Error("Eror in inzelizre s3 server", "err:", err)
+		slog.Error("Error in create s3 server", "err:", err)
 
 		return err
 	}
 
+	fmt.Println(os.Getenv("FSA"))
 	downloader := s3.New(sees)
 
 	o, err := downloader.GetObjectWithContext(ctx, &s3.GetObjectInput{
@@ -35,6 +37,7 @@ func SDownloadWithNonEncrypt(w http.ResponseWriter, name string) error {
 		IfNoneMatch: aws.String(""),
 		Key:         &name,
 	})
+	defer o.Body.Close()
 
 	if err != nil {
 		slog.Error("ServiceDownload:", "err", err)
@@ -43,11 +46,12 @@ func SDownloadWithNonEncrypt(w http.ResponseWriter, name string) error {
 
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", name))
-	w.Header().Set("Content-Length", strconv.FormatInt(*o.ContentLength-aes.BlockSize, 10))
+	w.Header().Set("Content-Length", strconv.FormatInt(*o.ContentLength, 10))
 
 	if _, err = io.Copy(w, o.Body); err != nil {
-		slog.Error("Err In file Service Downloader", "err", err)
-		return err
+		slog.Error("Err In file Service Downloader", "err", errors.New("connect closer"))
+		return errors.New("connect close")
+
 	}
 
 	return nil

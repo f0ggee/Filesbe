@@ -2,6 +2,7 @@ package Controller
 
 import (
 	"Kaban/Service/Handlers"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -9,53 +10,96 @@ import (
 	"net/http"
 )
 
-func ControlerFileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Router) {
+func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Router) {
+
+	type Answer struct {
+		StatusOperation string `json:"StatusOperation"`
+		Error           string `json:"Error"`
+		UrlToRedict     string `json:"UrlToRedict"`
+	}
 	if r.Method != http.MethodPost {
-		http.Error(w, "err", http.StatusUnauthorized)
-		slog.Error("Err in Cottroler Uploader")
+		slog.Error("Err in controller uploader")
+		w.Header().Set("Content-Type", JAson)
+		err := json.NewEncoder(w).Encode(Answer{
+			StatusOperation: "NotStart",
+			Error:           "method don't allow",
+
+			UrlToRedict: "nil",
+		})
+		if err != nil {
+			return
+		}
+
 		return
 	}
 
-	SC, err := CookiGet(w, r)
+	err := CookieGet(w, r)
 	if err != nil {
-		http.Error(w, "Cookie don't find", http.StatusNotFound)
+		w.Header().Set("Content-Type", JAson)
+		w.WriteHeader(401)
+		err := json.NewEncoder(w).Encode(Answer{
+			StatusOperation: "NotStart",
+			Error:           fmt.Sprint(err),
+
+			UrlToRedict: "/login",
+		})
+
+		if err != nil {
+			return
+		}
+		return
 
 	}
 
-	filName, err := Handlers.FileUploaderEnc(w, r, SC)
+	filName, err := Handlers.FileUploaderEncrypt(w, r)
 	if err != nil {
+		w.Header().Set("Content-Type", JAson)
+		w.WriteHeader(400)
+		err = json.NewEncoder(w).Encode(Answer{
+			StatusOperation: "NotStart",
+			Error:           fmt.Sprint(err),
+
+			UrlToRedict: "nil",
+		})
+
 		return
 	}
 
 	url, err := router.Get("fileName").URL("name", filName, "bool", "true")
 	if err != nil {
-		slog.Error("Error can't treate", err)
+		slog.Error("Error can't treat", err)
 		return
 	}
 
-	http.Redirect(w, r, url.Path, http.StatusFound)
+	w.Header().Set("Content-Type", JAson)
+	w.WriteHeader(200)
+	err = json.NewEncoder(w).Encode(Answer{
+		StatusOperation: "SUCCES",
+		Error:           "",
+
+		UrlToRedict: url.Path,
+	})
 
 }
 
-func CookiGet(w http.ResponseWriter, r *http.Request) (string, error) {
-	session, err := store.Get(r, "token1")
+func CookieGet(w http.ResponseWriter, r *http.Request) error {
+	store := Store()
+
+	session, err := store.Get(r, "token6")
+
 	if err != nil {
 		slog.Error("cookie don't send", err)
 		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
-		return "", err
+		return errors.New("cookie don't set")
 	}
 
-	_, ok := session.Values["cookie"]
-	if !ok {
-		http.Redirect(w, r, "/login", http.StatusFound)
+	rtToken, _ := session.Values["RT"].(string)
 
-	}
-	SC, ok := session.Values["SC"]
-	if !ok {
-		slog.Error("Err", "EXIST:", ok)
-		return "", errors.New("SC don't set")
+	jwts, _ := session.Values["JWT"].(string)
+	_, _, err, _ = Auth(rtToken, jwts, session)
+	if err != nil {
+		return errors.New("can't validate a tokens")
 	}
 
-	scs := fmt.Sprint(SC)
-	return scs, err
+	return nil
 }

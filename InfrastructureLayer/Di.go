@@ -1,9 +1,17 @@
 package InfrastructureLayer
 
 type ConnectToBd struct {
-	Re Repositorys
+	Re RepositorysForUsingDb
 }
 
-func NewUserService(Rep Repositorys) *ConnectToBd {
+func NewUserService(Rep RepositorysForUsingDb) *ConnectToBd {
 	return &ConnectToBd{Re: Rep}
+}
+
+type ConnectToBdTests struct {
+	Res RepositorysTest
+}
+
+func NewUserServiceTest(Reps RepositorysTest) *ConnectToBdTests {
+	return &ConnectToBdTests{Res: Reps}
 }

@@ -1,10 +1,15 @@
 package Handlers
 
 import (
+	"Kaban/Dto"
 	"Kaban/Service/Uttiltesss"
 	"bufio"
+	"context"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -13,27 +18,52 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"strconv"
-
 	"os"
+	"strconv"
 )
 
-type CustomError struct {
-	Message string
-	Err     error
-}
+func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) error {
 
-func SDownloadEncrypt(w http.ResponseWriter, r *http.Request, sc string, name string) error {
+	ctx, cancel := Uttiltesss.Contexte(ctxs)
+	defer cancel()
 
-	ctx, cancle := Uttiltesss.Contexte()
-	defer cancle()
+	sa, ok := Dto.MapForFile[name]
 
-	//
-	SC, ok := Nonce[name]
 	if !ok {
-		return errors.New("Nonce is don't set ")
+		slog.Error("File don't find ")
+		return errors.New("don't find ")
 	}
+	if sa.IsUsed {
+		return errors.New("file was used")
+	}
+	sa.IsStartDownload = true
 
+	defer func() {
+		slog.Info("Func delete starts ")
+		DeleteFile(name)
+	}()
+
+	ReturnToBytes, err := hex.DecodeString(sa.AesKey)
+	if err != nil {
+		slog.Error("Error decode to string", "Err", err)
+		return err
+	}
+	AesDecryptKey, err := rsa.DecryptOAEP(sha256.New(), nil, NewPrivateKey, ReturnToBytes, nil)
+
+	switch {
+	case errors.Is(err, errors.New("decryption error")):
+		AesDecryptKey, err = rsa.DecryptOAEP(sha256.New(), rand.Reader, OldPrivateKey, ReturnToBytes, nil)
+		if err != nil {
+			slog.Error("Error also decrypt with an old key ", err)
+			return err
+		}
+
+	}
+	if err != nil {
+		slog.Error("Error decode string", "Err", err)
+		slog.Info("Info name", name)
+		return err
+	}
 	Reader, writer := io.Pipe()
 
 	bucket := os.Getenv("BUCKET")
@@ -44,13 +74,12 @@ func SDownloadEncrypt(w http.ResponseWriter, r *http.Request, sc string, name st
 
 		return err
 	}
-
 	downloader := s3.New(sees)
 
 	o, err := downloader.GetObjectWithContext(ctx, &s3.GetObjectInput{
 		Bucket:      aws.String(bucket),
 		IfNoneMatch: aws.String(""),
-		Key:         &name,
+		Key:         aws.String(name),
 	})
 
 	if err != nil {
@@ -60,7 +89,7 @@ func SDownloadEncrypt(w http.ResponseWriter, r *http.Request, sc string, name st
 
 	go func() {
 		defer writer.Close()
-		err = DecryptFile(SC, o, writer)
+		err = DecryptFile(AesDecryptKey, o, writer)
 		if err != nil {
 			err := writer.CloseWithError(err)
 			if err != nil {
@@ -76,21 +105,25 @@ func SDownloadEncrypt(w http.ResponseWriter, r *http.Request, sc string, name st
 	w.Header().Set("Content-Length", strconv.FormatInt(*o.ContentLength-aes.BlockSize, 10))
 
 	if _, err = io.Copy(w, Reader); err != nil {
-		slog.Error("Err In file Service Downloader Encypt", "err", err)
-		return err
+		slog.Error("Err In file Service Downloader Encrypt", "err", errors.New("connect close"))
+		return errors.New("connect close")
 	}
 
 	return nil
 }
 
-func DecryptFile(SC string, o *s3.GetObjectOutput, writer *io.PipeWriter) error {
+func DecryptFile(AesKey []byte, o *s3.GetObjectOutput, writer *io.PipeWriter) error {
 
-	sc, err := hex.DecodeString(SC)
-	if err != nil {
-		slog.Error("Error in decrypt file ", err)
-		return err
-	}
-	block, err := aes.NewCipher(sc)
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			slog.Error("Error close s3 connection ", "err", err)
+			return
+
+		}
+	}(o.Body)
+
+	block, err := aes.NewCipher(AesKey)
 	if err != nil {
 		slog.Error("Error in  create file", err)
 		return err

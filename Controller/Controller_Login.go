@@ -3,14 +3,30 @@ package Controller
 import (
 	"Kaban/Dto"
 	"Kaban/Service/Handlers"
+	"encoding/hex"
 	"encoding/json"
+	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/sessions"
 	"log/slog"
 	"net/http"
+	"os"
+	"time"
 )
 
-func chehkjson(r *http.Request) (*Dto.Handler_Login, error) {
+var AllowList = make(map[string]time.Time)
+var DenyList = make(map[string]time.Time)
+
+func Store() sessions.Store {
+	var store1z, _ = hex.DecodeString(os.Getenv("KEY1"))
+
+	Store := sessions.NewCookieStore(store1z)
+	return Store
+
+}
+
+func checkJson(r *http.Request) (*Dto.User, error) {
 	var err error
-	var e Dto.Handler_Login
+	var e Dto.User
 
 	if err := json.NewDecoder(r.Body).Decode(&e); err != nil {
 		return nil, err
@@ -21,24 +37,122 @@ func chehkjson(r *http.Request) (*Dto.Handler_Login, error) {
 	return &e, err
 }
 
+func GenerateCookie(Jwt string, RFT string, r *http.Request, w http.ResponseWriter) error {
+
+	store := Store()
+	session, err := store.Get(r, "token6")
+	if err != nil {
+
+		slog.Error("cookie don't send 1 ", err)
+		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
+		return err
+	}
+
+	allowList := AllowList
+	denyList := DenyList
+
+	rft := session.Values["RT"].(string)
+
+	denyList[rft] = time.Now()
+
+	allowList[RFT] = time.Now()
+
+	session.Values["RT"] = RFT
+	session.Values["JWT"] = Jwt
+
+	session.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   int((100 * time.Hour).Seconds()),
+		Secure:   false,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	}
+
+	if err := session.Save(r, w); err != nil {
+		return err
+
+	}
+	return nil
+
+}
+
 func Loging(w http.ResponseWriter, r *http.Request) {
 
+	type AnswerLogin struct {
+		StatusOfOperation string `json:"StatusOperation"`
+		UrlToRedict       string `json:"UrlToRedict"`
+	}
 	if r.Method != http.MethodPost {
-		http.Error(w, "Erro", http.StatusUnauthorized)
+		http.Error(w, "Method Dont' allow", http.StatusUnauthorized)
 		slog.Error("Error", "err")
 		return
 	}
 
-	sa, err := chehkjson(r)
+	sa, err := checkJson(r)
 	if err != nil {
 		slog.Error("Err", "error", err)
 		return
 
 	}
+	err = ValiDateData(sa)
+	if err != nil {
+		per := AnswerLogin{
+			StatusOfOperation: "BREAK",
+		}
+		w.Header().Set("Content-Type", JAson)
+		w.WriteHeader(http.StatusBadRequest)
+		err = json.NewEncoder(w).Encode(&per)
+		if err != nil {
+			slog.Error("Json in Login can't treated", "Err", err)
+		}
+		return
 
-	Handlers.Login_Service(sa, w, r)
-	w.Header().Set("Content-Type", "application/json")
+	}
+
+	JWT, RFT, err := Handlers.LoginService(*sa, r.Context())
+	if err != nil {
+		http.Error(w, "Error treate", http.StatusUnauthorized)
+		return
+	}
+	err = GenerateCookie(JWT, RFT, r, w)
+	if err != nil {
+		per := AnswerLogin{
+			StatusOfOperation: "BREAK",
+		}
+		w.Header().Set("Content-Type", JAson)
+		http.Error(w, "Cant'treate", http.StatusConflict)
+
+		err = json.NewEncoder(w).Encode(&per)
+		if err != nil {
+			slog.Error("Json in Login can't treated", "Err", err)
+		}
+		return
+	}
+
+	per := AnswerLogin{
+		StatusOfOperation: "SUCCESS",
+		UrlToRedict:       "/main",
+	}
+	w.Header().Set("Content-Type", JAson)
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(w)
+	if err := json.NewEncoder(w).Encode(&per); err != nil {
+		slog.Error("Can't json Encode", "Err", err)
 
+		http.Error(w, "sda", http.StatusUnauthorized)
+		return
+
+	}
+
+}
+
+func ValiDateData(p *Dto.User) error {
+	validater := validator.New()
+
+	err := validater.Struct(p)
+	if err != nil {
+		slog.Error("Can't validate because", "Err", err)
+		return err
+
+	}
+	return nil
 }

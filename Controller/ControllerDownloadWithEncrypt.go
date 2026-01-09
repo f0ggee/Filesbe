@@ -2,28 +2,51 @@ package Controller
 
 import (
 	"Kaban/Service/Handlers"
-	"fmt"
+	"encoding/json"
+	"errors"
 	"github.com/gorilla/mux"
 	"log/slog"
 	"net/http"
 )
 
-func CookiGetInControllerDownloader(w http.ResponseWriter, r *http.Request) (string, error) {
-	session, err := store.Get(r, "token1")
+func CheckDenyList(RT string) bool {
+
+	DenyLists := DenyList
+	if _, ok := DenyLists[RT]; !ok {
+		return true
+	}
+	return false
+}
+
+func CookieGetInControllerDownloader(w http.ResponseWriter, r *http.Request) (string, error) {
+	store := Store()
+
+	session, err := store.Get(r, "token6")
 	if err != nil {
 		slog.Error("cookie don't send", err)
 		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
 		return "", err
 	}
 
-	_, ok := session.Values["cookie"]
+	RT, ok := session.Values["RT"].(string)
 	if !ok {
+		slog.Info("Hoa")
 		http.Redirect(w, r, "/login", http.StatusFound)
 
 	}
-	SC, _ := session.Values["SW"].(string)
+	JWT, ok := session.Values["JWT"].(string)
+	if !ok {
+		slog.Info("Hoa")
+		http.Redirect(w, r, "/login", http.StatusFound)
 
-	slog.Info("SC")
+	}
+
+	_, SC, err, _ := Auth(RT, JWT, session)
+	if err != nil {
+		slog.Error("Err in Auth server", "Err", err)
+		return "", err
+	}
+
 	return SC, err
 }
 func getNameFromUrl(r *http.Request) string {
@@ -41,20 +64,51 @@ func DownloadWithEncrypt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	type Answer struct {
+		StatusOperation string `json:"StatusOperation"`
+		Errr            error  `json:"Errr"`
+	}
 	name := getNameFromUrl(r)
 
-	sc, er := CookiGetInControllerDownloader(w, r)
+	_, er := CookieGetInControllerDownloader(w, r)
 	if er != nil {
+
+		if errors.Is(er, errors.New("token in deny list")) {
+			slog.Error("Error because in deny list")
+			w.Header().Set("Content-Type", "application/json")
+			errs := json.NewEncoder(w).Encode(Answer{StatusOperation: "Don't start", Errr: errors.New("can't validate")})
+			if errs != nil {
+				slog.Error("error in decode json", errs)
+				return
+			}
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+
+		}
 		slog.Error("Can't get cookie because", "err", er)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+
+		err := json.NewEncoder(w).Encode(Answer{StatusOperation: "Don't start", Errr: errors.New("can't validate")})
+		if err != nil {
+			slog.Error("error in decode json", "err", err)
+			return
+		}
+
 		return
 	}
 
-	err := Handlers.SDownloadEncrypt(w, r, sc, name)
+	err := Handlers.DownloadEncrypt(w, r.Context(), name)
 	if err != nil {
-		_, err = fmt.Fprintf(w, "Can't dowload file")
-		http.Error(w, "Error because"+fmt.Sprint(err), http.StatusBadRequest)
-		if err != nil {
-			slog.Error("Error writing a message", err)
+
+		w.Header().Set("Content-Type", JAson)
+		w.WriteHeader(http.StatusBadRequest)
+		if err = json.NewEncoder(w).Encode(Answer{
+			StatusOperation: "BREAK",
+			Errr:            errors.New("can't download file"),
+		}); err != nil {
+			slog.Error("Error Encode json", "err", err)
 			return
 		}
 		return
