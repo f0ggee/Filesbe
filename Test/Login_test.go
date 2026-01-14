@@ -1,7 +1,7 @@
 package Test
 
 import (
-	"Kaban/Controller"
+	"Kaban/iternal/Controller"
 	"bytes"
 	"encoding/json"
 	"net/http"

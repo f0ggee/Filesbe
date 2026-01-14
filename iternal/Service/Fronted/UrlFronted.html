@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Filesb — Download Link</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0a0a0a; --panel:#000; --text:#e5fff4; --muted:#34d399; --border:#0f3a2e;
+      --primary:#10b981; --focus:#22c55e;
+    }
+    *,*::before,*::after{ box-sizing:border-box; }
+    html,body{
+      height:100%; margin:0; background:var(--bg); color:var(--text);
+      font-family:"Inter",system-ui, sans-serif;
+    }
+
+    .container{
+      max-width:980px;
+      margin:0 auto;
+      padding: clamp(16px, 4vw, 24px) clamp(12px, 3vw, 16px) 64px;
+    }
+
+    .header{ display:flex; align-items:center; margin-bottom: clamp(16px, 4vw, 24px); }
+    .brand{ font-weight:700; color:var(--primary); font-size: clamp(18px, 4vw, 20px); letter-spacing:.4px; }
+
+    .card{
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:16px;
+      padding: clamp(24px, 6vw, 48px) clamp(16px, 4vw, 32px);
+      box-shadow:0 0 28px rgba(16,185,129,.12);
+    }
+
+    .title{
+      color:var(--primary); margin:0 0 8px;
+      font-size: clamp(22px, 5vw, 26px); font-weight:700;
+    }
+    .sub{
+      color:var(--muted); margin:0 0 12px;
+      font-size: clamp(13px, 3vw, 15px);
+      line-height: 1.5;
+    }
+
+    .center-wrap{ display:flex; align-items:center; justify-content:center; min-height:60vh; }
+    .field{ display:grid; gap:12px; width:min(600px, 100%); }
+    .label{ font-weight:600; color:var(--muted); font-size:14px; margin-top: 12px; }
+
+    .input-row{ display:flex; gap:12px; }
+
+    .input{
+      padding: clamp(14px, 3vw, 16px);
+      border-radius:12px; border:1px solid var(--border);
+      background:#06130f; color:var(--text);
+      font-size:16px;
+      width:100%; outline: none;
+      cursor: pointer; transition: border-color 0.2s;
+      text-overflow: ellipsis;
+    }
+    .input:hover { border-color: var(--primary); }
+
+    .btn-outline{
+      padding: 10px 20px; border:1px solid var(--border); border-radius:10px;
+      background:#07110e; color:var(--text); font-weight:600;
+      font-size: clamp(13px, 3vw, 14px); cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-outline:hover{ border-color:var(--focus); background: #0c221a; }
+
+    .message{
+      margin-top:16px; padding:12px 16px; border-radius:10px;
+      border:1px solid var(--border); background:#061b14; color:var(--muted);
+      display:none; font-size: 14px;
+    }
+    .message.show{ display:block; }
+    .message.error{ color:#ffb4b4; border-color:#6b1111; background:#3b0b0b; }
+
+    .footer{ margin-top:32px; text-align:center; font-size:12px; color:var(--muted); opacity:.6; }
+
+    @media (max-width:480px){
+      .input-row { flex-direction: column; }
+      .btn-outline { width: 100%; padding: 14px; }
+      .center-wrap { min-height: auto; padding-top: 20px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header class="header"><div class="brand">Filesb</div></header>
+
+  <main class="card center-wrap">
+    <section class="field">
+      <h1 class="title" data-i18n="dlTitle">Your Download Link</h1>
+      <p class="sub" data-i18n="dlSub">Click the input field to open the file.</p>
+      <p class="sub" style="opacity: 0.8; font-weight: 400;" data-i18n="copyPasteHint">You can also copy and paste this link into the browser where you want to download the file.</p>
+
+      <label for="linkInput" class="label" data-i18n="directLabel">Direct Link</label>
+      <div class="input-row">
+        <input id="linkInput" class="input" type="url" readonly placeholder="..." />
+        <button id="copyBtn" class="btn-outline" type="button" data-i18n="copy">Copy</button>
+      </div>
+      <div id="message" class="message" role="status"></div>
+    </section>
+  </main>
+  <div class="footer">© 2026 Filesb</div>
+</div>
+
+<script>
+  const translations = {
+    en: {
+      copy: "Copy", copied: "Copied!", dlTitle: "Your Download Link",
+      dlSub: "Click the input field to download or use the copy button.",
+      copyPasteHint: "You can also copy and paste this link into the browser where you want to download the file.",
+      directLabel: "Direct Link", ready: "Link is ready.",
+      paramError: "Parameters not found.", fetchError: "Error loading link.", noCopy: "Nothing to copy."
+    },
+    ru: {
+      copy: "Копировать", copied: "Готово!", dlTitle: "Ваша ссылка на файл",
+      dlSub: "Нажмите на поле для скачивания или кнопку копирования.",
+      copyPasteHint: "Вы также можете скопировать и вставить эту ссылку в браузер, через который вы хотите скачать файл.",
+      directLabel: "Прямая ссылка", ready: "Ссылка готова.",
+      paramError: "Параметры не найдены.", fetchError: "Ошибка загрузки.", noCopy: "Нечего копировать."
+    }
+  };
+
+  const currentLang = localStorage.getItem('userLanguage') || 'en';
+
+  function applyLanguage() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[currentLang][key]) {
+        el.textContent = translations[currentLang][key];
+      }
+    });
+  }
+
+  const input = document.getElementById('linkInput');
+  const copyBtn = document.getElementById('copyBtn');
+  const message = document.getElementById('message');
+
+  function showMessage(key, isError = false) {
+    message.textContent = translations[currentLang][key] || key;
+    message.className = 'message show' + (isError ? ' error' : '');
+  }
+
+  input.onclick = () => { if (input.value) window.open(input.value, '_blank'); };
+
+  copyBtn.onclick = async () => {
+    if (!input.value.trim()) return showMessage('noCopy', true);
+    try {
+      await navigator.clipboard.writeText(input.value);
+      copyBtn.textContent = translations[currentLang].copied;
+      setTimeout(() => copyBtn.textContent = translations[currentLang].copy, 1500);
+      showMessage('copied');
+    } catch { showMessage('fetchError', true); }
+  };
+
+  async function fetchLink() {
+    const match = window.location.pathname.match(/\/URL\/([^\/?#]+)\/([^\/?#]+)/i);
+    if (!match) return showMessage('paramError', true);
+    try {
+      const res = await fetch(`/doUrl/api?name=${encodeURIComponent(match[1])}&bool=${encodeURIComponent(match[2])}`);
+      const data = await res.json();
+      if (data && data.Url) { input.value = data.Url; showMessage('ready'); }
+      else showMessage('fetchError', true);
+    } catch (e) { showMessage('fetchError', true); }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    applyLanguage();
+    fetchLink();
+  });
+</script>
+</body>
+</html>

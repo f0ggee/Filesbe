@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Filesb — Protection</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#0a0a0a; --panel:#000; --text:#e5fff4; --muted:#89f0c2; --border:#0f3a2e;
+      --primary:#10b981; --primary-press:#059669; --focus:#22c55e; --danger:#dc2626;
+      --warning: #fbbf24;
+    }
+
+    *, *::before, *::after { box-sizing:border-box; }
+    html, body { height:100%; background:var(--bg); color:var(--text); font-family:"Inter", system-ui, sans-serif; margin:0; }
+
+    .container {
+      max-width:980px;
+      margin:0 auto;
+      padding: clamp(16px, 4vw, 32px) clamp(12px, 3vw, 24px) 64px;
+    }
+
+    .card-main {
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:16px; padding: clamp(16px, 4vw, 24px); margin-bottom: 24px;
+      box-shadow:0 0 28px rgba(16,185,129,.12);
+    }
+
+    .title {
+      color:var(--primary);
+      font-size: clamp(20px, 5vw, 26px);
+      font-weight:700; margin-bottom:12px;
+    }
+
+    .sub {
+      color:var(--muted); margin-bottom:16px;
+      font-size: clamp(14px, 3vw, 16px);
+    }
+
+    .vpn-warning {
+      color: var(--warning);
+      font-size: 13px;
+      margin-bottom: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .dropzone {
+      border:2px dashed #145a42; border-radius:14px;
+      padding: clamp(20px, 5vw, 32px);
+      text-align:center; background:#06130f; transition:all .15s ease;
+    }
+    .dropzone.dragover { border-color:var(--focus); background:#072015; }
+
+    .btn-primary {
+      padding: clamp(12px, 3vw, 14px) clamp(16px, 4vw, 20px);
+      border:none; border-radius:12px; font-weight:700;
+      background:var(--primary); color:#00150e; cursor:pointer;
+      font-size: clamp(14px, 3vw, 16px); transition: background 0.2s;
+    }
+    .btn-primary:hover { background: var(--primary-press); }
+
+    .btn-outline {
+      padding: 10px 14px; border:1px solid var(--border); border-radius:10px;
+      background:#07110e; color:var(--text); font-weight:600;
+      font-size: clamp(12px, 2.5vw, 14px); cursor: pointer;
+    }
+    .btn-outline:disabled { opacity:0.3; cursor:not-allowed; }
+
+    .file-list { margin-top:18px; display:grid; gap:10px; }
+    .file-item {
+      padding:12px 14px; border:1px solid var(--border);
+      border-radius:10px; background:#07110e; font-size: 14px;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .overlay.show { display: flex; }
+
+    .terminal-loader {
+      border: 0.1em solid #333; background-color: #1a1a1a;
+      color: #0f0; font-family: monospace;
+      font-size: clamp(0.9em, 3vw, 1.1em);
+      padding: 1.5em 1em; width: clamp(240px, 80vw, 16em);
+      border-radius: 8px; position: relative; overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .terminal-header {
+      position: absolute; top: 0; left: 0; right: 0; height: 1.8em;
+      background-color: #333; padding: 0 0.6em; display: flex;
+      align-items: center; justify-content: space-between;
+    }
+
+    .control { width: 8px; height: 8px; border-radius: 50%; }
+    .close { background: #ff5f56; }
+    .min { background: #ffbd2e; }
+    .max { background: #27c93f; }
+
+    .text {
+      display: inline-block; white-space: nowrap; overflow: hidden;
+      border-right: 0.2em solid #0f0; margin-top: 1.8em; width: 0;
+    }
+    .anim-type { animation: typeAndHold 3s steps(10) infinite, blink 0.5s step-end infinite alternate; }
+
+    .terminal-warning {
+      color: #89f0c2; font-size: 12px; margin-top: 15px; text-align: center;
+      opacity: 0.8; font-family: sans-serif;
+    }
+
+    @keyframes blink { 50% { border-right-color: transparent; } }
+    @keyframes typeAndHold { 0%, 10% { width: 0; } 50%, 90% { width: 10em; } 100% { width: 0; } }
+
+    @media (max-width: 480px) {
+      .btn-primary, .btn-outline { width: 100%; text-align: center; }
+      .dropzone div[style*="display:flex"] { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="card-main">
+    <h1 class="title" data-i18n="pTitle">Advanced Protection</h1>
+    <p class="sub" data-i18n="pSub1">✔ File encryption with modern algorithms</p>
+    <p class="sub" data-i18n="pSub2">✔ Automatic deletion after first download</p>
+  </div>
+
+  <div class="card-main">
+    <h1 class="title" data-i18n="uTitle">Secure File Upload</h1>
+    <p class="sub" data-i18n="uSub">Choose files — they will be processed by the protection system.</p>
+
+    <div id="dropzone" class="dropzone">
+      <div class="vpn-warning">
+        ⚠️ <span data-i18n="vpnText">Please disable VPN before starting the upload for maximum speed.</span>
+      </div>
+      <span data-i18n="dropText">Drag & drop files here</span>
+      <div style="display:flex; gap:12px; justify-content:center; margin-top:14px; flex-wrap:wrap;">
+        <button id="chooseBtn" class="btn-primary" type="button" data-i18n="chooseBtn">Choose file</button>
+        <button id="uploadBtn" class="btn-outline" type="button" disabled data-i18n="uploadBtn">Upload</button>
+      </div>
+      <div style="color:#dc2626; font-size:13px; margin-top:10px;"><span data-i18n="maxSize">Max size</span>: 1 GB</div>
+      <input id="fileInput" type="file" multiple hidden />
+    </div>
+    <div id="errorOutput"></div>
+    <div id="fileList" class="file-list"></div>
+  </div>
+</div>
+
+<div id="overlay" class="overlay">
+  <div>
+    <div class="terminal-loader">
+      <div class="terminal-header">
+        <div class="terminal-title" data-i18n="statusTitle">Status</div>
+        <div style="display:flex; gap:5px;">
+          <div class="control close"></div>
+          <div class="control min"></div>
+          <div class="control max"></div>
+        </div>
+      </div>
+      <div id="terminalText" class="text anim-type">Loading...</div>
+    </div>
+    <div class="terminal-warning" data-i18n="termWarning">Don't close a page while continue downloading</div>
+  </div>
+</div>
+
+<script>
+  const translations = {
+    en: {
+      pTitle: "Advanced Protection", pSub1: "✔ File encryption with modern algorithms",
+      pSub2: "✔ Automatic deletion after first download", uTitle: "Secure File Upload",
+      uSub: "Choose file — it will be processed by the protection system.",
+      vpnText: "Please disable VPN before starting the upload",
+      dropText: "Drag & drop files here", chooseBtn: "Choose file", uploadBtn: "Upload",
+      maxSize: "Max size", statusTitle: "Status", loading: "Loading...",
+      completed: "Completed!", termWarning: "Don't close the page during the process",
+      sysError: "System Error", opFail: "Operation failed", tryLater: "Please try again later."
+    },
+    ru: {
+      pTitle: "Продвинутая защита", pSub1: "✔ Шифрование файлов современными алгоритмами",
+      pSub2: "✔ Автоматическое удаление после первого скачивания", uTitle: "Безопасная загрузка",
+      uSub: "Выберите файл — он будет обработан системой защиты.",
+      vpnText: "Пожалуйста, выключите VPN перед началом загрузки",
+      dropText: "Перетащите файлы сюда", chooseBtn: "Выбрать файл", uploadBtn: "Загрузить",
+      maxSize: "Макс. размер", statusTitle: "Статус", loading: "Загрузка...",
+      completed: "Готово!", termWarning: "Не закрывайте страницу во время процесса",
+      sysError: "Системная ошибка", opFail: "Ошибка операции", tryLater: "Попробуйте позже."
+    }
+  };
+
+  const currentLang = localStorage.getItem('userLanguage') || 'en';
+
+  function applyLanguage() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[currentLang][key]) el.textContent = translations[currentLang][key];
+    });
+  }
+
+  const dropzone = document.getElementById('dropzone'),
+          fileInput = document.getElementById('fileInput'),
+          chooseBtn = document.getElementById('chooseBtn'),
+          uploadBtn = document.getElementById('uploadBtn'),
+          list = document.getElementById('fileList'),
+          errorOutput = document.getElementById('errorOutput'),
+          overlay = document.getElementById('overlay'),
+          terminalText = document.getElementById('terminalText');
+
+  let selectedFiles = [];
+
+  function renderList(){
+    list.innerHTML = selectedFiles.map(f => `<div class="file-item">• ${f.name}</div>`).join('');
+    uploadBtn.disabled = selectedFiles.length === 0;
+    errorOutput.innerHTML = "";
+  }
+
+  chooseBtn.onclick = () => fileInput.click();
+  fileInput.onchange = e => { selectedFiles = Array.from(e.target.files); renderList(); };
+
+  uploadBtn.onclick = async () => {
+    if(selectedFiles.length === 0) return;
+    errorOutput.innerHTML = "";
+    overlay.classList.add('show');
+    terminalText.textContent = translations[currentLang].loading;
+
+    const fd = new FormData();
+    selectedFiles.forEach(f => fd.append('file', f));
+
+    try {
+      const response = await fetch('/downloader2/api', { method: 'POST', body: fd });
+      const data = await response.json();
+
+      if (response.status === 401) {
+        overlay.classList.remove('show');
+        window.location.href = data.UrlToRedict || "/login";
+        return;
+      }
+
+      if (response.ok && (data.StatusOperation === 'SUCCESS' || data.StatusOperation === 'SUCCES')) {
+        terminalText.textContent = translations[currentLang].completed;
+        setTimeout(() => {
+          if (data.UrlToRedict) window.location.href = data.UrlToRedict;
+          else overlay.classList.remove('show');
+        }, 1500);
+      } else {
+        throw new Error(data.Error || translations[currentLang].opFail);
+      }
+    } catch (err) {
+      overlay.classList.remove('show');
+      alert(err.message);
+    }
+  };
+
+  ['dragenter','dragover'].forEach(ev => {
+    dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  });
+  ['dragleave','drop'].forEach(ev => {
+    dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('dragover'); });
+  });
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    selectedFiles = Array.from(e.dataTransfer.files);
+    renderList();
+  });
+
+  applyLanguage();
+</script>
+</body>
+</html>
