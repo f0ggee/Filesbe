@@ -9,6 +9,8 @@ import (
 var NewPrivateKey *rsa.PrivateKey
 var OldPrivateKey *rsa.PrivateKey
 
+//SwapKeys generates a  pair keys
+
 func SwapKeys() {
 
 	OldPrivateKey = NewPrivateKey

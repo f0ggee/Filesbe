@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Filesb — Success</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0a0a0a; --panel:#000; --text:#e5fff4; --muted:#89f0c2; --border:#0f3a2e;
+      --primary:#10b981; --primary-press:#059669; --focus:#22c55e;
+      --success-glow: rgba(16, 185, 129, 0.12);
+    }
+    *,*::before,*::after{ box-sizing:border-box; }
+    html,body{ height:100%; background:var(--bg); color:var(--text); font-family:"Inter",system-ui; margin: 0; }
+
+    .container{
+      max-width:480px; margin:0 auto; padding: 24px;
+      display: flex; flex-direction: column; justify-content: center; min-height: 100vh;
+    }
+
+    .brand{ font-weight:700; color:var(--primary); font-size:24px; text-align: center; margin-bottom: 32px; letter-spacing: 0.5px; }
+
+    .card{
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:28px; padding: clamp(32px, 8vw, 48px);
+      box-shadow: 0 0 40px var(--success-glow); text-align: center;
+    }
+
+    .success-icon {
+      width: 80px; height: 80px; background: #07110e; border: 2px solid var(--primary);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 28px; color: var(--primary);
+      box-shadow: 0 0 30px var(--success-glow);
+    }
+
+    .title{ color:var(--primary); margin:0 0 12px; font-size: 28px; font-weight:700; }
+    .sub{ color:var(--muted); margin:0 0 32px; font-size:16px; line-height: 1.6; opacity: 0.9; }
+
+    .btn-primary{
+      display: inline-block; width: 100%; padding: 18px;
+      border:none; border-radius:14px; font-weight:700;
+      background:var(--primary); color:#00150e; font-size:16px;
+      text-decoration: none; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    .btn-primary:hover { background: var(--primary-press); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .fade-in { animation: fadeIn 0.6s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="brand">Filesb</div>
+
+  <main class="card fade-in">
+    <div class="success-icon">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+
+    <h1 class="title" data-i18n="doneTitle">File Downloaded</h1>
+    <p class="sub" data-i18n="doneSub">The file has been successfully processed and saved to your device.</p>
+
+    <a href="/" class="btn-primary" data-i18n="backBtn">Return to Home</a>
+  </main>
+</div>
+
+<script>
+  const translations = {
+    en: {
+      doneTitle: "File Downloaded",
+      doneSub: "The file has been successfully processed and saved to your device.",
+      backBtn: "Return to Home"
+    },
+    ru: {
+      doneTitle: "Файл скачан",
+      doneSub: "Файл был успешно обработан и сохранен на ваше устройство.",
+      backBtn: "Вернуться на главную"
+    }
+  };
+
+  function initLanguage() {
+    // Определяем язык (localStorage -> Browser -> Default 'en')
+    const savedLang = localStorage.getItem('userLanguage');
+    const browserLang = (navigator.language || navigator.userLanguage).substring(0, 2);
+    const currentLang = savedLang || (translations[browserLang] ? browserLang : 'en');
+
+    // Применяем переводы
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[currentLang][key]) {
+        el.textContent = translations[currentLang][key];
+      }
+    });
+
+    document.documentElement.lang = currentLang;
+  }
+
+  document.addEventListener('DOMContentLoaded', initLanguage);
+</script>
+
+</body>
+</html>

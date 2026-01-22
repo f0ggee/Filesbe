@@ -2,7 +2,7 @@ package Handlers
 
 import (
 	"Kaban/iternal/Dto"
-	"Kaban/iternal/Service/Uttiltesss"
+	"Kaban/iternal/Service/Helpers"
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/scrypt"
 )
 
-func RegisterService(de *Dto.Handler_Registerr) (string, string, error) {
+func RegisterService(de *Dto.HandlerRegister) (string, string, error) {
 
 	app := *SetSettings()
 
@@ -24,7 +24,7 @@ func RegisterService(de *Dto.Handler_Registerr) (string, string, error) {
 	case err != nil:
 		return "", "", err
 	}
-	HashPassword, err := Uttiltesss.HashPassowrd(de.Password)
+	HashPassword, err := Helpers.HashPassowrd(de.Password)
 	if err != nil {
 		slog.Error("Err generate a password-scrypt", "err", err)
 		return "", "", err
@@ -53,7 +53,7 @@ func RegisterService(de *Dto.Handler_Registerr) (string, string, error) {
 	return TokenForJwt, TokenForRf, nil
 }
 
-func GenerateScrypt(de *Dto.Handler_Registerr, err error) (string, error) {
+func GenerateScrypt(de *Dto.HandlerRegister, err error) (string, error) {
 	salt := make([]byte, 16)
 	_, err = rand.Read(salt)
 	if err != nil {

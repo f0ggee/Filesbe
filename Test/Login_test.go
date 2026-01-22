@@ -47,7 +47,7 @@ func TestLoging(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	Controller.Loging(w, req)
+	Controller.Login(w, req)
 
 	for _, tt := range test {
 		var z AnswerLogin

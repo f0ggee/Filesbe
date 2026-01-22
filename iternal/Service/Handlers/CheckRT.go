@@ -27,7 +27,6 @@ func CheckRefreshTokenLifeTime(RT string) error {
 		}
 
 		slog.Error("Error check  RT token", err)
-		slog.Info("RT", RT)
 
 		return err
 	}
@@ -69,7 +68,7 @@ func GenerateNewTokens(RT string) (string, string, int, string, error) {
 
 	RtToken, err := RFT(claims.UserID, claims.Sc)
 	if err != nil {
-		slog.Error("Erro in checkRt", err)
+		slog.Error("Error in checkRt", err)
 		return "", "", 0, "", err
 	}
 

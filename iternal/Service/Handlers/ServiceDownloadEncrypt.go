@@ -2,7 +2,7 @@ package Handlers
 
 import (
 	Dto2 "Kaban/iternal/Dto"
-	Uttiltesss2 "Kaban/iternal/Service/Uttiltesss"
+	Uttiltesss2 "Kaban/iternal/Service/Helpers"
 	"bufio"
 	"context"
 	"crypto/aes"
@@ -16,8 +16,8 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -26,27 +26,27 @@ import (
 
 func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) error {
 
-	ctx, cancel := Uttiltesss2.Contexte(ctxs)
+	ctx, cancel := Uttiltesss2.ContextForDownloading(ctxs)
 	defer cancel()
+
+	//It,saves the file name in the variable for comfortably
 	NameOfFile := name
 
 	NameOfFile = GetTrueName(NameOfFile, name)
 
 	sa, err2 := TreatOfFile(NameOfFile)
 	if err2 != nil {
-		return err2
+
+		return errors.New("file was used")
 	}
 
-	defer func() {
-		slog.Info("Func delete starts ")
-		DeleteFile(name)
-	}()
-
+	//Return the string as bytes
 	ReturnToBytes, err := hex.DecodeString(sa.AesKey)
 	if err != nil {
 		slog.Error("Error decode to string", "Err", err)
 		return err
 	}
+	//Decrypt the key
 	AesDecryptKey, err := rsa.DecryptOAEP(sha256.New(), nil, NewPrivateKey, ReturnToBytes, nil)
 
 	switch {
@@ -65,8 +65,6 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	}
 	Reader, writer := io.Pipe()
 
-	bucket := os.Getenv("BUCKET")
-
 	sees, err := Uttiltesss2.Inzelire()
 	if err != nil {
 		slog.Error("Error in func", err)
@@ -76,14 +74,20 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	downloader := s3.New(sees)
 
 	o, err := downloader.GetObjectWithContext(ctx, &s3.GetObjectInput{
-		Bucket:      aws.String(bucket),
+		Bucket:      aws.String(Bucket),
 		IfNoneMatch: aws.String(""),
 		Key:         aws.String(NameOfFile),
 	})
 
-	if err != nil {
+	defer o.Body.Close()
+	switch {
+	case strings.Contains(fmt.Sprint(err), "NoSuchKey"):
+		slog.Info("File was used")
+		return errors.New("file was used")
+	case err != nil:
 		slog.Error("ServiceDownload:", err)
 		return err
+
 	}
 
 	go func() {
@@ -110,9 +114,12 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	w.Header().Set("Content-Length", strconv.FormatInt(*o.ContentLength-aes.BlockSize, 10))
 
 	if _, err = io.Copy(w, Reader); err != nil {
-		slog.Error("Err In file Service Downloader Encrypt", "err", errors.New("connect close"))
+		slog.Error("Err In file Service Downloader Encrypt", "err", err)
 		return errors.New("connect close")
 	}
+
+	slog.Info("Func Download ends")
+	DeleteFile(NameOfFile, false)
 
 	return nil
 }
@@ -134,6 +141,7 @@ func TreatOfFile(NameOfFile string) (struct {
 			IsStartDownload bool
 		}{}, errors.New("don't find ")
 	}
+
 	if sa.IsUsed {
 		return struct {
 			AesKey          string
@@ -146,7 +154,7 @@ func TreatOfFile(NameOfFile string) (struct {
 	return sa, nil
 }
 
-// If i want to save files
+// If I want to save files
 func treateOfFile(NameOfFile string) error {
 	sa, ok := Dto2.MapForFile[NameOfFile]
 
@@ -205,6 +213,7 @@ func DecryptFile(AesKey []byte, o *s3.GetObjectOutput, writer *io.PipeWriter) er
 			return err
 		}
 		if err == io.EOF {
+
 			break
 		}
 

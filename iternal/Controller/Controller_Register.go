@@ -15,10 +15,10 @@ import (
 
 const ContentType = "Content-Type"
 
-func checkJsonRegister(r *http.Request) (*Dto.Handler_Registerr, error) {
+func checkJsonRegister(r *http.Request) (*Dto.HandlerRegister, error) {
 
 	var err error
-	var e Dto.Handler_Registerr
+	var e Dto.HandlerRegister
 
 	if err := json.NewDecoder(r.Body).Decode(&e); err != nil {
 		return nil, err
@@ -135,7 +135,7 @@ func SetSession(w http.ResponseWriter, r *http.Request, err error, jwt string, r
 	return nil
 
 }
-func ValiDateDataForRegister(p *Dto.Handler_Registerr) error {
+func ValiDateDataForRegister(p *Dto.HandlerRegister) error {
 	validater := validator.New()
 
 	err := validater.Struct(p)

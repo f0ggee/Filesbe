@@ -17,14 +17,12 @@
     *,*::before,*::after{ box-sizing:border-box; }
     html,body{ height:100%; background:var(--bg); color:var(--text); font-family:"Inter",system-ui; margin: 0; }
 
-    /* AUTO-SIZE: Динамические отступы контейнера */
     .container{
       max-width:980px;
       margin:0 auto;
       padding:clamp(16px, 4vw, 32px) clamp(12px, 3vw, 24px) 64px;
     }
 
-    /* Адаптивная шапка */
     .header{
       display:flex;
       align-items:center;
@@ -37,7 +35,6 @@
 
     .nav-actions { display: flex; gap: 10px; }
 
-    /* DROPDOWNS AUTO-SIZE */
     .dropdown-container { position: relative; }
     .dropdown-content {
       position: absolute; top: calc(100% + 10px); right: 0;
@@ -67,7 +64,6 @@
     .contact-value { font-weight: 600; font-size: 12px; color: var(--text); }
     .copy-status { font-size: 10px; color: var(--primary); font-weight: 700; }
 
-    /* BUTTONS AUTO-SIZE */
     .btn-outline, .btn-primary{
       transition:background .15s ease, border-color .15s ease, transform .08s ease;
       cursor: pointer; white-space: nowrap;
@@ -83,7 +79,6 @@
       background:var(--primary); color:#00150e; font-size:clamp(14px, 3vw, 16px);
     }
 
-    /* GRID AUTO-SIZE */
     .grid{
       display:grid;
       grid-template-columns: 1.1fr 0.9fr;
@@ -103,7 +98,6 @@
       text-align:center; background:#06130f;
     }
 
-    /* TERMINAL MODAL */
     .overlay{
       position:fixed; inset:0; background:rgba(0,0,0,.85);
       display:none; align-items:center; justify-content:center;
@@ -124,10 +118,7 @@
 
     @keyframes typeAndHold { 0%, 10% { width: 0; } 50%, 90% { width: 10em; } 100% { width: 0; } }
 
-    /* RESPONSIVE BREAKPOINTS */
-    @media (max-width:860px){
-      .grid{ grid-template-columns:1fr; }
-    }
+    @media (max-width:860px){ .grid{ grid-template-columns:1fr; } }
     @media (max-width:480px) {
       .nav-actions { width: 100%; justify-content: space-between; margin-top: 10px; }
       .nav-actions .dropdown-container { flex: 1; }
@@ -220,7 +211,6 @@
 </div>
 
 <script>
-  // Весь ваш скрипт оставлен без изменений
   const translations = {
     en: {
       langBtn: "Language: EN ▾",
@@ -244,7 +234,8 @@
       protectBtn: "Go to protection",
       status: "Status",
       loading: "Loading...",
-      completed: "Completed!"
+      completed: "Completed!",
+      error: "Auth Error"
     },
     ru: {
       langBtn: "Язык: RU ▾",
@@ -268,7 +259,8 @@
       protectBtn: "Перейти к защите",
       status: "Status",
       loading: "Загрузка...",
-      completed: "Завершено!"
+      completed: "Завершено!",
+      error: "Ошибка авторизации"
     }
   };
 
@@ -298,7 +290,6 @@
 
   devContactBtn.onclick = (e) => { e.stopPropagation(); devDropdown.classList.toggle('show'); langDropdown.classList.remove('show'); };
   langBtn.onclick = (e) => { e.stopPropagation(); langDropdown.classList.toggle('show'); devDropdown.classList.remove('show'); };
-
   window.onclick = () => { devDropdown.classList.remove('show'); langDropdown.classList.remove('show'); };
 
   async function copyValue(text, el) {
@@ -331,11 +322,29 @@
   uploadBtn.onclick = async () => {
     overlay.classList.add('show');
     terminalText.textContent = translations[currentLang].loading;
+    terminalText.style.color = '#0f0'; // Сброс цвета до зеленого
     terminalText.classList.add('anim-type');
+
     const fd = new FormData();
     selectedFiles.forEach(f => fd.append('file', f));
+
     try {
       const response = await fetch('/downloader/api', { method: 'POST', body: fd });
+
+      // Обработка 401
+      if (response.status === 401) {
+        const data = await response.json();
+        terminalText.classList.remove('anim-type');
+        terminalText.style.color = 'var(--danger)'; // Красим строку (используем CSS переменную danger)
+        terminalText.textContent = translations[currentLang].error;
+
+        setTimeout(() => {
+          if (data.UrlToRedict) window.location.href = data.UrlToRedict;
+          else overlay.classList.remove('show');
+        }, 1200);
+        return;
+      }
+
       const data = await response.json();
       if (response.ok) {
         terminalText.classList.remove('anim-type');

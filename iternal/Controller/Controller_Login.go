@@ -19,7 +19,11 @@ var AllowList = make(map[string]time.Time)
 var DenyList = make(map[string]time.Time)
 
 func Store() sessions.Store {
-	var store1z, _ = hex.DecodeString(os.Getenv("KEY1"))
+	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
+	if err != nil {
+		slog.Error("Err decode the key", "Err", err)
+		return nil
+	}
 
 	Store := sessions.NewCookieStore(store1z)
 	return Store
@@ -59,7 +63,7 @@ func GenerateCookie(Jwt string, RFT string, r *http.Request, w http.ResponseWrit
 	allowList := AllowList
 	denyList := DenyList
 
-	rft := session.Values["RT"].(string)
+	rft, _ := session.Values["RT"].(string)
 
 	denyList[rft] = time.Now()
 
@@ -84,7 +88,7 @@ func GenerateCookie(Jwt string, RFT string, r *http.Request, w http.ResponseWrit
 
 }
 
-func Loging(w http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request) {
 
 	type AnswerLogin struct {
 		StatusOfOperation string `json:"StatusOperation"`
@@ -119,7 +123,7 @@ func Loging(w http.ResponseWriter, r *http.Request) {
 
 	JWT, RFT, err := Handlers.LoginService(*sa, r.Context())
 	if err != nil {
-		http.Error(w, "Error treate", http.StatusUnauthorized)
+		http.Error(w, "Error processed", http.StatusUnauthorized)
 		return
 	}
 	err = GenerateCookie(JWT, RFT, r, w)
@@ -128,11 +132,12 @@ func Loging(w http.ResponseWriter, r *http.Request) {
 			StatusOfOperation: "BREAK",
 		}
 		w.Header().Set("Content-Type", JsonExample)
-		http.Error(w, "Cant'treate", http.StatusConflict)
+		http.Error(w, "Cant' processed ", http.StatusConflict)
 
 		err = json.NewEncoder(w).Encode(&per)
 		if err != nil {
 			slog.Error("Json in Login can't treated", "Err", err)
+			return
 		}
 		return
 	}
@@ -154,9 +159,9 @@ func Loging(w http.ResponseWriter, r *http.Request) {
 }
 
 func ValiDateData(p *Dto.User) error {
-	validater := validator.New()
+	validate := validator.New()
 
-	err := validater.Struct(p)
+	err := validate.Struct(p)
 	if err != nil {
 		slog.Error("Can't validate because", "Err", err)
 		return err

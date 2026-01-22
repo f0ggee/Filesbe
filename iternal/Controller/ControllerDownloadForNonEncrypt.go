@@ -3,40 +3,20 @@ package Controller
 import (
 	"Kaban/iternal/Service/Handlers"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
 
 const JsonExample = "application/json"
 
-func CookieGetInControllerDownloaderNoEnc(r *http.Request) bool {
-	store := Store()
-
-	session, err := store.Get(r, "token6")
-	if err != nil {
-		slog.Error("cookie don't send", err)
-		return false
-	}
-
-	rt := session.Values["RT"].(string)
-	jwtToken := session.Values["JWT"].(string)
-
-	_, _, err, _ = Auth(rt, jwtToken, session)
-	if err != nil {
-		slog.Error("Error in file upload",
-			"Err", err)
-		return false
-	}
-
-	return true
-}
 func getNameFromUrl2(r *http.Request) string {
 	vars := mux.Vars(r)
 
 	name := vars["name"]
-	slog.Info(name)
 	return name
 
 }
@@ -59,14 +39,19 @@ func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request) {
 
 	name := getNameFromUrl2(r)
 
-	ok := CookieGetInControllerDownloaderNoEnc(r)
-	if !ok {
-		return
-	}
+	err, _ := Handlers.DownloadWithNonEncrypt(w, name, r.Context())
 
-	err := Handlers.DownloadWithNonEncrypt(w, name, r.Context())
-	if err != nil {
+	switch {
+	case strings.Contains(fmt.Sprint(err), "file was used"):
+		slog.Error("File was used and we do redirect to the information page")
+		http.Redirect(w, r, "/informationPage", http.StatusFound)
 		return
+
+	case err != nil:
+		slog.Error("Error  downloading file", "Err", err)
+		return
+
 	}
+	return
 
 }

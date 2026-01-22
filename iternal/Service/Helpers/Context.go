@@ -1,13 +1,13 @@
-package Uttiltesss
+package Helpers
 
 import (
 	"context"
 	"time"
 )
 
-func Contexte(ctx context.Context) (ctxe context.Context, cancel context.CancelFunc) {
+func ContextForDownloading(ctx context.Context) (ctxe context.Context, cancel context.CancelFunc) {
 
-	return context.WithTimeout(ctx, 10*time.Minute)
+	return context.WithTimeout(ctx, 15*time.Minute)
 
 }
 

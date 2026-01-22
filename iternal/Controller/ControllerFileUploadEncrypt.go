@@ -99,6 +99,7 @@ func CookieGet(w http.ResponseWriter, r *http.Request) error {
 	jwts, _ := session.Values["JWT"].(string)
 	_, _, err, _ = Auth(rtToken, jwts, session)
 	if err != nil {
+		slog.Error("Auth error", err)
 		return errors.New("can't validate a tokens")
 	}
 

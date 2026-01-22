@@ -13,6 +13,27 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var dbIp = os.Getenv("POSTGRESQL_HOST")
+var dbPort = os.Getenv("POSTGRESQL_PORT")
+var dbUser = os.Getenv("POSTGRESQL_USER")
+var dbPassword = os.Getenv("POSTGRESQL_PASSWORD")
+var dbDbname = os.Getenv("POSTGRESQL_DBNAME")
+
+func init() {
+
+	err := godotenv.Load("iternal/Service/.env")
+	if err != nil {
+		slog.Info("Error loading the file ")
+		return
+	}
+
+	dbIp = os.Getenv("POSTGRESQL_HOST")
+	dbPort = os.Getenv("POSTGRESQL_PORT")
+	dbUser = os.Getenv("POSTGRESQL_USER")
+	dbPassword = os.Getenv("POSTGRESQL_PASSWORD")
+	dbDbname = os.Getenv("POSTGRESQL_DBNAME")
+
+}
 func config() *pgxpool.Config {
 
 	const Maxconns = int32(5)
@@ -23,17 +44,12 @@ func config() *pgxpool.Config {
 
 	_ = godotenv.Load()
 
-	dbIp := os.Getenv("POSTGRESQL_HOST")
-	dbPort := os.Getenv("POSTGRESQL_PORT")
-	dbUser := os.Getenv("POSTGRESQL_USER")
-	dbPassword := os.Getenv("POSTGRESQL_PASSWORD")
-	dbDbname := os.Getenv("POSTGRESQL_DBNAME")
 	connstr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", dbIp, dbPort, dbUser, dbPassword, dbDbname)
 
 	dbconfige, err := pgxpool.ParseConfig(connstr)
 	if err != nil {
 		slog.Error("Error loading database connection", err)
-		os.Exit(1)
+		return nil
 
 	}
 	dbconfige.MaxConns = Maxconns

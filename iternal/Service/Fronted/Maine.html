@@ -19,11 +19,9 @@
 
         html,body{ height:100%; margin:0; background:var(--bg); color:var(--text); font-family:"Inter",system-ui, sans-serif; }
 
-        /* AUTO-SIZE: Контейнер и карточка подстраиваются под экран */
         .container{
             max-width:920px;
             margin:0 auto;
-            /* Плавный отступ сверху от 32px до 64px */
             padding: clamp(32px, 10vh, 64px) 16px;
         }
 
@@ -31,12 +29,10 @@
             background:#000;
             border:1px solid var(--border);
             border-radius:16px;
-            /* Резиновые внутренние отступы */
             padding: clamp(20px, 5vw, 36px);
             box-shadow:0 0 20px rgba(16,185,129,.15);
         }
 
-        /* AUTO-SIZE шрифта: от 24px на мобильных до 32px на ПК */
         .hero h1{
             font-size: clamp(24px, 6vw, 32px);
             font-weight:700;
@@ -47,14 +43,12 @@
 
         .hero p, .hero li{
             color:var(--muted);
-            /* Чуть уменьшаем шрифт на очень маленьких экранах */
             font-size: clamp(14px, 4vw, 16px);
             line-height:1.6;
         }
 
         .divider{ height:1px; background:var(--border); margin:20px 0; }
 
-        /* Адаптивная кнопка */
         .btn-primary{
             display:inline-block;
             padding: clamp(12px, 3vw, 14px) clamp(24px, 5vw, 32px);
@@ -70,7 +64,6 @@
             width: auto;
         }
 
-        /* На мобильных кнопка может быть чуть шире для удобства нажатия */
         @media (max-width: 480px) {
             .btn-primary { width: 100%; text-align: center; }
         }
@@ -145,15 +138,22 @@
         fetch('/maine/api', {
             method: 'GET',
             credentials: 'same-origin',
-            cache: 'no-store',
-            redirect: 'follow'
+            cache: 'no-store'
         })
             .then(res => {
-                if (res.redirected && res.url) {
-                    window.location.replace(res.url);
-                    return;
+                // Проверяем, что статус 200 или 401
+                if (res.status === 200 || res.status === 401) {
+                    return res.json().then(data => {
+                        if (data && data.status_redict) {
+                            window.location.href = data.status_redict;
+                        } else {
+                            window.location.href = fallbackHref;
+                        }
+                    });
+                } else {
+                    // Если другой статус, идем по запасному пути
+                    window.location.href = fallbackHref;
                 }
-                window.location.href = fallbackHref;
             })
             .catch(() => {
                 window.location.href = fallbackHref;

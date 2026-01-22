@@ -17,6 +17,7 @@ func CUrlUp(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		slog.Error("Method don't allow")
 		http.Error(w, "Method", http.StatusUnauthorized)
+		return
 	}
 
 	nameFile, bols := UrlUploader(r)

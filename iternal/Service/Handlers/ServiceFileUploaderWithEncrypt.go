@@ -2,7 +2,7 @@ package Handlers
 
 import (
 	"Kaban/iternal/Dto"
-	Uttiltesss2 "Kaban/iternal/Service/Uttiltesss"
+	Uttiltesss2 "Kaban/iternal/Service/Helpers"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -15,15 +15,16 @@ import (
 	"log/slog"
 	"mime/multipart"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/aws/aws-sdk-go/aws"
 )
 
 func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error) {
+	slog.Info("Func FileUploaderEncrypt starts")
 
 	reader, writer := io.Pipe()
 
@@ -35,11 +36,11 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 	}
 
 	//This function checks len of name
-	NameS := CheckLenOfName(sizeAndName.Filename)
+	NameS := Uttiltesss2.CheckLenOfName(sizeAndName.Filename)
 
 	// The function below  finds  best options for download
 	SizeFile := sizeAndName.Size
-	BesParts, goroutine := FindBest(SizeFile)
+	BesParts, goroutine := Uttiltesss2.FindBest(SizeFile)
 
 	defer func() {
 		err = file.Close()
@@ -49,7 +50,7 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 		}
 	}()
 
-	ctx, cancel := Uttiltesss2.Contexte(r.Context())
+	ctx, cancel := Uttiltesss2.ContextForDownloading(r.Context())
 	if err != nil {
 		slog.Error("Error in Check File size", err)
 		return "", errors.New("file size too big")
@@ -61,7 +62,7 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 		sa := time.Since(timeS)
 		fmt.Println(sa)
 	}()
-	cfg, err := Uttiltesss2.Inzelire2()
+	cfg, err := Uttiltesss2.Initialization2()
 	if err != nil {
 		slog.Error("can't connect to S3 server", "Err", err)
 		return "", errors.New("can't connect to our servers")
@@ -69,12 +70,13 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 
 	chanelForAesKey := make(chan []byte, 100)
 
-	// The function, which encrypt a file
+	// The function, which encrypts a file
 	go func() {
 		defer func(writer *io.PipeWriter) {
 			err := writer.Close()
 			if err != nil {
-
+				slog.Error("can't close a file", "err", err)
+				return
 			}
 		}(writer)
 		err = Encrypt(file, writer, chanelForAesKey)
@@ -112,25 +114,33 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 		uploader.Concurrency = goroutine
 	})
 
-	slog.Info("File", NameS)
 	_, err = uploader.Upload(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(os.Getenv("BUCKET")),
+		Bucket: aws.String(Bucket),
 		Key:    aws.String(sizeAndName.Filename),
 		Body:   reader,
 	})
+
+	var ns *types.NoSuchKey
+	switch {
+	case errors.As(err, &ns):
+
+		slog.Error("file was used")
+		return "", errors.New("file was used")
+
+	}
 	if err != nil {
 		slog.Error("Error in uploader", err)
 		return "", errors.New("error in uploader file")
 	}
 
-	//Func which in the end, deletes a file
+	//The Func  deletes a file
 	time.AfterFunc(5*time.Minute, func() {
 
-		DeleteFile(NameS)
+		DeleteFile(NameS, true)
 
 	})
 
-	slog.Info("File success upload :)")
+	slog.Info("File success upload ")
 
 	return NameS, nil
 
@@ -143,8 +153,6 @@ func Encrypt(file multipart.File, writer io.Writer, channelForBytes chan []byte)
 		slog.Error("err generate aes-key", "Err", err)
 		return errors.New("can't do advance protection")
 	}
-
-	slog.Info("Key", aesKey)
 
 	channelForBytes <- aesKey
 	close(channelForBytes)
@@ -186,27 +194,4 @@ func Encrypt(file multipart.File, writer io.Writer, channelForBytes chan []byte)
 	}
 
 	return nil
-}
-
-func FindBest(size int64) (int, int) {
-
-	switch {
-	case size > 500000000:
-
-		fileResult := size / 1000000
-
-		x := 50
-		ResultPart := int(fileResult) / x
-		for ResultPart > 15 {
-			ResultPart = int(fileResult) / x
-			x += 5
-
-		}
-		NumOfGroutine := ResultPart + 1
-		return x, NumOfGroutine
-
-	default:
-		return 5, 20
-
-	}
 }

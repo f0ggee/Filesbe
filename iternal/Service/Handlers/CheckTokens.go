@@ -21,7 +21,6 @@ func CheckLifeJWT(JWT string) (*jwt.Token, error) {
 	})
 
 	if err != nil {
-		slog.Error("ERRR", JWT)
 		slog.Error("Error in check Jwt", err)
 		return nil, err
 	}

@@ -24,7 +24,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 	err := CookiGet2(w, r)
 	if err != nil {
 		w.Header().Set("Content-Type", JsonExample)
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusUnauthorized)
 		if err = json.NewEncoder(w).Encode(Answer{
 			StatusOperation: "NotStart",
 			UrlToRedict:     "/login",
@@ -35,11 +35,11 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 		return
 	}
 
-	filName, err := Handlers.FileUploaderNoEncr(w, r)
+	filName, err := Handlers.FileUploaderNoEncrypt(w, r)
 	if err != nil {
 
 		w.Header().Set("Content-Type", JsonExample)
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusUnauthorized)
 		if err = json.NewEncoder(w).Encode(Answer{
 			StatusOperation: "BREAK",
 			UrlToRedict:     "",
@@ -92,8 +92,17 @@ func CookiGet2(w http.ResponseWriter, r *http.Request) error {
 		slog.Error("Cookie time expired")
 		return errors.New("Cookie time expired")
 	}
-	rt := session.Values["RT"].(string)
-	jwtToken := session.Values["JWT"].(string)
+	rt, ok := session.Values["RT"].(string)
+	if !ok {
+		slog.Error("Cookie dont have RT")
+		return errors.New("Cookie dont get RT")
+
+	}
+	jwtToken, ok := session.Values["JWT"].(string)
+	if !ok {
+		slog.Error("Cookie dont have JWT")
+		return errors.New("Cookie dont get JWT")
+	}
 
 	_, _, err, _ = Auth(rt, jwtToken, session)
 	if err != nil {

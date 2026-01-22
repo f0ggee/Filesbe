@@ -1,4 +1,4 @@
-package Uttiltesss
+package Helpers
 
 import "golang.org/x/crypto/bcrypt"
 

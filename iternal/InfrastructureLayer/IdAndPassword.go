@@ -9,11 +9,11 @@ import (
 
 func (db *DB) GetIdPassowrd(email string) (int, string, error) {
 	var (
-		Unic_id  int
+		UnicId   int
 		password string
 	)
 
-	err := db.Db.QueryRow(context.Background(), `SELECT unic_id ,password FROM person WHERE email=$1`, email).Scan(&Unic_id, &password)
+	err := db.Db.QueryRow(context.Background(), `SELECT unic_id ,password FROM person WHERE email=$1`, email).Scan(&UnicId, &password)
 
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
@@ -30,5 +30,5 @@ func (db *DB) GetIdPassowrd(email string) (int, string, error) {
 		return 0, "", err
 	}
 
-	return Unic_id, password, nil
+	return UnicId, password, nil
 }

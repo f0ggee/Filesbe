@@ -1,6 +1,7 @@
 package Controller
 
 import (
+	"encoding/json"
 	"log/slog"
 	"net/http"
 	"time"
@@ -12,23 +13,20 @@ func LoggingRequest(next http.Handler) http.Handler {
 		formatForOutput := "01/02/2006 03:04 PM"
 
 		t := time.Now()
-		slog.Info("Info",
-			slog.Group("Request"),
-			slog.String("URL", request.URL.Path),
-			slog.String("Time", t.Format(formatForOutput)),
-			slog.String("Ip", request.RemoteAddr),
-		)
+
+		if request.Header.Get("User-Agent") == "" {
+			return
+		}
+
+		if request != nil {
+			slog.String("Method ", request.Method)
+			slog.String("Time", t.Format(formatForOutput))
+			slog.String("URL", request.URL.String())
+			slog.String("Host", request.Host)
+		}
+
 		next.ServeHTTP(writer, request)
 	})
-}
-
-func CheckJwtTokenLifeTime(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-
-		next.ServeHTTP(writer, request)
-
-	})
-
 }
 
 func GetFrom(w http.ResponseWriter, r *http.Request) {
@@ -37,6 +35,9 @@ func GetFrom(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Cant' treat", http.StatusNotFound)
 		slog.Info("Not found")
 		return
+	}
+	type AnswerStruct struct {
+		StatusRedict string `json:"status_redict"`
 	}
 
 	store := Store()
@@ -53,14 +54,24 @@ func GetFrom(w http.ResponseWriter, r *http.Request) {
 	_, _, err, ok := Auth(rtToken, jwts, seSession)
 
 	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusMovedPermanently)
 
-		return
+		w.Header().Set(ContentType, JsonExample)
+		w.WriteHeader(http.StatusUnauthorized)
+
+		if err := json.NewEncoder(w).Encode(AnswerStruct{StatusRedict: "/login"}); err != nil {
+			slog.Error("Error decode the json", "Err", err)
+			return
+		}
 	}
 	if !ok {
 		return
 	}
 
-	http.Redirect(w, r, "/main", http.StatusMovedPermanently)
-
+	w.Header().Set(ContentType, JsonExample)
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(AnswerStruct{StatusRedict: "/main"}); err != nil {
+		slog.Error("Error decode the json", "Err", err)
+		return
+	}
+	return
 }

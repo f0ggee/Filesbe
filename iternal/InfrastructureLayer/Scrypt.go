@@ -37,7 +37,6 @@ func (db *DB) GeTScrypt(ctx context.Context, UnicId int) (string, error) {
 		err = s.Scan(&scrypt)
 
 	}
-	slog.Info("sctr", scrypt)
 
 	return scrypt, err
 }

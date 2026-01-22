@@ -1,12 +1,9 @@
 package Handlers
 
 import (
-	"Kaban/iternal/Dto"
-	Uttiltesss2 "Kaban/iternal/Service/Uttiltesss"
+	Uttiltesss2 "Kaban/iternal/Service/Helpers"
 	"context"
-	"crypto/rand"
 	"errors"
-	"fmt"
 	"log/slog"
 	"mime/multipart"
 	"net/http"
@@ -17,7 +14,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 )
 
-func FileUploaderNoEncr(w http.ResponseWriter, r *http.Request) (string, error) {
+func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request) (string, error) {
+	slog.Info("Func FileUploaderNoEncrypt starts")
 
 	file, sizeAndName, err := r.FormFile("file")
 	if err != nil {
@@ -31,10 +29,12 @@ func FileUploaderNoEncr(w http.ResponseWriter, r *http.Request) (string, error) 
 		slog.Error("Error in file Uploader no encrypt", "Error", err)
 		return "", err
 	}
-	namefile := CheckLenOfName(sizeAndName.Filename)
+
+	//This function cheks a len of name file
+	nameFile := Uttiltesss2.CheckLenOfName(sizeAndName.Filename)
 	defer cancel()
 
-	size, groutine := FindBest(sizeAndName.Size)
+	_, goroutines := Uttiltesss2.FindBest(sizeAndName.Size)
 
 	defer func() {
 		err = file.Close()
@@ -47,24 +47,23 @@ func FileUploaderNoEncr(w http.ResponseWriter, r *http.Request) (string, error) 
 
 	defer func() {
 		sa := time.Since(timeS)
-		fmt.Println(sa)
+		slog.Info("Time of downloading", "Time", sa)
 	}()
 
-	cfg, err := Uttiltesss2.Inzelire2()
+	cfg, err := Uttiltesss2.Initialization2()
 	if err != nil {
 		slog.Error("Err cant", err)
 		return "", err
 	}
 
-	bucket := "0c8f1ea9-b07f5996-b392-4227-961b-14d2a71a53dc"
 	uploader := manager.NewUploader(cfg, func(uploader *manager.Uploader) {
 		uploader.MaxUploadParts = 1000
-		uploader.PartSize = int64(size) * 1024 * 1024
-		uploader.Concurrency = groutine
+		uploader.PartSize = 50 * 1024 * 1024
+		uploader.Concurrency = goroutines
 	})
 
 	_, err = uploader.Upload(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(bucket),
+		Bucket: aws.String(Bucket),
 		Key:    aws.String(sizeAndName.Filename),
 		Body:   file,
 	})
@@ -73,21 +72,10 @@ func FileUploaderNoEncr(w http.ResponseWriter, r *http.Request) (string, error) 
 		return "", err
 	}
 
-	slog.Info("File success upload :)")
+	slog.Info("File success upload")
 
-	return namefile, nil
+	return nameFile, nil
 
-}
-
-func CheckLenOfName(sizeAndName string) string {
-	nameOfFile := sizeAndName
-	if len(sizeAndName) > 5 {
-		NewString := rand.Text()
-		Dto.NamesToConvert[NewString[:3]] = sizeAndName
-		nameOfFile = NewString[:3]
-
-	}
-	return nameOfFile
 }
 
 func CheckFileSize2(incomingRequest context.Context, sizeAndName *multipart.FileHeader) (context.Context, context.CancelFunc, error) {
@@ -108,7 +96,7 @@ func CheckFileSize2(incomingRequest context.Context, sizeAndName *multipart.File
 		return nil, nil, errors.New("file too big")
 
 	default:
-		ctx, c := Uttiltesss2.Contexte(incomingRequest)
+		ctx, c := Uttiltesss2.ContextForDownloading(incomingRequest)
 		return ctx, c, nil
 
 	}

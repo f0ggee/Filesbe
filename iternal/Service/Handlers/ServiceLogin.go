@@ -2,7 +2,7 @@ package Handlers
 
 import (
 	Dto2 "Kaban/iternal/Dto"
-	"Kaban/iternal/Service/Uttiltesss"
+	"Kaban/iternal/Service/Helpers"
 	"context"
 	"log/slog"
 	"os"
@@ -12,13 +12,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func LoginCheck(password string, hash_of_password string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(hash_of_password), []byte(password))
+func LoginCheck(password string, hashOfPassword string) error {
+	slog.Info("Func LoginCheck starts")
+	err := bcrypt.CompareHashAndPassword([]byte(hashOfPassword), []byte(password))
 	if err != nil {
 		slog.Error("Err", "err", err)
 		return err
 
 	}
+	slog.Info("Func LoginCheck ends")
 	return nil
 
 }
@@ -31,12 +33,13 @@ func LoginCheck(password string, hash_of_password string) error {
 
 func LoginService(s Dto2.User, ctx context.Context) (string, string, error) {
 
+	slog.Info("Func LoginService starts")
 	app := *SetSettings()
 
-	ctx, cancel := Uttiltesss.Contexte(ctx)
+	ctx, cancel := Helpers.ContextForDownloading(ctx)
 	defer cancel()
 
-	UnicId, password, err := app.Re.GetIdPassowrd(s.Email)
+	UnitId, password, err := app.Re.GetIdPassowrd(s.Email)
 	if err != nil {
 		slog.Error("Error in GetIdPassword")
 		return "", "", err
@@ -48,21 +51,22 @@ func LoginService(s Dto2.User, ctx context.Context) (string, string, error) {
 		return "", "", err
 	}
 
-	scrypt, err := app.Re.GeTScrypt(ctx, UnicId)
+	scrypt, err := app.Re.GeTScrypt(ctx, UnitId)
 	if err != nil {
 		slog.Error("Error in GeScrypt", "Err", err)
 		return "", "", err
 	}
 
-	JWtToken, err := JWT(UnicId, scrypt)
+	JWtToken, err := JWT(UnitId, scrypt)
 	if err != nil {
 		return "", "", err
 	}
-	RT, err := RFT(UnicId, scrypt)
+	RT, err := RFT(UnitId, scrypt)
 	if err != nil {
 		return "", "", err
 	}
 
+	slog.Info("Func LoginService ends")
 	return JWtToken, RT, nil
 
 }

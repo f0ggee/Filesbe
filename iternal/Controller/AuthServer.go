@@ -41,7 +41,7 @@ func Auth(Rt string, JwtToken string, session *sessions.Session) (int, string, e
 		delete(AllowLists, Rt)
 		DenyLists[Rt] = time.Now()
 		AllowLists[NewRet] = time.Now()
-		session.Values["JT"] = NewJwt
+		session.Values["JWT"] = NewJwt
 		session.Values["RT"] = NewRet
 		return Id, scrypt, nil, false
 	}
