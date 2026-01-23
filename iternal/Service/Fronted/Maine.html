@@ -3,7 +3,16 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Filesb — file sharing</title>
+
+    <link rel="icon" type="image/png" href="/Fronted/favicon.png">
+
+    <title>Filesb — Secure File Sharing | Защищенный обмен файлами</title>
+
+    <meta name="description" content="Secure and fast file sharing service. Filesb provides encrypted data transfer. / Защищенный и быстрый сервис обмена файлами с шифрованием." />
+    <meta name="keywords" content="secure file sharing, encrypted upload, защищенный файлообменник, безопасная передача файлов, шифрование, filesb" />
+
+    <meta property="og:title" content="Filesb — Secure File Sharing / Защищенный обмен" />
+    <meta property="og:description" content="Fast, minimal and secure file transfer. / Быстрая и безопасная передача файлов." />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,79 +23,34 @@
             --bg:#0a0a0a; --text:#d1fae5; --muted:#34d399; --border:#064e3b;
             --primary:#10b981; --primary-press:#059669;
         }
-
         *,*::before,*::after{ box-sizing:border-box; }
-
-        html,body{ height:100%; margin:0; background:var(--bg); color:var(--text); font-family:"Inter",system-ui, sans-serif; }
-
-        .container{
-            max-width:920px;
-            margin:0 auto;
-            padding: clamp(32px, 10vh, 64px) 16px;
-        }
-
-        .card{
-            background:#000;
-            border:1px solid var(--border);
-            border-radius:16px;
-            padding: clamp(20px, 5vw, 36px);
-            box-shadow:0 0 20px rgba(16,185,129,.15);
-        }
-
-        .hero h1{
-            font-size: clamp(24px, 6vw, 32px);
-            font-weight:700;
-            color:var(--primary);
-            margin-bottom:16px;
-            line-height: 1.2;
-        }
-
-        .hero p, .hero li{
-            color:var(--muted);
-            font-size: clamp(14px, 4vw, 16px);
-            line-height:1.6;
-        }
-
+        html,body{ height:100%; margin:0; background:var(--bg); color:var(--text); font-family:"Inter",sans-serif; }
+        .container{ max-width:920px; margin:0 auto; padding: clamp(32px, 10vh, 64px) 16px; }
+        .card{ background:#000; border:1px solid var(--border); border-radius:16px; padding: clamp(20px, 5vw, 36px); box-shadow:0 0 20px rgba(16,185,129,.15); }
+        .hero h1{ font-size: clamp(24px, 6vw, 32px); font-weight:700; color:var(--primary); margin-bottom:16px; }
+        .hero p, .hero li{ color:var(--muted); font-size: clamp(14px, 4vw, 16px); line-height:1.6; }
         .divider{ height:1px; background:var(--border); margin:20px 0; }
-
-        .btn-primary{
-            display:inline-block;
-            padding: clamp(12px, 3vw, 14px) clamp(24px, 5vw, 32px);
-            font-size: clamp(15px, 4vw, 16px);
-            font-weight:600;
-            border-radius:10px;
-            background:var(--primary);
-            color:#000;
-            text-decoration:none;
-            border:none;
-            transition:all .15s ease;
-            cursor:pointer;
-            width: auto;
-        }
-
-        @media (max-width: 480px) {
-            .btn-primary { width: 100%; text-align: center; }
-        }
-
+        .btn-primary{ display:inline-block; padding: 14px 32px; font-weight:600; border-radius:10px; background:var(--primary); color:#000; text-decoration:none; transition:all .15s ease; cursor:pointer; }
         .btn-primary:hover{ background:var(--primary-press); transform:translateY(-1px); }
         .center{ text-align:center; margin-top:20px; }
-        .beacon{ position:absolute; left:-9999px; width:1px; height:1px; opacity:0; pointer-events:none; }
+        .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
     </style>
 </head>
 <body>
 
-<img class="beacon" src="/maine/api" alt="">
-
 <div class="container">
     <section class="card hero">
-        <h1 id="title" data-i18n="title">Filesb — simple file sharing</h1>
+        <h1 id="title" data-i18n="title">Filesb — secure file sharing</h1>
+
         <p><strong data-i18n="descLabel">Description:</strong></p>
+        <p data-i18n="fullDesc">Filesb provides a fast and secure way to upload and share your documents with encryption.</p>
+
         <div class="divider"></div>
         <p><strong data-i18n="featLabel">Features:</strong></p>
         <ol id="featuresList">
-            <li data-i18n="f1">Minimal dark-green interface.</li>
-            <li data-i18n="f2">Works on any device.</li>
-            <li data-i18n="f3">Terminal-style design.</li>
+            <li data-i18n="f1">Secure encrypted data transfer.</li>
+            <li data-i18n="f2">No logs, high privacy standards.</li>
+            <li data-i18n="f3">Terminal-style minimal design.</li>
         </ol>
         <div class="center">
             <a href="/login" class="btn-primary" id="startBtn" data-i18n="startBtn">Get started</a>
@@ -94,31 +58,38 @@
     </section>
 </div>
 
+<div class="visually-hidden">
+    <h2>Secure file sharing service / Защищенный файлообменник</h2>
+    <p>Upload and share files securely. Безопасная загрузка и обмен файлами онлайн.</p>
+</div>
+
 <script>
     const translations = {
         en: {
-            title: "Filesb — simple file sharing",
+            title: "Filesb — secure file sharing",
             descLabel: "Description:",
+            fullDesc: "Filesb provides a fast and secure way to upload and share your documents with encryption.",
             featLabel: "Features:",
-            f1: "Minimal dark-green interface.",
-            f2: "Works on any device.",
-            f3: "Terminal-style design.",
+            f1: "Secure encrypted data transfer.",
+            f2: "No logs, high privacy standards.",
+            f3: "Terminal-style minimal design.",
             startBtn: "Get started",
             loading: "Loading..."
         },
         ru: {
-            title: "Filesb — простой обмен файлами",
+            title: "Filesb — защищенный обмен файлами",
             descLabel: "Описание:",
+            fullDesc: "Filesb предоставляет быстрый и защищенный способ загрузки и обмена документами с шифрованием.",
             featLabel: "Особенности:",
-            f1: "Минималистичный темно-зеленый интерфейс.",
-            f2: "Работает на любом устройстве.",
-            f3: "Дизайн в стиле терминала.",
+            f1: "Безопасная зашифрованная передача.",
+            f2: "Без логов, высокие стандарты приватности.",
+            f3: "Минималистичный дизайн в стиле терминала.",
             startBtn: "Начать работу",
             loading: "Загрузка..."
         }
     };
 
-    let currentLang = localStorage.getItem('userLanguage') || 'en';
+    let currentLang = localStorage.getItem('userLanguage') || (navigator.language.startsWith('ru') ? 'ru' : 'en');
 
     function applyLanguage() {
         document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -127,37 +98,17 @@
                 el.textContent = translations[currentLang][key];
             }
         });
+        document.documentElement.lang = currentLang;
     }
 
     const btn = document.getElementById('startBtn');
     btn.addEventListener('click', function (e) {
         e.preventDefault();
-        const fallbackHref = btn.getAttribute('href') || '/login';
         btn.textContent = translations[currentLang].loading;
-
-        fetch('/maine/api', {
-            method: 'GET',
-            credentials: 'same-origin',
-            cache: 'no-store'
-        })
-            .then(res => {
-                // Проверяем, что статус 200 или 401
-                if (res.status === 200 || res.status === 401) {
-                    return res.json().then(data => {
-                        if (data && data.status_redict) {
-                            window.location.href = data.status_redict;
-                        } else {
-                            window.location.href = fallbackHref;
-                        }
-                    });
-                } else {
-                    // Если другой статус, идем по запасному пути
-                    window.location.href = fallbackHref;
-                }
-            })
-            .catch(() => {
-                window.location.href = fallbackHref;
-            });
+        fetch('/maine/api', { method: 'GET', credentials: 'same-origin' })
+            .then(res => res.json())
+            .then(data => { window.location.href = data.status_redict || '/login'; })
+            .catch(() => { window.location.href = '/login'; });
     });
 
     applyLanguage();

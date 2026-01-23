@@ -29,10 +29,10 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request) (string, erro
 		slog.Error("Error in file Uploader no encrypt", "Error", err)
 		return "", err
 	}
+	defer cancel()
 
 	//This function cheks a len of name file
-	nameFile := Uttiltesss2.CheckLenOfName(sizeAndName.Filename)
-	defer cancel()
+	nameFile := CheckLenOfName(sizeAndName.Filename)
 
 	_, goroutines := Uttiltesss2.FindBest(sizeAndName.Size)
 
@@ -67,6 +67,13 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request) (string, erro
 		Key:    aws.String(sizeAndName.Filename),
 		Body:   file,
 	})
+
+	switch {
+	case errors.Is(err, context.Canceled):
+		slog.Info("a user has been cancelled download ")
+		return "", errors.New("a user has been cancelled download")
+
+	}
 	if err != nil {
 		slog.Error("Error in uploader", err)
 		return "", err
@@ -81,24 +88,23 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request) (string, erro
 func CheckFileSize2(incomingRequest context.Context, sizeAndName *multipart.FileHeader) (context.Context, context.CancelFunc, error) {
 
 	sizeFile := sizeAndName.Size
+	if sizeFile > 1000000000 {
+		return nil, nil, errors.New("file size too big")
+	}
 	switch {
 	case sizeFile >= 100000000 && sizeFile <= 500000000:
-		ctx, c := Uttiltesss2.Context2(incomingRequest, 5*time.Minute)
+		ctx, c := Uttiltesss2.Context2(incomingRequest, 12*time.Minute)
 
 		return ctx, c, nil
 
 	case sizeFile >= 500000000 && sizeFile < 1000000000:
-		ctx, c := Uttiltesss2.Context2(incomingRequest, 5*time.Minute)
+		ctx, c := Uttiltesss2.Context2(incomingRequest, 12*time.Minute)
 
-		return ctx, c, nil
-
-	case sizeFile > 1000000000:
-		return nil, nil, errors.New("file too big")
-
-	default:
-		ctx, c := Uttiltesss2.ContextForDownloading(incomingRequest)
 		return ctx, c, nil
 
 	}
 
+	ctx, c := Uttiltesss2.Context2(incomingRequest, 12*time.Minute)
+
+	return ctx, c, nil
 }

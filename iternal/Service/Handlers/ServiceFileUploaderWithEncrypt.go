@@ -3,6 +3,7 @@ package Handlers
 import (
 	"Kaban/iternal/Dto"
 	Uttiltesss2 "Kaban/iternal/Service/Helpers"
+	"context"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -36,7 +37,7 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 	}
 
 	//This function checks len of name
-	NameS := Uttiltesss2.CheckLenOfName(sizeAndName.Filename)
+	NameS := CheckLenOfName(sizeAndName.Filename)
 
 	// The function below  finds  best options for download
 	SizeFile := sizeAndName.Size
@@ -90,7 +91,9 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 		}
 	}()
 
+	Mut.RLock()
 	publicKey := &NewPrivateKey.PublicKey
+	Mut.RUnlock()
 
 	encryptAesKey, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, publicKey, <-chanelForAesKey, nil)
 	if err != nil {
@@ -100,12 +103,14 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 
 	IntoString := hex.EncodeToString(encryptAesKey)
 
+	Mut.Lock()
 	Dto.MapForFile[sizeAndName.Filename] = struct {
 		AesKey          string
 		TimeSet         time.Time
 		IsUsed          bool
 		IsStartDownload bool
 	}{AesKey: IntoString, TimeSet: time.Now(), IsUsed: false, IsStartDownload: false}
+	Mut.Unlock()
 
 	fmt.Println(BesParts, goroutine)
 	uploader := manager.NewUploader(cfg, func(uploader *manager.Uploader) {
@@ -127,6 +132,13 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 		slog.Error("file was used")
 		return "", errors.New("file was used")
 
+	case errors.Is(err, context.Canceled):
+		slog.Error("file was cancelled")
+		return "", errors.New("file was cancelled")
+
+	case errors.Is(err, context.DeadlineExceeded):
+		slog.Error("Time was exceeded")
+		return "", errors.New("time was exceeded")
 	}
 	if err != nil {
 		slog.Error("Error in uploader", err)

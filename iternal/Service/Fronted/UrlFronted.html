@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="icon" type="image/png" href="/Fronted/favicon.png">
+
   <title>Filesb — Download Link</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -135,6 +138,7 @@
         el.textContent = translations[currentLang][key];
       }
     });
+    document.documentElement.lang = currentLang;
   }
 
   const input = document.getElementById('linkInput');

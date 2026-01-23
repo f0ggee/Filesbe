@@ -34,7 +34,7 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 
 	NameOfFile = GetTrueName(NameOfFile, name)
 
-	sa, err2 := TreatOfFile(NameOfFile)
+	sa, err2 := PrecessingFile(NameOfFile)
 	if err2 != nil {
 
 		return errors.New("file was used")
@@ -46,23 +46,33 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 		slog.Error("Error decode to string", "Err", err)
 		return err
 	}
-	//Decrypt the key
-	AesDecryptKey, err := rsa.DecryptOAEP(sha256.New(), nil, NewPrivateKey, ReturnToBytes, nil)
 
+	Mut.RLock()
+	PrivatKey := NewPrivateKey
+	Mut.RUnlock()
+	//Decrypt the key
+	AesDecryptKey, err := rsa.DecryptOAEP(sha256.New(), nil, PrivatKey, ReturnToBytes, nil)
+
+	//Processing errors
 	switch {
-	case errors.Is(err, errors.New("decryption error")):
-		AesDecryptKey, err = rsa.DecryptOAEP(sha256.New(), rand.Reader, OldPrivateKey, ReturnToBytes, nil)
+	//if our key has been changed, we try to use the  old key
+	case strings.Contains(fmt.Sprint(err), "decryption error"):
+		Mut.RLock()
+		oldKey := OldPrivateKey
+		Mut.RUnlock()
+		slog.Error("Key is old")
+		AesDecryptKey, err = rsa.DecryptOAEP(sha256.New(), rand.Reader, oldKey, ReturnToBytes, nil)
 		if err != nil {
 			slog.Error("Error also decrypt with an old key ", err)
 			return err
 		}
 
-	}
-	if err != nil {
+	case err != nil:
 		slog.Error("Error decode string", "Err", err)
 		slog.Info("Info name", name)
 		return err
 	}
+
 	Reader, writer := io.Pipe()
 
 	sees, err := Uttiltesss2.Inzelire()
@@ -80,10 +90,18 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	})
 
 	defer o.Body.Close()
+
 	switch {
 	case strings.Contains(fmt.Sprint(err), "NoSuchKey"):
 		slog.Info("File was used")
 		return errors.New("file was used")
+
+	case errors.Is(err, context.DeadlineExceeded):
+		slog.Error("Time was exceeded")
+		return errors.New("time was exceeded")
+	case errors.Is(err, context.Canceled):
+		slog.Info("a user has been cancelled download ")
+		return errors.New("a user has been canceled download ")
 	case err != nil:
 		slog.Error("ServiceDownload:", err)
 		return err
@@ -119,18 +137,22 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	}
 
 	slog.Info("Func Download ends")
+	//Here, we start the func, which deletes a file
 	DeleteFile(NameOfFile, false)
 
 	return nil
 }
 
-func TreatOfFile(NameOfFile string) (struct {
+func PrecessingFile(NameOfFile string) (struct {
 	AesKey          string
 	TimeSet         time.Time
 	IsUsed          bool
 	IsStartDownload bool
 }, error) {
+
+	Mut.RLock()
 	sa, ok := Dto2.MapForFile[NameOfFile]
+	Mut.RUnlock()
 
 	if !ok {
 		slog.Error("File don't find ")
@@ -142,6 +164,7 @@ func TreatOfFile(NameOfFile string) (struct {
 		}{}, errors.New("don't find ")
 	}
 
+	//If a file is used
 	if sa.IsUsed {
 		return struct {
 			AesKey          string
@@ -150,30 +173,19 @@ func TreatOfFile(NameOfFile string) (struct {
 			IsStartDownload bool
 		}{}, errors.New("file was used")
 	}
+
+	//Here, we mention that a file starts downloads
 	sa.IsStartDownload = true
 	return sa, nil
 }
 
-// If I want to save files
-func treateOfFile(NameOfFile string) error {
-	sa, ok := Dto2.MapForFile[NameOfFile]
-
-	if !ok {
-		slog.Error("File don't find ")
-		return errors.New("don't find ")
-	}
-	if sa.IsUsed {
-		return errors.New("file was used")
-	}
-	sa.IsStartDownload = true
-	return nil
-}
-
 func GetTrueName(NameOfFile string, name string) string {
+	Mut.RLock()
 	if Name, ok := Dto2.NamesToConvert[NameOfFile]; ok {
 		NameOfFile = Name
 		delete(Dto2.NamesToConvert, name)
 	}
+	Mut.RUnlock()
 	return NameOfFile
 }
 

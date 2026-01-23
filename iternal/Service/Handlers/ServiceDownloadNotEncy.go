@@ -79,10 +79,12 @@ func DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext co
 // GetsName gets the real name from the map
 func GetsName(name string) string {
 
+	Mut.RLock()
 	names := ""
 	if Name, ok := Dto.NamesToConvert[name]; ok {
 		names = Name
 	}
+	Mut.RUnlock()
 	slog.Info("name", names)
 	return names
 }

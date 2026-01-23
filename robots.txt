@@ -1,0 +1,12 @@
+User-agent: *
+
+Disallow: /login/api
+Disallow: /register/api
+Disallow: /downloader/api
+Disallow: /downloader2/api
+Disallow: /maine/api
+Disallow: /doUrl/api
+
+Disallow: /maine/
+
+Sitemap: https://filesbes.com/sitemap.xml

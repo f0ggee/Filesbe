@@ -4,14 +4,18 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"log/slog"
+	"sync"
 )
 
 var NewPrivateKey *rsa.PrivateKey
 var OldPrivateKey *rsa.PrivateKey
 
+var Mut sync.RWMutex
+
 //SwapKeys generates a  pair keys
 
 func SwapKeys() {
+	Mut.Lock()
 
 	OldPrivateKey = NewPrivateKey
 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
@@ -22,4 +26,5 @@ func SwapKeys() {
 
 	NewPrivateKey = privateKey
 
+	Mut.Unlock()
 }

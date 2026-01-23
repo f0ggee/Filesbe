@@ -3,7 +3,6 @@ package main
 import (
 	Controller2 "Kaban/iternal/Controller"
 	"Kaban/iternal/Service/Handlers"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"time"
@@ -15,9 +14,23 @@ import (
 // the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
 
 func main() {
+	//Once create the pair of keys
 	Handlers.SwapKeys()
 
 	router := mux.NewRouter()
+
+	router = router.MatcherFunc(func(request *http.Request, match *mux.RouteMatch) bool {
+		if request.Host != "filesbes.com" {
+			return false
+		}
+
+		return true
+	}).Subrouter()
+
+	//The router will return  static files
+	StaticFiles := router.PathPrefix("/Fronted").Subrouter()
+
+	StaticFiles.Handle("/favicon.png", http.FileServer(http.Dir("iternal/Service")))
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
@@ -26,12 +39,12 @@ func main() {
 
 	})
 
-	ticker := time.NewTicker(24 * time.Hour)
+	ticker := time.NewTicker(12 * time.Hour)
 	defer ticker.Stop()
 
 	go func() {
 		for t := range ticker.C {
-			fmt.Println("Got a tick", t)
+			slog.Info("Got a ticker", t)
 			Handlers.SwapKeys()
 		}
 	}()
@@ -39,6 +52,12 @@ func main() {
 	router.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 
 		http.ServeFile(w, r, "iternal/Service/Fronted/Login.html")
+
+	})
+
+	router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
+
+		http.ServeFile(w, r, "./robots.txt")
 
 	})
 
@@ -54,10 +73,11 @@ func main() {
 		http.ServeFile(writer, request, "iternal/Service/Fronted/Main_Page.html")
 
 	})
-	router.HandleFunc("/wait", func(writer http.ResponseWriter, request *http.Request) {
-		http.ServeFile(writer, request, "iternal/Service/Fronted/WaitDownload.html")
+	router.HandleFunc("/sitemap.xml", func(writer http.ResponseWriter, request *http.Request) {
+		http.ServeFile(writer, request, "iternal/Service/Fronted/sitemap.xml")
 
 	})
+
 	router.HandleFunc("/protect", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "iternal/Service/Fronted/Protecion.html")
 

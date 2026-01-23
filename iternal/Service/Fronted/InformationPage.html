@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="icon" type="image/png" href="/Fronted/favicon.png">
+
   <title>Filesb — Success</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,12 +91,10 @@
   };
 
   function initLanguage() {
-    // Определяем язык (localStorage -> Browser -> Default 'en')
     const savedLang = localStorage.getItem('userLanguage');
     const browserLang = (navigator.language || navigator.userLanguage).substring(0, 2);
     const currentLang = savedLang || (translations[browserLang] ? browserLang : 'en');
 
-    // Применяем переводы
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (translations[currentLang][key]) {

@@ -13,6 +13,7 @@ import (
 func DeleteFile(Name string, IsEncrypt bool) {
 	slog.Info("Func deleteFile starts")
 
+	Mut.RLock()
 	nameOfFile := Name
 
 	if IsEncrypt {
@@ -21,6 +22,7 @@ func DeleteFile(Name string, IsEncrypt bool) {
 			return
 		}
 	}
+	Mut.RUnlock()
 
 	cfgs, err := Helpers.Initialization2()
 	if err != nil {

@@ -1,4 +1,4 @@
-package Helpers
+package Handlers
 
 import (
 	"Kaban/iternal/Dto"
@@ -6,6 +6,7 @@ import (
 )
 
 func CheckLenOfName(sizeAndName string) string {
+	Mut.Lock()
 	nameOfFile := sizeAndName
 	if len(sizeAndName) > 5 {
 		NewString := rand.Text()
@@ -13,5 +14,7 @@ func CheckLenOfName(sizeAndName string) string {
 		nameOfFile = NewString[:3]
 
 	}
+	Mut.Unlock()
+
 	return nameOfFile
 }
