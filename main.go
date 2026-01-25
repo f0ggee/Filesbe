@@ -19,16 +19,18 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router = router.MatcherFunc(func(request *http.Request, match *mux.RouteMatch) bool {
-		if request.Host != "filesbes.com" {
-			return false
-		}
-
-		return true
-	}).Subrouter()
+	//router = router.MatcherFunc(func(request *http.Request, match *mux.RouteMatch) bool {
+	//	if request.Host != "filesbes.com" {
+	//		return false
+	//	}
+	//
+	//	return true
+	//}).Subrouter()
 
 	//The router will return  static files
 	StaticFiles := router.PathPrefix("/Fronted").Subrouter()
+
+	//infoPage := router.Host("info.filesbes.com").Subrouter()
 
 	StaticFiles.Handle("/favicon.png", http.FileServer(http.Dir("iternal/Service")))
 
@@ -128,7 +130,7 @@ func main() {
 
 	//##
 	server := http.Server{
-		Addr:                         ":443", // I must change on 443
+		Addr:                         ":8080", // I must change on 443
 		Handler:                      router,
 		DisableGeneralOptionsHandler: false,
 		TLSConfig:                    nil,
@@ -139,17 +141,17 @@ func main() {
 		MaxHeaderBytes:               1 << 20,
 	}
 
-	err := server.ListenAndServeTLS("/etc/letsencrypt/live/filesbes.com/fullchain.pem", "/etc/letsencrypt/live/filesbes.com/privkey.pem")
-	if err != nil {
-		slog.Error("Err cant' do this", "err", err)
-		return
-	}
-
-	//err := server.ListenAndServe()
+	//err := server.ListenAndServeTLS("/etc/letsencrypt/live/filesbes.com/fullchain.pem", "/etc/letsencrypt/live/filesbes.com/privkey.pem")
 	//if err != nil {
-	//	slog.Error("Server couldn't start", err)
+	//	slog.Error("Err cant' do this", "err", err)
 	//	return
-	//
 	//}
+
+	err := server.ListenAndServe()
+	if err != nil {
+		slog.Error("Server couldn't start", err)
+		return
+
+	}
 
 }

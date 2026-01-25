@@ -1,7 +1,7 @@
 package Handlers
 
 import (
-	Dto2 "Kaban/iternal/Dto"
+	"Kaban/iternal/InfrastructureLayer"
 	Uttiltesss2 "Kaban/iternal/Service/Helpers"
 	"bufio"
 	"context"
@@ -18,7 +18,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -28,30 +27,25 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 
 	ctx, cancel := Uttiltesss2.ContextForDownloading(ctxs)
 	defer cancel()
+	apps := *InfrastructureLayer.ConnectKeyControl()
 
-	//It,saves the file name in the variable for comfortably
-	NameOfFile := name
+	RealNameFile := apps.Key.GetRealNameFile(name)
+	aesKey, err := apps.Key.ProcessingFileParameters(RealNameFile)
 
-	NameOfFile = GetTrueName(NameOfFile, name)
-
-	sa, err2 := PrecessingFile(NameOfFile)
-	if err2 != nil {
-
-		return errors.New("file was used")
+	if err != nil {
+		return err
 	}
-
 	//Return the string as bytes
-	ReturnToBytes, err := hex.DecodeString(sa.AesKey)
+	ReturnToBytes, err := hex.DecodeString(aesKey)
 	if err != nil {
 		slog.Error("Error decode to string", "Err", err)
 		return err
 	}
-
 	Mut.RLock()
-	PrivatKey := NewPrivateKey
+	PrivateKey := NewPrivateKey
 	Mut.RUnlock()
 	//Decrypt the key
-	AesDecryptKey, err := rsa.DecryptOAEP(sha256.New(), nil, PrivatKey, ReturnToBytes, nil)
+	AesDecryptKey, err := rsa.DecryptOAEP(sha256.New(), nil, PrivateKey, ReturnToBytes, nil)
 
 	//Processing errors
 	switch {
@@ -86,10 +80,17 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	o, err := downloader.GetObjectWithContext(ctx, &s3.GetObjectInput{
 		Bucket:      aws.String(Bucket),
 		IfNoneMatch: aws.String(""),
-		Key:         aws.String(NameOfFile),
+		Key:         aws.String(RealNameFile),
 	})
 
-	defer o.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			slog.Error("Error closing body", "Err", err)
+			return
+
+		}
+	}(o.Body)
 
 	switch {
 	case strings.Contains(fmt.Sprint(err), "NoSuchKey"):
@@ -128,7 +129,7 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	}()
 
 	w.Header().Set("Content-Type", "application/octet-stream")
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", NameOfFile))
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", RealNameFile))
 	w.Header().Set("Content-Length", strconv.FormatInt(*o.ContentLength-aes.BlockSize, 10))
 
 	if _, err = io.Copy(w, Reader); err != nil {
@@ -138,55 +139,9 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 
 	slog.Info("Func Download ends")
 	//Here, we start the func, which deletes a file
-	DeleteFile(NameOfFile, false)
+	DeleteFile(RealNameFile, false)
 
 	return nil
-}
-
-func PrecessingFile(NameOfFile string) (struct {
-	AesKey          string
-	TimeSet         time.Time
-	IsUsed          bool
-	IsStartDownload bool
-}, error) {
-
-	Mut.RLock()
-	sa, ok := Dto2.MapForFile[NameOfFile]
-	Mut.RUnlock()
-
-	if !ok {
-		slog.Error("File don't find ")
-		return struct {
-			AesKey          string
-			TimeSet         time.Time
-			IsUsed          bool
-			IsStartDownload bool
-		}{}, errors.New("don't find ")
-	}
-
-	//If a file is used
-	if sa.IsUsed {
-		return struct {
-			AesKey          string
-			TimeSet         time.Time
-			IsUsed          bool
-			IsStartDownload bool
-		}{}, errors.New("file was used")
-	}
-
-	//Here, we mention that a file starts downloads
-	sa.IsStartDownload = true
-	return sa, nil
-}
-
-func GetTrueName(NameOfFile string, name string) string {
-	Mut.RLock()
-	if Name, ok := Dto2.NamesToConvert[NameOfFile]; ok {
-		NameOfFile = Name
-		delete(Dto2.NamesToConvert, name)
-	}
-	Mut.RUnlock()
-	return NameOfFile
 }
 
 func DecryptFile(AesKey []byte, o *s3.GetObjectOutput, writer *io.PipeWriter) error {

@@ -62,6 +62,10 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 
 			UrlToRedict: "nil",
 		})
+		if err != nil {
+			slog.Info("Error in controller ", err)
+			return
+		}
 
 		return
 	}
@@ -97,7 +101,7 @@ func CookieGet(w http.ResponseWriter, r *http.Request) error {
 	rtToken, _ := session.Values["RT"].(string)
 
 	jwts, _ := session.Values["JWT"].(string)
-	_, _, err, _ = Auth(rtToken, jwts, session)
+	_, _, err = Handlers.Auth(rtToken, jwts)
 	if err != nil {
 		slog.Error("Auth error", err)
 		return errors.New("can't validate a tokens")

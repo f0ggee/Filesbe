@@ -1,6 +1,7 @@
 package Controller
 
 import (
+	"Kaban/iternal/Service/Handlers"
 	"encoding/json"
 	"log/slog"
 	"net/http"
@@ -48,10 +49,12 @@ func GetFrom(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
+
 	rtToken, _ := seSession.Values["RT"].(string)
 
 	jwts, _ := seSession.Values["JWT"].(string)
-	_, _, err, ok := Auth(rtToken, jwts, seSession)
+
+	NewJwt, NewRt, err := Handlers.Auth(rtToken, jwts)
 
 	if err != nil {
 
@@ -62,9 +65,14 @@ func GetFrom(w http.ResponseWriter, r *http.Request) {
 			slog.Error("Error decode the json", "Err", err)
 			return
 		}
-	}
-	if !ok {
 		return
+	}
+
+	if NewRt != "" && NewJwt != "" {
+		seSession.Values["RT"] = NewRt
+
+		seSession.Values["JWT"] = NewJwt
+
 	}
 
 	w.Header().Set(ContentType, JsonExample)

@@ -32,7 +32,7 @@ func init() {
 	EndPoint = os.Getenv("end")
 }
 
-func Initialization2() (*s3.Client, error) {
+func S3Helper() (*s3.Client, error) {
 
 	//accessKey := os.Getenv("Access_Key")
 	//secretKey := os.Getenv("Secret_key")

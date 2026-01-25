@@ -12,15 +12,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func CheckDenyList(RT string) bool {
-
-	DenyLists := DenyList
-	if _, ok := DenyLists[RT]; !ok {
-		return true
-	}
-	return false
-}
-
 func getNameFromUrl(r *http.Request) string {
 	vars := mux.Vars(r)
 
@@ -49,8 +40,8 @@ func DownloadWithEncrypt(w http.ResponseWriter, r *http.Request) {
 	case strings.Contains(fmt.Sprint(err), "file was used"):
 		http.Redirect(w, r, "/informationPage", http.StatusFound)
 		return
-
-	case err != nil:
+	}
+	if err != nil {
 		w.Header().Set("Content-Type", JsonExample)
 		w.WriteHeader(http.StatusBadRequest)
 		if err = json.NewEncoder(w).Encode(Answer{

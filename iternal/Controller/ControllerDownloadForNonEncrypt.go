@@ -47,8 +47,10 @@ func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/informationPage", http.StatusFound)
 		return
 
-	case err != nil:
-		slog.Error("Error  downloading file", "Err", err)
+	}
+	if err != nil {
+		slog.Error("Error downloading file", err)
+
 		return
 
 	}

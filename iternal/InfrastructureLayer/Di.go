@@ -1,17 +1,19 @@
 package InfrastructureLayer
 
+import "Kaban/iternal/DomainLevel"
+
 type ConnectToBd struct {
-	Re RepositorysForUsingDb
+	Re DomainLevel.UserServer
 }
 
-func NewUserService(Rep RepositorysForUsingDb) *ConnectToBd {
+func NewUserService(Rep DomainLevel.UserServer) *ConnectToBd {
 	return &ConnectToBd{Re: Rep}
 }
 
 type ConnectToBdTests struct {
-	Res RepositorysTest
+	Res DomainLevel.RepositorysTest
 }
 
-func NewUserServiceTest(Reps RepositorysTest) *ConnectToBdTests {
+func NewUserServiceTest(Reps DomainLevel.RepositorysTest) *ConnectToBdTests {
 	return &ConnectToBdTests{Res: Reps}
 }

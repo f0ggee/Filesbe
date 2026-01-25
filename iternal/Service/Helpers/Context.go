@@ -11,8 +11,8 @@ func ContextForDownloading(ctx context.Context) (ctxe context.Context, cancel co
 
 }
 
-func Context2(IncomingRequest context.Context, n time.Duration) (ctx context.Context, cancel context.CancelFunc) {
+func Context2(IncomingRequest context.Context) (ctx context.Context, cancel context.CancelFunc) {
 
-	return context.WithTimeout(IncomingRequest, n)
+	return context.WithTimeout(IncomingRequest, 15*time.Minute)
 
 }

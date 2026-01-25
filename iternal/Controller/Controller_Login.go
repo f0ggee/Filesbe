@@ -15,9 +15,6 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-var AllowList = make(map[string]time.Time)
-var DenyList = make(map[string]time.Time)
-
 func Store() sessions.Store {
 	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
 	if err != nil {
@@ -49,38 +46,20 @@ func checkJson(r *http.Request) (*Dto.User, error) {
 	return &e, err
 }
 
-func GenerateCookie(Jwt string, RFT string, r *http.Request, w http.ResponseWriter) error {
+func SaveTokens(s sessions.Session, Jwt string, RFT string, r *http.Request, w http.ResponseWriter) error {
 
-	store := Store()
-	session, err := store.Get(r, "token6")
-	if err != nil {
+	s.Values["RT"] = RFT
+	s.Values["JWT"] = Jwt
 
-		slog.Error("cookie don't send 1 ", err)
-		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
-		return err
-	}
-
-	allowList := AllowList
-	denyList := DenyList
-
-	rft, _ := session.Values["RT"].(string)
-
-	denyList[rft] = time.Now()
-
-	allowList[RFT] = time.Now()
-
-	session.Values["RT"] = RFT
-	session.Values["JWT"] = Jwt
-
-	session.Options = &sessions.Options{
+	s.Options = &sessions.Options{
 		Path:     "/",
 		MaxAge:   int((100 * time.Hour).Seconds()),
-		Secure:   true,
+		Secure:   false,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
 	}
 
-	if err := session.Save(r, w); err != nil {
+	if err := s.Save(r, w); err != nil {
 		return err
 
 	}
@@ -94,11 +73,23 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		StatusOfOperation string `json:"StatusOperation"`
 		UrlToRedict       string `json:"UrlToRedict"`
 	}
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Dont' allow", http.StatusUnauthorized)
 		slog.Error("Error", "err")
 		return
 	}
+	store := Store()
+
+	Session, err := store.Get(r, "token6")
+	if err != nil {
+
+		slog.Error("cookie don't send 1 ", err)
+		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
+		return
+	}
+
+	oldRftToken, _ := Session.Values["RT"].(string)
 
 	sa, err := checkJson(r)
 	if err != nil {
@@ -121,12 +112,22 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	JWT, RFT, err := Handlers.LoginService(*sa, r.Context())
+	JWT, RFT, err := Handlers.LoginService(*sa, r.Context(), oldRftToken)
 	if err != nil {
-		http.Error(w, "Error processed", http.StatusUnauthorized)
+		per := AnswerLogin{
+			StatusOfOperation: "NotStart",
+		}
+		w.Header().Set("Content-Type", JsonExample)
+		http.Error(w, "Cant' processed ", http.StatusConflict)
+
+		err = json.NewEncoder(w).Encode(&per)
+		if err != nil {
+			slog.Error("Json in Login can't treated", "Err", err)
+			return
+		}
 		return
 	}
-	err = GenerateCookie(JWT, RFT, r, w)
+	err = SaveTokens(*Session, JWT, RFT, r, w)
 	if err != nil {
 		per := AnswerLogin{
 			StatusOfOperation: "BREAK",

@@ -13,7 +13,6 @@ import (
 func DeleteFile(Name string, IsEncrypt bool) {
 	slog.Info("Func deleteFile starts")
 
-	Mut.RLock()
 	nameOfFile := Name
 
 	if IsEncrypt {
@@ -22,14 +21,12 @@ func DeleteFile(Name string, IsEncrypt bool) {
 			return
 		}
 	}
-	Mut.RUnlock()
 
-	cfgs, err := Helpers.Initialization2()
+	cfgs, err := Helpers.S3Helper()
 	if err != nil {
 		slog.Error("can't connect to S3 server", "Err", err)
 		return
 	}
-
 	s := &s3.DeleteObjectInput{
 		Bucket: aws.String(Bucket),
 		Key:    &nameOfFile,
@@ -38,7 +35,9 @@ func DeleteFile(Name string, IsEncrypt bool) {
 	_, err = cfgs.DeleteObject(context.Background(), s)
 	if err != nil {
 		slog.Error("Error in delete func", err)
+
 	}
+
 	slog.Info("Func deleteFile ends")
 	return
 

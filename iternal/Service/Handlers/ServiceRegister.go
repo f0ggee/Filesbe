@@ -2,6 +2,7 @@ package Handlers
 
 import (
 	"Kaban/iternal/Dto"
+	"Kaban/iternal/InfrastructureLayer"
 	"Kaban/iternal/Service/Helpers"
 	"crypto/rand"
 	"encoding/hex"
@@ -13,7 +14,8 @@ import (
 
 func RegisterService(de *Dto.HandlerRegister) (string, string, error) {
 
-	app := *SetSettings()
+	app := *InfrastructureLayer.SetSettings()
+	manageTokenInteraction := *InfrastructureLayer.SetSittingsTokenInteraction()
 
 	//Если пользователь существует, то тогда функция вернет кастомную ошибку - "person already exist"
 	err := app.Re.CheckUser(de.Email)
@@ -41,11 +43,11 @@ func RegisterService(de *Dto.HandlerRegister) (string, string, error) {
 		return "", "", err
 	}
 
-	TokenForJwt, err := JWT(UnicIdUser, ScryptKey)
+	TokenForJwt, err := manageTokenInteraction.Tokens.GenerateJWT(UnicIdUser)
 	if err != nil {
 		return "", "", err
 	}
-	TokenForRf, err := RFT(UnicIdUser, ScryptKey)
+	TokenForRf, err := manageTokenInteraction.Tokens.GenerateRT(UnicIdUser, nil)
 	if err != nil {
 		return "", "", err
 	}

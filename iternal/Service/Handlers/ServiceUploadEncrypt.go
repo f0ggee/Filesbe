@@ -1,8 +1,9 @@
 package Handlers
 
 import (
-	"Kaban/iternal/Dto"
+	"Kaban/iternal/InfrastructureLayer"
 	Uttiltesss2 "Kaban/iternal/Service/Helpers"
+	"Kaban/iternal/Service/Helpers/validator"
 	"context"
 	"crypto/aes"
 	"crypto/cipher"
@@ -26,22 +27,12 @@ import (
 
 func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error) {
 	slog.Info("Func FileUploaderEncrypt starts")
-
-	reader, writer := io.Pipe()
-
 	file, sizeAndName, err := r.FormFile("file")
 	if err != nil {
 		slog.Error("Err from FileUploader 1 ", err)
 		http.Error(w, "Error", http.StatusNotFound)
 		return "", errors.New("can't get file")
 	}
-
-	//This function checks len of name
-	NameS := CheckLenOfName(sizeAndName.Filename)
-
-	// The function below  finds  best options for download
-	SizeFile := sizeAndName.Size
-	BesParts, goroutine := Uttiltesss2.FindBest(SizeFile)
 
 	defer func() {
 		err = file.Close()
@@ -50,20 +41,35 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 			return
 		}
 	}()
+	apps := *InfrastructureLayer.ConnectKeyControl()
 
-	ctx, cancel := Uttiltesss2.ContextForDownloading(r.Context())
+	err = validator.CheckFileSize2(sizeAndName.Size)
 	if err != nil {
-		slog.Error("Error in Check File size", err)
-		return "", errors.New("file size too big")
+		slog.Error("check file size error", err)
+		return "", err
+	}
+
+	ctx, cancel := Uttiltesss2.Context2(r.Context())
+	if cancel == nil {
+		return "", errors.New("error in file Uploader no encrypt")
 	}
 	defer cancel()
+
+	reader, writer := io.Pipe()
+
+	//This function checks len of name
+	NameS := CheckLenOfName(sizeAndName.Filename)
+
+	// The function below  finds  best options for download
+	BesParts, goroutine := Uttiltesss2.FindBest(sizeAndName.Size)
+
 	timeS := time.Now()
 
 	defer func() {
 		sa := time.Since(timeS)
 		fmt.Println(sa)
 	}()
-	cfg, err := Uttiltesss2.Initialization2()
+	cfg, err := Uttiltesss2.S3Helper()
 	if err != nil {
 		slog.Error("can't connect to S3 server", "Err", err)
 		return "", errors.New("can't connect to our servers")
@@ -91,58 +97,16 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 		}
 	}()
 
-	Mut.RLock()
-	publicKey := &NewPrivateKey.PublicKey
-	Mut.RUnlock()
-
-	encryptAesKey, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, publicKey, <-chanelForAesKey, nil)
-	if err != nil {
-		slog.Error("Error create aes", "ERR", err)
-		return "", errors.New("can't validate data ")
+	AesKeyIntoString, err2 := encryptKey(chanelForAesKey)
+	if err2 != nil {
+		return "", err2
 	}
 
-	IntoString := hex.EncodeToString(encryptAesKey)
+	apps.Key.SaveFileInfo(sizeAndName.Filename, AesKeyIntoString)
 
-	Mut.Lock()
-	Dto.MapForFile[sizeAndName.Filename] = struct {
-		AesKey          string
-		TimeSet         time.Time
-		IsUsed          bool
-		IsStartDownload bool
-	}{AesKey: IntoString, TimeSet: time.Now(), IsUsed: false, IsStartDownload: false}
-	Mut.Unlock()
-
-	fmt.Println(BesParts, goroutine)
-	uploader := manager.NewUploader(cfg, func(uploader *manager.Uploader) {
-		uploader.MaxUploadParts = 200
-		uploader.PartSize = int64(BesParts) * 1024 * 1024
-		uploader.Concurrency = goroutine
-	})
-
-	_, err = uploader.Upload(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(Bucket),
-		Key:    aws.String(sizeAndName.Filename),
-		Body:   reader,
-	})
-
-	var ns *types.NoSuchKey
-	switch {
-	case errors.As(err, &ns):
-
-		slog.Error("file was used")
-		return "", errors.New("file was used")
-
-	case errors.Is(err, context.Canceled):
-		slog.Error("file was cancelled")
-		return "", errors.New("file was cancelled")
-
-	case errors.Is(err, context.DeadlineExceeded):
-		slog.Error("Time was exceeded")
-		return "", errors.New("time was exceeded")
-	}
-	if err != nil {
-		slog.Error("Error in uploader", err)
-		return "", errors.New("error in uploader file")
+	_, err3 := uploadFileEncrypt(cfg, BesParts, goroutine, ctx, sizeAndName, reader)
+	if err3 != nil {
+		return "", err3
 	}
 
 	//The Func  deletes a file
@@ -156,6 +120,65 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 
 	return NameS, nil
 
+}
+
+func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.Context, sizeAndName *multipart.FileHeader, reader *io.PipeReader) (string, error) {
+	uploader := manager.NewUploader(cfg, func(uploader *manager.Uploader) {
+		uploader.MaxUploadParts = 200
+		uploader.PartSize = int64(BesParts) * 1024 * 1024
+		uploader.Concurrency = goroutine
+	})
+
+	_, err := uploader.Upload(ctx, &s3.PutObjectInput{
+		Bucket: aws.String(Bucket),
+		Key:    aws.String(sizeAndName.Filename),
+		Body:   reader,
+	})
+	if err == nil {
+		return "", nil
+	}
+
+	var ns *types.NoSuchKey
+
+	switch {
+
+	case errors.As(err, &ns):
+
+		slog.Error("file was used")
+		return "", errors.New("file was used")
+
+	case errors.Is(err, context.Canceled):
+		slog.Error("file was cancelled")
+		return "", errors.New("file was cancelled")
+
+	case errors.Is(err, context.DeadlineExceeded):
+		slog.Error("Time was exceeded")
+		return "", errors.New("time was exceeded")
+
+	default:
+		slog.Error("file was not uploadable", err.Error())
+		return "", errors.New("file was not uploadable")
+	}
+}
+
+func encryptKey(chanelForAesKey chan []byte) (string, error) {
+
+	for {
+
+		key, _ := <-chanelForAesKey
+
+		publicKey := &NewPrivateKey.PublicKey
+
+		encryptAesKey, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, publicKey, key, nil)
+		if err != nil {
+			slog.Error("Error create aes", "ERR", err)
+			return "", errors.New("can't validate data ")
+		}
+
+		IntoString := hex.EncodeToString(encryptAesKey)
+		return IntoString, nil
+
+	}
 }
 
 func Encrypt(file multipart.File, writer io.Writer, channelForBytes chan []byte) error {

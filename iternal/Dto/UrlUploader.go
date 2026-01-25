@@ -1,5 +1,5 @@
 package Dto
 
-type UrlUplo struct {
+type UrlUploader struct {
 	Url string `json:"Url"`
 }

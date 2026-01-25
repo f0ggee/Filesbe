@@ -238,7 +238,7 @@
       status: "Status",
       loading: "Loading...",
       completed: "Completed!",
-      error: "Auth Error"
+      error: "Error occurred"
     },
     ru: {
       langBtn: "Язык: RU ▾",
@@ -263,7 +263,7 @@
       status: "Status",
       loading: "Загрузка...",
       completed: "Завершено!",
-      error: "Ошибка авторизации"
+      error: "Произошла ошибка"
     }
   };
 
@@ -272,8 +272,6 @@
   function setLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('userLanguage', lang);
-
-    // Обновление языка документа для браузера
     document.documentElement.lang = lang;
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -296,7 +294,8 @@
   const langDropdown = document.getElementById('langDropdown');
 
   devContactBtn.onclick = (e) => { e.stopPropagation(); devDropdown.classList.toggle('show'); langDropdown.classList.remove('show'); };
-  langBtn.onclick = (e) => { e.stopPropagation(); langDropdown.classList.toggle('show'); devDropdown.classList.remove('show'); };
+  langBtn.onclick = (e) => { e.stopPropagation(); langDropdown.classList.show = !langDropdown.classList.contains('show');
+    langDropdown.classList.toggle('show'); devDropdown.classList.remove('show'); };
   window.onclick = () => { devDropdown.classList.remove('show'); langDropdown.classList.remove('show'); };
 
   async function copyValue(text, el) {
@@ -338,34 +337,48 @@
     try {
       const response = await fetch('/downloader/api', { method: 'POST', body: fd });
 
-      if (response.status === 401) {
-        const data = await response.json();
+      // Читаем JSON от сервера
+      const data = await response.json();
+
+      // ЛОГИКА ОШИБКИ: Если в JSON есть поле Error, выводим его (независимо от статус-кода 400 или 401)
+      if (data.Error) {
         terminalText.classList.remove('anim-type');
         terminalText.style.color = 'var(--danger)';
-        terminalText.textContent = translations[currentLang].error;
+        terminalText.textContent = data.Error; // Показываем текст ошибки пользователю
 
         setTimeout(() => {
-          if (data.UrlToRedict) window.location.href = data.UrlToRedict;
-          else overlay.classList.remove('show');
-        }, 1200);
+          // Если есть UrlToRedict и это не "nil", уходим на него
+          if (data.UrlToRedict && data.UrlToRedict !== "nil" && data.UrlToRedict !== "") {
+            window.location.href = data.UrlToRedict;
+          } else {
+            overlay.classList.remove('show');
+          }
+        }, 3000);
         return;
       }
 
-      const data = await response.json();
-      if (response.ok) {
-        terminalText.classList.remove('anim-type');
-        terminalText.textContent = translations[currentLang].completed;
-        setTimeout(() => {
-          if (data.UrlToRedict) window.location.href = data.UrlToRedict;
-          else overlay.classList.remove('show');
-        }, 1200);
-      } else {
-        overlay.classList.remove('show');
-        alert("Error during upload");
+      // Если в JSON нет ошибки, но HTTP статус плохой (на всякий случай)
+      if (!response.ok) {
+        throw new Error("HTTP error " + response.status);
       }
+
+      // УСПЕХ:
+      terminalText.classList.remove('anim-type');
+      terminalText.textContent = translations[currentLang].completed;
+      setTimeout(() => {
+        if (data.UrlToRedict && data.UrlToRedict !== "nil" && data.UrlToRedict !== "") {
+          window.location.href = data.UrlToRedict;
+        } else {
+          overlay.classList.remove('show');
+        }
+      }, 1200);
+
     } catch (err) {
-      overlay.classList.remove('show');
-      alert("Error: " + err.message);
+      // Ошибка сети или критический сбой
+      terminalText.classList.remove('anim-type');
+      terminalText.style.color = 'var(--danger)';
+      terminalText.textContent = err.message || "Network Error";
+      setTimeout(() => { overlay.classList.remove('show'); }, 3000);
     }
   };
 </script>

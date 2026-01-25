@@ -2,6 +2,7 @@ package Handlers
 
 import (
 	Uttiltesss2 "Kaban/iternal/Service/Helpers"
+	"Kaban/iternal/Service/Helpers/validator"
 	"context"
 	"errors"
 	"log/slog"
@@ -14,20 +15,31 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 )
 
-func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request) (string, error) {
+func FileUploaderNoEncrypt(r *http.Request) (string, error) {
 	slog.Info("Func FileUploaderNoEncrypt starts")
 
 	file, sizeAndName, err := r.FormFile("file")
 	if err != nil {
 		slog.Error("Err from FileUploader 1 ", err)
-		http.Error(w, "Error", http.StatusNotFound)
 		return "", err
 	}
+	defer func() {
+		err = file.Close()
+		if err != nil {
+			slog.Error("Err, cant' close a file", "err", err)
+			return
+		}
+	}()
 
-	ctx, cancel, err := CheckFileSize2(r.Context(), sizeAndName)
+	err = validator.CheckFileSize2(sizeAndName.Size)
 	if err != nil {
 		slog.Error("Error in file Uploader no encrypt", "Error", err)
 		return "", err
+	}
+
+	ctx, cancel := Uttiltesss2.Context2(r.Context())
+	if cancel == nil {
+		return "", errors.New("error in file Uploader no encrypt")
 	}
 	defer cancel()
 
@@ -36,13 +48,6 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request) (string, erro
 
 	_, goroutines := Uttiltesss2.FindBest(sizeAndName.Size)
 
-	defer func() {
-		err = file.Close()
-		if err != nil {
-			slog.Error("Err, cant' close a file", "err", err)
-			return
-		}
-	}()
 	timeS := time.Now()
 
 	defer func() {
@@ -50,12 +55,24 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request) (string, erro
 		slog.Info("Time of downloading", "Time", sa)
 	}()
 
-	cfg, err := Uttiltesss2.Initialization2()
+	cfg, err := Uttiltesss2.S3Helper()
 	if err != nil {
 		slog.Error("Err cant", err)
 		return "", err
 	}
 
+	s, err2, done := uploadFile(cfg, goroutines, err, ctx, sizeAndName, file)
+	if done {
+		return s, err2
+	}
+
+	slog.Info("File success upload")
+
+	return nameFile, nil
+
+}
+
+func uploadFile(cfg *s3.Client, goroutines int, err error, ctx context.Context, sizeAndName *multipart.FileHeader, file multipart.File) (string, error, bool) {
 	uploader := manager.NewUploader(cfg, func(uploader *manager.Uploader) {
 		uploader.MaxUploadParts = 1000
 		uploader.PartSize = 50 * 1024 * 1024
@@ -71,40 +88,12 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request) (string, erro
 	switch {
 	case errors.Is(err, context.Canceled):
 		slog.Info("a user has been cancelled download ")
-		return "", errors.New("a user has been cancelled download")
+		return "", errors.New("a user has been cancelled download"), true
 
 	}
 	if err != nil {
 		slog.Error("Error in uploader", err)
-		return "", err
+		return "", err, true
 	}
-
-	slog.Info("File success upload")
-
-	return nameFile, nil
-
-}
-
-func CheckFileSize2(incomingRequest context.Context, sizeAndName *multipart.FileHeader) (context.Context, context.CancelFunc, error) {
-
-	sizeFile := sizeAndName.Size
-	if sizeFile > 1000000000 {
-		return nil, nil, errors.New("file size too big")
-	}
-	switch {
-	case sizeFile >= 100000000 && sizeFile <= 500000000:
-		ctx, c := Uttiltesss2.Context2(incomingRequest, 12*time.Minute)
-
-		return ctx, c, nil
-
-	case sizeFile >= 500000000 && sizeFile < 1000000000:
-		ctx, c := Uttiltesss2.Context2(incomingRequest, 12*time.Minute)
-
-		return ctx, c, nil
-
-	}
-
-	ctx, c := Uttiltesss2.Context2(incomingRequest, 12*time.Minute)
-
-	return ctx, c, nil
+	return "", nil, false
 }

@@ -1,4 +1,4 @@
-package InfrastructureLayer
+package UserInteraction
 
 import (
 	"context"

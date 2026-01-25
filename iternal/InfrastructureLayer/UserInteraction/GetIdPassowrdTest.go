@@ -1,4 +1,4 @@
-package InfrastructureLayer
+package UserInteraction
 
 var ma = make(map[string]struct {
 	password string

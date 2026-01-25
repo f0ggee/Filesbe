@@ -3,7 +3,7 @@ package Helpers
 func FindBest(size int64) (int, int) {
 
 	switch {
-	case size >= 100000000:
+	case size >= 100*1024*1024:
 
 		fileResult := size / 1000000
 

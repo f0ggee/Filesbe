@@ -1,19 +1,19 @@
-package Handlers
+package TokenInteraction
 
 import (
 	"Kaban/iternal/Dto"
 	"fmt"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func CheckLifeJWT(JWT string) (*jwt.Token, error) {
+func (A *ControlTokens) CheckLifeRt(Rt string) error {
 
 	key := []byte(os.Getenv("KEYFORJWT"))
-	token, err := jwt.ParseWithClaims(JWT, &Dto.MyCustomCookie{}, func(token *jwt.Token) (interface{}, error) {
-		// Проверка алгоритма (важно для безопасности, чтобы избежать атак alg:none)
+	_, err := jwt.ParseWithClaims(Rt, &Dto.JwtCustomStruct{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("неожиданный метод подписи: %v", token.Header["alg"])
 		}
@@ -21,9 +21,13 @@ func CheckLifeJWT(JWT string) (*jwt.Token, error) {
 	})
 
 	if err != nil {
-		slog.Error("Error in check Jwt", err)
-		return nil, err
+		delete(Dto.AllowList, Rt)
+		Dto.DenyList[Rt] = time.Now()
+		slog.Error("Refresh have been change", err)
+		return err
+
 	}
-	return token, nil
+
+	return nil
 
 }
