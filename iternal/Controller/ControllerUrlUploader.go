@@ -30,7 +30,7 @@ func CUrlUp(w http.ResponseWriter, r *http.Request) {
 	slog.Info("as", bols)
 	if bols == "true" {
 		if err := json.NewEncoder(w).Encode(map[string]string{
-			"Url": "https://filesbes.com/" + "d2/" + nameFile,
+			"Url": "http://localhost:8080/" + "d2/" + nameFile,
 		}); err != nil {
 			slog.Error("Json can't be treated -", err)
 			return

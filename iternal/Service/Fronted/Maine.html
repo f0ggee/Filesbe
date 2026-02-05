@@ -3,16 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <link rel="icon" type="image/png" href="/Fronted/favicon.png">
 
-    <title>Filesb — Secure File Sharing | Защищенный обмен файлами</title>
-
-    <meta name="description" content="Secure and fast file sharing service. Filesb provides encrypted data transfer. / Защищенный и быстрый сервис обмена файлами с шифрованием." />
-    <meta name="keywords" content="secure file sharing, encrypted upload, защищенный файлообменник, безопасная передача файлов, шифрование, filesb" />
-
-    <meta property="og:title" content="Filesb — Secure File Sharing / Защищенный обмен" />
-    <meta property="og:description" content="Fast, minimal and secure file transfer. / Быстрая и безопасная передача файлов." />
+    <title data-i18n="headTitle">Filesb — Secure File Sharing</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,49 +17,59 @@
             --primary:#10b981; --primary-press:#059669;
         }
         *,*::before,*::after{ box-sizing:border-box; }
-        html,body{ height:100%; margin:0; background:var(--bg); color:var(--text); font-family:"Inter",sans-serif; }
+
+        /* Auto-Size */
+        html,body{
+            height:100%; margin:0; background:var(--bg); color:var(--text);
+            font-family:"Inter",sans-serif;
+            font-size: clamp(14px, 1.1vw, 18px);
+        }
+
         .container{ max-width:920px; margin:0 auto; padding: clamp(32px, 10vh, 64px) 16px; }
-        .card{ background:#000; border:1px solid var(--border); border-radius:16px; padding: clamp(20px, 5vw, 36px); box-shadow:0 0 20px rgba(16,185,129,.15); }
-        .hero h1{ font-size: clamp(24px, 6vw, 32px); font-weight:700; color:var(--primary); margin-bottom:16px; }
-        .hero p, .hero li{ color:var(--muted); font-size: clamp(14px, 4vw, 16px); line-height:1.6; }
-        .divider{ height:1px; background:var(--border); margin:20px 0; }
-        .btn-primary{ display:inline-block; padding: 14px 32px; font-weight:600; border-radius:10px; background:var(--primary); color:#000; text-decoration:none; transition:all .15s ease; cursor:pointer; }
-        .btn-primary:hover{ background:var(--primary-press); transform:translateY(-1px); }
-        .center{ text-align:center; margin-top:20px; }
-        .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+        .card{ background:#000; border:1px solid var(--border); border-radius:16px; padding: clamp(20px, 5vw, 48px); box-shadow:0 0 25px rgba(16,185,129,.15); }
+
+        .hero h1{ font-size: clamp(24px, 5vw, 36px); font-weight:700; color:var(--primary); margin-bottom:20px; }
+        .hero p, .hero li{ color:var(--muted); line-height:1.6; margin-bottom: 12px; }
+        .divider{ height:1px; background:var(--border); margin:24px 0; opacity: 0.6; }
+
+        .center{ text-align:center; margin-top:32px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+        .btn{ display:inline-block; padding: 14px 32px; font-weight:600; border-radius:10px; text-decoration:none; transition:all .15s ease; cursor:pointer; font-size: 16px; border: 2px solid transparent; }
+        .btn-primary{ background:var(--primary); color:#000; }
+        .btn-primary:hover{ background:var(--primary-press); transform:translateY(-2px); }
+        .btn-secondary{ background: transparent; border-color: var(--border); color: var(--muted); }
+        .btn-secondary:hover{ border-color: var(--primary); color: var(--primary); transform:translateY(-2px); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <section class="card hero">
-        <h1 id="title" data-i18n="title">Filesb — secure file sharing</h1>
+        <h1 data-i18n="title">Filesb — Secure File Sharing</h1>
 
         <p><strong data-i18n="descLabel">Description:</strong></p>
         <p data-i18n="fullDesc">Filesb provides a fast and secure way to upload and share your documents with encryption.</p>
 
         <div class="divider"></div>
         <p><strong data-i18n="featLabel">Features:</strong></p>
-        <ol id="featuresList">
+        <ol>
             <li data-i18n="f1">Secure encrypted data transfer.</li>
             <li data-i18n="f2">No logs, high privacy standards.</li>
             <li data-i18n="f3">Terminal-style minimal design.</li>
         </ol>
+
         <div class="center">
-            <a href="/login" class="btn-primary" id="startBtn" data-i18n="startBtn">Get started</a>
+            <a href="/login" class="btn btn-primary" id="startBtn" data-i18n="startBtn">Get started</a>
+            <a href="/aboutProject" class="btn btn-secondary" data-i18n="aboutBtn">About us</a>
         </div>
     </section>
-</div>
-
-<div class="visually-hidden">
-    <h2>Secure file sharing service / Защищенный файлообменник</h2>
-    <p>Upload and share files securely. Безопасная загрузка и обмен файлами онлайн.</p>
 </div>
 
 <script>
     const translations = {
         en: {
-            title: "Filesb — secure file sharing",
+            headTitle: "Filesb — Secure File Sharing",
+            title: "Filesb — Secure File Sharing",
             descLabel: "Description:",
             fullDesc: "Filesb provides a fast and secure way to upload and share your documents with encryption.",
             featLabel: "Features:",
@@ -74,9 +77,11 @@
             f2: "No logs, high privacy standards.",
             f3: "Terminal-style minimal design.",
             startBtn: "Get started",
+            aboutBtn: "About us",
             loading: "Loading..."
         },
         ru: {
+            headTitle: "Filesb — Защищенный обмен файлами",
             title: "Filesb — защищенный обмен файлами",
             descLabel: "Описание:",
             fullDesc: "Filesb предоставляет быстрый и защищенный способ загрузки и обмена документами с шифрованием.",
@@ -85,6 +90,7 @@
             f2: "Без логов, высокие стандарты приватности.",
             f3: "Минималистичный дизайн в стиле терминала.",
             startBtn: "Начать работу",
+            aboutBtn: "О нас",
             loading: "Загрузка..."
         }
     };
@@ -98,6 +104,7 @@
                 el.textContent = translations[currentLang][key];
             }
         });
+        document.title = translations[currentLang].headTitle;
         document.documentElement.lang = currentLang;
     }
 

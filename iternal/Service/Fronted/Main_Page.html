@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <link rel="icon" type="image/png" href="/Fronted/favicon.png">
-
   <title>Filesb — File Upload</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,28 +15,23 @@
     :root{
       --bg:#0a0a0a; --panel:#000; --text:#e5fff4; --muted:#89f0c2; --border:#0f3a2e;
       --primary:#10b981; --primary-press:#059669; --focus:#22c55e; --danger:#dc2626;
+      --error-bg: rgba(220, 38, 38, 0.15); --error-border: #7f1d1d;
     }
     *,*::before,*::after{ box-sizing:border-box; }
     html,body{ height:100%; background:var(--bg); color:var(--text); font-family:"Inter",system-ui; margin: 0; }
 
     .container{
-      max-width:980px;
-      margin:0 auto;
+      max-width:980px; margin:0 auto;
       padding:clamp(16px, 4vw, 32px) clamp(12px, 3vw, 24px) 64px;
     }
 
+    /* HEADER & NAV */
     .header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:clamp(20px, 5vh, 32px);
-      gap: 12px;
-      flex-wrap: wrap;
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:clamp(20px, 5vh, 32px); gap: 12px; flex-wrap: wrap;
     }
     .brand{ font-weight:700; color:var(--primary); font-size:clamp(18px, 4vw, 22px); letter-spacing:.4px; margin-right: auto; }
-
     .nav-actions { display: flex; gap: 10px; }
-
     .dropdown-container { position: relative; }
     .dropdown-content {
       position: absolute; top: calc(100% + 10px); right: 0;
@@ -67,27 +61,42 @@
     .contact-value { font-weight: 600; font-size: 12px; color: var(--text); }
     .copy-status { font-size: 10px; color: var(--primary); font-weight: 700; }
 
+    /* --- BUTTONS --- */
     .btn-outline, .btn-primary{
-      transition:background .15s ease, border-color .15s ease, transform .08s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Плавная анимация */
       cursor: pointer; white-space: nowrap;
     }
+
     .btn-outline{
       padding: clamp(8px, 2vw, 10px) clamp(10px, 3vw, 14px);
       border:1px solid var(--border); border-radius:10px;
       background:#07110e; color:var(--text); font-weight:600; font-size:clamp(12px, 2.5vw, 13px);
     }
+
+    /* Эффект наведения для кнопки Upload (когда она не disabled) */
+    .btn-outline:not(:disabled):hover {
+      border-color: var(--primary); /* Зеленая рамка */
+      background: rgba(16, 185, 129, 0.08); /* Легкий зеленый фон */
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.25); /* Свечение */
+      transform: translateY(-2px); /* Приподнятие */
+      color: #fff;
+    }
+
+    .btn-outline:disabled { opacity:0.3; cursor:not-allowed; }
+
     .btn-primary{
       padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px);
       border:none; border-radius:12px; font-weight:700;
       background:var(--primary); color:#00150e; font-size:clamp(14px, 3vw, 16px);
     }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap:clamp(16px, 3vw, 24px);
+    .btn-primary:hover {
+      background: var(--primary-press);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
 
+    /* LAYOUT */
+    .grid{ display:grid; grid-template-columns: 1.1fr 0.9fr; gap:clamp(16px, 3vw, 24px); }
     .card{
       background:var(--panel); border:1px solid var(--border);
       border-radius:16px; padding:clamp(16px, 4vw, 24px);
@@ -96,11 +105,33 @@
     .title{ color:var(--primary); margin:0 0 8px; font-size:clamp(22px, 5vw, 26px); font-weight:700; }
     .sub{ color:var(--muted); margin:0 0 18px; font-size:clamp(13px, 3vw, 15px); }
 
+    /* DROPZONE & FILES */
     .dropzone{
       border:2px dashed #145a42; border-radius:14px; padding:clamp(20px, 5vw, 32px);
-      text-align:center; background:#06130f;
+      text-align:center; background:#06130f; transition: all 0.2s;
     }
+    .dropzone.dragover { border-color:var(--focus); background:#072015; }
 
+    /* ОШИБКИ */
+    .error-box {
+      margin-top: 20px; padding: 16px;
+      background: var(--error-bg); border: 1px solid var(--error-border);
+      border-radius: 12px; color: #ff8a8a;
+      display: none; align-items: flex-start; gap: 12px;
+      animation: fadeIn 0.3s ease-out;
+    }
+    .error-box.visible { display: flex; }
+    .error-icon { flex-shrink: 0; width: 20px; height: 20px; fill: currentColor; margin-top: 2px; }
+    .error-content { flex: 1; }
+    .error-title { font-weight: 700; color: #ffcccc; font-size: 14px; margin-bottom: 4px; display: block; }
+    .error-msg { font-size: 14px; line-height: 1.4; }
+    .error-close {
+      background: none; border: none; color: #ff8a8a; cursor: pointer;
+      font-size: 18px; padding: 0; line-height: 1; opacity: 0.7;
+    }
+    .error-close:hover { opacity: 1; color: #fff; }
+
+    /* OVERLAY */
     .overlay{
       position:fixed; inset:0; background:rgba(0,0,0,.85);
       display:none; align-items:center; justify-content:center;
@@ -119,6 +150,7 @@
     .text { display: inline-block; white-space: nowrap; overflow: hidden; border-right: 0.2em solid #0f0; margin-top: 1.5em; width: 0; }
     .anim-type { animation: typeAndHold 3s steps(10) infinite, blink 0.5s step-end infinite alternate; }
 
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes typeAndHold { 0%, 10% { width: 0; } 50%, 90% { width: 10em; } 100% { width: 0; } }
 
     @media (max-width:860px){ .grid{ grid-template-columns:1fr; } }
@@ -134,18 +166,16 @@
 <div class="container">
   <header class="header">
     <div class="brand">Filesb</div>
-
     <div class="nav-actions">
       <div class="dropdown-container">
-        <button class="btn-outline" id="langBtn">Language ▾</button>
+        <button class="btn-outline" id="langBtn" type="button">Language ▾</button>
         <div class="dropdown-content" id="langDropdown" style="width: 150px;">
           <div class="lang-item" data-lang="en" onclick="setLanguage('en')">English <span>🇺🇸</span></div>
           <div class="lang-item" data-lang="ru" onclick="setLanguage('ru')">Русский <span>🇷🇺</span></div>
         </div>
       </div>
-
       <div class="dropdown-container">
-        <button class="btn-outline" id="devContactBtn" style="border-color: var(--primary); color: var(--primary);">
+        <button class="btn-outline" id="devContactBtn" type="button" style="border-color: var(--primary); color: var(--primary);">
           Developer Contact ▾
         </button>
         <div class="dropdown-content" id="devDropdown">
@@ -173,16 +203,29 @@
     <section class="card">
       <h1 class="title" data-i18n="uploadTitle">File Upload</h1>
       <p class="sub" data-i18n="uploadSub">Choose files and get an instant share link</p>
+
       <div class="dropzone" id="dropzone">
         <div style="margin-bottom: 15px;" data-i18n="dropText">Drag & Drop files here</div>
         <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-          <button class="btn-primary" id="chooseBtn" data-i18n="chooseBtn">Choose files</button>
-          <button class="btn-outline" id="uploadBtn" disabled data-i18n="uploadBtn">Upload</button>
+          <button class="btn-primary" id="chooseBtn" type="button" data-i18n="chooseBtn">Choose files</button>
+          <button class="btn-outline" id="uploadBtn" type="button" disabled data-i18n="uploadBtn">Upload</button>
         </div>
         <div class="sub" style="font-size:13px; margin-top:12px;" data-i18n="multipleSupport">Multiple selection supported</div>
         <div style="color:var(--danger); font-size:14px;"><span data-i18n="maxSize">Max file size</span>: 1 GB</div>
         <input type="file" id="fileInput" multiple hidden>
       </div>
+
+      <div id="errorBox" class="error-box">
+        <svg class="error-icon" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
+        <div class="error-content">
+          <span class="error-title" data-i18n="errTitle">Error</span>
+          <span id="errorMessage" class="error-msg"></span>
+        </div>
+        <button class="error-close" onclick="hideError()" type="button">×</button>
+      </div>
+
       <div id="fileList" style="margin-top:15px; font-size:14px; color:var(--muted);"></div>
     </section>
 
@@ -214,57 +257,38 @@
 </div>
 
 <script>
+  // --- ЛОКАЛИЗАЦИЯ И ТЕКСТЫ ---
   const translations = {
     en: {
-      langBtn: "Language: EN ▾",
-      contactBtn: "Developer Contact ▾",
-      contactTitle: "Contact Info",
-      copy: "Copy",
-      copied: "Copied!",
-      uploadTitle: "File Upload",
-      uploadSub: "Choose files and get an instant share link",
-      dropText: "Drag & Drop files here",
-      chooseBtn: "Choose files",
-      uploadBtn: "Upload",
-      maxSize: "Max file size",
-      whyTitle: "Why Filesb",
-      why1: "No messengers needed",
-      why2: "Minimalistic interface",
-      why3: "Instant file links",
-      advTitle: "Advanced Protection",
-      adv1: "Modern file encryption",
-      adv2: "Short server storage time",
-      protectBtn: "Go to protection",
-      status: "Status",
-      loading: "Loading...",
-      completed: "Completed!",
-      error: "Error occurred"
+      langBtn: "Language: EN ▾", contactBtn: "Developer Contact ▾", contactTitle: "Contact Info",
+      copy: "Copy", copied: "Copied!", uploadTitle: "File Upload",
+      uploadSub: "Choose files and get an instant share link", dropText: "Drag & Drop files here",
+      chooseBtn: "Choose files", uploadBtn: "Upload", maxSize: "Max file size",
+      whyTitle: "Why Filesb", why1: "No messengers needed", why2: "Minimalistic interface", why3: "Instant file links",
+      advTitle: "Advanced Protection", adv1: "Modern file encryption", adv2: "Short server storage time",
+      protectBtn: "Go to protection", status: "Status", loading: "Loading...",
+      completed: "Completed!", error: "Error occurred", errTitle: "Operation Failed",
+      defaultError: "An unexpected error occurred."
     },
     ru: {
-      langBtn: "Язык: RU ▾",
-      contactBtn: "Связь с разработчиком ▾",
-      contactTitle: "Контакты",
-      copy: "Копировать",
-      copied: "Готово!",
-      uploadTitle: "Загрузка файлов",
-      uploadSub: "Выберите файлы и получите мгновенную ссылку",
-      dropText: "Перетащите файлы сюда",
-      chooseBtn: "Выбрать файлы",
-      uploadBtn: "Загрузить",
-      maxSize: "Макс. размер файла",
-      whyTitle: "Почему Filesb",
-      why1: "Мессенджеры не нужны",
-      why2: "Минималистичный интерфейс",
-      why3: "Мгновенные ссылки",
-      advTitle: "Продвинутая защита",
-      adv1: "Современное шифрование",
-      adv2: "Короткое время хранения",
-      protectBtn: "Перейти к защите",
-      status: "Status",
-      loading: "Загрузка...",
-      completed: "Завершено!",
-      error: "Произошла ошибка"
+      langBtn: "Язык: RU ▾", contactBtn: "Связь с разработчиком ▾", contactTitle: "Контакты",
+      copy: "Копировать", copied: "Готово!", uploadTitle: "Загрузка файлов",
+      uploadSub: "Выберите файлы и получите мгновенную ссылку", dropText: "Перетащите файлы сюда",
+      chooseBtn: "Выбрать файлы", uploadBtn: "Загрузить", maxSize: "Макс. размер файла",
+      whyTitle: "Почему Filesb", why1: "Мессенджеры не нужны", why2: "Минималистичный интерфейс", why3: "Мгновенные ссылки",
+      advTitle: "Продвинутая защита", adv1: "Современное шифрование", adv2: "Короткое время хранения",
+      protectBtn: "Перейти к защите", status: "Status", loading: "Загрузка...",
+      completed: "Завершено!", error: "Произошла ошибка", errTitle: "Ошибка операции",
+      defaultError: "Произошла непредвиденная ошибка."
     }
+  };
+
+  // Словарь для перевода ошибок с сервера
+  const serverErrorMap = {
+    "file too large": { en: "The file is too large.", ru: "Файл слишком большой." },
+    "invalid format": { en: "This file format is not supported.", ru: "Формат не поддерживается." },
+    "server busy": { en: "Server is busy, try again later.", ru: "Сервер занят." },
+    "empty file": { en: "Cannot upload empty files.", ru: "Файл пустой." }
   };
 
   let currentLang = localStorage.getItem('userLanguage') || 'en';
@@ -273,7 +297,6 @@
     currentLang = lang;
     localStorage.setItem('userLanguage', lang);
     document.documentElement.lang = lang;
-
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if(translations[lang][key]) el.textContent = translations[lang][key];
@@ -285,17 +308,16 @@
     });
     document.getElementById('langDropdown').classList.remove('show');
   }
+  document.addEventListener('DOMContentLoaded', () => setLanguage(currentLang));
 
-  document.addEventListener('DOMContentLoaded', () => { setLanguage(currentLang); });
-
+  // --- UI ЛОГИКА ---
   const devContactBtn = document.getElementById('devContactBtn');
   const devDropdown = document.getElementById('devDropdown');
   const langBtn = document.getElementById('langBtn');
   const langDropdown = document.getElementById('langDropdown');
 
   devContactBtn.onclick = (e) => { e.stopPropagation(); devDropdown.classList.toggle('show'); langDropdown.classList.remove('show'); };
-  langBtn.onclick = (e) => { e.stopPropagation(); langDropdown.classList.show = !langDropdown.classList.contains('show');
-    langDropdown.classList.toggle('show'); devDropdown.classList.remove('show'); };
+  langBtn.onclick = (e) => { e.stopPropagation(); langDropdown.classList.toggle('show'); devDropdown.classList.remove('show'); };
   window.onclick = () => { devDropdown.classList.remove('show'); langDropdown.classList.remove('show'); };
 
   async function copyValue(text, el) {
@@ -307,78 +329,102 @@
     } catch (err) {}
   }
 
+  // --- ЗАГРУЗКА ФАЙЛОВ ---
   const fileInput = document.getElementById('fileInput');
   const uploadBtn = document.getElementById('uploadBtn');
   const chooseBtn = document.getElementById('chooseBtn');
+  const dropzone = document.getElementById('dropzone');
   const overlay = document.getElementById('overlay');
   const terminalText = document.getElementById('terminalText');
   const fileList = document.getElementById('fileList');
   const protectBtn = document.getElementById('protectBtn');
+  const errorBox = document.getElementById('errorBox');
+  const errorMessage = document.getElementById('errorMessage');
 
   let selectedFiles = [];
   protectBtn.onclick = () => { window.location.href = '/protect'; };
   chooseBtn.onclick = () => fileInput.click();
 
-  fileInput.onchange = (e) => {
-    selectedFiles = [...e.target.files];
+  function renderList() {
+    fileList.innerHTML = '';
+    selectedFiles.forEach(f => {
+      const div = document.createElement('div');
+      div.textContent = `• ${f.name}`;
+      fileList.appendChild(div);
+    });
     uploadBtn.disabled = selectedFiles.length === 0;
-    fileList.innerHTML = selectedFiles.map(f => `<div>• ${f.name}</div>`).join('');
-  };
+    hideError();
+  }
 
+  fileInput.onchange = (e) => { selectedFiles = [...e.target.files]; renderList(); };
+
+  ['dragenter','dragover'].forEach(ev => {
+    dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  });
+  ['dragleave','drop'].forEach(ev => {
+    dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('dragover'); });
+  });
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    selectedFiles = Array.from(e.dataTransfer.files);
+    renderList();
+  });
+
+  function showError(msg) {
+    errorMessage.textContent = msg;
+    errorBox.classList.add('visible');
+  }
+  function hideError() {
+    errorBox.classList.remove('visible');
+  }
+  function translateServerError(serverMsg) {
+    if (!serverMsg) return translations[currentLang].defaultError;
+    const lowerMsg = serverMsg.toLowerCase();
+    for (const key in serverErrorMap) {
+      if (lowerMsg.includes(key)) return serverErrorMap[key][currentLang];
+    }
+    return serverMsg;
+  }
+
+  // === ГЛАВНАЯ ФУНКЦИЯ ЗАГРУЗКИ ===
   uploadBtn.onclick = async () => {
+    hideError();
     overlay.classList.add('show');
     terminalText.textContent = translations[currentLang].loading;
     terminalText.style.color = '#0f0';
-    terminalText.classList.add('anim-type');
 
     const fd = new FormData();
     selectedFiles.forEach(f => fd.append('file', f));
 
     try {
       const response = await fetch('/downloader/api', { method: 'POST', body: fd });
+      const data = await response.json().catch(() => ({}));
 
-      // Читаем JSON от сервера
-      const data = await response.json();
-
-      // ЛОГИКА ОШИБКИ: Если в JSON есть поле Error, выводим его (независимо от статус-кода 400 или 401)
-      if (data.Error) {
-        terminalText.classList.remove('anim-type');
-        terminalText.style.color = 'var(--danger)';
-        terminalText.textContent = data.Error; // Показываем текст ошибки пользователю
-
-        setTimeout(() => {
-          // Если есть UrlToRedict и это не "nil", уходим на него
-          if (data.UrlToRedict && data.UrlToRedict !== "nil" && data.UrlToRedict !== "") {
-            window.location.href = data.UrlToRedict;
-          } else {
-            overlay.classList.remove('show');
-          }
-        }, 3000);
+      if (response.status === 401) {
+        if (data.UrlToRedict) window.location.href = data.UrlToRedict;
+        else window.location.href = "/login";
         return;
       }
 
-      // Если в JSON нет ошибки, но HTTP статус плохой (на всякий случай)
-      if (!response.ok) {
-        throw new Error("HTTP error " + response.status);
+      if (response.status === 400) {
+        overlay.classList.remove('show');
+        const translated = translateServerError(data.Error);
+        showError(translated);
+        return;
       }
 
-      // УСПЕХ:
-      terminalText.classList.remove('anim-type');
-      terminalText.textContent = translations[currentLang].completed;
-      setTimeout(() => {
-        if (data.UrlToRedict && data.UrlToRedict !== "nil" && data.UrlToRedict !== "") {
-          window.location.href = data.UrlToRedict;
-        } else {
-          overlay.classList.remove('show');
-        }
-      }, 1200);
-
+      if (response.status === 200) {
+        terminalText.textContent = translations[currentLang].completed;
+        setTimeout(() => {
+          if (data.UrlToRedict) window.location.href = data.UrlToRedict;
+          else overlay.classList.remove('show');
+        }, 1000);
+        return;
+      }
+      throw new Error(`Server status: ${response.status}`);
     } catch (err) {
-      // Ошибка сети или критический сбой
-      terminalText.classList.remove('anim-type');
-      terminalText.style.color = 'var(--danger)';
-      terminalText.textContent = err.message || "Network Error";
-      setTimeout(() => { overlay.classList.remove('show'); }, 3000);
+      overlay.classList.remove('show');
+      showError(translations[currentLang].defaultError + " (" + err.message + ")");
     }
   };
 </script>

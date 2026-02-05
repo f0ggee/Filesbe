@@ -20,6 +20,9 @@ func (S *ControlTokens) GenerateNewTokens(RT string) (string, string, error) {
 		},
 	)
 
+	if rt == nil {
+		return "", "", err
+	}
 	claims, ok := rt.Claims.(*Dto.JwtCustomStruct)
 	if !ok {
 		return "", "", errors.New("can't par")

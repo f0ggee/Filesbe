@@ -58,9 +58,8 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 		w.WriteHeader(400)
 		err = json.NewEncoder(w).Encode(Answer{
 			StatusOperation: "NotStart",
-			Error:           fmt.Sprint(err),
-
-			UrlToRedict: "nil",
+			Error:           err.Error(),
+			UrlToRedict:     "",
 		})
 		if err != nil {
 			slog.Info("Error in controller ", err)

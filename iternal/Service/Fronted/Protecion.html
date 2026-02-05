@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <link rel="icon" type="image/png" href="/Fronted/favicon.png">
-
   <title>Filesb — Protection</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,17 +15,25 @@
     :root {
       --bg:#0a0a0a; --panel:#000; --text:#e5fff4; --muted:#89f0c2; --border:#0f3a2e;
       --primary:#10b981; --primary-press:#059669; --focus:#22c55e; --danger:#dc2626;
-      --warning: #fbbf24;
+      --warning: #fbbf24; --error-bg: rgba(220, 38, 38, 0.15); --error-border: #7f1d1d;
     }
 
     *, *::before, *::after { box-sizing:border-box; }
     html, body { height:100%; background:var(--bg); color:var(--text); font-family:"Inter", system-ui, sans-serif; margin:0; }
 
     .container {
-      max-width:980px;
-      margin:0 auto;
+      max-width:980px; margin:0 auto;
       padding: clamp(16px, 4vw, 32px) clamp(12px, 3vw, 24px) 64px;
     }
+
+    /* Кнопка Назад */
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none; color: var(--muted);
+      font-weight: 600; font-size: 15px; margin-bottom: 24px;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .btn-back:hover { color: var(--primary); transform: translateX(-4px); }
 
     .card-main {
       background:var(--panel); border:1px solid var(--border);
@@ -35,25 +42,15 @@
     }
 
     .title {
-      color:var(--primary);
-      font-size: clamp(20px, 5vw, 26px);
+      color:var(--primary); font-size: clamp(20px, 5vw, 26px);
       font-weight:700; margin-bottom:12px;
     }
 
-    .sub {
-      color:var(--muted); margin-bottom:16px;
-      font-size: clamp(14px, 3vw, 16px);
-    }
+    .sub { color:var(--muted); margin-bottom:16px; font-size: clamp(14px, 3vw, 16px); }
 
     .vpn-warning {
-      color: var(--warning);
-      font-size: 13px;
-      margin-bottom: 12px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      color: var(--warning); font-size: 13px; margin-bottom: 12px;
+      font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;
     }
 
     .dropzone {
@@ -84,15 +81,43 @@
       border-radius:10px; background:#07110e; font-size: 14px;
     }
 
+    /* --- НОВЫЕ СТИЛИ ДЛЯ ОШИБОК --- */
+    .error-box {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      border-radius: 12px;
+      color: #ff8a8a;
+      display: none; /* Скрыто по умолчанию */
+      align-items: flex-start;
+      gap: 12px;
+      animation: fadeIn 0.3s ease-out;
+    }
+    .error-box.visible { display: flex; }
+
+    .error-icon { flex-shrink: 0; width: 20px; height: 20px; fill: currentColor; margin-top: 2px; }
+
+    .error-content { flex: 1; }
+    .error-title { font-weight: 700; color: #ffcccc; font-size: 14px; margin-bottom: 4px; display: block; }
+    .error-msg { font-size: 14px; line-height: 1.4; }
+
+    .error-close {
+      background: none; border: none; color: #ff8a8a; cursor: pointer;
+      font-size: 18px; padding: 0; line-height: 1; opacity: 0.7;
+    }
+    .error-close:hover { opacity: 1; color: #fff; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* ------------------------------ */
+
     .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(4px);
-      z-index: 9999;
-      display: none;
-      align-items: center;
-      justify-content: center;
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(4px); z-index: 9999; display: none;
+      align-items: center; justify-content: center;
     }
     .overlay.show { display: flex; }
 
@@ -104,29 +129,22 @@
       border-radius: 8px; position: relative; overflow: hidden;
       box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
-
     .terminal-header {
       position: absolute; top: 0; left: 0; right: 0; height: 1.8em;
       background-color: #333; padding: 0 0.6em; display: flex;
       align-items: center; justify-content: space-between;
     }
-
     .control { width: 8px; height: 8px; border-radius: 50%; }
-    .close { background: #ff5f56; }
-    .min { background: #ffbd2e; }
-    .max { background: #27c93f; }
-
+    .close { background: #ff5f56; } .min { background: #ffbd2e; } .max { background: #27c93f; }
     .text {
       display: inline-block; white-space: nowrap; overflow: hidden;
       border-right: 0.2em solid #0f0; margin-top: 1.8em; width: 0;
     }
     .anim-type { animation: typeAndHold 3s steps(10) infinite, blink 0.5s step-end infinite alternate; }
-
     .terminal-warning {
       color: #89f0c2; font-size: 12px; margin-top: 15px; text-align: center;
       opacity: 0.8; font-family: sans-serif;
     }
-
     @keyframes blink { 50% { border-right-color: transparent; } }
     @keyframes typeAndHold { 0%, 10% { width: 0; } 50%, 90% { width: 10em; } 100% { width: 0; } }
 
@@ -140,6 +158,10 @@
 <body>
 
 <div class="container">
+  <a href="/main" class="btn-back">
+    ← <span data-i18n="backBtn">Back</span>
+  </a>
+
   <div class="card-main">
     <h1 class="title" data-i18n="pTitle">Advanced Protection</h1>
     <p class="sub" data-i18n="pSub1">✔ File encryption with modern algorithms</p>
@@ -162,7 +184,18 @@
       <div style="color:#dc2626; font-size:13px; margin-top:10px;"><span data-i18n="maxSize">Max size</span>: 1 GB</div>
       <input id="fileInput" type="file" multiple hidden />
     </div>
-    <div id="errorOutput"></div>
+
+    <div id="errorBox" class="error-box">
+      <svg class="error-icon" viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </svg>
+      <div class="error-content">
+        <span class="error-title" data-i18n="errTitle">Error</span>
+        <span id="errorMessage" class="error-msg"></span>
+      </div>
+      <button class="error-close" onclick="hideError()">×</button>
+    </div>
+
     <div id="fileList" class="file-list"></div>
   </div>
 </div>
@@ -185,6 +218,7 @@
 </div>
 
 <script>
+  // 1. Конфигурация текстов
   const translations = {
     en: {
       pTitle: "Advanced Protection", pSub1: "✔ File encryption with modern algorithms",
@@ -194,7 +228,9 @@
       dropText: "Drag & drop files here", chooseBtn: "Choose file", uploadBtn: "Upload",
       maxSize: "Max size", statusTitle: "Status", loading: "Loading...",
       completed: "Completed!", termWarning: "Don't close the page during the process",
-      sysError: "System Error", opFail: "Operation failed", tryLater: "Please try again later."
+      backBtn: "Back", errTitle: "Operation Failed",
+      // Дефолтные ошибки, если с сервера придет что-то неизвестное
+      defaultError: "An unexpected error occurred."
     },
     ru: {
       pTitle: "Продвинутая защита", pSub1: "✔ Шифрование файлов современными алгоритмами",
@@ -204,8 +240,19 @@
       dropText: "Перетащите файлы сюда", chooseBtn: "Выбрать файл", uploadBtn: "Загрузить",
       maxSize: "Макс. размер", statusTitle: "Статус", loading: "Загрузка...",
       completed: "Готово!", termWarning: "Не закрывайте страницу во время процесса",
-      sysError: "Системная ошибка", opFail: "Ошибка операции", tryLater: "Попробуйте позже."
+      backBtn: "Назад", errTitle: "Ошибка операции",
+      defaultError: "Произошла непредвиденная ошибка."
     }
+  };
+
+  // 2. Словарь известных ошибок сервера для перевода
+  // Ключ - часть текста или код ошибки, который может прислать сервер
+  const serverErrorMap = {
+    "file too large": { en: "The file is too large.", ru: "Файл слишком большой." },
+    "invalid format": { en: "This file format is not supported.", ru: "Этот формат файла не поддерживается." },
+    "server busy": { en: "Server is busy, try again later.", ru: "Сервер перегружен, попробуйте позже." },
+    "empty file": { en: "Cannot upload empty files.", ru: "Нельзя загружать пустые файлы." }
+    // Сюда можно добавлять любые фразы, которые присылает бэкенд
   };
 
   const currentLang = localStorage.getItem('userLanguage') || 'en';
@@ -218,29 +265,62 @@
     document.documentElement.lang = currentLang;
   }
 
+  // Элементы
   const dropzone = document.getElementById('dropzone'),
           fileInput = document.getElementById('fileInput'),
           chooseBtn = document.getElementById('chooseBtn'),
           uploadBtn = document.getElementById('uploadBtn'),
           list = document.getElementById('fileList'),
-          errorOutput = document.getElementById('errorOutput'),
+          errorBox = document.getElementById('errorBox'),
+          errorMessage = document.getElementById('errorMessage'),
           overlay = document.getElementById('overlay'),
           terminalText = document.getElementById('terminalText');
 
   let selectedFiles = [];
 
+  // Функции интерфейса
   function renderList(){
     list.innerHTML = selectedFiles.map(f => `<div class="file-item">• ${f.name}</div>`).join('');
     uploadBtn.disabled = selectedFiles.length === 0;
-    errorOutput.innerHTML = "";
+    hideError();
   }
 
+  function showError(msg) {
+    errorMessage.textContent = msg;
+    errorBox.classList.add('visible');
+  }
+
+  function hideError() {
+    errorBox.classList.remove('visible');
+  }
+
+  // Логика перевода серверной ошибки
+  function translateServerError(serverMsg) {
+    if (!serverMsg) return translations[currentLang].defaultError;
+
+    // Приводим к нижнему регистру для поиска
+    const lowerMsg = serverMsg.toLowerCase();
+
+    // Ищем совпадение по ключевым фразам
+    for (const key in serverErrorMap) {
+      if (lowerMsg.includes(key)) {
+        return serverErrorMap[key][currentLang];
+      }
+    }
+
+    // Если совпадений нет, возвращаем как есть (или можно возвращать defaultError)
+    return serverMsg;
+  }
+
+  // Обработчики событий
   chooseBtn.onclick = () => fileInput.click();
   fileInput.onchange = e => { selectedFiles = Array.from(e.target.files); renderList(); };
 
+  // --- ГЛАВНАЯ ЛОГИКА ЗАГРУЗКИ ---
   uploadBtn.onclick = async () => {
     if(selectedFiles.length === 0) return;
-    errorOutput.innerHTML = "";
+
+    hideError();
     overlay.classList.add('show');
     terminalText.textContent = translations[currentLang].loading;
 
@@ -248,30 +328,67 @@
     selectedFiles.forEach(f => fd.append('file', f));
 
     try {
-      const response = await fetch('/downloader2/api', { method: 'POST', body: fd });
+      const response = await fetch('/downloader2/api', {
+        method: 'POST',
+        body: fd
+      });
+
+      // Пытаемся распарсить JSON
+      // Внимание: если сервер упадет с 500 и вернет html, тут будет ошибка,
+      // поэтому лучше обернуть в try/catch парсинг, но для простоты оставим так.
       const data = await response.json();
 
+      // 1.1.1 - Обработка 401 (Unauthorized)
       if (response.status === 401) {
-        overlay.classList.remove('show');
-        window.location.href = data.UrlToRedict || "/login";
+        // Забиваем на все, кроме UrlToRedict
+        if (data.UrlToRedict) {
+          window.location.href = data.UrlToRedict;
+        } else {
+          // Фолбэк, если урла нет (редкий кейс)
+          window.location.href = "/login";
+        }
         return;
       }
 
-      if (response.ok && (data.StatusOperation === 'SUCCESS' || data.StatusOperation === 'SUCCES')) {
-        terminalText.textContent = translations[currentLang].completed;
-        setTimeout(() => {
-          if (data.UrlToRedict) window.location.href = data.UrlToRedict;
-          else overlay.classList.remove('show');
-        }, 1500);
-      } else {
-        throw new Error(data.Error || translations[currentLang].opFail);
+      // 1.1.2 - Обработка 400 (Bad Request / Ошибка валидации)
+      if (response.status === 400) {
+        overlay.classList.remove('show'); // Убираем лоадер
+
+        // Переводим ошибку и показываем красиво
+        const rawError = data.Error || "Unknown error";
+        const translatedError = translateServerError(rawError);
+        showError(translatedError);
+        return;
       }
+
+      // 1.1.3 - Обработка 200 (Success)
+      if (response.status === 200) {
+        // Проверяем наличие редиректа
+        if (data.UrlToRedict) {
+          terminalText.textContent = translations[currentLang].completed;
+          setTimeout(() => {
+            window.location.href = data.UrlToRedict;
+          }, 1000); // Небольшая пауза, чтобы юзер увидел "Completed"
+        } else {
+          // Если 200, но нет UrlToRedict - считаем это странным, но скрываем лоадер
+          overlay.classList.remove('show');
+          console.warn("Status 200 but no redirect URL provided");
+        }
+      }
+      // Обработка других кодов (например 500)
+      else if (response.status !== 401 && response.status !== 400 && response.status !== 200) {
+        throw new Error(`Server returned status: ${response.status}`);
+      }
+
     } catch (err) {
       overlay.classList.remove('show');
-      alert(err.message);
+      console.error(err);
+      // Показываем системную ошибку в красивом блоке
+      showError(translations[currentLang].defaultError + " (" + err.message + ")");
     }
   };
 
+  // Drag & Drop
   ['dragenter','dragover'].forEach(ev => {
     dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('dragover'); });
   });

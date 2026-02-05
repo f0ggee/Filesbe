@@ -40,7 +40,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 	if err != nil {
 
 		w.Header().Set("Content-Type", JsonExample)
-		w.WriteHeader(http.StatusUnauthorized)
+		w.WriteHeader(http.StatusBadRequest)
 		if err = json.NewEncoder(w).Encode(Answer{
 			StatusOperation: "BREAK",
 			UrlToRedict:     "",
@@ -69,7 +69,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 	}
 
 	w.Header().Set("Content-Type", JsonExample)
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	if err = json.NewEncoder(w).Encode(Answer{
 		StatusOperation: "SUCCESS",
 		UrlToRedict:     url.Path,

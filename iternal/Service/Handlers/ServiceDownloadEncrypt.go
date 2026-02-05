@@ -7,10 +7,6 @@ import (
 	"context"
 	"crypto/aes"
 	"crypto/cipher"
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/sha256"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -28,47 +24,34 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	ctx, cancel := Uttiltesss2.ContextForDownloading(ctxs)
 	defer cancel()
 	apps := *InfrastructureLayer.ConnectKeyControl()
+	redisConnect := *InfrastructureLayer.NewSetRedisConnect()
 
-	RealNameFile := apps.Key.GetRealNameFile(name)
-	aesKey, err := apps.Key.ProcessingFileParameters(RealNameFile)
-
+	fileInfoInBytes, err := redisConnect.Ras.GetFileInfo(name)
 	if err != nil {
 		return err
 	}
-	//Return the string as bytes
-	ReturnToBytes, err := hex.DecodeString(aesKey)
+
+	aesKey, realFileName, err := apps.Key.DecryptFileInfo(fileInfoInBytes, NewPrivateKey, OldPrivateKey)
 	if err != nil {
-		slog.Error("Error decode to string", "Err", err)
-		return err
-	}
-	Mut.RLock()
-	PrivateKey := NewPrivateKey
-	Mut.RUnlock()
-	//Decrypt the key
-	AesDecryptKey, err := rsa.DecryptOAEP(sha256.New(), nil, PrivateKey, ReturnToBytes, nil)
-
-	//Processing errors
-	switch {
-	//if our key has been changed, we try to use the  old key
-	case strings.Contains(fmt.Sprint(err), "decryption error"):
-		Mut.RLock()
-		oldKey := OldPrivateKey
-		Mut.RUnlock()
-		slog.Error("Key is old")
-		AesDecryptKey, err = rsa.DecryptOAEP(sha256.New(), rand.Reader, oldKey, ReturnToBytes, nil)
-		if err != nil {
-			slog.Error("Error also decrypt with an old key ", err)
-			return err
-		}
-
-	case err != nil:
-		slog.Error("Error decode string", "Err", err)
-		slog.Info("Info name", name)
 		return err
 	}
 
 	Reader, writer := io.Pipe()
 
+	err = downloadFileToClient(w, ctx, name, writer, aesKey, realFileName, Reader)
+	if err != nil {
+		return err
+	}
+
+	slog.Info("Func Delete start")
+
+	DeleteFile(name, true)
+	slog.Info("Func Delete ends ")
+
+	return nil
+}
+
+func downloadFileToClient(w http.ResponseWriter, ctx context.Context, name string, writer *io.PipeWriter, aesKey []byte, realFileName string, Reader *io.PipeReader) error {
 	sees, err := Uttiltesss2.Inzelire()
 	if err != nil {
 		slog.Error("Error in func", err)
@@ -80,11 +63,11 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	o, err := downloader.GetObjectWithContext(ctx, &s3.GetObjectInput{
 		Bucket:      aws.String(Bucket),
 		IfNoneMatch: aws.String(""),
-		Key:         aws.String(RealNameFile),
+		Key:         aws.String(name),
 	})
 
 	defer func(Body io.ReadCloser) {
-		err := Body.Close()
+		err = Body.Close()
 		if err != nil {
 			slog.Error("Error closing body", "Err", err)
 			return
@@ -103,10 +86,11 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	case errors.Is(err, context.Canceled):
 		slog.Info("a user has been cancelled download ")
 		return errors.New("a user has been canceled download ")
-	case err != nil:
+
+	}
+	if err != nil {
 		slog.Error("ServiceDownload:", err)
 		return err
-
 	}
 
 	go func() {
@@ -117,7 +101,7 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 				return
 			}
 		}(writer)
-		err = DecryptFile(AesDecryptKey, o, writer)
+		err = DecryptFile(aesKey, o, writer)
 		if err != nil {
 			err := writer.CloseWithError(err)
 			if err != nil {
@@ -129,18 +113,13 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	}()
 
 	w.Header().Set("Content-Type", "application/octet-stream")
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", RealNameFile))
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", realFileName))
 	w.Header().Set("Content-Length", strconv.FormatInt(*o.ContentLength-aes.BlockSize, 10))
 
 	if _, err = io.Copy(w, Reader); err != nil {
 		slog.Error("Err In file Service Downloader Encrypt", "err", err)
 		return errors.New("connect close")
 	}
-
-	slog.Info("Func Download ends")
-	//Here, we start the func, which deletes a file
-	DeleteFile(RealNameFile, false)
-
 	return nil
 }
 

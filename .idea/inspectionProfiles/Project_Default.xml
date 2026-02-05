@@ -7,5 +7,10 @@
         <method importPath="github.com/aws/aws-sdk-go/service/s3" receiver="*S3" name="GetObjectWithContext" />
       </methods>
     </inspection_tool>
+    <inspection_tool class="GoResourceLeak" enabled="true" level="WARNING" enabled_by_default="true">
+      <functions>
+        <function importPath="github.com/redis/go-redis" name="NewClient" />
+      </functions>
+    </inspection_tool>
   </profile>
 </component>

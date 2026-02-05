@@ -1,9 +1,11 @@
 package Handlers
 
 import (
+	"Kaban/iternal/InfrastructureLayer"
 	Uttiltesss2 "Kaban/iternal/Service/Helpers"
 	"Kaban/iternal/Service/Helpers/validator"
 	"context"
+	"encoding/json"
 	"errors"
 	"log/slog"
 	"mime/multipart"
@@ -18,10 +20,17 @@ import (
 func FileUploaderNoEncrypt(r *http.Request) (string, error) {
 	slog.Info("Func FileUploaderNoEncrypt starts")
 
+	apps := *InfrastructureLayer.ConnectKeyControl()
+
 	file, sizeAndName, err := r.FormFile("file")
 	if err != nil {
 		slog.Error("Err from FileUploader 1 ", err)
 		return "", err
+	}
+	if sizeAndName.Size >= FileMaxSize {
+		slog.Info("File too big")
+
+		return "", errors.New("file too big")
 	}
 	defer func() {
 		err = file.Close()
@@ -43,8 +52,7 @@ func FileUploaderNoEncrypt(r *http.Request) (string, error) {
 	}
 	defer cancel()
 
-	//This function cheks a len of name file
-	nameFile := CheckLenOfName(sizeAndName.Filename)
+	shortNameFile := apps.Key.GenerateShortFileName()
 
 	_, goroutines := Uttiltesss2.FindBest(sizeAndName.Size)
 
@@ -66,9 +74,21 @@ func FileUploaderNoEncrypt(r *http.Request) (string, error) {
 		return s, err2
 	}
 
+	fileIntoBytes, err := json.Marshal(sizeAndName.Filename)
+	if err != nil {
+		slog.Error("Err in FileUploader no encrypt", "Error", err)
+		return "", err
+	}
+	redisConnect := *InfrastructureLayer.NewSetRedisConnect()
+
+	err = redisConnect.Ras.WriteData(shortNameFile, fileIntoBytes)
+	if err != nil {
+		return "", err
+	}
+
 	slog.Info("File success upload")
 
-	return nameFile, nil
+	return shortNameFile, nil
 
 }
 

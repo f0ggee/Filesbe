@@ -5,6 +5,8 @@ import (
 	"crypto/rsa"
 	"log/slog"
 	"sync"
+
+	"github.com/awnumar/memguard"
 )
 
 var NewPrivateKey *rsa.PrivateKey
@@ -15,9 +17,11 @@ var Mut sync.RWMutex
 //SwapKeys generates a  pair keys
 
 func SwapKeys() {
-	Mut.Lock()
-
+	memguard.CatchInterrupt()
+	defer memguard.Purge()
+	//Mut.Lock()
 	OldPrivateKey = NewPrivateKey
+
 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		slog.Error("Error generate key", err)
@@ -26,5 +30,5 @@ func SwapKeys() {
 
 	NewPrivateKey = privateKey
 
-	Mut.Unlock()
+	//Mut.Unlock()
 }

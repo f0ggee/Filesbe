@@ -48,21 +48,6 @@ func checkJson(r *http.Request) (*Dto.User, error) {
 
 func SaveTokens(s sessions.Session, Jwt string, RFT string, r *http.Request, w http.ResponseWriter) error {
 
-	s.Values["RT"] = RFT
-	s.Values["JWT"] = Jwt
-
-	s.Options = &sessions.Options{
-		Path:     "/",
-		MaxAge:   int((100 * time.Hour).Seconds()),
-		Secure:   false,
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-	}
-
-	if err := s.Save(r, w); err != nil {
-		return err
-
-	}
 	return nil
 
 }
@@ -127,21 +112,37 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	err = SaveTokens(*Session, JWT, RFT, r, w)
-	if err != nil {
-		per := AnswerLogin{
-			StatusOfOperation: "BREAK",
-		}
-		w.Header().Set("Content-Type", JsonExample)
-		http.Error(w, "Cant' processed ", http.StatusConflict)
 
-		err = json.NewEncoder(w).Encode(&per)
-		if err != nil {
-			slog.Error("Json in Login can't treated", "Err", err)
-			return
-		}
-		return
+	Session.Values["RT"] = RFT
+	Session.Values["JWT"] = JWT
+
+	Session.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   int((100 * time.Hour).Seconds()),
+		Secure:   false,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
 	}
+
+	if err := Session.Save(r, w); err != nil {
+		return
+
+	}
+	//err = SaveTokens(*Session, JWT, RFT, r, w)
+	//if err != nil {
+	//	per := AnswerLogin{
+	//		StatusOfOperation: "BREAK",
+	//	}
+	//	w.Header().Set("Content-Type", JsonExample)
+	//	http.Error(w, "Cant' processed ", http.StatusConflict)
+	//
+	//	err = json.NewEncoder(w).Encode(&per)
+	//	if err != nil {
+	//		slog.Error("Json in Login can't treated", "Err", err)
+	//		return
+	//	}
+	//	return
+	//}
 
 	per := AnswerLogin{
 		StatusOfOperation: "SUCCESS",

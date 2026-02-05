@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="/Fronted/favicon.png">
+
+  <title data-i18n="headTitle">Filesbes — Fast File Transfer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#0a0a0a; --text:#d1fae5; --muted:#34d399; --border:#064e3b;
+      --primary:#10b981; --primary-press:#059669;
+    }
+    *,*::before,*::after{ box-sizing:border-box; }
+
+    /* Auto-Size Logic */
+    html,body{
+      height: 100%; margin: 0;
+      background: var(--bg); color: var(--text);
+      font-family: "Inter", sans-serif;
+      font-size: clamp(14px, 1.2vw, 18px); /* Базовый размер шрифта подстраивается под экран */
+    }
+
+    .container{
+      max-width: 900px;
+      margin: 0 auto;
+      padding: clamp(20px, 8vh, 80px) 20px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+
+    .card{
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: clamp(24px, 5vw, 48px);
+      box-shadow: 0 0 40px rgba(16,185,129,0.1);
+      position: relative; overflow: hidden;
+    }
+
+    h1{ font-size: clamp(22px, 4vw, 36px); font-weight: 700; color: var(--primary); margin: 0 0 24px 0; }
+    p, li{ color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+    strong { color: var(--primary); font-weight: 600; }
+
+    .divider{ height: 1px; background: var(--border); margin: clamp(20px, 4vh, 32px) 0; opacity: 0.5; }
+
+    .section-title { font-size: 1.2rem; margin-bottom: 16px; display: block; color: var(--primary); }
+
+    .center{ text-align: center; margin-top: 32px; }
+
+    /* Кнопка Назад */
+    .btn-back {
+      display: inline-block; padding: 12px 28px; font-weight: 600; border-radius: 10px;
+      text-decoration: none; transition: all .2s ease; border: 1px solid var(--border);
+      color: var(--muted); background: transparent; cursor: pointer;
+    }
+    .btn-back:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
+
+    /* Визуальный эффект: Мерцание в углу */
+    .card::after {
+      content: ""; position: absolute; top: -50px; right: -50px; width: 100px; height: 100px;
+      background: var(--primary); filter: blur(70px); opacity: 0.15; pointer-events: none;
+    }
+
+    /* Курсор терминала */
+    .cursor::after { content: "_"; animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <section class="card">
+    <h1 id="mainTitle"><span data-i18n="h1">Filesbes: быстрая передача файлов</span><span class="cursor"></span></h1>
+
+    <p data-i18n="intro">Filesbes — это сервис, который помогает быстро перекинуть файлы с одного устройства на другое. Вам не придётся заходить в мессенджеры или почту, чтобы просто отправить документ.</p>
+
+    <div class="divider"></div>
+
+    <strong class="section-title" data-i18n="howTitle">Как это работает</strong>
+    <ol>
+      <li data-i18n="step1">Загрузите файл на сайт.</li>
+      <li data-i18n="step2">Получите персональную ссылку.</li>
+      <li data-i18n="step3">Откройте эту ссылку в браузере на другом устройстве.</li>
+      <li data-i18n="step4">Скачайте файл. Готово!</li>
+    </ol>
+
+    <div class="divider"></div>
+
+    <strong class="section-title" data-i18n="infoTitle">Важные детали</strong>
+    <ul>
+      <li><strong data-i18n="detail1_bold">Мы не облачное хранилище.</strong> <span data-i18n="detail1_text">Сервис нужен только для быстрой пересылки данных.</span></li>
+      <li><strong data-i18n="detail2_bold">Файл удаляется сразу</strong> <span data-i18n="detail2_text">после первой загрузки.</span></li>
+      <li><strong data-i18n="detail3_bold">Безопасность.</strong> <span data-i18n="detail3_text">Если вы выбрали шифрование, файл удалится через 5 минут, если его так и не скачали.</span></li>
+      <li><strong data-i18n="detail4_bold">Автоудаление.</strong> <span data-i18n="detail4_text">В любом случае все файлы стираются через сутки после загрузки.</span></li>
+    </ul>
+
+    <div class="center">
+      <a href="/" class="btn-back" data-i18n="backBtn">← Назад</a>
+    </div>
+  </section>
+</div>
+
+<script>
+  const translations = {
+    en: {
+      headTitle: "Filesbes — Fast File Transfer",
+      h1: "Filesbes: fast file transfer",
+      intro: "Filesbes is a service that helps you quickly move files from one device to another. You don't have to use messengers or email just to send a document.",
+      howTitle: "How it works",
+      step1: "Upload the file to the site.",
+      step2: "Get a personal link.",
+      step3: "Open this link in a browser on another device.",
+      step4: "Download the file. Done!",
+      infoTitle: "Important details",
+      detail1_bold: "We are not a cloud storage.",
+      detail1_text: "The service is only for fast data transfer.",
+      detail2_bold: "The file is deleted immediately",
+      detail2_text: "after the first download.",
+      detail3_bold: "Security.",
+      detail3_text: "If you chose encryption, the file will be deleted after 5 minutes if it was never downloaded.",
+      detail4_bold: "Auto-deletion.",
+      detail4_text: "In any case, all files are erased 24 hours after upload.",
+      backBtn: "← Back"
+    },
+    ru: {
+      headTitle: "Filesbes — Быстрая передача файлов",
+      h1: "Filesbes: быстрая передача файлов",
+      intro: "Filesbes — это сервис, который помогает быстро перекинуть файлы с одного устройства на другое. Вам не придётся заходить в мессенджеры или почту, чтобы просто отправить документ.",
+      howTitle: "Как это работает",
+      step1: "Загрузите файл на сайт.",
+      step2: "Получите персональную ссылку.",
+      step3: "Откройте эту ссылку в браузере на другом устройстве.",
+      step4: "Скачайте файл. Готово!",
+      infoTitle: "Важные детали",
+      detail1_bold: "Мы не облачное хранилище.",
+      detail1_text: "Сервис нужен только для быстрой пересылки данных.",
+      detail2_bold: "Файл удаляется сразу",
+      detail2_text: "после первой загрузки.",
+      detail3_bold: "Безопасность.",
+      detail3_text: "Если вы выбрали шифрование, файл удалится через 5 минут, если его так и не скачали.",
+      detail4_bold: "Автоудаление.",
+      detail4_text: "В любом случае все файлы стираются через сутки после загрузки.",
+      backBtn: "← Назад"
+    }
+  };
+
+  // Логика определения языка
+  let currentLang = localStorage.getItem('userLanguage') || (navigator.language.startsWith('ru') ? 'ru' : 'en');
+
+  function applyLanguage() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[currentLang][key]) {
+        el.textContent = translations[currentLang][key];
+      }
+    });
+    document.title = translations[currentLang].headTitle;
+    document.documentElement.lang = currentLang;
+  }
+
+  // Инициализация
+  applyLanguage();
+</script>
+</body>
+</html>

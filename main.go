@@ -23,6 +23,7 @@ func main() {
 	//	if request.Host != "filesbes.com" {
 	//		return false
 	//	}
+	//	slog.Info(request.Host)
 	//
 	//	return true
 	//}).Subrouter()
@@ -30,7 +31,11 @@ func main() {
 	//The router will return  static files
 	StaticFiles := router.PathPrefix("/Fronted").Subrouter()
 
-	//infoPage := router.Host("info.filesbes.com").Subrouter()
+	router.HandleFunc("/aboutProject", func(writer http.ResponseWriter, request *http.Request) {
+
+		http.ServeFile(writer, request, "iternal/Service/Fronted/InfoPageAboutApp.html")
+
+	})
 
 	StaticFiles.Handle("/favicon.png", http.FileServer(http.Dir("iternal/Service")))
 
