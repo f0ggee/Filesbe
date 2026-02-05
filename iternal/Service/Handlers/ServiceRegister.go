@@ -21,7 +21,7 @@ func RegisterService(de *Dto.HandlerRegister) (string, string, error) {
 	err := app.Re.CheckUser(de.Email)
 	switch {
 	case errors.Is(err, errors.New("person already exist")):
-		return "", "", err
+		return "", "", errors.New("person already exist")
 
 	case err != nil:
 		return "", "", err
@@ -37,7 +37,6 @@ func RegisterService(de *Dto.HandlerRegister) (string, string, error) {
 		return "", "", err
 	}
 
-	//Интерфейс для создания пользователя, возвращает уникальный индификатор пользователя
 	UnicIdUser, err := app.Re.CreateUser(de.Name, de.Email, HashPassword, ScryptKey)
 	if err != nil {
 		return "", "", err

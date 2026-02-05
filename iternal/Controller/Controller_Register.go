@@ -4,6 +4,7 @@ import (
 	"Kaban/iternal/Dto"
 	"Kaban/iternal/Service/Handlers"
 	"encoding/json"
+	"errors"
 	"io"
 	"log/slog"
 	"net/http"
@@ -47,6 +48,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	type RegisterAnswer struct {
 		StatusOfOperation string `json:"StatusOfOperation"`
 		UrlToRedict       string `json:"UrlToRedict"`
+		Error             string `json:"Error"`
 	}
 
 	DataRegister, err := checkJsonRegister(r)
@@ -65,6 +67,22 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jwt, rt, err := Handlers.RegisterService(DataRegister)
+
+	switch {
+	case errors.Is(err, errors.New("person already exist")):
+		w.Header().Set(ContentType, JsonExample)
+		w.WriteHeader(http.StatusBadRequest)
+		err := json.NewEncoder(w).Encode(RegisterAnswer{
+			StatusOfOperation: "BREAK",
+			UrlToRedict:       "",
+			Error:             err.Error(),
+		})
+		if err != nil {
+			slog.Error("Error is  Processing the json register response", "Error", err)
+			return
+		}
+		return
+	}
 	if err != nil {
 		slog.Error("Error sesseion", err)
 

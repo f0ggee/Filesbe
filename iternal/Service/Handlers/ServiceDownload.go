@@ -79,10 +79,15 @@ func DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext co
 
 	}
 
-	slog.Info("Func DownloadWithNonEncrypt ends")
+	slog.Info("start delete func in download  ")
 
-	slog.Error("start ")
-	DeleteFile(name, false)
+	S3Interaction := *InfrastructureLayer.NewConnectToS3()
+
+	err = S3Interaction.Manage.DeleteFileFromS3(name, Bucket)
+	if err != nil {
+		return err, ""
+	}
+	slog.Info("ends delete func in download  ")
 
 	return nil, ""
 }

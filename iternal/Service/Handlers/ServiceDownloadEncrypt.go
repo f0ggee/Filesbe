@@ -43,10 +43,19 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 		return err
 	}
 
-	slog.Info("Func Delete start")
+	slog.Info("Func Delete start in download encrypt")
+	S3Interaction := *InfrastructureLayer.NewConnectToS3()
 
-	DeleteFile(name, true)
-	slog.Info("Func Delete ends ")
+	err = redisConnect.Ras.DeleteFileInfo(name)
+	if err != nil {
+		return err
+	}
+	err = S3Interaction.Manage.DeleteFileFromS3(name, Bucket)
+	if err != nil {
+		return err
+	}
+
+	slog.Info("Func Delete ends in download encrypt  ")
 
 	return nil
 }

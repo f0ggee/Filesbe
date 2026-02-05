@@ -120,6 +120,7 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 		slog.Error("Error in file writing", err)
 		return "", err
 	}
+
 	time.AfterFunc(5*time.Minute, func() {
 		slog.Info("Func  Auto-FileDelete start")
 
@@ -131,7 +132,12 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 		if err != nil {
 			return
 		}
-		DeleteFile(shortNameForFile, true)
+		S3Interaction := *InfrastructureLayer.NewConnectToS3()
+
+		err = S3Interaction.Manage.DeleteFileFromS3(shortNameForFile, Bucket)
+		if err != nil {
+			return
+		}
 		slog.Info("Func Auto-deleteFile ends")
 
 	})
