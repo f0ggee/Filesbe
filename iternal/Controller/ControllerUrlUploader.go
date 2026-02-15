@@ -27,7 +27,7 @@ func CUrlUp(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 
-	slog.Info("as", bols)
+	slog.Info("Parameter of downloading ", bols)
 	if bols == "true" {
 		if err := json.NewEncoder(w).Encode(map[string]string{
 			"Url": "http://localhost:8080/" + "d2/" + nameFile,

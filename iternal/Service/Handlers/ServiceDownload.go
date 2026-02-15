@@ -9,7 +9,9 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"mime"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -33,7 +35,7 @@ func DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext co
 	trueFileName := ""
 	err = json.Unmarshal(fileNameInBytes, &trueFileName)
 	if err != nil {
-		slog.Error("Unmarshal err", err)
+		slog.Error("Unmarshal err", err.Error())
 		return err, ""
 	}
 	sees, err := Uttiltesss2.Inzelire()
@@ -48,7 +50,8 @@ func DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext co
 	o, err := downloader.GetObjectWithContext(ctx, &s3.GetObjectInput{
 		Bucket:      aws.String(Bucket),
 		IfNoneMatch: aws.String(""),
-		Key:         &trueFileName,
+
+		Key: &trueFileName,
 	})
 
 	switch {
@@ -61,6 +64,9 @@ func DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext co
 
 	}
 
+	fileExtension := filepath.Ext(trueFileName)
+	FileExtension := mime.TypeByExtension(fileExtension)
+
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
@@ -69,7 +75,7 @@ func DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext co
 		}
 	}(o.Body)
 
-	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Type", FileExtension)
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", trueFileName))
 	w.Header().Set("Content-Length", strconv.FormatInt(*o.ContentLength, 10))
 
@@ -83,7 +89,7 @@ func DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext co
 
 	S3Interaction := *InfrastructureLayer.NewConnectToS3()
 
-	err = S3Interaction.Manage.DeleteFileFromS3(name, Bucket)
+	err = S3Interaction.Manage.DeleteFileFromS3(trueFileName, Bucket)
 	if err != nil {
 		return err, ""
 	}

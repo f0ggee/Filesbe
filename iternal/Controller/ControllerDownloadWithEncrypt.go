@@ -30,11 +30,8 @@ func DownloadWithEncrypt(w http.ResponseWriter, r *http.Request) {
 
 	err := Handlers.DownloadEncrypt(w, r.Context(), name)
 	if err != nil {
-		w.Header().Set("Content-Type", JsonExample)
 		http.Redirect(w, r, "/informationPage", http.StatusFound)
-
 		return
-
 	}
 
 	return

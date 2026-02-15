@@ -63,7 +63,7 @@ func GenerateScrypt(de *Dto.HandlerRegister, err error) (string, error) {
 	}
 	D3, err := scrypt.Key([]byte(de.Password), salt, 1<<15, 8, 1, 32)
 	if err != nil {
-		slog.Error("Error cant create password", err)
+		slog.Error("Error cant create password", err.Error())
 		return "", err
 	}
 	D4 := hex.EncodeToString(D3)

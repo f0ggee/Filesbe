@@ -6,4 +6,5 @@ type RedisInteration interface {
 	SetIstartDonwload(string) error
 	GetFileInfo(string) ([]byte, error)
 	DeleteFileInfo(string) error
+	GetKey() ([]byte, []byte, []byte, error)
 }

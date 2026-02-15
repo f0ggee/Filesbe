@@ -5,14 +5,21 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/hex"
 	"encoding/json"
 	"log/slog"
 )
 
-func (*FileInfoController) DecryptFileInfo(FileInfoIntoBytes []byte, key *rsa.PrivateKey, oldKey *rsa.PrivateKey) ([]byte, string, error) {
+func (*FileInfoController) DecryptFileInfo(FileInfoIntoBytes []byte, key []byte, oldKey []byte) ([]byte, string, error) {
 
-	decryptFileInfo, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, key, FileInfoIntoBytes, nil)
+	slog.Info("Key", key)
+	keyRsa, err := x509.ParsePKCS1PrivateKey(key)
+	if err != nil {
+		slog.Error("Func EncryptData ParsePKCS1PrivateKey fail", err)
+		return nil, "", err
+	}
+	decryptFileInfo, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, keyRsa, FileInfoIntoBytes, nil)
 
 	//switch {
 	//case strings.Contains(fmt.Sprint(err), "decryption error"):

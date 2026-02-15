@@ -31,7 +31,11 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 		return err
 	}
 
-	aesKey, realFileName, err := apps.Key.DecryptFileInfo(fileInfoInBytes, NewPrivateKey, OldPrivateKey)
+	Keys.Mut.RLock()
+	newPrivateKey := Keys.NewPrivateKey
+	oldPrivateKey := Keys.OldPrivateKey
+	Keys.Mut.RUnlock()
+	aesKey, realFileName, err := apps.Key.DecryptFileInfo(fileInfoInBytes, newPrivateKey.Bytes(), oldPrivateKey.Bytes())
 	if err != nil {
 		return err
 	}
@@ -63,7 +67,7 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 func downloadFileToClient(w http.ResponseWriter, ctx context.Context, name string, writer *io.PipeWriter, aesKey []byte, realFileName string, Reader *io.PipeReader) error {
 	sees, err := Uttiltesss2.Inzelire()
 	if err != nil {
-		slog.Error("Error in func", err)
+		slog.Error("Error in func", err.Error())
 
 		return err
 	}
@@ -98,7 +102,7 @@ func downloadFileToClient(w http.ResponseWriter, ctx context.Context, name strin
 
 	}
 	if err != nil {
-		slog.Error("ServiceDownload:", err)
+		slog.Error("ServiceDownload:", err.Error())
 		return err
 	}
 
@@ -145,14 +149,14 @@ func DecryptFile(AesKey []byte, o *s3.GetObjectOutput, writer *io.PipeWriter) er
 
 	block, err := aes.NewCipher(AesKey)
 	if err != nil {
-		slog.Error("Error in  create file", err)
+		slog.Error("Error in  create file", err.Error())
 		return err
 	}
 
 	nonce := make([]byte, aes.BlockSize)
 	_, err = io.ReadFull(o.Body, nonce)
 	if err != nil {
-		slog.Error("Error in read", err)
+		slog.Error("Error in read", err.Error())
 		return err
 	}
 
@@ -164,7 +168,7 @@ func DecryptFile(AesKey []byte, o *s3.GetObjectOutput, writer *io.PipeWriter) er
 	for {
 		n, err := file.Read(plaintext)
 		if err != nil && err != io.EOF {
-			slog.Error("Error in file", err)
+			slog.Error("Error in file", err.Error())
 			return err
 		}
 		if err == io.EOF {

@@ -6,7 +6,7 @@ RUN go mod download
 
 COPY iternal ./iternal
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o app ./main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o app ./main.go; apk add --no-cache mailcap
 
 
 

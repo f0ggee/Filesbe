@@ -102,14 +102,18 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 
 	shortNameForFile := apps.Key.GenerateShortFileName()
 
-	EncryptFileInfo, err := apps.Key.EncryptData(FileInfoInBytes, &NewPrivateKey.PublicKey)
+	Keys.Mut.RLock()
+	newPrivateKey := Keys.NewPrivateKey.Data()
+	Keys.Mut.RUnlock()
+
+	EncryptFileInfo, err := apps.Key.EncryptData(FileInfoInBytes, newPrivateKey)
 	if err != nil {
-		err := writer.CloseWithError(err)
 		slog.Error("Error in file writing", err)
 		return "", err
 	}
 
-	_, err3 := uploadFileEncrypt(cfg, BesParts, goroutine, ctx, shortNameForFile, reader)
+	FileExtension := apps.Key.FindFormatOfFile(sizeAndName.Filename)
+	_, err3 := uploadFileEncrypt(cfg, BesParts, goroutine, ctx, shortNameForFile, FileExtension, reader)
 	if err3 != nil {
 		return "", err3
 	}
@@ -147,7 +151,7 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 
 }
 
-func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.Context, shortFileName string, reader *io.PipeReader) (string, error) {
+func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.Context, shortFileName string, ContentType string, reader *io.PipeReader) (string, error) {
 	uploader := manager.NewUploader(cfg, func(uploader *manager.Uploader) {
 		uploader.MaxUploadParts = 200
 		uploader.PartSize = int64(BesParts) * 1024 * 1024
@@ -155,9 +159,10 @@ func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.
 	})
 
 	_, err := uploader.Upload(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(Bucket),
-		Key:    aws.String(shortFileName),
-		Body:   reader,
+		Bucket:      aws.String(Bucket),
+		Key:         aws.String(shortFileName),
+		ContentType: aws.String(ContentType),
+		Body:        reader,
 	})
 	if err == nil {
 		return "", nil
@@ -169,11 +174,11 @@ func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.
 
 	case errors.As(err, &ns):
 
-		slog.Error("file was used")
+		slog.Error("file was")
 		return "", errors.New("file was used")
 
 	case errors.Is(err, context.Canceled):
-		slog.Error("file was cancelled")
+		slog.Error("file downloading was cancelled")
 		return "", errors.New("file was cancelled")
 
 	case errors.Is(err, context.DeadlineExceeded):
@@ -229,7 +234,7 @@ func Encrypt(file multipart.File, writer io.Writer, channelForBytes chan []byte)
 	for {
 		n, err := file.Read(buf)
 		if err != nil && err != io.EOF {
-			slog.Error("Error in file upload", err)
+			slog.Error("Error in file upload", err.Error())
 			return err
 		}
 		if err == io.EOF {
@@ -238,7 +243,7 @@ func Encrypt(file multipart.File, writer io.Writer, channelForBytes chan []byte)
 		stream.XORKeyStream(buf[:n], buf[:n])
 		_, err = writer.Write(buf[:n])
 		if err != nil {
-			slog.Error("Err write in process", err)
+			slog.Error("Err write in process", err.Error())
 			return err
 		}
 

@@ -1,12 +1,11 @@
 package DomainLevel
 
-import "crypto/rsa"
-
 type FileInfo interface {
 	ConvertToBytesFileInfo(string, []byte) ([]byte, error)
 	GetRealNameFile(string) string
 	ProcessingFileParameters(string) (string, error)
 	GenerateShortFileName() string
-	EncryptData([]byte, *rsa.PublicKey) ([]byte, error)
-	DecryptFileInfo([]byte, *rsa.PrivateKey, *rsa.PrivateKey) ([]byte, string, error)
+	EncryptData([]byte, []byte) ([]byte, error)
+	DecryptFileInfo([]byte, []byte, []byte) ([]byte, string, error)
+	FindFormatOfFile(string) string
 }

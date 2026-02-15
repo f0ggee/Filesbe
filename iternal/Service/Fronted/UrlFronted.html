@@ -10,10 +10,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
   <style>
     :root{
       --bg:#0a0a0a; --panel:#000; --text:#e5fff4; --muted:#34d399; --border:#0f3a2e;
       --primary:#10b981; --focus:#22c55e;
+      /* Переменная для цвета "Инфо" плашки */
+      --info-border: #10b981;
     }
     *,*::before,*::after{ box-sizing:border-box; }
     html,body{
@@ -30,6 +34,70 @@
     .header{ display:flex; align-items:center; margin-bottom: clamp(16px, 4vw, 24px); }
     .brand{ font-weight:700; color:var(--primary); font-size: clamp(18px, 4vw, 20px); letter-spacing:.4px; }
 
+    /* --- СТИЛИ ИНФО-ПЛАШКИ (BRUTALIST ADAPTED) --- */
+    .brutalist-card {
+      display: none; /* Скрыто по умолчанию, JS покажет если нужно */
+      flex-direction: column;
+      width: 100%;
+      background-color: #050505;
+      border: 2px solid var(--info-border);
+      padding: 20px;
+      /* Жесткая тень в цвет темы */
+      box-shadow: 6px 6px 0px var(--info-border);
+      margin-bottom: 32px;
+      font-family: "JetBrains Mono", monospace; /* Технический шрифт */
+      animation: slideIn 0.4s ease-out;
+    }
+
+    .brutalist-card__header {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+      border-bottom: 1px solid var(--info-border); padding-bottom: 12px;
+    }
+
+    .brutalist-card__icon svg { width: 24px; height: 24px; fill: var(--info-border); }
+
+    .brutalist-card__title {
+      font-weight: 700; color: var(--info-border); font-size: 16px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    .brutalist-card__message {
+      color: var(--text); font-size: 14px; line-height: 1.6; margin-bottom: 20px;
+    }
+
+    .brutalist-card__actions {
+      display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap;
+    }
+
+    /* Кнопка "Mark as read" - залитая */
+    .btn-brutal-primary {
+      background: var(--info-border); color: #000;
+      border: 1px solid var(--info-border);
+      padding: 8px 16px; font-weight: 700; cursor: pointer;
+      font-family: inherit; font-size: 13px; text-transform: uppercase;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-brutal-primary:hover {
+      box-shadow: 3px 3px 0 rgba(255,255,255,0.2); transform: translate(-1px,-1px);
+    }
+    .btn-brutal-primary:active { transform: translate(0,0); box-shadow: none; }
+
+    /* Кнопка "Dismiss" - контурная */
+    .btn-brutal-outline {
+      background: transparent; color: var(--info-border);
+      border: 1px solid var(--info-border);
+      padding: 8px 16px; font-weight: 700; cursor: pointer;
+      font-family: inherit; font-size: 13px; text-transform: uppercase;
+      transition: background 0.2s;
+    }
+    .btn-brutal-outline:hover { background: rgba(16,185,129, 0.1); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- ОСНОВНАЯ КАРТОЧКА --- */
     .card{
       background:var(--panel); border:1px solid var(--border);
       border-radius:16px;
@@ -48,6 +116,8 @@
     }
 
     .center-wrap{ display:flex; align-items:center; justify-content:center; min-height:60vh; }
+    /* Если показываем инфо-карту, центрирование может сдвигаться, это нормально */
+
     .field{ display:grid; gap:12px; width:min(600px, 100%); }
     .label{ font-weight:600; color:var(--muted); font-size:14px; margin-top: 12px; }
 
@@ -87,6 +157,8 @@
       .input-row { flex-direction: column; }
       .btn-outline { width: 100%; padding: 14px; }
       .center-wrap { min-height: auto; padding-top: 20px; }
+      .brutalist-card__actions { justify-content: stretch; }
+      .btn-brutal-primary, .btn-brutal-outline { flex: 1; text-align: center; }
     }
   </style>
 </head>
@@ -94,6 +166,29 @@
 <div class="container">
   <header class="header"><div class="brand">Filesb</div></header>
 
+  <div id="infoCard" class="brutalist-card">
+    <div class="brutalist-card__header">
+      <div class="brutalist-card__icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+        </svg>
+      </div>
+      <div class="brutalist-card__title" data-i18n="infoTitle">How to use this link</div>
+    </div>
+
+    <div class="brutalist-card__message" data-i18n="infoMsg">
+      This is your custom download link. Open the browser on the device where you want to save the file and enter this link.
+    </div>
+
+    <div class="brutalist-card__actions">
+      <button class="btn-brutal-outline" onclick="closeInfoCard()" data-i18n="btnDismiss">
+        Close
+      </button>
+      <button class="btn-brutal-primary" onclick="markAsRead()" data-i18n="btnMarkRead">
+        Don't show again
+      </button>
+    </div>
+  </div>
   <main class="card center-wrap">
     <section class="field">
       <h1 class="title" data-i18n="dlTitle">Your Download Link</h1>
@@ -116,16 +211,24 @@
     en: {
       copy: "Copy", copied: "Copied!", dlTitle: "Your Download Link",
       dlSub: "Click the input field to download or use the copy button.",
-      copyPasteHint: "You can also copy and paste this link into the browser where you want to download the file.",
       directLabel: "Direct Link", ready: "Link is ready.",
-      paramError: "Parameters not found.", fetchError: "Error loading link.", noCopy: "Nothing to copy."
+      paramError: "Parameters not found.", fetchError: "Error loading link.", noCopy: "Nothing to copy.",
+      // Новые переводы для плашки
+      infoTitle: "How to use this link",
+      infoMsg: "This is your custom download link. Open the browser on the device where you want to save the file and enter this link.",
+      btnDismiss: "Close",
+      btnMarkRead: "Don't show again"
     },
     ru: {
       copy: "Копировать", copied: "Готово!", dlTitle: "Ваша ссылка на файл",
       dlSub: "Нажмите на поле для скачивания или кнопку копирования.",
-      copyPasteHint: "Вы также можете скопировать и вставить эту ссылку в браузер, через который вы хотите скачать файл.",
       directLabel: "Прямая ссылка", ready: "Ссылка готова.",
-      paramError: "Параметры не найдены.", fetchError: "Ошибка загрузки.", noCopy: "Нечего копировать."
+      paramError: "Параметры не найдены.", fetchError: "Ошибка загрузки.", noCopy: "Нечего копировать.",
+      // Новые переводы для плашки
+      infoTitle: "Как использовать ссылку",
+      infoMsg: "Это ваша персональная ссылка для скачивания. Откройте браузер на устройстве, где хотите сохранить файл, и введите эту ссылку.",
+      btnDismiss: "Закрыть",
+      btnMarkRead: "Больше не показывать"
     }
   };
 
@@ -140,6 +243,30 @@
     });
     document.documentElement.lang = currentLang;
   }
+
+  // --- ЛОГИКА ИНФО-ПЛАШКИ ---
+  const infoCard = document.getElementById('infoCard');
+  const STORAGE_KEY_HINT = 'filesb_download_hint_seen'; // Уникальный ключ
+
+  function checkInfoCard() {
+    // Проверяем, нажимал ли пользователь "Больше не показывать"
+    const isSeen = localStorage.getItem(STORAGE_KEY_HINT);
+    if (!isSeen) {
+      infoCard.style.display = 'flex'; // Показываем
+    }
+  }
+
+  window.closeInfoCard = function() {
+    // Просто скрываем (Dismiss)
+    infoCard.style.display = 'none';
+  }
+
+  window.markAsRead = function() {
+    // Запоминаем выбор и скрываем
+    localStorage.setItem(STORAGE_KEY_HINT, 'true');
+    infoCard.style.display = 'none';
+  }
+  // ---------------------------
 
   const input = document.getElementById('linkInput');
   const copyBtn = document.getElementById('copyBtn');
@@ -175,6 +302,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     applyLanguage();
+    checkInfoCard(); // Проверяем, нужно ли показать плашку
     fetchLink();
   });
 </script>

@@ -75,29 +75,39 @@
     }
     .btn-outline:disabled { opacity:0.3; cursor:not-allowed; }
 
+    /* СТИЛИ СПИСКА ФАЙЛОВ И КНОПКИ УДАЛЕНИЯ */
     .file-list { margin-top:18px; display:grid; gap:10px; }
+
     .file-item {
       padding:12px 14px; border:1px solid var(--border);
       border-radius:10px; background:#07110e; font-size: 14px;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: background 0.2s;
+    }
+    .file-item:hover { background: #0a1f18; }
+
+    .file-name {
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 10px;
     }
 
-    /* --- НОВЫЕ СТИЛИ ДЛЯ ОШИБОК --- */
+    .btn-remove-file {
+      background: none; border: none; color: #ff5f56; cursor: pointer;
+      font-size: 20px; padding: 0 4px; line-height: 1; display: flex;
+      align-items: center; justify-content: center; opacity: 0.7;
+    }
+    .btn-remove-file:hover { opacity: 1; color: #ff8a8a; }
+
+    /* --- СТИЛИ ОШИБОК --- */
     .error-box {
-      margin-top: 20px;
-      padding: 16px;
-      background: var(--error-bg);
-      border: 1px solid var(--error-border);
-      border-radius: 12px;
-      color: #ff8a8a;
-      display: none; /* Скрыто по умолчанию */
-      align-items: flex-start;
-      gap: 12px;
+      margin-top: 20px; padding: 16px;
+      background: var(--error-bg); border: 1px solid var(--error-border);
+      border-radius: 12px; color: #ff8a8a;
+      display: none; align-items: flex-start; gap: 12px;
       animation: fadeIn 0.3s ease-out;
     }
     .error-box.visible { display: flex; }
 
     .error-icon { flex-shrink: 0; width: 20px; height: 20px; fill: currentColor; margin-top: 2px; }
-
     .error-content { flex: 1; }
     .error-title { font-weight: 700; color: #ffcccc; font-size: 14px; margin-bottom: 4px; display: block; }
     .error-msg { font-size: 14px; line-height: 1.4; }
@@ -112,7 +122,6 @@
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    /* ------------------------------ */
 
     .overlay {
       position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85);
@@ -229,8 +238,7 @@
       maxSize: "Max size", statusTitle: "Status", loading: "Loading...",
       completed: "Completed!", termWarning: "Don't close the page during the process",
       backBtn: "Back", errTitle: "Operation Failed",
-      // Дефолтные ошибки, если с сервера придет что-то неизвестное
-      defaultError: "An unexpected error occurred."
+      defaultError: "An unexpected error occurred. Please try again."
     },
     ru: {
       pTitle: "Продвинутая защита", pSub1: "✔ Шифрование файлов современными алгоритмами",
@@ -241,18 +249,32 @@
       maxSize: "Макс. размер", statusTitle: "Статус", loading: "Загрузка...",
       completed: "Готово!", termWarning: "Не закрывайте страницу во время процесса",
       backBtn: "Назад", errTitle: "Ошибка операции",
-      defaultError: "Произошла непредвиденная ошибка."
+      defaultError: "Произошла непредвиденная ошибка. Попробуйте снова."
     }
   };
 
-  // 2. Словарь известных ошибок сервера для перевода
-  // Ключ - часть текста или код ошибки, который может прислать сервер
+  // 2. Словарь известных ошибок (ИСПРАВЛЕНО ДЛЯ АНГЛИЙСКОГО)
   const serverErrorMap = {
-    "file too large": { en: "The file is too large.", ru: "Файл слишком большой." },
-    "invalid format": { en: "This file format is not supported.", ru: "Этот формат файла не поддерживается." },
-    "server busy": { en: "Server is busy, try again later.", ru: "Сервер перегружен, попробуйте позже." },
-    "empty file": { en: "Cannot upload empty files.", ru: "Нельзя загружать пустые файлы." }
-    // Сюда можно добавлять любые фразы, которые присылает бэкенд
+    "file name is too long": {
+      en: "File name is too long. Please shorten it.",
+      ru: "Имя файла слишком длинное. Пожалуйста, сократите его."
+    },
+    "file too large": {
+      en: "The file is too large.",
+      ru: "Файл слишком большой."
+    },
+    "invalid format": {
+      en: "This file format is not supported.",
+      ru: "Этот формат файла не поддерживается."
+    },
+    "server busy": {
+      en: "Server is busy, try again later.",
+      ru: "Сервер перегружен, попробуйте позже."
+    },
+    "empty file": {
+      en: "Cannot upload empty files.",
+      ru: "Нельзя загружать пустые файлы."
+    }
   };
 
   const currentLang = localStorage.getItem('userLanguage') || 'en';
@@ -278,12 +300,33 @@
 
   let selectedFiles = [];
 
-  // Функции интерфейса
+  // 3. ОБНОВЛЕННАЯ ФУНКЦИЯ ОТРИСОВКИ С КНОПКОЙ УДАЛЕНИЯ
   function renderList(){
-    list.innerHTML = selectedFiles.map(f => `<div class="file-item">• ${f.name}</div>`).join('');
-    uploadBtn.disabled = selectedFiles.length === 0;
+    if (selectedFiles.length === 0) {
+      list.innerHTML = '';
+      uploadBtn.disabled = true;
+      return;
+    }
+
+    list.innerHTML = selectedFiles.map((f, index) => `
+      <div class="file-item">
+        <span class="file-name">• ${f.name}</span>
+        <button class="btn-remove-file" onclick="removeFile(${index})" title="Remove">×</button>
+      </div>
+    `).join('');
+
+    uploadBtn.disabled = false;
     hideError();
   }
+
+  // 4. ФУНКЦИЯ УДАЛЕНИЯ ("ОТОПРЕТЬ")
+  window.removeFile = function(index) {
+    selectedFiles.splice(index, 1); // Удаляем из массива
+    if (selectedFiles.length === 0) {
+      fileInput.value = ''; // Сбрасываем инпут, чтобы можно было выбрать тот же файл снова
+    }
+    renderList(); // Перерисовываем список
+  };
 
   function showError(msg) {
     errorMessage.textContent = msg;
@@ -294,29 +337,26 @@
     errorBox.classList.remove('visible');
   }
 
-  // Логика перевода серверной ошибки
   function translateServerError(serverMsg) {
     if (!serverMsg) return translations[currentLang].defaultError;
-
-    // Приводим к нижнему регистру для поиска
     const lowerMsg = serverMsg.toLowerCase();
-
-    // Ищем совпадение по ключевым фразам
     for (const key in serverErrorMap) {
       if (lowerMsg.includes(key)) {
         return serverErrorMap[key][currentLang];
       }
     }
-
-    // Если совпадений нет, возвращаем как есть (или можно возвращать defaultError)
-    return serverMsg;
+    console.warn("Untranslated server error:", serverMsg);
+    return translations[currentLang].defaultError;
   }
 
-  // Обработчики событий
   chooseBtn.onclick = () => fileInput.click();
-  fileInput.onchange = e => { selectedFiles = Array.from(e.target.files); renderList(); };
+  fileInput.onchange = e => {
+    // Добавляем новые файлы к уже существующим (или заменяем - по твоему выбору)
+    // Сейчас: замена списка (стандартное поведение input type file)
+    selectedFiles = Array.from(e.target.files);
+    renderList();
+  };
 
-  // --- ГЛАВНАЯ ЛОГИКА ЗАГРУЗКИ ---
   uploadBtn.onclick = async () => {
     if(selectedFiles.length === 0) return;
 
@@ -333,62 +373,43 @@
         body: fd
       });
 
-      // Пытаемся распарсить JSON
-      // Внимание: если сервер упадет с 500 и вернет html, тут будет ошибка,
-      // поэтому лучше обернуть в try/catch парсинг, но для простоты оставим так.
       const data = await response.json();
 
-      // 1.1.1 - Обработка 401 (Unauthorized)
       if (response.status === 401) {
-        // Забиваем на все, кроме UrlToRedict
-        if (data.UrlToRedict) {
-          window.location.href = data.UrlToRedict;
-        } else {
-          // Фолбэк, если урла нет (редкий кейс)
-          window.location.href = "/login";
-        }
+        if (data.UrlToRedict) window.location.href = data.UrlToRedict;
+        else window.location.href = "/login";
         return;
       }
 
-      // 1.1.2 - Обработка 400 (Bad Request / Ошибка валидации)
       if (response.status === 400) {
-        overlay.classList.remove('show'); // Убираем лоадер
-
-        // Переводим ошибку и показываем красиво
-        const rawError = data.Error || "Unknown error";
-        const translatedError = translateServerError(rawError);
-        showError(translatedError);
+        overlay.classList.remove('show');
+        const rawError = data.Error || "";
+        const finalMsg = translateServerError(rawError);
+        showError(finalMsg);
         return;
       }
 
-      // 1.1.3 - Обработка 200 (Success)
       if (response.status === 200) {
-        // Проверяем наличие редиректа
         if (data.UrlToRedict) {
           terminalText.textContent = translations[currentLang].completed;
           setTimeout(() => {
             window.location.href = data.UrlToRedict;
-          }, 1000); // Небольшая пауза, чтобы юзер увидел "Completed"
+          }, 1000);
         } else {
-          // Если 200, но нет UrlToRedict - считаем это странным, но скрываем лоадер
           overlay.classList.remove('show');
-          console.warn("Status 200 but no redirect URL provided");
         }
       }
-      // Обработка других кодов (например 500)
       else if (response.status !== 401 && response.status !== 400 && response.status !== 200) {
-        throw new Error(`Server returned status: ${response.status}`);
+        throw new Error("Server status " + response.status);
       }
 
     } catch (err) {
       overlay.classList.remove('show');
       console.error(err);
-      // Показываем системную ошибку в красивом блоке
-      showError(translations[currentLang].defaultError + " (" + err.message + ")");
+      showError(translations[currentLang].defaultError);
     }
   };
 
-  // Drag & Drop
   ['dragenter','dragover'].forEach(ev => {
     dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('dragover'); });
   });
@@ -397,6 +418,8 @@
   });
   dropzone.addEventListener('drop', e => {
     e.preventDefault();
+    // При Drag & Drop обычно заменяем список или добавляем?
+    // Сделаю замену для консистентности
     selectedFiles = Array.from(e.dataTransfer.files);
     renderList();
   });

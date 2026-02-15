@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/awnumar/memguard"
 	"github.com/gorilla/mux"
 )
 
@@ -14,9 +15,10 @@ import (
 // the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
 
 func main() {
-	//Once create the pair of keys
-	Handlers.SwapKeys()
 
+	memguard.CatchInterrupt()
+	defer memguard.Purge()
+	//Once create the pair of keys
 	router := mux.NewRouter()
 
 	//router = router.MatcherFunc(func(request *http.Request, match *mux.RouteMatch) bool {
@@ -46,8 +48,10 @@ func main() {
 
 	})
 
-	ticker := time.NewTicker(12 * time.Hour)
+	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
+
+	Handlers.SwapKeyFirst()
 
 	go func() {
 		for t := range ticker.C {

@@ -28,7 +28,7 @@ func Auth(Rt string, JwtToken string) (string, string, error) {
 
 	NewJwt, NewRet, err := manageToken.Tokens.GenerateNewTokens(Rt)
 	if err != nil {
-		slog.Error("error generate new tokens", err)
+		slog.Error("error generate new tokens", "Value", err.Error())
 		return "", "", err
 	}
 
