@@ -48,7 +48,7 @@ func main() {
 
 	})
 
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(12 * time.Hour)
 	defer ticker.Stop()
 
 	Handlers.SwapKeyFirst()

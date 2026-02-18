@@ -10,7 +10,7 @@ import (
 )
 
 func (A *ControlTokens) GenerateRT(UnicId int, timeOldKey *jwt.NumericDate) (string, error) {
-	timeLiveKey := &jwt.NumericDate{Time: time.Now().Add(30 * time.Hour)}
+	timeLiveKey := &jwt.NumericDate{Time: time.Now().Add(5 * time.Second)}
 
 	if timeOldKey != nil {
 		timeLiveKey = timeOldKey
