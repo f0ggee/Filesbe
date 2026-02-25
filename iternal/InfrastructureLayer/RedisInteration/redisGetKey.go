@@ -26,7 +26,7 @@ func (*RedisInterationLayer) GetKey() ([]byte, []byte, []byte, error) {
 		if count > 20 {
 			return nil, nil, nil, errors.New("timeout")
 		}
-		err := redisConnect.HGetAll(context.Background(), "TestServer2").Err()
+		err := redisConnect.HGetAll(context.Background(), "server1").Err()
 
 		if err != nil {
 			slog.Error("We got the error", "Error", err)
@@ -41,17 +41,17 @@ func (*RedisInterationLayer) GetKey() ([]byte, []byte, []byte, error) {
 			PlainText: nil,
 			Signature: nil,
 		}
-		err = redisConnect.HGetAll(context.Background(), "TestServer2").Scan(&zs)
+		err = redisConnect.HGetAll(context.Background(), "server1").Scan(&zs)
 		if err != nil {
 			slog.Error("We got the error when try get the data", "Error", err)
 			return nil, nil, nil, errors.New(err.Error())
 		}
 
 		// TODO - When i start the project, must remove them
-		//err = redisConnect.HDel(context.Background(), "server1", "key").Err()
+		//err = redisConnect.Del(context.Background(), "server1").Err()
 		//if err != nil {
-		//	slog.Error("Error delete key", "Error", err)
-		//	return nil
+		//	slog.Error("We got the error", "Error", err)
+		//	return nil, nil, nil, errors.New(err.Error())
 		//}
 
 		slog.Info("We got the key", "key", true)

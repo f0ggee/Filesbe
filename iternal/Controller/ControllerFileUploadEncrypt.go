@@ -100,6 +100,7 @@ func CookieGet(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	rtToken, _ := session.Values["RT"].(string)
+	slog.Info("cookie get", rtToken)
 
 	jwts, _ := session.Values["JWT"].(string)
 	_, _, err = Handlers.Auth(rtToken, jwts)

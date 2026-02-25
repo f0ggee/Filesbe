@@ -24,7 +24,6 @@ func (A *ControlTokens) CheckLifeRt(Rt string) error {
 		delete(Dto.AllowList, Rt)
 		Dto.DenyList[Rt] = time.Now()
 		slog.Error("Refresh have been change", err)
-		return err
 
 	}
 

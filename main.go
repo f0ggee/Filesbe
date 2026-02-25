@@ -5,6 +5,7 @@ import (
 	"Kaban/iternal/Service/Handlers"
 	"log/slog"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/awnumar/memguard"
@@ -15,6 +16,11 @@ import (
 // the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
 
 func main() {
+	handler := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	child := handler.With(
+		"Time", time.Now(),
+	)
+	slog.SetDefault(child)
 
 	memguard.CatchInterrupt()
 	defer memguard.Purge()

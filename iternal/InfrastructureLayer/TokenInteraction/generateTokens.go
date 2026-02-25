@@ -23,6 +23,7 @@ func (S *ControlTokens) GenerateNewTokens(RT string) (string, string, error) {
 	)
 
 	if rt == nil {
+		slog.Error("GenerateNewTokens", "Token is nil", err)
 		return "", "", err
 	}
 	claims, ok := rt.Claims.(*Dto.JwtCustomStruct)

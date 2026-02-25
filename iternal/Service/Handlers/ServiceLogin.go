@@ -39,7 +39,7 @@ func LoginService(s Dto2.User, ctx context.Context, OldRtKey string) (string, st
 	ctx, cancel := Helpers.ContextForDownloading(ctx)
 	defer cancel()
 
-	_, password, err := app.Re.GetIdPassowrd(s.Email)
+	Id, password, err := app.Re.GetIdPassowrd(s.Email)
 	if err != nil {
 		slog.Error("Error in GetIdPassword")
 		return "", "", err
@@ -51,9 +51,23 @@ func LoginService(s Dto2.User, ctx context.Context, OldRtKey string) (string, st
 		return "", "", err
 	}
 
-	jwtTokens, rtToken, err := ManageTokenApp.Tokens.GenerateNewTokens(OldRtKey)
-	if err != nil {
-		return "", "", err
+	jwtTokens, rtToken := "", ""
+
+	switch {
+	case OldRtKey == "":
+		jwtTokens, err = ManageTokenApp.Tokens.GenerateJWT(Id)
+		if err != nil {
+			return "", "", err
+		}
+		rtToken, err = ManageTokenApp.Tokens.GenerateRT(Id, nil)
+		if err != nil {
+			return "", "", err
+		}
+	default:
+		jwtTokens, rtToken, err = ManageTokenApp.Tokens.GenerateNewTokens(OldRtKey)
+		if err != nil {
+			return "", "", err
+		}
 	}
 
 	ManageTokenApp.Tokens.DeleteAndSaveToken(OldRtKey, rtToken)

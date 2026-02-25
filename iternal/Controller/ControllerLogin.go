@@ -118,7 +118,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	Session.Options = &sessions.Options{
 		Path:     "/",
-		MaxAge:   int((100 * time.Hour).Seconds()),
+		MaxAge:   int((100 * time.Hour).Hours()),
 		Secure:   false,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,

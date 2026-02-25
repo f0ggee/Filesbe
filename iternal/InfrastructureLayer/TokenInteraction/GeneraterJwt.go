@@ -14,7 +14,7 @@ func (A *ControlTokens) GenerateJWT(id int) (string, error) {
 	claims := Dto2.JwtCustomStruct{
 		UserID: id,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Second)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(5 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			Issuer:    "Admin",
 		},
