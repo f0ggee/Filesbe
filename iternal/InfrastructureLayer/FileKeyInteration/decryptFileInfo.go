@@ -8,7 +8,9 @@ import (
 	"crypto/x509"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"log/slog"
+	"strings"
 )
 
 func (*FileInfoController) DecryptFileInfo(FileInfoIntoBytes []byte, key []byte, oldKey []byte) ([]byte, string, error) {
@@ -21,19 +23,20 @@ func (*FileInfoController) DecryptFileInfo(FileInfoIntoBytes []byte, key []byte,
 	}
 	decryptFileInfo, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, keyRsa, FileInfoIntoBytes, nil)
 
-	//switch {
-	//case strings.Contains(fmt.Sprint(err), "decryption error"):
-	//	slog.Error("Key is old")
-	//	decryptFileInfo, err = rsa.DecryptOAEP(sha256.New(), rand.Reader, oldKey, FileInfoIntoBytes, nil)
-	//	if err != nil {
-	//		slog.Error("Error also decrypt with an old key ", err)
-	//		return nil, "", err
-	//	}
-	//
-	//}
-	if err != nil {
-		slog.Error("Error in decrypt file info", "Error", err)
-		return nil, "", err
+	switch {
+	case strings.Contains(fmt.Sprint(err), "decryption error"):
+		slog.Error("Key is old")
+		keyRsaOld, err := x509.ParsePKCS1PrivateKey(oldKey)
+		if err != nil {
+			slog.Error("Func EncryptData ParsePKCS1PrivateKey fail", err)
+			return nil, "", err
+		}
+		decryptFileInfo, err = rsa.DecryptOAEP(sha256.New(), rand.Reader, keyRsaOld, FileInfoIntoBytes, nil)
+		if err != nil {
+			slog.Error("Error also decrypt with an old key ", err)
+			return nil, "", err
+		}
+
 	}
 
 	sa := &Dto.FileDescription{

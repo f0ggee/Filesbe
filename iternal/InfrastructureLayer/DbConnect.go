@@ -3,8 +3,6 @@ package InfrastructureLayer
 import (
 	"Kaban/iternal/DomainLevel"
 	"Kaban/iternal/InfrastructureLayer/UserInteraction"
-	"Kaban/iternal/Service/Connect_to_BD"
-	"log/slog"
 )
 
 type ConnectToBd struct {
@@ -20,12 +18,8 @@ type ConnectToBdTests struct {
 }
 
 func SetSettings() *ConnectToBd {
-	db, err := Connect_to_BD.Connect()
-	if err != nil {
-		slog.Error("Err_from_register 1 ", err)
-		return nil
-	}
-	S := &UserInteraction.DB{Db: db}
+
+	S := &UserInteraction.DB{Db: nil}
 	app := NewUserService(S)
 	return app
 }

@@ -2,37 +2,37 @@ package Handlers
 
 import (
 	"Kaban/iternal/InfrastructureLayer"
-	"errors"
-	"log/slog"
 )
 
-func Auth(Rt string, JwtToken string) (string, string, error) {
+func Auth(Rt string, JwtToken string) (string, error) {
 
 	manageToken := *InfrastructureLayer.SetSittingsTokenInteraction()
 
-	ok := manageToken.Tokens.TokenDenyMapChecker(Rt)
+	//ok := manageToken.Tokens.TokenDenyMapChecker(Rt)
 
-	if ok {
-		return "", "", errors.New("token Deny")
+	//if ok {
+	//	return "", "", errors.New("token Deny")
+	//}
+
+	JwtTokenClaims, err := manageToken.Tokens.CheckLifeJwt(JwtToken)
+	if err == nil || JwtTokenClaims == nil {
+		return "", nil
+	}
+	RefreshToken, err := manageToken.Tokens.CheckLifeRt(Rt)
+	if err != nil || RefreshToken == nil {
+		return "", err
 	}
 
-	err := manageToken.Tokens.CheckLifeJwt(JwtToken)
-	if err == nil {
-		return "", "", nil
-	}
+	if !JwtTokenClaims.Valid {
+		if RefreshToken.Valid {
+			JwtToken, err = manageToken.Tokens.GenerateJWT(RefreshToken.Claims)
+			if err != nil {
+				return "", err
+			}
 
-	err = manageToken.Tokens.CheckLifeRt(Rt)
-	if err != nil {
-		return "", "", err
+			return JwtToken, nil
+		}
 	}
-
-	NewJwt, NewRet, err := manageToken.Tokens.GenerateNewTokens(Rt)
-	if err != nil {
-		slog.Error("error generate new tokens", "Value", err.Error())
-		return "", "", err
-	}
-
-	manageToken.Tokens.DeleteAndSaveToken(Rt, NewRet)
-	return NewJwt, NewRet, nil
+	return "", nil
 
 }

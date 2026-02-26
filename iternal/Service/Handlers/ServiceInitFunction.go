@@ -28,7 +28,7 @@ func init() {
 		slog.Error("Error decode publickKeyMasterServer", "Error", err.Error())
 		return
 	}
-	OurPrivateKeyIntoBytes, err := hex.DecodeString(os.Getenv("Server1SecretKey"))
+	OurPrivateKeyIntoBytes, err := hex.DecodeString(os.Getenv("Server2SecretKey"))
 	if err != nil {
 		slog.Error("Error decode Server1SecretKey", "Error", err.Error())
 		return

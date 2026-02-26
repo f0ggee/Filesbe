@@ -9,19 +9,20 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func (A *ControlTokens) CheckLifeJwt(JWT string) error {
+func (A *ControlTokens) CheckLifeJwt(JWT string) (*jwt.Token, error) {
+
 	key := []byte(os.Getenv("KEYFORJWT"))
-	_, err := jwt.ParseWithClaims(JWT, &Dto.JwtCustomStruct{}, func(token *jwt.Token) (interface{}, error) {
+	JwtToken, err := jwt.ParseWithClaims(JWT, &Dto.JwtCustomStruct{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("неожиданный метод подписи: %v", token.Header["alg"])
 		}
 		return key, nil
 	})
-
 	if err != nil {
-		slog.Error("Error in check Jwt", err)
-		return err
+		slog.Error("Erorr to parse jwt token", "Error", err.Error())
+		return nil, err
 	}
-	return nil
+
+	return JwtToken, nil
 
 }

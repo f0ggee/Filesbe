@@ -2,12 +2,17 @@ package main
 
 import (
 	Controller2 "Kaban/iternal/Controller"
+	"Kaban/iternal/Service/Connect_to_BD"
 	"Kaban/iternal/Service/Handlers"
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
 
+	"Kaban/iternal/InfrastructureLayer/TokenInteraction"
+
+	"Kaban/iternal/InfrastructureLayer/TokenInteraction/manageTokensImpl"
+	"Kaban/iternal/InfrastructureLayer/UserInteraction"
 	"github.com/awnumar/memguard"
 	"github.com/gorilla/mux"
 )
@@ -24,7 +29,22 @@ func main() {
 
 	memguard.CatchInterrupt()
 	defer memguard.Purge()
-	//Once create the pair of keys
+
+	db, err := Connect_to_BD.Connect()
+	if err != nil {
+		slog.Error("Err_from_register 1 ", err)
+		return
+	}
+
+	TokensRealization := TokenInteraction.ControlTokens{A: nil}
+	DatabaseRealization := UserInteraction.DB{Db: db}
+	manageTokensImplRealization := manageTokensImpl.ManageTokensImpl{}
+
+	Sa := Handlers.CollectorPack(Handlers.HandlerPack{
+		Tokens:    &TokensRealization,
+		Database:  &DatabaseRealization,
+		TokenImpl: manageTokensImplRealization,
+	})
 	router := mux.NewRouter()
 
 	//router = router.MatcherFunc(func(request *http.Request, match *mux.RouteMatch) bool {
@@ -105,7 +125,10 @@ func main() {
 
 	}).Name("fileName")
 
-	router.HandleFunc("/login/api", Controller2.Login).Methods("POST")
+	router.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
+		Controller2.Login(writer, request, *Handlers.HandlerPackCollect)
+
+	}).Methods("POST")
 	router.HandleFunc("/register/api", Controller2.Register).Methods("POST")
 
 	router.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {

@@ -22,7 +22,6 @@ func SwapKeys() bool {
 	slog.Info("SwapKeys", "Start", true)
 	Keys.Mut.Lock()
 
-	/// TODO: I should remove  these raws
 	Keys.OldPrivateKey.Destroy()
 	Keys.OldPrivateKey = memguard.NewBuffer(Keys.NewPrivateKey.Size())
 	Keys.OldPrivateKey.Copy(Keys.NewPrivateKey.Bytes())

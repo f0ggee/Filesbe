@@ -2,7 +2,6 @@ package Handlers
 
 import (
 	Dto2 "Kaban/iternal/Dto"
-	"Kaban/iternal/InfrastructureLayer"
 	"Kaban/iternal/Service/Helpers"
 	"context"
 	"log/slog"
@@ -29,19 +28,20 @@ func PasswordCheck(password string, hashOfPassword string) error {
 //	return app
 //}
 
-func LoginService(s Dto2.User, ctx context.Context, OldRtKey string) (string, string, error) {
+func (sa *HandlerPackCollect) LoginService(s Dto2.User, ctx context.Context) (string, string, error) {
 
 	slog.Info("Func LoginService starts")
-	app := *InfrastructureLayer.SetSettings()
-
-	ManageTokenApp := *InfrastructureLayer.SetSittingsTokenInteraction()
+	//app := *InfrastructureLayer.SetSettings()
+	//
+	//ManageTokenApp := *InfrastructureLayer.SetSittingsTokenInteraction()
 
 	ctx, cancel := Helpers.ContextForDownloading(ctx)
 	defer cancel()
 
-	Id, password, err := app.Re.GetIdPassowrd(s.Email)
+	Id, password, err := sa.S.Database.GetIdPassowrd(s.Email)
+	//Id, password, err := app.Re.GetIdPassowrd(s.Email)
 	if err != nil {
-		slog.Error("Error in GetIdPassword")
+		slog.Error("Error in GetIdPassword", "error", err)
 		return "", "", err
 	}
 
@@ -51,28 +51,20 @@ func LoginService(s Dto2.User, ctx context.Context, OldRtKey string) (string, st
 		return "", "", err
 	}
 
-	jwtTokens, rtToken := "", ""
+	DataCollected := sa.S.TokenImpl.CollectDataForTokens(Id)
 
-	switch {
-	case OldRtKey == "":
-		jwtTokens, err = ManageTokenApp.Tokens.GenerateJWT(Id)
-		if err != nil {
-			return "", "", err
-		}
-		rtToken, err = ManageTokenApp.Tokens.GenerateRT(Id, nil)
-		if err != nil {
-			return "", "", err
-		}
-	default:
-		jwtTokens, rtToken, err = ManageTokenApp.Tokens.GenerateNewTokens(OldRtKey)
-		if err != nil {
-			return "", "", err
-		}
+	RefreshToken, err := sa.S.Tokens.GenerateRT(DataCollected)
+	if err != nil {
+		slog.Error("func login 3", "err", err)
+		return "", "", err
+	}
+	JwtToken, err := sa.S.Tokens.GenerateJWT(DataCollected)
+	if err != nil {
+		slog.Error("func login 4", "err", err)
+		return "", "", err
 	}
 
-	ManageTokenApp.Tokens.DeleteAndSaveToken(OldRtKey, rtToken)
-
 	slog.Info("Func LoginService ends")
-	return jwtTokens, rtToken, nil
+	return JwtToken, RefreshToken, nil
 
 }

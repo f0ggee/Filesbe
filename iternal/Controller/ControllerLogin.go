@@ -46,26 +46,18 @@ func checkJson(r *http.Request) (*Dto.User, error) {
 	return &e, err
 }
 
-func SaveTokens(s sessions.Session, Jwt string, RFT string, r *http.Request, w http.ResponseWriter) error {
-
-	return nil
-
-}
-
-func Login(w http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.HandlerPackCollect) {
 
 	type AnswerLogin struct {
 		StatusOfOperation string `json:"StatusOperation"`
 		UrlToRedict       string `json:"UrlToRedict"`
 	}
-
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Dont' allow", http.StatusUnauthorized)
 		slog.Error("Error", "err")
 		return
 	}
 	store := Store()
-
 	Session, err := store.Get(r, "token6")
 	if err != nil {
 
@@ -73,8 +65,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
 		return
 	}
-
-	oldRftToken, _ := Session.Values["RT"].(string)
 
 	sa, err := checkJson(r)
 	if err != nil {
@@ -97,7 +87,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	JWT, RFT, err := Handlers.LoginService(*sa, r.Context(), oldRftToken)
+	JwtToken, RefreshToken, err := realization.LoginService(*sa, r.Context())
 	if err != nil {
 		per := AnswerLogin{
 			StatusOfOperation: "NotStart",
@@ -113,8 +103,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Session.Values["RT"] = RFT
-	Session.Values["JWT"] = JWT
+	Session.Values["RT"] = JwtToken
+	Session.Values["JWT"] = RefreshToken
 
 	Session.Options = &sessions.Options{
 		Path:     "/",
@@ -128,21 +118,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
-	//err = SaveTokens(*Session, JWT, RFT, r, w)
-	//if err != nil {
-	//	per := AnswerLogin{
-	//		StatusOfOperation: "BREAK",
-	//	}
-	//	w.Header().Set("Content-Type", JsonExample)
-	//	http.Error(w, "Cant' processed ", http.StatusConflict)
-	//
-	//	err = json.NewEncoder(w).Encode(&per)
-	//	if err != nil {
-	//		slog.Error("Json in Login can't treated", "Err", err)
-	//		return
-	//	}
-	//	return
-	//}
 
 	per := AnswerLogin{
 		StatusOfOperation: "SUCCESS",

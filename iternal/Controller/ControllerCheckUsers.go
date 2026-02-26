@@ -45,17 +45,11 @@ func GetFrom(w http.ResponseWriter, r *http.Request) {
 	seSession, err := store.Get(r, "token6")
 	if err != nil {
 		slog.Error("Error check", "Err", err)
-
 		return
-
 	}
-
 	rtToken, _ := seSession.Values["RT"].(string)
-
 	jwts, _ := seSession.Values["JWT"].(string)
-
-	NewJwt, NewRt, err := Handlers.Auth(rtToken, jwts)
-
+	NewJwt, err := Handlers.Auth(rtToken, jwts)
 	if err != nil {
 
 		w.Header().Set(ContentType, JsonExample)
@@ -67,14 +61,7 @@ func GetFrom(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-
-	if NewRt != "" && NewJwt != "" {
-		seSession.Values["RT"] = NewRt
-
-		seSession.Values["JWT"] = NewJwt
-
-	}
-
+	seSession.Values["JWT"] = NewJwt
 	w.Header().Set(ContentType, JsonExample)
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(AnswerStruct{StatusRedict: "/main"}); err != nil {
