@@ -5,11 +5,9 @@ import (
 	"log/slog"
 )
 
-func (*RedisInterationLayer) CheckExistFileInfo(FileName string) bool {
-	redisConnect := ConnectToRedis()
-	defer redisConnect.Close()
+func (d *RedisInterationLayer) CheckExistFileInfo(FileName string) bool {
 
-	c, err := redisConnect.Exists(context.Background(), FileName).Result()
+	c, err := d.Re.Exists(context.Background(), FileName).Result()
 	if err != nil {
 		slog.Error("CheckExistFileInfo error:", err)
 		return false

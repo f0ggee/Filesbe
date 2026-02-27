@@ -16,10 +16,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 )
 
-func FileUploaderNoEncrypt(r *http.Request) (string, error) {
-	slog.Info("Func FileUploaderNoEncrypt starts")
-
-	apps := *InfrastructureLayer.ConnectKeyControl()
+func (sa *HandlerPackCollect) FileUploader(r *http.Request) (string, error) {
+	slog.Info("Func FileUploader starts")
 
 	file, sizeAndName, err := r.FormFile("file")
 	if err != nil {
@@ -44,7 +42,7 @@ func FileUploaderNoEncrypt(r *http.Request) (string, error) {
 	}
 	defer cancel()
 
-	shortNameFile := apps.Key.GenerateShortFileName()
+	shortNameFile := sa.S.FileInfo.GenerateShortFileName()
 
 	_, goroutines := Uttiltesss2.FindBest(sizeAndName.Size)
 
@@ -71,9 +69,8 @@ func FileUploaderNoEncrypt(r *http.Request) (string, error) {
 		slog.Error("Err in FileUploader no encrypt", "Error", err)
 		return "", err
 	}
-	redisConnect := *InfrastructureLayer.NewSetRedisConnect()
 
-	err = redisConnect.Ras.WriteData(shortNameFile, fileIntoBytes)
+	err = sa.S.RedisConn.WriteData(shortNameFile, fileIntoBytes)
 	if err != nil {
 		return "", err
 	}

@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Router) {
+func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Router, s *Handlers.HandlerPackCollect) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "err", http.StatusUnauthorized)
 		slog.Error("Err in Cottroler Uploader")
@@ -22,7 +22,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 		Error           string `json:"Error"`
 	}
 
-	err := CookiGet2(w, r)
+	err := CookieGet2(w, r, s)
 	if err != nil {
 		w.Header().Set("Content-Type", JsonExample)
 		w.WriteHeader(http.StatusUnauthorized)
@@ -36,7 +36,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 		return
 	}
 
-	filName, err := Handlers.FileUploaderNoEncrypt(r)
+	filName, err := s.FileUploader(r)
 	if err != nil {
 
 		w.Header().Set("Content-Type", JsonExample)
@@ -80,7 +80,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 
 }
 
-func CookiGet2(w http.ResponseWriter, r *http.Request) error {
+func CookieGet2(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) error {
 	store := Store()
 
 	session, err := store.Get(r, "token6")
@@ -95,14 +95,21 @@ func CookiGet2(w http.ResponseWriter, r *http.Request) error {
 		return errors.New("Cookie time expired")
 	}
 
-	rtToken, _ := session.Values["RT"].(string)
+	rtToken, ok := session.Values["RT"].(string)
+	if !ok {
+		slog.Error("Cookie dont set RT")
+		return errors.New("Cookie dont get RT")
+	}
 
 	jwts, _ := session.Values["JWT"].(string)
-	_, _, err = Handlers.Auth(rtToken, jwts)
+	Jwts, err := s.Auth(rtToken, jwts)
 	if err != nil {
 		slog.Error("cookie doesn't set up ",
 			"Err", err)
 		return err
+	}
+	if jwts != "" {
+		session.Values["JWT"] = Jwts
 	}
 
 	return nil

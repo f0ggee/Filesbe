@@ -2,7 +2,6 @@ package Handlers
 
 import (
 	"Kaban/iternal/Dto"
-	"Kaban/iternal/InfrastructureLayer"
 	"Kaban/iternal/Service/Helpers"
 	"crypto/rand"
 	"encoding/hex"
@@ -12,13 +11,13 @@ import (
 	"golang.org/x/crypto/scrypt"
 )
 
-func RegisterService(de *Dto.HandlerRegister) (string, string, error) {
+func (sa *HandlerPackCollect) RegisterService(de *Dto.HandlerRegister) (string, string, error) {
 
-	app := *InfrastructureLayer.SetSettings()
-	manageTokenInteraction := *InfrastructureLayer.SetSittingsTokenInteraction()
+	//app := *InfrastructureLayer.SetSettings()
+	//manageTokenInteraction := *InfrastructureLayer.SetSittingsTokenInteraction()
 
 	//Если пользователь существует, то тогда функция вернет кастомную ошибку - "person already exist"
-	err := app.Re.CheckUser(de.Email)
+	err := sa.S.Database.CheckUser(de.Email)
 	switch {
 	case errors.Is(err, errors.New("person already exist")):
 		return "", "", errors.New("person already exist")
@@ -37,21 +36,25 @@ func RegisterService(de *Dto.HandlerRegister) (string, string, error) {
 		return "", "", err
 	}
 
-	UnicIdUser, err := app.Re.CreateUser(de.Name, de.Email, HashPassword, ScryptKey)
+	UnicIdUser, err := sa.S.Database.CreateUser(de.Name, de.Email, HashPassword, ScryptKey)
 	if err != nil {
 		return "", "", err
 	}
 
-	TokenForJwt, err := manageTokenInteraction.Tokens.GenerateJWT(UnicIdUser)
+	DataCollected := sa.S.TokenImpl.CollectDataForTokens(UnicIdUser)
+
+	RefreshToken, err := sa.S.Tokens.GenerateRT(DataCollected)
 	if err != nil {
+		slog.Error("func login 3", "err", err)
 		return "", "", err
 	}
-	TokenForRf, err := manageTokenInteraction.Tokens.GenerateRT(UnicIdUser, nil)
+	JwtToken, err := sa.S.Tokens.GenerateJWT(DataCollected)
 	if err != nil {
+		slog.Error("func login 4", "err", err)
 		return "", "", err
 	}
 
-	return TokenForJwt, TokenForRf, nil
+	return JwtToken, RefreshToken, nil
 }
 
 func GenerateScrypt(de *Dto.HandlerRegister, err error) (string, error) {

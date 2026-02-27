@@ -14,7 +14,7 @@ func getNameFromUrl(r *http.Request) string {
 	return name
 
 }
-func DownloadWithEncrypt(w http.ResponseWriter, r *http.Request) {
+func DownloadWithEncrypt(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) {
 
 	if r.Method != http.MethodGet {
 		http.Error(w, "Status method don't allow", http.StatusBadRequest)
@@ -28,7 +28,7 @@ func DownloadWithEncrypt(w http.ResponseWriter, r *http.Request) {
 	}
 	name := getNameFromUrl(r)
 
-	err := Handlers.DownloadEncrypt(w, r.Context(), name)
+	err := s.DownloadEncrypt(w, r.Context(), name)
 	if err != nil {
 		http.Redirect(w, r, "/informationPage", http.StatusFound)
 		return

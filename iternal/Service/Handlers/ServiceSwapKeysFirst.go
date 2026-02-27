@@ -1,19 +1,16 @@
 package Handlers
 
 import (
-	"Kaban/iternal/InfrastructureLayer"
 	"log/slog"
 
 	"github.com/awnumar/memguard"
 )
 
-func SwapKeyFirst() {
+func (sa *HandlerPackCollect) SwapKeyFirst() {
 
 	slog.Info("SwapKeyFirst", "Start", true)
-	redis := *InfrastructureLayer.NewSetRedisConnect()
-	encryptionKeyS := *InfrastructureLayer.ConnectToEncryptKey()
 
-	aesKey, plainText, sign, err := redis.Ras.GetKey()
+	aesKey, plainText, sign, err := sa.S.RedisConn.GetKey()
 	if err != nil {
 		return
 	}
@@ -21,15 +18,15 @@ func SwapKeyFirst() {
 	defer memguard.WipeBytes(aesKey)
 	defer memguard.WipeBytes(plainText)
 
-	shaHashFromData := encryptionKeyS.Choose.ConvertDataToHash(plainText, aesKey)
+	shaHashFromData := sa.S.Choose.ConvertDataToHash(plainText, aesKey)
 
-	err = encryptionKeyS.Choose.CheckSignIncomingKey(sign, shaHashFromData, ControlPrivateKeyStruct.MasterServerPublicKeyBytes)
+	err = sa.S.Choose.CheckSignIncomingKey(sign, shaHashFromData, ControlPrivateKeyStruct.MasterServerPublicKeyBytes)
 	if err != nil {
 		slog.Error("Error check sign incomingKey", "Error", err.Error())
 		return
 	}
 
-	NewRsaKey := memguard.NewBufferFromBytes(encryptionKeyS.Choose.DecryptIncomingKey(aesKey, plainText, ControlPrivateKeyStruct.OurPrivateKeyIntoBytes))
+	NewRsaKey := memguard.NewBufferFromBytes(sa.S.Choose.DecryptIncomingKey(aesKey, plainText, ControlPrivateKeyStruct.OurPrivateKeyIntoBytes))
 	if NewRsaKey == nil {
 		return
 	}

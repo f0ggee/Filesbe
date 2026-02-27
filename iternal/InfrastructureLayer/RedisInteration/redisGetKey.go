@@ -6,19 +6,9 @@ import (
 	"errors"
 	"log/slog"
 	"time"
-
-	"github.com/redis/go-redis/v9"
 )
 
-func (*RedisInterationLayer) GetKey() ([]byte, []byte, []byte, error) {
-	redisConnect := ConnectToRedis()
-	defer func(redisConnect *redis.Client) {
-		err := redisConnect.Close()
-		if err != nil {
-			slog.Error("Error closing redis connection", "error", err.Error())
-			return
-		}
-	}(redisConnect)
+func (d *RedisInterationLayer) GetKey() ([]byte, []byte, []byte, error) {
 	count := 0
 
 	for {
@@ -26,7 +16,7 @@ func (*RedisInterationLayer) GetKey() ([]byte, []byte, []byte, error) {
 		if count > 20 {
 			return nil, nil, nil, errors.New("timeout")
 		}
-		err := redisConnect.HGetAll(context.Background(), "server2").Err()
+		err := d.Re.HGetAll(context.Background(), "server1").Err()
 
 		if err != nil {
 			slog.Error("We got the error", "Error", err)
@@ -41,18 +31,18 @@ func (*RedisInterationLayer) GetKey() ([]byte, []byte, []byte, error) {
 			PlainText: nil,
 			Signature: nil,
 		}
-		err = redisConnect.HGetAll(context.Background(), "server2").Scan(&zs)
+		err = d.Re.HGetAll(context.Background(), "server1").Scan(&zs)
 		if err != nil {
 			slog.Error("We got the error when try get the data", "Error", err)
 			return nil, nil, nil, errors.New(err.Error())
 		}
 
 		// TODO - When i start the project, must remove them
-		//err = redisConnect.Del(context.Background(), "server2").Err()
-		//if err != nil {
-		//	slog.Error("We got the error", "Error", err)
-		//	return nil, nil, nil, errors.New(err.Error())
-		//}
+		err = d.Re.Del(context.Background(), "server2").Err()
+		if err != nil {
+			slog.Error("We got the error", "Error", err)
+			return nil, nil, nil, errors.New(err.Error())
+		}
 
 		slog.Info("We got the key", "key", true)
 		return zs.AesKey, zs.PlainText, zs.Signature, nil

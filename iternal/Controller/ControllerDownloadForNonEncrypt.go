@@ -20,7 +20,7 @@ func getNameFromUrl2(r *http.Request) string {
 	return name
 
 }
-func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request) {
+func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) {
 	type JsonAnswer struct {
 		StatusOperation string   `json:"StatusOperation"`
 		Error           []string `json:"Error"`
@@ -39,7 +39,7 @@ func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request) {
 
 	name := getNameFromUrl2(r)
 
-	err, _ := Handlers.DownloadWithNonEncrypt(w, name, r.Context())
+	err, _ := s.DownloadWithNonEncrypt(w, name, r.Context())
 
 	switch {
 	case strings.Contains(fmt.Sprint(err), "file was used"):

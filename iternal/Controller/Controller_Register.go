@@ -37,7 +37,7 @@ func checkJsonRegister(r *http.Request) (*Dto.HandlerRegister, error) {
 	return &e, err
 }
 
-func Register(w http.ResponseWriter, r *http.Request) {
+func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) {
 
 	if r.Method != http.MethodPost {
 		slog.Error("Error from Controller_register, method don't allow ", "err")
@@ -66,7 +66,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jwt, rt, err := Handlers.RegisterService(DataRegister)
+	jwt, rt, err := s.RegisterService(DataRegister)
 
 	switch {
 	case errors.Is(err, errors.New("person already exist")):

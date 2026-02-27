@@ -1,7 +1,6 @@
 package Handlers
 
 import (
-	"Kaban/iternal/InfrastructureLayer"
 	Uttiltesss2 "Kaban/iternal/Service/Helpers"
 	"bufio"
 	"context"
@@ -19,14 +18,12 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) error {
+func (ds *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) error {
 
 	ctx, cancel := Uttiltesss2.ContextForDownloading(ctxs)
 	defer cancel()
-	apps := *InfrastructureLayer.ConnectKeyControl()
-	redisConnect := *InfrastructureLayer.NewSetRedisConnect()
 
-	fileInfoInBytes, err := redisConnect.Ras.GetFileInfo(name)
+	fileInfoInBytes, err := ds.S.RedisConn.GetFileInfo(name)
 	if err != nil {
 		return err
 	}
@@ -35,7 +32,7 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	newPrivateKey := Keys.NewPrivateKey
 	oldPrivateKey := Keys.OldPrivateKey
 	Keys.Mut.RUnlock()
-	aesKey, realFileName, err := apps.Key.DecryptFileInfo(fileInfoInBytes, newPrivateKey.Bytes(), oldPrivateKey.Bytes())
+	aesKey, realFileName, err := ds.S.FileInfo.DecryptFileInfo(fileInfoInBytes, newPrivateKey.Bytes(), oldPrivateKey.Bytes())
 	if err != nil {
 		return err
 	}
@@ -48,13 +45,12 @@ func DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) e
 	}
 
 	slog.Info("Func Delete start in download encrypt")
-	S3Interaction := *InfrastructureLayer.NewConnectToS3()
 
-	err = redisConnect.Ras.DeleteFileInfo(name)
+	err = ds.S.RedisConn.DeleteFileInfo(name)
 	if err != nil {
 		return err
 	}
-	err = S3Interaction.Manage.DeleteFileFromS3(name, Bucket)
+	err = ds.S.S3Conn.DeleteFileFromS3(name, Bucket)
 	if err != nil {
 		return err
 	}

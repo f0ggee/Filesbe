@@ -103,8 +103,8 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 		return
 	}
 
-	Session.Values["RT"] = JwtToken
-	Session.Values["JWT"] = RefreshToken
+	Session.Values["RT"] = RefreshToken
+	Session.Values["JWT"] = JwtToken
 
 	Session.Options = &sessions.Options{
 		Path:     "/",

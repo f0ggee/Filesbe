@@ -30,7 +30,7 @@ func LoggingRequest(next http.Handler) http.Handler {
 	})
 }
 
-func GetFrom(w http.ResponseWriter, r *http.Request) {
+func GetFrom(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) {
 
 	if r.Method != http.MethodGet {
 		http.Error(w, "Cant' treat", http.StatusNotFound)
@@ -47,9 +47,21 @@ func GetFrom(w http.ResponseWriter, r *http.Request) {
 		slog.Error("Error check", "Err", err)
 		return
 	}
-	rtToken, _ := seSession.Values["RT"].(string)
+	rtToken, ok := seSession.Values["RT"].(string)
+	if !ok {
+		w.Header().Set(ContentType, JsonExample)
+		w.WriteHeader(http.StatusUnauthorized)
+
+		if err := json.NewEncoder(w).Encode(AnswerStruct{StatusRedict: "/login"}); err != nil {
+			slog.Error("Error decode the json", "Err", err)
+			return
+		}
+		return
+	}
 	jwts, _ := seSession.Values["JWT"].(string)
-	NewJwt, err := Handlers.Auth(rtToken, jwts)
+	slog.Info("JWT", "JWT", jwts)
+
+	NewJwt, err := s.Auth(rtToken, jwts)
 	if err != nil {
 
 		w.Header().Set(ContentType, JsonExample)

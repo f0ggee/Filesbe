@@ -6,6 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
 )
 
 func init() {
@@ -17,13 +18,13 @@ func init() {
 	}
 }
 
-type RedisInterationLayer struct{}
+type RedisInterationLayer struct {
+	Re *redis.Client
+}
 
-func (*RedisInterationLayer) WriteData(shortName string, InfoAboutFile []byte) error {
+func (s *RedisInterationLayer) WriteData(shortName string, InfoAboutFile []byte) error {
 
-	redisConnect := ConnectToRedis()
-	defer redisConnect.Close()
-	err := redisConnect.HSet(context.Background(), shortName, Dto.FileInfo{
+	err := s.Re.HSet(context.Background(), shortName, Dto.FileInfo{
 		InfoAboutFile:   InfoAboutFile,
 		IsStartDownload: false,
 	}).Err()

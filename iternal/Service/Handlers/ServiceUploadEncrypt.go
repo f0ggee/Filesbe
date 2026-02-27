@@ -1,7 +1,6 @@
 package Handlers
 
 import (
-	"Kaban/iternal/InfrastructureLayer"
 	Uttiltesss2 "Kaban/iternal/Service/Helpers"
 	"context"
 	"crypto/aes"
@@ -23,7 +22,7 @@ import (
 
 const FileMaxSize = 1 << 30
 
-func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error) {
+func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error) {
 
 	slog.Info("Func FileUploaderEncrypt starts")
 	file, sizeAndName, err := r.FormFile("file")
@@ -45,9 +44,6 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 		}
 	}()
 
-	apps := *InfrastructureLayer.ConnectKeyControl()
-	redisConnect := *InfrastructureLayer.NewSetRedisConnect()
-
 	ctx, cancel := Uttiltesss2.Context2(r.Context())
 	if cancel == nil {
 		return "", errors.New("error in file Uploader no encrypt")
@@ -64,11 +60,6 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 		sa := time.Since(timeS)
 		fmt.Println(sa)
 	}()
-	cfg, err := Uttiltesss2.S3Helper()
-	if err != nil {
-		slog.Error("can't connect to S3 server", "Err", err)
-		return "", errors.New("can't connect to our servers")
-	}
 
 	chanelForAesKey := make(chan []byte, 100)
 
@@ -93,32 +84,33 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 
 	AesKey := encryptKey(chanelForAesKey)
 
-	FileInfoInBytes, err := apps.Key.ConvertToBytesFileInfo(sizeAndName.Filename, AesKey)
+	FileInfoInBytes, err := sa.S.FileInfo.ConvertToBytesFileInfo(sizeAndName.Filename, AesKey)
 	if err != nil {
 		err := writer.CloseWithError(err)
 		slog.Error("Error in file writing", err)
 		return "", err
 	}
 
-	shortNameForFile := apps.Key.GenerateShortFileName()
+	shortNameForFile := sa.S.FileInfo.GenerateShortFileName()
+	//shortNameForFile := apps.Key.GenerateShortFileName()
 
 	Keys.Mut.RLock()
 	newPrivateKey := Keys.NewPrivateKey.Data()
 	Keys.Mut.RUnlock()
 
-	EncryptFileInfo, err := apps.Key.EncryptData(FileInfoInBytes, newPrivateKey)
+	EncryptFileInfo, err := sa.S.FileInfo.EncryptData(FileInfoInBytes, newPrivateKey)
 	if err != nil {
 		slog.Error("Error in file writing", err)
 		return "", err
 	}
 
-	FileExtension := apps.Key.FindFormatOfFile(sizeAndName.Filename)
-	_, err3 := uploadFileEncrypt(cfg, BesParts, goroutine, ctx, shortNameForFile, FileExtension, reader)
+	FileExtension := sa.S.FileInfo.FindFormatOfFile(sizeAndName.Filename)
+	_, err3 := uploadFileEncrypt(sa.S.S3Connect, BesParts, goroutine, ctx, shortNameForFile, FileExtension, reader)
 	if err3 != nil {
 		return "", err3
 	}
 
-	err = redisConnect.Ras.WriteData(shortNameForFile, EncryptFileInfo)
+	err = sa.S.RedisConn.WriteData(shortNameForFile, EncryptFileInfo)
 	if err != nil {
 		err := writer.CloseWithError(err)
 		slog.Error("Error in file writing", err)
@@ -128,17 +120,15 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 	time.AfterFunc(5*time.Minute, func() {
 		slog.Info("Func  Auto-FileDelete start")
 
-		DownloadingHaveStarted := redisConnect.Ras.ChekIsStartDownload(shortNameForFile)
+		DownloadingHaveStarted := sa.S.RedisConn.ChekIsStartDownload(shortNameForFile)
 		if DownloadingHaveStarted {
 			return
 		}
-		err := redisConnect.Ras.DeleteFileInfo(shortNameForFile)
+		err := sa.S.RedisConn.DeleteFileInfo(shortNameForFile)
 		if err != nil {
 			return
 		}
-		S3Interaction := *InfrastructureLayer.NewConnectToS3()
-
-		err = S3Interaction.Manage.DeleteFileFromS3(shortNameForFile, Bucket)
+		err = sa.S.S3Conn.DeleteFileFromS3(shortNameForFile, Bucket)
 		if err != nil {
 			return
 		}
@@ -152,7 +142,9 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error)
 }
 
 func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.Context, shortFileName string, ContentType string, reader *io.PipeReader) (string, error) {
+
 	uploader := manager.NewUploader(cfg, func(uploader *manager.Uploader) {
+
 		uploader.MaxUploadParts = 200
 		uploader.PartSize = int64(BesParts) * 1024 * 1024
 		uploader.Concurrency = goroutine
@@ -164,6 +156,14 @@ func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.
 		ContentType: aws.String(ContentType),
 		Body:        reader,
 	})
+	//Uploads, err := cfg.CreateMultipartUpload(context.Background(), &s3.CreateMultipartUploadInput{
+	//	Bucket:      aws.String(Bucket),
+	//	Key:         aws.String(shortFileName),
+	//	ContentType: aws.String(ContentType),
+	//}, func(options *s3.Options) {
+	//
+	//})
+
 	if err == nil {
 		return "", nil
 	}

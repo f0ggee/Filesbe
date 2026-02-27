@@ -6,16 +6,13 @@ import (
 	"log/slog"
 )
 
-func (*RedisInterationLayer) ChekIsStartDownload(name string) bool {
-
-	redisConnect := ConnectToRedis()
-	defer redisConnect.Close()
+func (d *RedisInterationLayer) ChekIsStartDownload(name string) bool {
 
 	isExit := Dto.FileInfo{
 		InfoAboutFile:   nil,
 		IsStartDownload: false,
 	}
-	err := redisConnect.HGetAll(context.Background(), name).Scan(&isExit)
+	err := d.Re.HGetAll(context.Background(), name).Scan(&isExit)
 
 	if err != nil {
 		slog.Error("Can't get the label IsStartDownload", err)

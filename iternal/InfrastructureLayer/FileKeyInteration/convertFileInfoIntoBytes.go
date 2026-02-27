@@ -9,7 +9,11 @@ import (
 
 type FileInfoController struct{}
 
-func (*FileInfoController) ConvertToBytesFileInfo(NameFile string, AesKey []byte) ([]byte, error) {
+func (d *FileInfoController) SayHi() string {
+	return "Hi"
+}
+
+func (d *FileInfoController) ConvertToBytesFileInfo(NameFile string, AesKey []byte) ([]byte, error) {
 
 	FileAboutStruct := Dto.FileDescription{
 		FileName: NameFile,

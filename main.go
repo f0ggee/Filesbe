@@ -2,8 +2,10 @@ package main
 
 import (
 	Controller2 "Kaban/iternal/Controller"
+	"Kaban/iternal/InfrastructureLayer/s3Interation"
 	"Kaban/iternal/Service/Connect_to_BD"
 	"Kaban/iternal/Service/Handlers"
+	"Kaban/iternal/Service/Helpers"
 	"log/slog"
 	"net/http"
 	"os"
@@ -11,8 +13,12 @@ import (
 
 	"Kaban/iternal/InfrastructureLayer/TokenInteraction"
 
+	"Kaban/iternal/InfrastructureLayer/FileKeyInteration"
+	"Kaban/iternal/InfrastructureLayer/RedisInteration"
 	"Kaban/iternal/InfrastructureLayer/TokenInteraction/manageTokensImpl"
 	"Kaban/iternal/InfrastructureLayer/UserInteraction"
+	"Kaban/iternal/InfrastructureLayer/encryptionKeyInteration"
+
 	"github.com/awnumar/memguard"
 	"github.com/gorilla/mux"
 )
@@ -35,16 +41,36 @@ func main() {
 		slog.Error("Err_from_register 1 ", err)
 		return
 	}
+	cfg, err := Helpers.S3Helper()
+	if err != nil {
+		return
+	}
+
+	redisConn := RedisInteration.ConnectToRedis()
+	defer redisConn.Close()
 
 	TokensRealization := TokenInteraction.ControlTokens{A: nil}
 	DatabaseRealization := UserInteraction.DB{Db: db}
 	manageTokensImplRealization := manageTokensImpl.ManageTokensImpl{}
+	s3Connect := s3Interation.ConntrolerForS3{}
+	RedisStruct := RedisInteration.RedisInterationLayer{
+		Re: redisConn,
+	}
+	InfoMange := FileKeyInteration.FileInfoController{}
+	encryptKey := encryptionKeyInteration.EncryptionKey{}
 
-	Sa := Handlers.CollectorPack(Handlers.HandlerPack{
+	HandlerPack := &Handlers.HandlerPack{
 		Tokens:    &TokensRealization,
 		Database:  &DatabaseRealization,
 		TokenImpl: manageTokensImplRealization,
-	})
+		S3Conn:    &s3Connect,
+		S3Connect: cfg,
+		RedisConn: &RedisStruct,
+		FileInfo:  &InfoMange,
+		Choose:    &encryptKey,
+	}
+	Sa := Handlers.CollectorPack(*HandlerPack)
+
 	router := mux.NewRouter()
 
 	//router = router.MatcherFunc(func(request *http.Request, match *mux.RouteMatch) bool {
@@ -56,6 +82,7 @@ func main() {
 	//	return true
 	//}).Subrouter()
 
+	slog.Info("Starting Server", Sa.S.FileInfo.SayHi())
 	//The router will return  static files
 	StaticFiles := router.PathPrefix("/Fronted").Subrouter()
 
@@ -77,12 +104,12 @@ func main() {
 	ticker := time.NewTicker(12 * time.Hour)
 	defer ticker.Stop()
 
-	Handlers.SwapKeyFirst()
+	Sa.SwapKeyFirst()
 
 	go func() {
 		for t := range ticker.C {
 			slog.Info("Got a ticker", t)
-			Handlers.SwapKeys()
+			Sa.SwapKeys()
 		}
 	}()
 
@@ -126,21 +153,24 @@ func main() {
 	}).Name("fileName")
 
 	router.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
-		Controller2.Login(writer, request, *Handlers.HandlerPackCollect)
+		Controller2.Login(writer, request, Sa)
 
 	}).Methods("POST")
-	router.HandleFunc("/register/api", Controller2.Register).Methods("POST")
+	router.HandleFunc("/register/api", func(writer http.ResponseWriter, request *http.Request) {
+		Controller2.Register(writer, request, Sa)
+
+	}).Methods("POST")
 
 	router.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {
 
-		Controller2.DownloadWithEncrypt(writer, request)
+		Controller2.DownloadWithEncrypt(writer, request, Sa)
 
 		//Handlers.Delete(ch)
 
 	}).Methods(http.MethodGet)
 	router.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
 
-		Controller2.DownloadWithNotEncrypt(writer, request)
+		Controller2.DownloadWithNotEncrypt(writer, request, Sa)
 
 		//Handlers.Delete(ch)
 
@@ -148,16 +178,16 @@ func main() {
 
 	router.HandleFunc("/downloader/api", func(writer http.ResponseWriter, request *http.Request) {
 
-		Controller2.FileUploaderNoEncrypt(writer, request, router)
+		Controller2.FileUploaderNoEncrypt(writer, request, router, Sa)
 
 	}).Methods(http.MethodPost)
 	router.HandleFunc("/downloader2/api", func(writer http.ResponseWriter, request *http.Request) {
 
-		Controller2.FileUploaderEncrypt(writer, request, router)
+		Controller2.FileUploaderEncrypt(writer, request, router, Sa)
 
 	}).Methods(http.MethodPost)
 	router.HandleFunc("/maine/api", func(writer http.ResponseWriter, request *http.Request) {
-		Controller2.GetFrom(writer, request)
+		Controller2.GetFrom(writer, request, Sa)
 
 	}).Methods("GET")
 	router.HandleFunc("/doUrl/api", func(writer http.ResponseWriter, request *http.Request) {
@@ -185,7 +215,7 @@ func main() {
 	//	return
 	//}
 
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 	if err != nil {
 		slog.Error("Server couldn't start", err)
 		return

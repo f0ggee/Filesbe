@@ -17,7 +17,6 @@ func (*ConntrolerForS3) DeleteFileFromS3(key string, bucket string) error {
 		slog.Error("can't connect to S3 server", "Err", err)
 		return err
 	}
-	slog.Error("Key", key)
 	s := &s3.DeleteObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    &key,

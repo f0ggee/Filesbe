@@ -8,4 +8,5 @@ type FileInfo interface {
 	EncryptData([]byte, []byte) ([]byte, error)
 	DecryptFileInfo([]byte, []byte, []byte) ([]byte, string, error)
 	FindFormatOfFile(string) string
+	SayHi() string
 }
