@@ -31,6 +31,7 @@ func main() {
 	child := handler.With(
 		"Time", time.Now(),
 	)
+
 	slog.SetDefault(child)
 
 	memguard.CatchInterrupt()
@@ -72,6 +73,8 @@ func main() {
 	Sa := Handlers.CollectorPack(*HandlerPack)
 
 	router := mux.NewRouter()
+	newRouter := router.PathPrefix("/").Subrouter()
+	newRouter.Use(Controller2.CheckBots)
 
 	//router = router.MatcherFunc(func(request *http.Request, match *mux.RouteMatch) bool {
 	//	if request.Host != "filesbes.com" {
@@ -161,14 +164,14 @@ func main() {
 
 	}).Methods("POST")
 
-	router.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {
+	newRouter.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {
 
 		Controller2.DownloadWithEncrypt(writer, request, Sa)
 
 		//Handlers.Delete(ch)
 
 	}).Methods(http.MethodGet)
-	router.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
+	newRouter.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
 
 		Controller2.DownloadWithNotEncrypt(writer, request, Sa)
 
