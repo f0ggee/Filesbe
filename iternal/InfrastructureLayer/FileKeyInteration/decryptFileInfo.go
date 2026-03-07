@@ -14,8 +14,6 @@ import (
 )
 
 func (*FileInfoController) DecryptFileInfo(FileInfoIntoBytes []byte, key []byte, oldKey []byte) ([]byte, string, error) {
-
-	slog.Info("Key", key)
 	keyRsa, err := x509.ParsePKCS1PrivateKey(key)
 	if err != nil {
 		slog.Error("Func EncryptData ParsePKCS1PrivateKey fail", err)
