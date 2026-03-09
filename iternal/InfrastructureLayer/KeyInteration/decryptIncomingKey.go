@@ -1,4 +1,4 @@
-package encryptionKeyInteration
+package KeyInteration
 
 import (
 	"crypto/aes"

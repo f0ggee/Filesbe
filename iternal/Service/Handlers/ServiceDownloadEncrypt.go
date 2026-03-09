@@ -32,7 +32,7 @@ func (ds *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs contex
 	newPrivateKey := Keys.NewPrivateKey
 	oldPrivateKey := Keys.OldPrivateKey
 	Keys.Mut.RUnlock()
-	aesKey, realFileName, err := ds.S.FileInfo.DecryptFileInfo(fileInfoInBytes, newPrivateKey.Bytes(), oldPrivateKey.Bytes())
+	aesKey, realFileName, err := ds.S.FileDataManipulation.DecryptFileInfo(fileInfoInBytes, newPrivateKey.Bytes(), oldPrivateKey.Bytes())
 	if err != nil {
 		return err
 	}
