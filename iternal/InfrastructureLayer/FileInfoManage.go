@@ -12,9 +12,9 @@ func ConnectKeyControl() *ControlAccessKeys {
 }
 
 type ControlAccessKeys struct {
-	Key DomainLevel.FileInfo
+	Key DomainLevel.FileInfoInteraction
 }
 
-func NewSetKeyController(r DomainLevel.FileInfo) *ControlAccessKeys {
+func NewSetKeyController(r DomainLevel.FileInfoInteraction) *ControlAccessKeys {
 	return &ControlAccessKeys{Key: r}
 }

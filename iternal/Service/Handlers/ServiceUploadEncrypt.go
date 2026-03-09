@@ -12,6 +12,7 @@ import (
 	"log/slog"
 	"mime/multipart"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
@@ -98,7 +99,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 	newPrivateKey := Keys.NewPrivateKey.Data()
 	Keys.Mut.RUnlock()
 
-	EncryptFileInfo, err := sa.S.FileInfo.EncryptData(FileInfoInBytes, newPrivateKey)
+	EncryptFileInfo, err := sa.S.FileDataManipulation.EncryptData(FileInfoInBytes, newPrivateKey)
 	if err != nil {
 		slog.Error("Error in file writing", err)
 		return "", err
@@ -119,19 +120,37 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 
 	time.AfterFunc(5*time.Minute, func() {
 		slog.Info("Func  Auto-FileDelete start")
+		wg := sync.WaitGroup{}
 
+		defer wg.Done()
 		DownloadingHaveStarted := sa.S.RedisConn.ChekIsStartDownload(shortNameForFile)
 		if DownloadingHaveStarted {
 			return
 		}
-		err := sa.S.RedisConn.DeleteFileInfo(shortNameForFile)
-		if err != nil {
-			return
-		}
-		err = sa.S.S3Conn.DeleteFileFromS3(shortNameForFile, Bucket)
-		if err != nil {
-			return
-		}
+
+		go func() {
+			wg.Add(1)
+			defer wg.Done()
+			err := sa.S.RedisConn.DeleteFileInfo(shortNameForFile)
+
+			if err != nil {
+				slog.Error("Error in file writing", err)
+				return
+			}
+		}()
+
+		go func() {
+			wg.Add(1)
+			defer wg.Done()
+			err = sa.S.S3Conn.DeleteFileFromS3(shortNameForFile, Bucket)
+			if err != nil {
+				return
+			}
+
+		}()
+
+		wg.Wait()
+
 		slog.Info("Func Auto-deleteFile ends")
 
 	})

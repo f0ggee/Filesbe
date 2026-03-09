@@ -12,10 +12,12 @@ type HandlerPack struct {
 	TokenImpl DomainLevel.ManageTokensImpl
 	RedisConn DomainLevel.RedisInteration
 	S3Conn    DomainLevel.S3Interation
-	FileInfo  DomainLevel.FileInfo
-	Choose    DomainLevel.EncryptionKeyInteration
+	FileInfo  DomainLevel.FileInfoInteraction
+	Choose    DomainLevel.KeyInteraction
 
-	S3Connect *s3.Client
+	Encryption           DomainLevel.EncryptionKey
+	FileDataManipulation DomainLevel.FileInfoDataManipulation
+	S3Connect            *s3.Client
 }
 
 type HandlerPackCollect struct {

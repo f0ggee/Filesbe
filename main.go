@@ -14,10 +14,10 @@ import (
 	"Kaban/iternal/InfrastructureLayer/TokenInteraction"
 
 	"Kaban/iternal/InfrastructureLayer/FileKeyInteration"
+	"Kaban/iternal/InfrastructureLayer/KeyInteration"
 	"Kaban/iternal/InfrastructureLayer/RedisInteration"
 	"Kaban/iternal/InfrastructureLayer/TokenInteraction/manageTokensImpl"
 	"Kaban/iternal/InfrastructureLayer/UserInteraction"
-	"Kaban/iternal/InfrastructureLayer/encryptionKeyInteration"
 
 	"github.com/awnumar/memguard"
 	"github.com/gorilla/mux"
@@ -58,7 +58,7 @@ func main() {
 		Re: redisConn,
 	}
 	InfoMange := FileKeyInteration.FileInfoController{}
-	encryptKey := encryptionKeyInteration.EncryptionKey{}
+	encryptKey := KeyInteration.EncryptionKey{}
 
 	HandlerPack := &Handlers.HandlerPack{
 		Tokens:    &TokensRealization,

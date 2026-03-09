@@ -2,20 +2,20 @@ package InfrastructureLayer
 
 import (
 	"Kaban/iternal/DomainLevel"
-	"Kaban/iternal/InfrastructureLayer/encryptionKeyInteration"
+	"Kaban/iternal/InfrastructureLayer/KeyInteration"
 )
 
 type EncryptionKeyInteration struct {
-	Choose DomainLevel.EncryptionKeyInteration
+	Choose DomainLevel.KeyInteraction
 }
 
-func NewSetEncryptionKeyInteration(Connect DomainLevel.EncryptionKeyInteration) *EncryptionKeyInteration {
+func NewSetEncryptionKeyInteration(Connect DomainLevel.KeyInteraction) *EncryptionKeyInteration {
 	return &EncryptionKeyInteration{Choose: Connect}
 }
 
 func ConnectToEncryptKey() *EncryptionKeyInteration {
 
-	apps := &encryptionKeyInteration.EncryptionKey{}
+	apps := &KeyInteration.EncryptionKey{}
 	saz := NewSetEncryptionKeyInteration(apps)
 	return saz
 }
