@@ -7,17 +7,19 @@ import (
 )
 
 type HandlerPack struct {
-	Tokens    DomainLevel.ManageTokens
-	Database  DomainLevel.UserServer
-	TokenImpl DomainLevel.ManageTokensImpl
-	RedisConn DomainLevel.RedisInteration
-	S3Conn    DomainLevel.S3Interation
-	FileInfo  DomainLevel.FileInfoInteraction
-	Choose    DomainLevel.KeyInteraction
-
+	Tokens               DomainLevel.ManageAuthTokens
+	Database             DomainLevel.UserServer
+	TokenImpl            DomainLevel.ManageAuthTokensImpl
+	RedisConn            DomainLevel.RedisInteraction
+	S3Conn               DomainLevel.S3Handle
+	FileInfo             DomainLevel.FileInfoManipulation
+	Choose               DomainLevel.KeyInteraction
+	GrpcDataMange        DomainLevel.GrpcDataManage
 	Encryption           DomainLevel.EncryptionKey
-	FileDataManipulation DomainLevel.FileInfoDataManipulation
+	ConverterKey         DomainLevel.ConverterKey
+	FileDataManipulation DomainLevel.FileDataManipulation
 	S3Connect            *s3.Client
+	GrpcConn             DomainLevel.GrpcInteraction
 }
 
 type HandlerPackCollect struct {

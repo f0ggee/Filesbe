@@ -1,4 +1,4 @@
-package FileKeyInteration
+package fileDataManipulation
 
 import (
 	"crypto/rand"
@@ -11,10 +11,10 @@ import (
 	"strings"
 )
 
-func (*FileInfoController) EncryptData(FileInfoData []byte, Key []byte) ([]byte, error) {
+func (*FileDataManipulation) EncryptData(FileInfoData []byte, Key []byte) ([]byte, error) {
 	keyRsa, err := x509.ParsePKCS1PrivateKey(Key)
 	if err != nil {
-		slog.Error("Func EncryptData ParsePKCS1PrivateKey fail", err)
+		slog.Error("Func EncryptAes ParsePKCS1PrivateKey fail", err)
 		return nil, err
 	}
 

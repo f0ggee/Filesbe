@@ -2,6 +2,7 @@ package main
 
 import (
 	Controller2 "Kaban/iternal/Controller"
+	"Kaban/iternal/InfrastructureLayer/KeyInteration/Encryption"
 	"Kaban/iternal/InfrastructureLayer/s3Interation"
 	"Kaban/iternal/Service/Connect_to_BD"
 	"Kaban/iternal/Service/Handlers"
@@ -14,7 +15,11 @@ import (
 	"Kaban/iternal/InfrastructureLayer/TokenInteraction"
 
 	"Kaban/iternal/InfrastructureLayer/FileKeyInteration"
+	"Kaban/iternal/InfrastructureLayer/FileKeyInteration/fileDataManipulation"
+	"Kaban/iternal/InfrastructureLayer/GrpcInteraction"
+	"Kaban/iternal/InfrastructureLayer/GrpcInteraction/grpcDataManage"
 	"Kaban/iternal/InfrastructureLayer/KeyInteration"
+	"Kaban/iternal/InfrastructureLayer/KeyInteration/Converter"
 	"Kaban/iternal/InfrastructureLayer/RedisInteration"
 	"Kaban/iternal/InfrastructureLayer/TokenInteraction/manageTokensImpl"
 	"Kaban/iternal/InfrastructureLayer/UserInteraction"
@@ -59,16 +64,26 @@ func main() {
 	}
 	InfoMange := FileKeyInteration.FileInfoController{}
 	encryptKey := KeyInteration.EncryptionKey{}
+	GrpcConn := GrpcInteraction.DataSend{}
+	converterKey := Converter.KeyConverter{}
+	KeyEncryption := Encryption.EncryptStruct{}
+	fileDataControl := fileDataManipulation.FileDataManipulation{}
+
+	GrpcDataManage := grpcDataManage.DataManage{K: grpcDataManage.CollectorPackForGrpcDataManage{converterKey}}
 
 	HandlerPack := &Handlers.HandlerPack{
-		Tokens:    &TokensRealization,
-		Database:  &DatabaseRealization,
-		TokenImpl: manageTokensImplRealization,
-		S3Conn:    &s3Connect,
-		S3Connect: cfg,
-		RedisConn: &RedisStruct,
-		FileInfo:  &InfoMange,
-		Choose:    &encryptKey,
+		Tokens:               &TokensRealization,
+		Database:             &DatabaseRealization,
+		TokenImpl:            manageTokensImplRealization,
+		S3Conn:               &s3Connect,
+		S3Connect:            cfg,
+		RedisConn:            &RedisStruct,
+		FileInfo:             &InfoMange,
+		Choose:               &encryptKey,
+		GrpcConn:             &GrpcConn,
+		GrpcDataMange:        &GrpcDataManage,
+		Encryption:           &KeyEncryption,
+		FileDataManipulation: &fileDataControl,
 	}
 	Sa := Handlers.CollectorPack(*HandlerPack)
 
@@ -201,7 +216,7 @@ func main() {
 
 	//##
 	server := http.Server{
-		Addr:                         ":8080", // I must change on 443
+		Addr:                         ":8081", // I must change on 443
 		Handler:                      router,
 		DisableGeneralOptionsHandler: false,
 		TLSConfig:                    nil,

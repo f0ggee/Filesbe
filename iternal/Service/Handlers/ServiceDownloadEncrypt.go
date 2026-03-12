@@ -18,12 +18,12 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-func (ds *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) error {
+func (sa *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) error {
 
 	ctx, cancel := Uttiltesss2.ContextForDownloading(ctxs)
 	defer cancel()
 
-	fileInfoInBytes, err := ds.S.RedisConn.GetFileInfo(name)
+	fileInfoInBytes, err := sa.S.RedisConn.GetFileInfo(name)
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func (ds *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs contex
 	newPrivateKey := Keys.NewPrivateKey
 	oldPrivateKey := Keys.OldPrivateKey
 	Keys.Mut.RUnlock()
-	aesKey, realFileName, err := ds.S.FileDataManipulation.DecryptFileInfo(fileInfoInBytes, newPrivateKey.Bytes(), oldPrivateKey.Bytes())
+	aesKey, realFileName, err := sa.S.FileDataManipulation.DecryptFileInfo(fileInfoInBytes, newPrivateKey.Bytes(), oldPrivateKey.Bytes())
 	if err != nil {
 		return err
 	}
@@ -46,11 +46,11 @@ func (ds *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs contex
 
 	slog.Info("Func Delete start in download encrypt")
 
-	err = ds.S.RedisConn.DeleteFileInfo(name)
+	err = sa.S.RedisConn.DeleteFileInfo(name)
 	if err != nil {
 		return err
 	}
-	err = ds.S.S3Conn.DeleteFileFromS3(name, Bucket)
+	err = sa.S.S3Conn.DeleteFileFromS3(name, Bucket)
 	if err != nil {
 		return err
 	}

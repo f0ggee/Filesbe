@@ -1,12 +1,18 @@
 package DomainLevel
 
+import "crypto/rsa"
+
 type KeyInteraction interface {
-	ConvertDataToHash([]byte, []byte) []byte
 	CheckSignIncomingKey([]byte, []byte, []byte) error
 	DecryptIncomingKey([]byte, []byte, []byte) []byte
-	JsonConverter(any) ([]byte, error)
 }
 
 type EncryptionKey interface {
 	EncryptAes([]byte, []byte) ([]byte, error)
+}
+
+type ConverterKey interface {
+	JsonConverter(any) ([]byte, error)
+	ConverterToPrivateKey([]byte) (*rsa.PrivateKey, error)
+	ConvertDataToHash([]byte, []byte) []byte
 }

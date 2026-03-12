@@ -7,6 +7,8 @@ import (
 	"log/slog"
 )
 
+type EncryptionKey struct{}
+
 func (*EncryptionKey) CheckSignIncomingKey(sign []byte, hash []byte, PublicKeyMasterServer []byte) error {
 
 	publicKeyMasterServer, err := x509.ParsePKCS1PublicKey(PublicKeyMasterServer)

@@ -6,10 +6,10 @@ import (
 )
 
 type S3Connection struct {
-	Manage DomainLevel.S3Interation
+	Manage DomainLevel.S3Handle
 }
 
-func NewS3Connection(manage DomainLevel.S3Interation) *S3Connection {
+func NewS3Connection(manage DomainLevel.S3Handle) *S3Connection {
 	return &S3Connection{Manage: manage}
 }
 
