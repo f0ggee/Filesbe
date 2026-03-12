@@ -1,4 +1,4 @@
-package FileKeyInteration
+package fileDataManipulation
 
 import (
 	"Kaban/iternal/Dto"
@@ -13,10 +13,12 @@ import (
 	"strings"
 )
 
-func (*FileInfoController) DecryptFileInfo(FileInfoIntoBytes []byte, key []byte, oldKey []byte) ([]byte, string, error) {
+type FileDataManipulation struct{}
+
+func (*FileDataManipulation) DecryptFileInfo(FileInfoIntoBytes []byte, key []byte, oldKey []byte) ([]byte, string, error) {
 	keyRsa, err := x509.ParsePKCS1PrivateKey(key)
 	if err != nil {
-		slog.Error("Func EncryptData ParsePKCS1PrivateKey fail", err)
+		slog.Error("Func EncryptAes ParsePKCS1PrivateKey fail", err)
 		return nil, "", err
 	}
 	decryptFileInfo, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, keyRsa, FileInfoIntoBytes, nil)
@@ -26,7 +28,7 @@ func (*FileInfoController) DecryptFileInfo(FileInfoIntoBytes []byte, key []byte,
 		slog.Error("Key is old")
 		keyRsaOld, err := x509.ParsePKCS1PrivateKey(oldKey)
 		if err != nil {
-			slog.Error("Func EncryptData ParsePKCS1PrivateKey fail", err)
+			slog.Error("Func EncryptAes ParsePKCS1PrivateKey fail", err)
 			return nil, "", err
 		}
 		decryptFileInfo, err = rsa.DecryptOAEP(sha256.New(), rand.Reader, keyRsaOld, FileInfoIntoBytes, nil)

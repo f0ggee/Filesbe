@@ -1,6 +1,6 @@
 package DomainLevel
 
-type RedisInteration interface {
+type RedisInteraction interface {
 	WriteData(string, []byte) error
 	ChekIsStartDownload(string) bool
 	SetIstartDonwload(string) error

@@ -6,7 +6,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type ManageTokens interface {
+type ManageAuthTokens interface {
 	GenerateJWT(jwt.Claims) (string, error)
 	GenerateRT(jwt.Claims) (string, error)
 	TokenDenyMapChecker(string) bool
@@ -15,6 +15,6 @@ type ManageTokens interface {
 	DeleteAndSaveToken(string, string)
 }
 
-type ManageTokensImpl interface {
+type ManageAuthTokensImpl interface {
 	CollectDataForTokens(int) Dto.JwtCustomStruct
 }

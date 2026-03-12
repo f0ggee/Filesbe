@@ -19,13 +19,13 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-func (d *HandlerPackCollect) DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext context.Context) (error, string) {
+func (sa *HandlerPackCollect) DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext context.Context) (error, string) {
 
 	slog.Info("Func DownloadWithNonEncrypt starts")
 	ctx, cancel := Uttiltesss2.ContextForDownloading(IncomeContext)
 	defer cancel()
 
-	fileNameInBytes, err := d.S.RedisConn.GetFileInfo(name)
+	fileNameInBytes, err := sa.S.RedisConn.GetFileInfo(name)
 	if err != nil {
 		return err, ""
 	}

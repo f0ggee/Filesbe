@@ -1,6 +1,6 @@
 package DomainLevel
 
-type FileInfoInteraction interface {
+type FileInfoManipulation interface {
 	ConvertToBytesFileInfo(string, []byte) ([]byte, error) //keep it
 	GetRealNameFile(string) string                         // Keep it
 	ProcessingFileParameters(string) (string, error)       //keep it 0
@@ -8,7 +8,7 @@ type FileInfoInteraction interface {
 	FindFormatOfFile(string) string
 	SayHi() string
 }
-type FileInfoDataManipulation interface {
+type FileDataManipulation interface {
 	EncryptData([]byte, []byte) ([]byte, error)
 	DecryptFileInfo([]byte, []byte, []byte) ([]byte, string, error)
 }

@@ -30,7 +30,7 @@ func (sa *HandlerPackCollect) SwapKeys() bool {
 		return false
 	}
 
-	hashFromData := memguard.NewBufferFromBytes(sa.S.Choose.ConvertDataToHash(plaintext, aesKey))
+	hashFromData := memguard.NewBufferFromBytes(sa.S.ConverterKey.ConvertDataToHash(plaintext, aesKey))
 	if hashFromData == nil {
 		return false
 	}

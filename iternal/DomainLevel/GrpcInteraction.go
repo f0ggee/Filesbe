@@ -1,5 +1,11 @@
 package DomainLevel
 
 type GrpcInteraction interface {
-	SendData([]byte) ([]byte, error)
+	SendRequestGrpc([]byte) ([]byte, error)
+	SayHi() string
+}
+
+type GrpcDataManage interface {
+	GenerateSignature(message []byte, key []byte) ([]byte, error)
+	SayHI() string
 }
