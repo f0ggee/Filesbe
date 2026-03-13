@@ -11,8 +11,9 @@ type EncryptionKey interface {
 	EncryptAes([]byte, []byte) ([]byte, error)
 }
 
-type ConverterKey interface {
+type Converter interface {
 	JsonConverter(any) ([]byte, error)
 	ConverterToPrivateKey([]byte) (*rsa.PrivateKey, error)
+	ConverterToPublicKey([]byte) (*rsa.PublicKey, error)
 	ConvertDataToHash([]byte, []byte) []byte
 }

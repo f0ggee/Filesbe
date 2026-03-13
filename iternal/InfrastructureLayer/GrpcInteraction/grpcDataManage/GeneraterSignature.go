@@ -9,7 +9,7 @@ import (
 )
 
 type CollectorPackForGrpcDataManage struct {
-	Keys DomainLevel.ConverterKey
+	Keys DomainLevel.Converter
 }
 type DataManage struct {
 	K CollectorPackForGrpcDataManage

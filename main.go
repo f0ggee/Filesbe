@@ -84,6 +84,7 @@ func main() {
 		GrpcDataMange:        &GrpcDataManage,
 		Encryption:           &KeyEncryption,
 		FileDataManipulation: &fileDataControl,
+		ConverterKey:         &converterKey,
 	}
 	Sa := Handlers.CollectorPack(*HandlerPack)
 
@@ -216,7 +217,7 @@ func main() {
 
 	//##
 	server := http.Server{
-		Addr:                         ":8081", // I must change on 443
+		Addr:                         "localhost:8081", // I must change on 443
 		Handler:                      router,
 		DisableGeneralOptionsHandler: false,
 		TLSConfig:                    nil,

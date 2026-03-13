@@ -16,7 +16,7 @@ type HandlerPack struct {
 	Choose               DomainLevel.KeyInteraction
 	GrpcDataMange        DomainLevel.GrpcDataManage
 	Encryption           DomainLevel.EncryptionKey
-	ConverterKey         DomainLevel.ConverterKey
+	ConverterKey         DomainLevel.Converter
 	FileDataManipulation DomainLevel.FileDataManipulation
 	S3Connect            *s3.Client
 	GrpcConn             DomainLevel.GrpcInteraction

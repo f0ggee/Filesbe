@@ -99,7 +99,17 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 	newPrivateKey := Keys.NewPrivateKey.Data()
 	Keys.Mut.RUnlock()
 
-	EncryptFileInfo, err := sa.S.FileDataManipulation.EncryptData(FileInfoInBytes, newPrivateKey)
+	PubLick, err := sa.S.ConverterKey.ConverterToPublicKey(newPrivateKey)
+	if err != nil {
+		err := writer.CloseWithError(err)
+		if err != nil {
+			slog.Error("Error in file writing", err)
+			return "", err
+		}
+		return "", errors.New("error in file writing")
+	}
+
+	EncryptFileInfo, err := sa.S.FileDataManipulation.EncryptData(FileInfoInBytes, PubLick)
 	if err != nil {
 		slog.Error("Error in file writing", err)
 		return "", err

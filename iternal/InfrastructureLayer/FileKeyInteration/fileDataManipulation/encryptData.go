@@ -4,21 +4,15 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
-	"crypto/x509"
 	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
 )
 
-func (*FileDataManipulation) EncryptData(FileInfoData []byte, Key []byte) ([]byte, error) {
-	keyRsa, err := x509.ParsePKCS1PrivateKey(Key)
-	if err != nil {
-		slog.Error("Func EncryptAes ParsePKCS1PrivateKey fail", err)
-		return nil, err
-	}
+func (*FileDataManipulation) EncryptData(FileInfoData []byte, Key *rsa.PublicKey) ([]byte, error) {
 
-	encryptAesKey, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, &keyRsa.PublicKey, FileInfoData, nil)
+	encryptAesKey, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, Key, FileInfoData, nil)
 
 	switch {
 	case strings.Contains(fmt.Sprint(err), "message too long for RSA key size"):
