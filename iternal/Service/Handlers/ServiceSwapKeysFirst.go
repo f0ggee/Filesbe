@@ -56,7 +56,12 @@ func (sa *HandlerPackCollect) SwapKeyFirst() {
 	}()
 	go func() {
 		defer wg.Done()
-		EncryptedDataAesKey1, err1 := sa.S.FileDataManipulation.EncryptData(AesKey.Data(), ControlPrivateKeyStruct.MasterServerPublicKeyBytes)
+		Key, errConverterKey := sa.S.ConverterKey.ConverterToPublicKey(ControlPrivateKeyStruct.MasterServerPublicKeyBytes)
+		if errConverterKey != nil {
+			chanelForErrors <- errConverterKey
+			return
+		}
+		EncryptedDataAesKey1, err1 := sa.S.FileDataManipulation.EncryptData(AesKey.Data(), Key)
 		if err1 != nil {
 			chanelForErrors <- err1
 			return

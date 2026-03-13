@@ -18,7 +18,7 @@ type FileDataManipulation struct{}
 func (*FileDataManipulation) DecryptFileInfo(FileInfoIntoBytes []byte, key []byte, oldKey []byte) ([]byte, string, error) {
 	keyRsa, err := x509.ParsePKCS1PrivateKey(key)
 	if err != nil {
-		slog.Error("Func EncryptAes ParsePKCS1PrivateKey fail", err)
+		slog.Error("Func DecryptFileInfo ParsePKCS1PrivateKey fail", "Error", err)
 		return nil, "", err
 	}
 	decryptFileInfo, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, keyRsa, FileInfoIntoBytes, nil)

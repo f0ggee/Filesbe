@@ -1,5 +1,7 @@
 package DomainLevel
 
+import "crypto/rsa"
+
 type FileInfoManipulation interface {
 	ConvertToBytesFileInfo(string, []byte) ([]byte, error) //keep it
 	GetRealNameFile(string) string                         // Keep it
@@ -9,6 +11,6 @@ type FileInfoManipulation interface {
 	SayHi() string
 }
 type FileDataManipulation interface {
-	EncryptData([]byte, []byte) ([]byte, error)
+	EncryptData([]byte, *rsa.PublicKey) ([]byte, error)
 	DecryptFileInfo([]byte, []byte, []byte) ([]byte, string, error)
 }

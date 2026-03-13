@@ -11,8 +11,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type DataSend struct {
-}
+type DataSend struct{}
 
 func (s *DataSend) SayHi() string {
 	//TODO implement me
@@ -21,7 +20,7 @@ func (s *DataSend) SayHi() string {
 }
 
 func (s *DataSend) SendRequestGrpc(data []byte) ([]byte, error) {
-	slog.Info("We've started getting data")
+	slog.Info("We started sending data")
 	conn, err := grpc.NewClient("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		slog.Error("Error while creating gRPC connection", "Error", err)
@@ -42,7 +41,7 @@ func (s *DataSend) SendRequestGrpc(data []byte) ([]byte, error) {
 	}
 
 	if OutputData.Error != nil {
-		slog.Error("Error while sending data", "Error", OutputData.Error)
+		slog.Error("we got the error ", "Error", OutputData.Error)
 		return nil, err
 	}
 
