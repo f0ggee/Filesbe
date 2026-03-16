@@ -90,5 +90,6 @@ func (sa *HandlerPackCollect) SwapKeyFirst() {
 		slog.Error("Error while SendRequestGrpc", "err", err)
 		return
 	}
+
 	fmt.Println(OutputData)
 }

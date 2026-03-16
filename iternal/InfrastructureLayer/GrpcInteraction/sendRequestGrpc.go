@@ -1,10 +1,9 @@
 package GrpcInteraction
 
 import (
+	pb "Kaban/iternal/InfrastructureLayer/GrpcInteraction/protoFiles"
 	"context"
 	"time"
-
-	pb "Kaban/iternal/InfrastructureLayer/GrpcInteraction/protoFiles"
 
 	"golang.org/x/exp/slog"
 	"google.golang.org/grpc"
@@ -21,7 +20,7 @@ func (s *DataSend) SayHi() string {
 
 func (s *DataSend) SendRequestGrpc(data []byte) ([]byte, error) {
 	slog.Info("We started sending data")
-	conn, err := grpc.NewClient("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("localhost:8081", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		slog.Error("Error while creating gRPC connection", "Error", err)
 		return nil, err
@@ -29,9 +28,8 @@ func (s *DataSend) SendRequestGrpc(data []byte) ([]byte, error) {
 
 	defer conn.Close()
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-
 	clientRequest := pb.NewSendingGettingClient(conn)
 
 	OutputData, err := clientRequest.GettingNewKey(ctx, &pb.InputSendData{SendData: data})
