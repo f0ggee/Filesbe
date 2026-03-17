@@ -1,10 +1,15 @@
 package DomainLevel
 
-import "crypto/rsa"
+import (
+	"crypto/rsa"
+
+	"github.com/awnumar/memguard"
+)
 
 type KeyInteraction interface {
 	CheckSignIncomingKey([]byte, []byte, []byte) error
-	DecryptIncomingKey([]byte, []byte, []byte) []byte
+	DecryptPacket([]byte, []byte) *memguard.LockedBuffer
+	DecryptAesKey([]byte, []byte) ([]byte, error)
 }
 
 type EncryptionKey interface {
