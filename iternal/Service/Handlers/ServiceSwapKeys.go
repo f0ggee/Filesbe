@@ -25,6 +25,8 @@ func (sa *HandlerPackCollect) SwapKeys() bool {
 	Keys.OldPrivateKey.Copy(Keys.NewPrivateKey.Bytes())
 	Keys.NewPrivateKey.Destroy()
 
+	Keys.Mut.Unlock()
+
 	aesKey, plaintext, sign, err := sa.S.RedisConn.GetKey()
 	if err != nil {
 		return false
@@ -41,11 +43,18 @@ func (sa *HandlerPackCollect) SwapKeys() bool {
 		slog.Error("Error checkSignIncomingKey", "Error", err.Error())
 		return false
 	}
-	NewRsaKey := memguard.NewBufferFromBytes(sa.S.Choose.DecryptIncomingKey(aesKey, plaintext, ControlPrivateKeyStruct.OurPrivateKeyIntoBytes))
+	AesKeyDecrypted, err2 := sa.S.Choose.DecryptAesKey(aesKey, ControlPrivateKeyStruct.OurPrivateKeyIntoBytes)
+	if err2 != nil {
+		return false
+	}
+
+	NewRsaKey := (sa.S.Choose.DecryptPacket(AesKeyDecrypted, plaintext))
 	if NewRsaKey == nil {
 		return false
 	}
 	defer NewRsaKey.Destroy()
+
+	Keys.Mut.Lock()
 	Keys.NewPrivateKey = memguard.NewBuffer(NewRsaKey.Size())
 	Keys.NewPrivateKey.Copy(NewRsaKey.Bytes())
 	slog.Info("SwapKeys", "End", true)

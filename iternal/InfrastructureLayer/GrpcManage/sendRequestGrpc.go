@@ -1,7 +1,7 @@
-package GrpcInteraction
+package GrpcManage
 
 import (
-	pb "Kaban/iternal/InfrastructureLayer/GrpcInteraction/protoFiles"
+	pb "Kaban/iternal/InfrastructureLayer/GrpcManage/protoFiles"
 	"context"
 	"time"
 

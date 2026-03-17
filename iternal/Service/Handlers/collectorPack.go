@@ -20,6 +20,7 @@ type HandlerPack struct {
 	FileDataManipulation DomainLevel.FileDataManipulation
 	S3Connect            *s3.Client
 	GrpcConn             DomainLevel.GrpcInteraction
+	Checking             DomainLevel.PacketChecker
 }
 
 type HandlerPackCollect struct {

@@ -3,7 +3,6 @@ package Handlers
 import (
 	"Kaban/iternal/Dto"
 	"crypto/rand"
-	"fmt"
 	"log/slog"
 	"os"
 	"sync"
@@ -12,13 +11,13 @@ import (
 	"github.com/awnumar/memguard"
 )
 
-func (sa *HandlerPackCollect) SwapKeyFirst() {
+func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 
 	slog.Info("SwapKeyFirst", "start", true)
 
 	SignedServerName, err := sa.S.GrpcDataMange.GenerateSignature([]byte(os.Getenv("serverName")), ControlPrivateKeyStruct.OurPrivateKeyIntoBytes)
 	if err != nil {
-		return
+		return 0
 	}
 	GrpcStruct := Dto.GrpcDataLook{
 		Time:             time.Now(),
@@ -34,7 +33,7 @@ func (sa *HandlerPackCollect) SwapKeyFirst() {
 
 	ConvertedData, err := sa.S.ConverterKey.JsonConverter(GrpcStruct)
 	if err != nil {
-		return
+		return 0
 	}
 
 	EncryptedData := []byte(nil)
@@ -73,7 +72,7 @@ func (sa *HandlerPackCollect) SwapKeyFirst() {
 	close(chanelForErrors)
 	for err := range chanelForErrors {
 		if err != nil {
-			return
+			return 0
 		}
 	}
 
@@ -82,14 +81,28 @@ func (sa *HandlerPackCollect) SwapKeyFirst() {
 		CipherData: EncryptedData,
 	})
 	if err != nil {
-		return
+		return 0
 	}
 
-	OutputData, err := sa.S.GrpcConn.SendRequestGrpc(convertedDataGrpcDataLooks)
-	if err != nil {
-		slog.Error("Error while SendRequestGrpc", "err", err)
-		return
-	}
+	attempts := 0
 
-	fmt.Println(OutputData)
+	for {
+		if attempts > 3 {
+			return 12 * time.Hour
+		}
+		OutputData, err := sa.S.GrpcConn.SendRequestGrpc(convertedDataGrpcDataLooks)
+		if err != nil {
+			slog.Error("Error while SendRequestGrpc", "err", err)
+			return 12 * time.Hour
+		}
+		TimeForSwapping, err := sa.S.Checking.Handle(OutputData)
+		if err != nil {
+			attempts++
+			time.Sleep(time.Second)
+		}
+		if TimeForSwapping == 0 {
+			return 12 * time.Hour
+		}
+		return TimeForSwapping
+	}
 }

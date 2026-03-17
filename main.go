@@ -2,6 +2,7 @@ package main
 
 import (
 	Controller2 "Kaban/iternal/Controller"
+	"Kaban/iternal/InfrastructureLayer/GrpcManage/PacketChecking"
 	"Kaban/iternal/InfrastructureLayer/KeyInteration/Encryption"
 	"Kaban/iternal/InfrastructureLayer/s3Interation"
 	"Kaban/iternal/Service/Connect_to_BD"
@@ -16,8 +17,8 @@ import (
 
 	"Kaban/iternal/InfrastructureLayer/FileKeyInteration"
 	"Kaban/iternal/InfrastructureLayer/FileKeyInteration/fileDataManipulation"
-	"Kaban/iternal/InfrastructureLayer/GrpcInteraction"
-	"Kaban/iternal/InfrastructureLayer/GrpcInteraction/grpcDataManage"
+	"Kaban/iternal/InfrastructureLayer/GrpcManage"
+	"Kaban/iternal/InfrastructureLayer/GrpcManage/grpcDataManage"
 	"Kaban/iternal/InfrastructureLayer/KeyInteration"
 	"Kaban/iternal/InfrastructureLayer/KeyInteration/Converter"
 	"Kaban/iternal/InfrastructureLayer/RedisInteration"
@@ -27,9 +28,6 @@ import (
 	"github.com/awnumar/memguard"
 	"github.com/gorilla/mux"
 )
-
-//TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
 
 func main() {
 	handler := slog.New(slog.NewTextHandler(os.Stdout, nil))
@@ -64,10 +62,13 @@ func main() {
 	}
 	InfoMange := FileKeyInteration.FileInfoController{}
 	encryptKey := KeyInteration.EncryptionKey{}
-	GrpcConn := GrpcInteraction.DataSend{}
+	GrpcConn := GrpcManage.DataSend{}
 	converterKey := Converter.KeyConverter{}
 	KeyEncryption := Encryption.EncryptStruct{}
 	fileDataControl := fileDataManipulation.FileDataManipulation{}
+	Checking := PacketChecking.Validating{
+		Decrypter: &encryptKey,
+	}
 
 	GrpcDataManage := grpcDataManage.DataManage{K: grpcDataManage.CollectorPackForGrpcDataManage{converterKey}}
 
@@ -85,6 +86,7 @@ func main() {
 		Encryption:           &KeyEncryption,
 		FileDataManipulation: &fileDataControl,
 		ConverterKey:         &converterKey,
+		Checking:             &Checking,
 	}
 	Sa := Handlers.CollectorPack(*HandlerPack)
 
@@ -119,11 +121,10 @@ func main() {
 		}
 
 	})
+	TimeSwaping := Sa.SwapKeyFirst()
 
-	ticker := time.NewTicker(12 * time.Hour)
+	ticker := time.NewTicker(time.Until(time.Now().Add(TimeSwaping)))
 	defer ticker.Stop()
-
-	Sa.SwapKeyFirst()
 
 	go func() {
 		for t := range ticker.C {
