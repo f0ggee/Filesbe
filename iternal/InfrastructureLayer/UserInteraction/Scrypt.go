@@ -10,7 +10,6 @@ import (
 )
 
 type DB struct {
-	Db *pgxpool.Pool
 }
 
 func (db *DB) GeTScrypt(ctx context.Context, UnicId int) (string, error) {

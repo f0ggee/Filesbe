@@ -6,10 +6,10 @@ import (
 )
 
 type Generates struct {
-	Tokens DomainLevel.ManageAuthTokens
+	Tokens DomainLevel.ManageTokens
 }
 
-func NewGenerateTokenEr(Re DomainLevel.ManageAuthTokens) *Generates {
+func NewGenerateTokenEr(Re DomainLevel.ManageTokens) *Generates {
 	return &Generates{Tokens: Re}
 }
 

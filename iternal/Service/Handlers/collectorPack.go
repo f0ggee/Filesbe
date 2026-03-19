@@ -7,19 +7,19 @@ import (
 )
 
 type HandlerPack struct {
-	Tokens               DomainLevel.ManageAuthTokens
-	Database             DomainLevel.UserServer
+	Tokens               DomainLevel.ManageTokens
+	Database             DomainLevel.ReadDb
 	TokenImpl            DomainLevel.ManageAuthTokensImpl
-	RedisConn            DomainLevel.RedisInteraction
+	RedisConn            DomainLevel.DeleterRedis
 	S3Conn               DomainLevel.S3Handle
 	FileInfo             DomainLevel.FileInfoManipulation
 	Choose               DomainLevel.KeyInteraction
 	GrpcDataMange        DomainLevel.GrpcDataManage
-	Encryption           DomainLevel.EncryptionKey
+	Encryption           DomainLevel.Encryption
 	ConverterKey         DomainLevel.Converter
 	FileDataManipulation DomainLevel.FileDataManipulation
 	S3Connect            *s3.Client
-	GrpcConn             DomainLevel.GrpcInteraction
+	GrpcConn             DomainLevel.SendingRequestGrpc
 	Checking             DomainLevel.PacketChecker
 }
 

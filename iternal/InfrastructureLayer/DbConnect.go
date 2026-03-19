@@ -6,10 +6,10 @@ import (
 )
 
 type ConnectToBd struct {
-	Re DomainLevel.UserServer
+	Re DomainLevel.ReadDb
 }
 
-func NewUserService(Rep DomainLevel.UserServer) *ConnectToBd {
+func NewUserService(Rep DomainLevel.ReadDb) *ConnectToBd {
 	return &ConnectToBd{Re: Rep}
 }
 

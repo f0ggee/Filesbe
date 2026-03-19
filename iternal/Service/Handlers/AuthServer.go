@@ -4,7 +4,7 @@ import "log/slog"
 
 func (sa *HandlerPackCollect) Auth(Rt string, JwtToken string) (string, error) {
 
-	//ok := manageToken.Tokens.TokenDenyMapChecker(Rt)
+	//ok := manageToken.Tokens.DenyMapChecker(Rt)
 
 	//if ok {
 	//	return "", "", errors.New("token Deny")

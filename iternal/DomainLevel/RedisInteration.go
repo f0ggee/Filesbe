@@ -1,10 +1,19 @@
 package DomainLevel
 
-type RedisInteraction interface {
-	WriteData(string, []byte) error
-	ChekIsStartDownload(string) bool
-	SetIstartDonwload(string) error
-	GetFileInfo(string) ([]byte, error)
+type DeleterRedis interface {
 	DeleteFileInfo(string) error
+}
+
+type WritingRedis interface {
+	WriteData(string, []byte) error
+	EnableDownloadingParameter(string) error
+}
+
+type RedisChecker interface {
+	ChekIsStartDownload(string) bool
+}
+
+type ReadingRedis interface {
 	GetKey() ([]byte, []byte, []byte, error)
+	GetFileInfo(string) ([]byte, error)
 }

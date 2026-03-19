@@ -8,9 +8,7 @@ import (
 	"log/slog"
 )
 
-type EncryptStruct struct{}
-
-func (e *EncryptStruct) EncryptAes(AesKey []byte, Data []byte) ([]byte, error) {
+func (e *Encrypter) EncryptAes(AesKey []byte, Data []byte) ([]byte, error) {
 	AesCipher, err := aes.NewCipher(AesKey)
 	if err != nil {
 		slog.Error("Error creating new AesCipher", "Error", err.Error())
