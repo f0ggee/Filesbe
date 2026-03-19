@@ -6,10 +6,10 @@ import (
 )
 
 type RedisInterationLayer struct {
-	Ras DomainLevel.RedisInteraction
+	Ras DomainLevel.DeleterRedis
 }
 
-func NewRedisInterationLayer(rep DomainLevel.RedisInteraction) *RedisInterationLayer {
+func NewRedisInterationLayer(rep DomainLevel.DeleterRedis) *RedisInterationLayer {
 	return &RedisInterationLayer{Ras: rep}
 }
 

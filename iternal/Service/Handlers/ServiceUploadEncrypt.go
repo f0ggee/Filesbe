@@ -93,7 +93,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 	}
 
 	shortNameForFile := sa.S.FileInfo.GenerateShortFileName()
-	//shortNameForFile := apps.Key.GenerateShortFileName()
+	//shortNameForFile := apps.Key.GenerateShortName()
 
 	Keys.Mut.RLock()
 	newPrivateKey := Keys.NewPrivateKey.Data()

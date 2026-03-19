@@ -6,19 +6,20 @@ import (
 	"github.com/awnumar/memguard"
 )
 
-type KeyInteraction interface {
-	CheckSignIncomingKey([]byte, []byte, []byte) error
+type Decryption interface {
 	DecryptPacket([]byte, []byte) *memguard.LockedBuffer
 	DecryptAesKey([]byte, []byte) ([]byte, error)
+	DecryptFileInfo([]byte, []byte, []byte) ([]byte, string, error)
 }
 
-type EncryptionKey interface {
+type CryptoValidating interface {
+	CheckSignKey([]byte, []byte, []byte) error
+}
+type CryptoGenerating interface {
+	GenerateShortName() string
+	GenerateSignature(message []byte, key []byte) ([]byte, error)
+}
+type Encryption interface {
 	EncryptAes([]byte, []byte) ([]byte, error)
-}
-
-type Converter interface {
-	JsonConverter(any) ([]byte, error)
-	ConverterToPrivateKey([]byte) (*rsa.PrivateKey, error)
-	ConverterToPublicKey([]byte) (*rsa.PublicKey, error)
-	ConvertDataToHash([]byte, []byte) []byte
+	EncryptFileInfo([]byte, *rsa.PublicKey) ([]byte, error)
 }

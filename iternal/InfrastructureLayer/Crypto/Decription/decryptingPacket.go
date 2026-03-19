@@ -1,4 +1,4 @@
-package KeyInteration
+package Decription
 
 import (
 	"crypto/aes"
@@ -8,7 +8,7 @@ import (
 	"github.com/awnumar/memguard"
 )
 
-func (*EncryptionKey) DecryptPacket(aesKey []byte, plainText []byte) *memguard.LockedBuffer {
+func (d DecryptionData) DecryptPacket(aesKey []byte, plainText []byte) *memguard.LockedBuffer {
 	aesBlock, err := aes.NewCipher(aesKey)
 	if err != nil {
 		slog.Error("Error create new aes block", "Error", err.Error())

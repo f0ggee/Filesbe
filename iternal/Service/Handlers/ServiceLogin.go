@@ -4,29 +4,41 @@ import (
 	Dto2 "Kaban/iternal/Dto"
 	"Kaban/iternal/Service/Helpers"
 	"context"
+	"crypto/rand"
 	"log/slog"
+	"time"
 
+	"Kaban/iternal/Dto"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func PasswordCheck(password string, hashOfPassword string) error {
-	slog.Info("Func LoginCheck starts")
+	slog.Info("Password checking starts")
 	err := bcrypt.CompareHashAndPassword([]byte(hashOfPassword), []byte(password))
 	if err != nil {
-		slog.Error("Err", "err", err)
+		slog.Error("Error while checking the password", "Error", err.Error())
 		return err
 
 	}
-	slog.Info("Func LoginCheck ends")
+	slog.Info("Password ends")
 	return nil
 
 }
 
-//func SetSettingsTest(db string) *InfrastructureLayer2.ConnectToBdTests {
-//	S := &InfrastructureLayer2.DbForTests{DbTest: db}
-//	app := InfrastructureLayer2.NewUserServiceTest(S)
-//	return app
-//}
+func CollectData(id int) Dto.JwtCustomStruct {
+	ds := Dto.JwtCustomStruct{
+		UserID: id,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    "Kabaner",
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			ID:        rand.Text(),
+		},
+	}
+
+	return ds
+}
 
 func (sa *HandlerPackCollect) LoginService(s Dto2.User, ctx context.Context) (string, string, error) {
 
@@ -38,8 +50,8 @@ func (sa *HandlerPackCollect) LoginService(s Dto2.User, ctx context.Context) (st
 	ctx, cancel := Helpers.ContextForDownloading(ctx)
 	defer cancel()
 
-	Id, password, err := sa.S.Database.GetIdPassowrd(s.Email)
-	//Id, password, err := app.Re.GetIdPassowrd(s.Email)
+	Id, password, err := sa.S.Database.GetIdPassword(s.Email)
+	//Id, password, err := app.Re.GetIdPassword(s.Email)
 	if err != nil {
 		slog.Error("Error in GetIdPassword", "error", err)
 		return "", "", err
@@ -51,7 +63,7 @@ func (sa *HandlerPackCollect) LoginService(s Dto2.User, ctx context.Context) (st
 		return "", "", err
 	}
 
-	DataCollected := sa.S.TokenImpl.CollectDataForTokens(Id)
+	DataCollected := CollectData(Id)
 
 	RefreshToken, err := sa.S.Tokens.GenerateRT(DataCollected)
 	if err != nil {

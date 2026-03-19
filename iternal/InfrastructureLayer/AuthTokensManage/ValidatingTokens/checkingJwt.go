@@ -1,4 +1,4 @@
-package TokenInteraction
+package ValidatingTokens
 
 import (
 	"Kaban/iternal/Dto"
@@ -9,8 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func (A *ControlTokens) CheckLifeJwt(JWT string) (*jwt.Token, error) {
-
+func (c Checking) CheckJwt(JWT string) (*jwt.Token, error) {
 	slog.Info("JWT TOKEN", "JWT", JWT)
 	key := []byte(os.Getenv("KEYFORJWT"))
 	JwtToken, err := jwt.ParseWithClaims(JWT, &Dto.JwtCustomStruct{}, func(token *jwt.Token) (interface{}, error) {
@@ -25,5 +24,4 @@ func (A *ControlTokens) CheckLifeJwt(JWT string) (*jwt.Token, error) {
 	}
 
 	return JwtToken, nil
-
 }
