@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-func (k Converter) JsonConverter(a any) ([]byte, error) {
+func (k ConvertingData) JsonConverter(a any) ([]byte, error) {
 
 	JsonDataType, err := json.Marshal(&a)
 

@@ -1,11 +1,13 @@
 package DomainLevel
 
+import "context"
+
 type DeleterRedis interface {
 	DeleteFileInfo(string) error
 }
 
 type WritingRedis interface {
-	WriteData(string, []byte) error
+	WriteData(string, []byte, context.Context) error
 	EnableDownloadingParameter(string) error
 }
 
