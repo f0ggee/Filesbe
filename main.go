@@ -1,76 +1,93 @@
 package main
 
 import (
-	Controller2 "Kaban/iternal/Controller"
-	"Kaban/iternal/InfrastructureLayer/GrpcManage/PacketChecking"
-	"Kaban/iternal/InfrastructureLayer/KeyInteration/Encryption"
-	"Kaban/iternal/InfrastructureLayer/s3Interation"
-	"Kaban/iternal/Service/Connect_to_BD"
-	"Kaban/iternal/Service/Handlers"
-	"Kaban/iternal/Service/Helpers"
+	Controller2 "Kaban/internal/Controller"
+	"Kaban/internal/InfrastructureLayer/DatabaseControl"
+
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ControllingTokens"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage/Generating"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens"
+	CryptoChecking "Kaban/internal/InfrastructureLayer/Crypto/Checking"
+	"Kaban/internal/InfrastructureLayer/Crypto/Decription"
+	"Kaban/internal/InfrastructureLayer/Crypto/Encryption"
+	CryptoGenerater "Kaban/internal/InfrastructureLayer/Crypto/Generating"
+	"Kaban/internal/InfrastructureLayer/DataConverting"
+	"Kaban/internal/InfrastructureLayer/DatabaseControl/Checking"
+	"Kaban/internal/InfrastructureLayer/DatabaseControl/Reading"
+	"Kaban/internal/InfrastructureLayer/DatabaseControl/Writinig"
+	"Kaban/internal/InfrastructureLayer/FileKeyInteration/HandleFileInfo"
+	"Kaban/internal/InfrastructureLayer/FileKeyInteration/HandlerFile"
+	"Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests"
+	"Kaban/internal/InfrastructureLayer/GrpcManage/PacketChecking"
+	"Kaban/internal/InfrastructureLayer/GrpcManage/SendingRequest"
+	"Kaban/internal/InfrastructureLayer/RedisInteration"
+	"Kaban/internal/InfrastructureLayer/RedisInteration/DeletingRedis"
+	"Kaban/internal/InfrastructureLayer/RedisInteration/ReadingRedis"
+	"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
+	"Kaban/internal/InfrastructureLayer/RedisInteration/WritingRedis"
+	"Kaban/internal/InfrastructureLayer/s3Interation/DeleterS3"
+	"Kaban/internal/Service/Handlers"
+	"Kaban/internal/Service/Helpers"
+	"github.com/awnumar/memguard"
+	"github.com/gorilla/mux"
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
-
-	"Kaban/iternal/InfrastructureLayer/TokenInteraction"
-
-	"Kaban/iternal/InfrastructureLayer/FileKeyInteration"
-	"Kaban/iternal/InfrastructureLayer/FileKeyInteration/fileDataManipulation"
-	"Kaban/iternal/InfrastructureLayer/GrpcManage"
-	"Kaban/iternal/InfrastructureLayer/GrpcManage/grpcDataManage"
-	"Kaban/iternal/InfrastructureLayer/KeyInteration"
-	"Kaban/iternal/InfrastructureLayer/KeyInteration/Converter"
-	"Kaban/iternal/InfrastructureLayer/RedisInteration"
-	"Kaban/iternal/InfrastructureLayer/TokenInteraction/manageTokensImpl"
-	"Kaban/iternal/InfrastructureLayer/UserInteraction"
-
-	"github.com/awnumar/memguard"
-	"github.com/gorilla/mux"
 )
 
 func main() {
-	handler := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	child := handler.With(
-		"Time", time.Now(),
-	)
-
-	slog.SetDefault(child)
+	SettingSlog()
 
 	memguard.CatchInterrupt()
 	defer memguard.Purge()
 
-	db, err := Connect_to_BD.Connect()
+	db, err := DatabaseControl.Connect()
 	if err != nil {
 		slog.Error("Err_from_register 1 ", err)
 		return
 	}
+	defer db.Close()
 	cfg, err := Helpers.S3Helper()
 	if err != nil {
 		return
 	}
-
 	redisConn := RedisInteration.ConnectToRedis()
 	defer redisConn.Close()
 
-	TokensRealization := TokenInteraction.ControlTokens{A: nil}
-	DatabaseRealization := UserInteraction.DB{Db: db}
-	manageTokensImplRealization := manageTokensImpl.ManageTokensImpl{}
-	s3Connect := s3Interation.ConntrolerForS3{}
-	RedisStruct := RedisInteration.RedisInterationLayer{
-		Re: redisConn,
-	}
-	InfoMange := FileKeyInteration.FileInfoController{}
-	encryptKey := KeyInteration.EncryptionKey{}
-	GrpcConn := GrpcManage.DataSend{}
-	converterKey := Converter.KeyConverter{}
-	KeyEncryption := Encryption.EncryptStruct{}
-	fileDataControl := fileDataManipulation.FileDataManipulation{}
-	Checking := PacketChecking.Validating{
-		Decrypter: &encryptKey,
+	ManagingAuthTokens := ControllingTokens.ManageTokens{}
+	GeneratingAuthTokens := Generating.CreatingTokens{}
+	CheckingAuthToken := ValidatingTokens.Checking{}
+
+	CryptoEncryption := Encryption.Encrypter{}
+	CryptoDecryption := Decription.DecryptionData{}
+	CryptoGenerate := CryptoGenerater.Generating{}
+	CryptoCheck := CryptoChecking.Checking{}
+
+	DbCheck := Checking.CheckerDb{Db: db}
+	DbReading := Reading.Read{Db: db}
+	DbWriting := Writinig.Writer{Db: db}
+
+	ConverterJson := DataConverting.Converter{}
+
+	ProcessedFile := HandlerFile.ProcessingFile{}
+	ProcessedFileInfo := HandleFileInfo.ProcessingFileInfo{}
+
+	GrpcHandlingReqests := HandlingRequests.HandlerGrpcRequest{
+		CryptoEncrypt:  &CryptoEncryption,
+		CryptoDecrypt:  CryptoDecryption,
+		CryptoValidate: &CryptoCheck,
 	}
 
-	GrpcDataManage := grpcDataManage.DataManage{K: grpcDataManage.CollectorPackForGrpcDataManage{converterKey}}
+	PacketValidate := PacketChecking.PacketValidating{}
+	SendingGrcp := SendingRequest.SenderRequests{}
+
+	DeleterRds := DeletingRedis.DeleterRedis{Re: redisConn}
+	ReaderRedis := ReadingRedis.RedisReader{Re: redisConn}
+	WriterRedis := WritingRedis.Writing{Re: redisConn}
+	CheckerRedis := RedisChecking.ValidationRedis{Re: redisConn}
+
+	S3Delter := DeleterS3.DeleterS3{Conf: cfg}
 
 	HandlerPack := &Handlers.HandlerPack{
 		Tokens:               &TokensRealization,
@@ -242,4 +259,13 @@ func main() {
 
 	}
 
+}
+
+func SettingSlog() {
+	handler := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	child := handler.With(
+		"Time", time.Now(),
+	)
+
+	slog.SetDefault(child)
 }
