@@ -58,28 +58,25 @@ func main() {
 	ManagingAuthTokens := ControllingTokens.ManageTokens{}
 	GeneratingAuthTokens := Generating.CreatingTokens{}
 	CheckingAuthToken := ValidatingTokens.Checking{}
-
 	CryptoEncryption := Encryption.Encrypter{}
 	CryptoDecryption := Decription.DecryptionData{}
 	CryptoGenerate := CryptoGenerater.Generating{}
 	CryptoCheck := CryptoChecking.Checking{}
-
 	DbCheck := Checking.CheckerDb{Db: db}
 	DbReading := Reading.Read{Db: db}
 	DbWriting := Writinig.Writer{Db: db}
-
-	ConverterJson := DataConverting.Converter{}
-
+	ConverterJson := DataConverting.ConvertingData{}
 	ProcessedFile := HandlerFile.ProcessingFile{}
 	ProcessedFileInfo := HandleFileInfo.ProcessingFileInfo{}
+	PacketValidate := PacketChecking.PacketValidating{}
 
-	GrpcHandlingReqests := HandlingRequests.HandlerGrpcRequest{
-		CryptoEncrypt:  &CryptoEncryption,
-		CryptoDecrypt:  CryptoDecryption,
-		CryptoValidate: &CryptoCheck,
+	GrpcHandlingRequests := HandlingRequests.HandlerGrpcRequest{
+		CryptoEncrypt:    &CryptoEncryption,
+		CryptoDecrypt:    CryptoDecryption,
+		CryptoValidate:   &CryptoCheck,
+		ValidationPacket: PacketValidate,
 	}
 
-	PacketValidate := PacketChecking.PacketValidating{}
 	SendingGrcp := SendingRequest.SenderRequests{}
 
 	DeleterRds := DeletingRedis.DeleterRedis{Re: redisConn}
@@ -87,41 +84,49 @@ func main() {
 	WriterRedis := WritingRedis.Writing{Re: redisConn}
 	CheckerRedis := RedisChecking.ValidationRedis{Re: redisConn}
 
-	S3Delter := DeleterS3.DeleterS3{Conf: cfg}
+	S3Deleter := DeleterS3.DeleterS3{Conf: cfg}
 
-	HandlerPack := &Handlers.HandlerPack{
-		Tokens:               &TokensRealization,
-		Database:             &DatabaseRealization,
-		TokenImpl:            manageTokensImplRealization,
-		S3Conn:               &s3Connect,
-		S3Connect:            cfg,
-		RedisConn:            &RedisStruct,
-		FileInfo:             &InfoMange,
-		Choose:               &encryptKey,
-		GrpcConn:             &GrpcConn,
-		GrpcDataMange:        &GrpcDataManage,
-		Encryption:           &KeyEncryption,
-		FileDataManipulation: &fileDataControl,
-		ConverterKey:         &converterKey,
-		Checking:             &Checking,
+	HandlerPack := Handlers.HandlerPackCollect{
+		S3: Handlers.S3Controlling{
+			Deleter:   &S3Deleter,
+			S3Connect: cfg,
+		},
+		Crypto: Handlers.HandlerPackCrypto{
+			Validate: &CryptoCheck,
+			Decrypt:  &CryptoDecryption,
+			Encrypt:  &CryptoEncryption,
+			Generate: &CryptoGenerate,
+		},
+		FileInfo: Handlers.HandlerFileManagerPack{
+			FileInfo:     ProcessedFileInfo,
+			FileManaging: ProcessedFile,
+		},
+		AuthTokens: Handlers.HandlerPackAuthTokens{
+			Manage:          ManagingAuthTokens,
+			GeneratingToken: GeneratingAuthTokens,
+		},
+		DatabaseControlling: Handlers.DatabaseControlling{
+			Writer:  &DbWriting,
+			Reader:  &DbReading,
+			Checker: &DbCheck,
+		},
+		RedisControlling: Handlers.RedisControlling{
+			Deleter: &DeleterRds,
+			Reader:  &ReaderRedis,
+			Writer:  &WriterRedis,
+		},
+		Grpc: Handlers.HandlerGrpc{
+			GrpcSendingRequest: &SendingGrcp,
+			ProcessingRequests: GrpcHandlingRequests,
+		},
+		Convert: Handlers.Converter{Converting: ConverterJson},
 	}
-	Sa := Handlers.CollectorPack(*HandlerPack)
+	Sa := Handlers.NewHandlerPackCollect(HandlerPack.S3, HandlerPack.Crypto, HandlerPack.FileInfo, HandlerPack.AuthTokens, HandlerPack.DatabaseControlling, HandlerPack.RedisControlling, HandlerPack.Grpc, HandlerPack.Convert)
 
+	slog.Info("Starting server", Sa.Crypto.Decrypt.SayHello("EE"))
 	router := mux.NewRouter()
 	newRouter := router.PathPrefix("/").Subrouter()
 	newRouter.Use(Controller2.CheckBots)
-
-	//router = router.MatcherFunc(func(request *http.Request, match *mux.RouteMatch) bool {
-	//	if request.Host != "filesbes.com" {
-	//		return false
-	//	}
-	//	slog.Info(request.Host)
-	//
-	//	return true
-	//}).Subrouter()
-
-	slog.Info("Starting Server", Sa.S.FileInfo.SayHi())
-	//The router will return  static files
 	StaticFiles := router.PathPrefix("/Fronted").Subrouter()
 
 	router.HandleFunc("/aboutProject", func(writer http.ResponseWriter, request *http.Request) {

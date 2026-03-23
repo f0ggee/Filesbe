@@ -10,6 +10,7 @@ type Decryption interface {
 	DecryptPacket([]byte, []byte) *memguard.LockedBuffer
 	DecryptAesKey([]byte, []byte) ([]byte, error)
 	DecryptFileInfo([]byte, []byte, []byte) ([]byte, string, error)
+	SayHello(string) string
 }
 
 type CryptoValidating interface {
