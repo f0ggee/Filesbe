@@ -1,4 +1,4 @@
 package DataConverting
 
-type Converter struct {
+type ConvertingData struct {
 }

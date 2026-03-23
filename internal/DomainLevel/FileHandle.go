@@ -8,4 +8,5 @@ type HandleFileInfo interface {
 
 type HandleFile interface {
 	FindFormatOfFile(string) string
+	FindBesOptions(int64) (int, int)
 }

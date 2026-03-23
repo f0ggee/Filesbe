@@ -40,9 +40,15 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 	defer PacketData.Destroy()
 
 	PacketInfo := Dto.GrpcIncomingPacketDetails{
-		Sign:   nil,
-		RsaKey: nil,
-		T1:     0,
+		Sign:    nil,
+		RsaKey:  nil,
+		T1:      0,
+		TimeNow: time.Now(),
+	}
+
+	err = h.ValidationPacket.CheckTime(PacketInfo.TimeNow)
+	if err != nil {
+		return 0, err
 	}
 
 	err = json.Unmarshal(PacketData.Bytes(), &PacketInfo)

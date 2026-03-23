@@ -1,11 +1,14 @@
 package Handlers
 
 import (
+	"Kaban/internal/Dto"
 	Uttiltesss2 "Kaban/internal/Service/Helpers"
 	"context"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/x509"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -15,6 +18,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/awnumar/memguard"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
@@ -45,12 +49,6 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 		}
 	}()
 
-	ctx, cancel := Uttiltesss2.Context2(r.Context())
-	if cancel == nil {
-		return "", errors.New("error in file Uploader no encrypt")
-	}
-	defer cancel()
-
 	reader, writer := io.Pipe()
 
 	BesParts, goroutine := Uttiltesss2.FindBest(sizeAndName.Size)
@@ -62,8 +60,8 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 		fmt.Println(sa)
 	}()
 
-	chanelForAesKey := make(chan []byte, 100)
-
+	chanelForAesKey := make(chan memguard.LockedBuffer)
+	AesKey := memguard.NewBuffer(0)
 	go func() {
 		defer func(writer *io.PipeWriter) {
 			err := writer.Close()
@@ -72,7 +70,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 				return
 			}
 		}(writer)
-		err = Encrypt(file, writer, chanelForAesKey)
+		err = sa.Encrypt(file, writer, chanelForAesKey)
 		if err != nil {
 			err := writer.CloseWithError(err)
 			if err != nil {
@@ -83,45 +81,53 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 		}
 	}()
 
-	AesKey := encryptKey(chanelForAesKey)
+	for v := range chanelForAesKey {
+		AesKey = memguard.NewBuffer(v.Size())
+		AesKey.Copy(v.Bytes())
+		break
+	}
 
-	FileInfoInBytes, err := sa.S.FileInfo.ConvertToBytesFileInfo(sizeAndName.Filename, AesKey)
+	defer AesKey.Destroy()
+
+	FileInfoInBytes, err := sa.Convert.Converting.JsonConverter(Dto.FileLabelsBytes{
+		FileName: sizeAndName.Filename,
+		AesKey:   hex.EncodeToString(AesKey.Bytes()),
+	})
+
 	if err != nil {
 		err := writer.CloseWithError(err)
 		slog.Error("Error in file writing", err)
 		return "", err
 	}
 
-	shortNameForFile := sa.S.FileInfo.GenerateShortFileName()
-	//shortNameForFile := apps.Key.GenerateShortName()
+	shortNameForFile := sa.Crypto.Generate.GenerateShortName()
 
 	Keys.Mut.RLock()
 	newPrivateKey := Keys.NewPrivateKey.Data()
 	Keys.Mut.RUnlock()
 
-	PubLick, err := sa.S.ConverterKey.ConverterToPublicKey(newPrivateKey)
+	Public, err := x509.ParsePKCS1PublicKey(newPrivateKey)
 	if err != nil {
 		err := writer.CloseWithError(err)
 		if err != nil {
 			slog.Error("Error in file writing", err)
 			return "", err
 		}
-		return "", errors.New("error in file writing")
 	}
 
-	EncryptFileInfo, err := sa.S.FileDataManipulation.EncryptData(FileInfoInBytes, PubLick)
+	EncryptFileInfo, err := sa.Crypto.Encrypt.EncryptFileInfo(FileInfoInBytes, Public)
 	if err != nil {
 		slog.Error("Error in file writing", err)
 		return "", err
 	}
 
-	FileExtension := sa.S.FileInfo.FindFormatOfFile(sizeAndName.Filename)
-	_, err3 := uploadFileEncrypt(sa.S.S3Connect, BesParts, goroutine, ctx, shortNameForFile, FileExtension, reader)
+	FileExtension := sa.FileInfo.FileManaging.FindFormatOfFile(sizeAndName.Filename)
+	_, err3 := uploadFileEncrypt(sa.S3.S3Connect, BesParts, goroutine, r.Context(), shortNameForFile, FileExtension, reader)
 	if err3 != nil {
 		return "", err3
 	}
 
-	err = sa.S.RedisConn.WriteData(shortNameForFile, EncryptFileInfo)
+	err = sa.RedisControlling.Writer.WriteData(shortNameForFile, EncryptFileInfo, r.Context())
 	if err != nil {
 		err := writer.CloseWithError(err)
 		slog.Error("Error in file writing", err)
@@ -133,7 +139,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 		wg := sync.WaitGroup{}
 
 		defer wg.Done()
-		DownloadingHaveStarted := sa.S.RedisConn.ChekIsStartDownload(shortNameForFile)
+		DownloadingHaveStarted := sa.RedisControlling.CheckerRedis.ChekIsStartDownload(shortNameForFile)
 		if DownloadingHaveStarted {
 			return
 		}
@@ -141,7 +147,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 		go func() {
 			wg.Add(1)
 			defer wg.Done()
-			err := sa.S.RedisConn.DeleteFileInfo(shortNameForFile)
+			err := sa.RedisControlling.Deleter.DeleteFileInfo(shortNameForFile)
 
 			if err != nil {
 				slog.Error("Error in file writing", err)
@@ -152,7 +158,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 		go func() {
 			wg.Add(1)
 			defer wg.Done()
-			err = sa.S.S3Conn.DeleteFileFromS3(shortNameForFile, Bucket)
+			err = sa.S3.Deleter.DeleteFileFromS3(shortNameForFile, context.Background())
 			if err != nil {
 				return
 			}
@@ -177,6 +183,7 @@ func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.
 		uploader.MaxUploadParts = 200
 		uploader.PartSize = int64(BesParts) * 1024 * 1024
 		uploader.Concurrency = goroutine
+		uploader.BufferProvider = manager.NewBufferedReadSeekerWriteToPool(BesParts)
 	})
 
 	_, err := uploader.Upload(ctx, &s3.PutObjectInput{
@@ -185,14 +192,6 @@ func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.
 		ContentType: aws.String(ContentType),
 		Body:        reader,
 	})
-	//Uploads, err := cfg.CreateMultipartUpload(context.Background(), &s3.CreateMultipartUploadInput{
-	//	Bucket:      aws.String(Bucket),
-	//	Key:         aws.String(shortFileName),
-	//	ContentType: aws.String(ContentType),
-	//}, func(options *s3.Options) {
-	//
-	//})
-
 	if err == nil {
 		return "", nil
 	}
@@ -220,29 +219,20 @@ func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.
 	}
 }
 
-func encryptKey(chanelForAesKey chan []byte) []byte {
-
-	for {
-
-		key, _ := <-chanelForAesKey
-
-		return key
-
+func (sa *HandlerPackCollect) Encrypt(file multipart.File, writer io.Writer, channelForBytes chan memguard.LockedBuffer) error {
+	aesKey, err := memguard.NewBufferFromReader(rand.Reader, 32)
+	if err != nil {
+		slog.Error("Error generating random bytes", "Error", err)
+		return err
 	}
-}
+	defer aesKey.Destroy()
 
-func Encrypt(file multipart.File, writer io.Writer, channelForBytes chan []byte) error {
-	aesKey := make([]byte, 32)
+	go func() {
+		channelForBytes <- *aesKey
+		close(channelForBytes)
+	}()
 
-	if _, err := io.ReadFull(rand.Reader, aesKey); err != nil {
-		slog.Error("err generate aes-key", "Err", err)
-		return errors.New("can't do advance protection")
-	}
-
-	channelForBytes <- aesKey
-	close(channelForBytes)
-
-	block, err := aes.NewCipher(aesKey)
+	block, err := aes.NewCipher(aesKey.Bytes())
 	if err != nil {
 		slog.Error("err create a NewCipher")
 		return err

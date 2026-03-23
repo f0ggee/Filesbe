@@ -6,7 +6,6 @@ import (
 	"log/slog"
 
 	"github.com/joho/godotenv"
-	"github.com/redis/go-redis/v9"
 )
 
 func init() {
@@ -18,7 +17,7 @@ func init() {
 	}
 }
 
-func (s *Writing) WriteData(shortName string, InfoAboutFile []byte) error {
+func (s *Writing) WriteData(shortName string, InfoAboutFile []byte, ctx context.Context) error {
 
 	err := s.Re.HSet(context.Background(), shortName, Dto.FileInfoLabels{
 		InfoAboutFile:   InfoAboutFile,

@@ -6,27 +6,57 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-type HandlerPack struct {
-	Tokens               DomainLevel.ManageTokens
-	Database             DomainLevel.ReadDb
-	TokenImpl            DomainLevel.ManageAuthTokensImpl
-	RedisConn            DomainLevel.DeleterRedis
-	S3Conn               DomainLevel.S3Handle
-	FileInfo             DomainLevel.FileInfoManipulation
-	Choose               DomainLevel.KeyInteraction
-	GrpcDataMange        DomainLevel.GrpcDataManage
-	Encryption           DomainLevel.Encryption
-	ConverterKey         DomainLevel.Converter
-	FileDataManipulation DomainLevel.FileDataManipulation
-	S3Connect            *s3.Client
-	GrpcConn             DomainLevel.SendingRequestGrpc
-	Checking             DomainLevel.PacketChecker
+type S3Controlling struct {
+	Deleter   DomainLevel.DeleterS3
+	S3Connect *s3.Client
 }
 
+type HandlerPackCrypto struct {
+	Validate DomainLevel.CryptoValidating
+	Encrypt  DomainLevel.Encryption
+	Decrypt  DomainLevel.Decryption
+	Generate DomainLevel.CryptoGenerating
+}
+
+type HandlerFileManagerPack struct {
+	FileInfo     DomainLevel.HandleFileInfo
+	FileManaging DomainLevel.HandleFile
+}
+
+type HandlerPackAuthTokens struct {
+	Manage          DomainLevel.ManageTokens
+	GeneratingToken DomainLevel.Generator
+}
+type HandlerGrpc struct {
+	GrpcSendingRequest DomainLevel.SendingRequestGrpc
+	ProcessingRequests DomainLevel.HandlingRequests
+}
+type DatabaseControlling struct {
+	Writer  DomainLevel.WriteDb
+	Reader  DomainLevel.ReadDb
+	Checker DomainLevel.CheckingDb
+}
+type RedisControlling struct {
+	Writer       DomainLevel.WritingRedis
+	Reader       DomainLevel.ReadingRedis
+	Deleter      DomainLevel.DeleterRedis
+	CheckerRedis DomainLevel.RedisChecker
+}
+
+type Converter struct {
+	Converting DomainLevel.DataConvert
+}
 type HandlerPackCollect struct {
-	S HandlerPack
+	S3                  S3Controlling
+	Crypto              HandlerPackCrypto
+	FileInfo            HandlerFileManagerPack
+	AuthTokens          HandlerPackAuthTokens
+	DatabaseControlling DatabaseControlling
+	RedisControlling    RedisControlling
+	Grpc                HandlerGrpc
+	Convert             Converter
 }
 
-func CollectorPack(S HandlerPack) *HandlerPackCollect {
-	return &HandlerPackCollect{S: S}
+func NewHandlerPackCollect(s3 S3Controlling, crypto HandlerPackCrypto, fileInfo HandlerFileManagerPack, authTokens HandlerPackAuthTokens, databaseControlling DatabaseControlling, redisControlling RedisControlling, grpc HandlerGrpc, converter Converter) *HandlerPackCollect {
+	return &HandlerPackCollect{S3: s3, Crypto: crypto, FileInfo: fileInfo, AuthTokens: authTokens, DatabaseControlling: databaseControlling, RedisControlling: redisControlling, Grpc: grpc, Convert: converter}
 }
