@@ -66,7 +66,7 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 		return
 	}
 
-	jwt, rt, err := s.RegisterService(DataRegister)
+	jwt, rt, err := s.RegisterService(DataRegister, r.Context())
 
 	switch {
 	case errors.Is(err, errors.New("person already exist")):

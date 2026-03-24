@@ -1,7 +1,6 @@
 package Handlers
 
 import (
-	Uttiltesss2 "Kaban/internal/Service/Helpers"
 	"bufio"
 	"context"
 	"crypto/aes"
@@ -20,10 +19,7 @@ import (
 
 func (sa *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) error {
 
-	ctx, cancel := Uttiltesss2.ContextForDownloading(ctxs)
-	defer cancel()
-
-	fileInfoInBytes, err := sa.S.RedisConn.GetFileInfo(name)
+	fileInfoInBytes, err := sa.RedisControlling.Reader.GetFileInfo(name, ctxs)
 	if err != nil {
 		return err
 	}
@@ -32,25 +28,25 @@ func (sa *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs contex
 	newPrivateKey := Keys.NewPrivateKey
 	oldPrivateKey := Keys.OldPrivateKey
 	Keys.Mut.RUnlock()
-	aesKey, realFileName, err := sa.S.FileDataManipulation.DecryptFileInfo(fileInfoInBytes, newPrivateKey.Bytes(), oldPrivateKey.Bytes())
+	aesKey, realFileName, err := sa.Crypto.Decrypt.DecryptFileInfo(fileInfoInBytes, newPrivateKey.Bytes(), oldPrivateKey.Bytes())
 	if err != nil {
 		return err
 	}
 
 	Reader, writer := io.Pipe()
 
-	err = downloadFileToClient(w, ctx, name, writer, aesKey, realFileName, Reader)
+	err = sa.downloadFileToClient(w, ctxs, name, writer, aesKey, realFileName, Reader)
 	if err != nil {
 		return err
 	}
 
 	slog.Info("Func Delete start in download encrypt")
 
-	err = sa.S.RedisConn.DeleteFileInfo(name)
+	err = sa.RedisControlling.Deleter.DeleteFileInfo(name, ctxs)
 	if err != nil {
 		return err
 	}
-	err = sa.S.S3Conn.DeleteFileFromS3(name, Bucket)
+	err = sa.S3.Deleter.DeleteFileFromS3(name, ctxs)
 	if err != nil {
 		return err
 	}
@@ -60,14 +56,9 @@ func (sa *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs contex
 	return nil
 }
 
-func downloadFileToClient(w http.ResponseWriter, ctx context.Context, name string, writer *io.PipeWriter, aesKey []byte, realFileName string, Reader *io.PipeReader) error {
-	sees, err := Uttiltesss2.Inzelire()
-	if err != nil {
-		slog.Error("Error in func", err.Error())
+func (sa *HandlerPackCollect) downloadFileToClient(w http.ResponseWriter, ctx context.Context, name string, writer *io.PipeWriter, aesKey []byte, realFileName string, Reader *io.PipeReader) error {
 
-		return err
-	}
-	downloader := s3.New(sees)
+	downloader := s3.New(sa.S3.S3OldConnect)
 
 	o, err := downloader.GetObjectWithContext(ctx, &s3.GetObjectInput{
 		Bucket:      aws.String(Bucket),
@@ -121,12 +112,13 @@ func downloadFileToClient(w http.ResponseWriter, ctx context.Context, name strin
 		}
 	}()
 
-	w.Header().Set("Content-Type", "application/octet-stream")
+	FormatFile := sa.FileInfo.FileManaging.FindFormatOfFile(realFileName)
+	w.Header().Set("Content-Type", FormatFile)
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", realFileName))
 	w.Header().Set("Content-Length", strconv.FormatInt(*o.ContentLength-aes.BlockSize, 10))
 
 	if _, err = io.Copy(w, Reader); err != nil {
-		slog.Error("Err In file Service Downloader Encrypt", "err", err)
+		slog.Error("Err In file Service Downloader EncryptFile", "err", err)
 		return errors.New("connect close")
 	}
 	return nil
