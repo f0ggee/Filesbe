@@ -3,6 +3,7 @@ package Handlers
 import (
 	"Kaban/internal/Dto"
 	"crypto/rand"
+	"crypto/x509"
 	"log/slog"
 	"os"
 	"sync"
@@ -14,8 +15,7 @@ import (
 func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 
 	slog.Info("SwapKeyFirst", "start", true)
-
-	SignedServerName, err := sa.S.GrpcDataMange.GenerateSignature([]byte(os.Getenv("serverName")), ControlPrivateKeyStruct.OurPrivateKeyIntoBytes)
+	SignedServerName, err := sa.Crypto.Generate.GenerateSignature([]byte(os.Getenv("serverName")), ControlPrivateKeyStruct.OurPrivateKeyIntoBytes)
 	if err != nil {
 		return 0
 	}
@@ -31,7 +31,7 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 	}
 	defer AesKey.Destroy()
 
-	ConvertedData, err := sa.S.ConverterKey.JsonConverter(GrpcStruct)
+	ConvertedData, err := sa.Convert.Converting.JsonConverter(GrpcStruct)
 	if err != nil {
 		return 0
 	}
@@ -46,7 +46,7 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
-		EncryptedData1, err1 := sa.S.Encryption.EncryptAes(AesKey.Data(), ConvertedData)
+		EncryptedData1, err1 := sa.Crypto.Encrypt.EncryptAes(AesKey.Data(), ConvertedData)
 		if err1 != nil {
 			chanelForErrors <- err1
 			return
@@ -55,12 +55,14 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 	}()
 	go func() {
 		defer wg.Done()
-		Key, errConverterKey := sa.S.ConverterKey.ConverterToPublicKey(ControlPrivateKeyStruct.MasterServerPublicKeyBytes)
-		if errConverterKey != nil {
-			chanelForErrors <- errConverterKey
+
+		Key, err := x509.ParsePKCS1PublicKey(AesKey.Data())
+		if err != nil {
+			chanelForErrors <- err
 			return
 		}
-		EncryptedDataAesKey1, err1 := sa.S.FileDataManipulation.EncryptData(AesKey.Data(), Key)
+
+		EncryptedDataAesKey1, err1 := sa.Crypto.Encrypt.EncryptFileInfo(AesKey.Data(), Key)
 		if err1 != nil {
 			chanelForErrors <- err1
 			return
@@ -76,7 +78,7 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 		}
 	}
 
-	convertedDataGrpcDataLooks, err := sa.S.ConverterKey.JsonConverter(Dto.GrpcOutComingPacketForSending{
+	convertedDataGrpcDataLooks, err := sa.Convert.Converting.JsonConverter(Dto.GrpcOutComingPacketForSending{
 		AesKeyData: EncryptedDataAesKey,
 		CipherData: EncryptedData,
 	})
@@ -90,19 +92,20 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 		if attempts > 3 {
 			return 12 * time.Hour
 		}
-		OutputData, err := sa.S.GrpcConn.SendRequestGrpc(convertedDataGrpcDataLooks)
+		OutputData, err := sa.Grpc.GrpcSendingRequest.RequestingGettingNewKey(convertedDataGrpcDataLooks)
 		if err != nil {
 			slog.Error("Error while SendRequestGrpc", "err", err)
 			return 12 * time.Hour
 		}
-		TimeForSwapping, err := sa.S.Checking.Handle(OutputData)
+
+		TimeNextSwapping, err := sa.Grpc.ProcessingRequests.CheckingGettingNewKey(OutputData)
 		if err != nil {
 			attempts++
 			time.Sleep(time.Second)
 		}
-		if TimeForSwapping == 0 {
+		if TimeNextSwapping == 0 {
 			return 12 * time.Hour
 		}
-		return TimeForSwapping
+		return TimeNextSwapping
 	}
 }

@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (d *RedisReader) GetKey() ([]byte, []byte, []byte, error) {
+func (d *RedisReader) GetKey(ctx context.Context) ([]byte, []byte, []byte, error) {
 	count := 0
 
 	for {
@@ -16,7 +16,7 @@ func (d *RedisReader) GetKey() ([]byte, []byte, []byte, error) {
 		if count > 20 {
 			return nil, nil, nil, errors.New("timeout")
 		}
-		err := d.Re.HGetAll(context.Background(), "server1").Err()
+		err := d.Re.HGetAll(ctx, "server1").Err()
 
 		if err != nil {
 			slog.Error("We got the error", "Error", err)
@@ -31,13 +31,13 @@ func (d *RedisReader) GetKey() ([]byte, []byte, []byte, error) {
 			PlainText: nil,
 			Signature: nil,
 		}
-		err = d.Re.HGetAll(context.Background(), "server1").Scan(&zs)
+		err = d.Re.HGetAll(ctx, "server1").Scan(&zs)
 		if err != nil {
 			slog.Error("We got the error when try get the data", "Error", err)
 			return nil, nil, nil, errors.New(err.Error())
 		}
 
-		err = d.Re.Del(context.Background(), "server2").Err()
+		err = d.Re.Del(ctx, "server2").Err()
 		if err != nil {
 			slog.Error("We got the error", "Error", err)
 			return nil, nil, nil, errors.New(err.Error())

@@ -5,9 +5,9 @@ import (
 	"log/slog"
 )
 
-func (d *ValidationRedis) CheckFileInfoExists(FileName string) bool {
+func (d *ValidationRedis) CheckFileInfoExists(FileName string, ctx context.Context) bool {
 
-	c, err := d.Re.Exists(context.Background(), FileName).Result()
+	c, err := d.Re.Exists(ctx, FileName).Result()
 	if err != nil {
 		slog.Error("CheckExistFileInfo error:", err)
 		return false

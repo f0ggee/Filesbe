@@ -25,9 +25,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 )
 
-const FileMaxSize = 1 << 30
-
-func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http.Request) (string, error) {
+func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, error) {
 
 	slog.Info("Func FileUploaderEncrypt starts")
 	file, sizeAndName, err := r.FormFile("file")
@@ -70,7 +68,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 				return
 			}
 		}(writer)
-		err = sa.Encrypt(file, writer, chanelForAesKey)
+		err = sa.EncryptFile(file, writer, chanelForAesKey)
 		if err != nil {
 			err := writer.CloseWithError(err)
 			if err != nil {
@@ -139,7 +137,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 		wg := sync.WaitGroup{}
 
 		defer wg.Done()
-		DownloadingHaveStarted := sa.RedisControlling.CheckerRedis.ChekIsStartDownload(shortNameForFile)
+		DownloadingHaveStarted := sa.RedisControlling.CheckerRedis.ChekIsStartDownload(shortNameForFile, context.Background())
 		if DownloadingHaveStarted {
 			return
 		}
@@ -147,7 +145,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(w http.ResponseWriter, r *http
 		go func() {
 			wg.Add(1)
 			defer wg.Done()
-			err := sa.RedisControlling.Deleter.DeleteFileInfo(shortNameForFile)
+			err := sa.RedisControlling.Deleter.DeleteFileInfo(shortNameForFile, r.Context())
 
 			if err != nil {
 				slog.Error("Error in file writing", err)
@@ -219,7 +217,7 @@ func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.
 	}
 }
 
-func (sa *HandlerPackCollect) Encrypt(file multipart.File, writer io.Writer, channelForBytes chan memguard.LockedBuffer) error {
+func (sa *HandlerPackCollect) EncryptFile(file multipart.File, writer io.Writer, channelForBytes chan memguard.LockedBuffer) error {
 	aesKey, err := memguard.NewBufferFromReader(rand.Reader, 32)
 	if err != nil {
 		slog.Error("Error generating random bytes", "Error", err)
@@ -229,7 +227,7 @@ func (sa *HandlerPackCollect) Encrypt(file multipart.File, writer io.Writer, cha
 
 	go func() {
 		channelForBytes <- *aesKey
-		close(channelForBytes)
+		return
 	}()
 
 	block, err := aes.NewCipher(aesKey.Bytes())

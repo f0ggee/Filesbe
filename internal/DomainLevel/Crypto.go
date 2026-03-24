@@ -16,10 +16,12 @@ type Decryption interface {
 type CryptoValidating interface {
 	CheckSignKey([]byte, []byte, []byte) error
 	//CheckSignatureGrpc([]byte, []byte, []byte) error
+	PasswordVerify([]byte, []byte) error
 }
 type CryptoGenerating interface {
 	GenerateShortName() string
 	GenerateSignature(message []byte, key []byte) ([]byte, error)
+	GenerateHashFromPassword([]byte) ([]byte, error)
 }
 type Encryption interface {
 	EncryptAes([]byte, []byte) ([]byte, error)

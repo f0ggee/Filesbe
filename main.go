@@ -23,17 +23,17 @@ import (
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/DeletingRedis"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/ReadingRedis"
-	"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/WritingRedis"
 	"Kaban/internal/InfrastructureLayer/s3Interation/DeleterS3"
 	"Kaban/internal/Service/Handlers"
 	"Kaban/internal/Service/Helpers"
-	"github.com/awnumar/memguard"
-	"github.com/gorilla/mux"
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/awnumar/memguard"
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -82,7 +82,7 @@ func main() {
 	DeleterRds := DeletingRedis.DeleterRedis{Re: redisConn}
 	ReaderRedis := ReadingRedis.RedisReader{Re: redisConn}
 	WriterRedis := WritingRedis.Writing{Re: redisConn}
-	CheckerRedis := RedisChecking.ValidationRedis{Re: redisConn}
+	//CheckerRedis := RedisChecking.ValidationRedis{Re: redisConn}
 
 	S3Deleter := DeleterS3.DeleterS3{Conf: cfg}
 
@@ -104,6 +104,7 @@ func main() {
 		AuthTokens: Handlers.HandlerPackAuthTokens{
 			Manage:          ManagingAuthTokens,
 			GeneratingToken: GeneratingAuthTokens,
+			Checking:        CheckingAuthToken,
 		},
 		DatabaseControlling: Handlers.DatabaseControlling{
 			Writer:  &DbWriting,

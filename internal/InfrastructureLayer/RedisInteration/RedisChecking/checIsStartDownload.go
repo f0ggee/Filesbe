@@ -6,7 +6,7 @@ import (
 	"log/slog"
 )
 
-func (d *ValidationRedis) ChekIsStartDownload(name string) bool {
+func (d *ValidationRedis) ChekIsStartDownload(name string, ctx context.Context) bool {
 
 	isExit := Dto.FileInfoLabels{
 		InfoAboutFile:   nil,
