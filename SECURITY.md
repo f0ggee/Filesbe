@@ -26,3 +26,22 @@ Time for an asnwer:
 1 hour - 1 day
 
 
+Evidence:
+1)If you've found a bug, you can send a video on  which you demonstrate your finding
+
+## A threat: 
+This type is  for serious threats like leaking of user's data or a threat that  affects the security system 
+Type: RT
+Your message: 
+
+Evidence: 
+1)You have to make a video  which shows  this leak 
+
+2)Also, you have to explain how you found this threat 
+
+
+Time for an ansewering:
+30 min - 1 hour 
+
+
+
