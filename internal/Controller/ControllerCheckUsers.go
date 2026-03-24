@@ -73,7 +73,10 @@ func GetFrom(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackColl
 		}
 		return
 	}
-	seSession.Values["JWT"] = NewJwt
+	if NewJwt != "" {
+		seSession.Values["JWT"] = NewJwt
+
+	}
 	w.Header().Set(ContentType, JsonExample)
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(AnswerStruct{StatusRedict: "/main"}); err != nil {

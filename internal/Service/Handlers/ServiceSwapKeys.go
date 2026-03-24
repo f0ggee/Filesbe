@@ -1,6 +1,8 @@
 package Handlers
 
 import (
+	"context"
+	"crypto/sha256"
 	"log/slog"
 	"sync"
 
@@ -13,40 +15,41 @@ var Keys struct {
 	OldPrivateKey *memguard.LockedBuffer
 }
 
-//SwapKeys generates a  pair keys
-
-func (sa *HandlerPackCollect) SwapKeys() bool {
-
-	slog.Info("SwapKeys", "Start", true)
-	defer Keys.NewPrivateKey.Destroy()
+func ChangerOldKey() {
 	Keys.Mut.Lock()
 	Keys.OldPrivateKey.Destroy()
 	Keys.OldPrivateKey = memguard.NewBuffer(Keys.NewPrivateKey.Size())
 	Keys.OldPrivateKey.Copy(Keys.NewPrivateKey.Bytes())
 	Keys.Mut.Unlock()
+}
 
-	aesKey, plaintext, sign, err := sa.S.RedisConn.GetKey()
+func (sa *HandlerPackCollect) SwapKeys() bool {
+
+	slog.Info("SwapKeys", "Start", true)
+	defer Keys.NewPrivateKey.Destroy()
+	ChangerOldKey()
+
+	aesKey, plaintext, sign, err := sa.RedisControlling.Reader.GetKey(context.Background())
 	if err != nil {
 		return false
 	}
 
-	hashFromData := memguard.NewBufferFromBytes(sa.S.ConverterKey.ConvertDataToHash(plaintext, aesKey))
-	if hashFromData == nil {
-		return false
-	}
-	defer hashFromData.Destroy()
+	hashSha := sha256.New()
+	hashSha.Write(plaintext)
+	hashSha.Write(aesKey)
 
-	err = sa.S.Choose.CheckSignIncomingKey(sign, hashFromData.Bytes(), ControlPrivateKeyStruct.MasterServerPublicKeyBytes)
+	err = sa.Crypto.Validate.CheckSignKey(sign, hashSha.Sum([]byte(nil)), ControlPrivateKeyStruct.MasterServerPublicKeyBytes)
 	if err != nil {
 		slog.Error("Error checkSignIncomingKey", "Error", err.Error())
 		return false
 	}
-	AesKeyDecrypted, err2 := sa.S.Choose.DecryptAesKey(aesKey, ControlPrivateKeyStruct.OurPrivateKeyIntoBytes)
+
+	AesKeyDecrypted1, err2 := sa.Crypto.Decrypt.DecryptAesKey(aesKey, ControlPrivateKeyStruct.OurPrivateKeyIntoBytes)
 	if err2 != nil {
 		return false
 	}
 
-	NewRsaKey := (sa.S.Choose.DecryptPacket(AesKeyDecrypted, plaintext))
+	NewRsaKey := (sa.Crypto.Decrypt.DecryptPacket(AesKeyDecrypted1, plaintext))
 	if NewRsaKey == nil {
 		return false
 	}
@@ -55,8 +58,7 @@ func (sa *HandlerPackCollect) SwapKeys() bool {
 	Keys.Mut.Lock()
 	Keys.NewPrivateKey = memguard.NewBuffer(NewRsaKey.Size())
 	Keys.NewPrivateKey.Copy(NewRsaKey.Bytes())
-	slog.Info("SwapKeys", "End", true)
-
 	Keys.Mut.Unlock()
+	slog.Info("SwapKeys", "End", true)
 	return true
 }

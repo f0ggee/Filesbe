@@ -1,10 +1,7 @@
 package Handlers
 
 import (
-	"Kaban/internal/InfrastructureLayer"
-	Uttiltesss2 "Kaban/internal/Service/Helpers"
 	"context"
-	"encoding/json"
 	"errors"
 	"log/slog"
 	"mime/multipart"
@@ -36,15 +33,10 @@ func (sa *HandlerPackCollect) FileUploader(r *http.Request) (string, error) {
 			return
 		}
 	}()
-	ctx, cancel := Uttiltesss2.Context2(r.Context())
-	if cancel == nil {
-		return "", errors.New("error in file Uploader no encrypt")
-	}
-	defer cancel()
 
-	shortNameFile := sa.S.FileInfo.GenerateShortFileName()
+	shortNameFile := sa.Crypto.Generate.GenerateShortName()
 
-	_, goroutines := Uttiltesss2.FindBest(sizeAndName.Size)
+	_, goroutines := sa.FileInfo.FileManaging.FindBestOptions(sizeAndName.Size)
 
 	timeS := time.Now()
 
@@ -53,44 +45,36 @@ func (sa *HandlerPackCollect) FileUploader(r *http.Request) (string, error) {
 		slog.Info("Time of downloading", "Time", sa)
 	}()
 
-	cfg, err := Uttiltesss2.S3Helper()
-	if err != nil {
-		slog.Error("Err cant", err.Error())
-		return "", err
-	}
-
-	s, err2, done := uploadFile(cfg, goroutines, err, ctx, sizeAndName, file)
+	s, err2, done := sa.uploadFile(sa.S3.S3Connect, goroutines, err, r.Context(), sizeAndName, file)
 	if done {
 		return s, err2
 	}
 
-	fileIntoBytes, err := json.Marshal(sizeAndName.Filename)
+	fileIntoBytes, err := sa.Convert.Converting.JsonConverter(sizeAndName.Filename)
 	if err != nil {
 		slog.Error("Err in FileUploader no encrypt", "Error", err)
 		return "", err
 	}
 
-	err = sa.S.RedisConn.WriteData(shortNameFile, fileIntoBytes)
+	err = sa.RedisControlling.Writer.WriteData(shortNameFile, fileIntoBytes, r.Context())
 	if err != nil {
 		return "", err
 	}
 
-	slog.Info("File success upload")
+	slog.Info("File was generated")
 
 	return shortNameFile, nil
 
 }
 
-func uploadFile(cfg *s3.Client, goroutines int, err error, ctx context.Context, sizeAndName *multipart.FileHeader, file multipart.File) (string, error, bool) {
+func (sa *HandlerPackCollect) uploadFile(cfg *s3.Client, goroutines int, err error, ctx context.Context, sizeAndName *multipart.FileHeader, file multipart.File) (string, error, bool) {
 	uploader := manager.NewUploader(cfg, func(uploader *manager.Uploader) {
 		uploader.MaxUploadParts = 1000
 		uploader.PartSize = 50 * 1024 * 1024
 		uploader.Concurrency = goroutines
 	})
 
-	apps := *InfrastructureLayer.ConnectKeyControl()
-
-	FileExtension := apps.Key.FindFormatOfFile(sizeAndName.Filename)
+	FileExtension := sa.FileInfo.FileManaging.FindFormatOfFile(sizeAndName.Filename)
 
 	slog.Info("File extension", FileExtension)
 	_, err = uploader.Upload(ctx, &s3.PutObjectInput{

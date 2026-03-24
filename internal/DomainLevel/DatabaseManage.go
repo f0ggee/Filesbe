@@ -7,7 +7,7 @@ type ReadDb interface {
 }
 
 type WriteDb interface {
-	CreateUser(string, string, string, string, context.Context) (int, error)
+	CreateUser(string, string, string, context.Context) (int, error)
 }
 type CheckingDb interface {
 	CheckerUser(string, context.Context) error

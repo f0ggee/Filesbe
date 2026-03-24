@@ -1,17 +1,13 @@
 package Handlers
 
 import (
-	"Kaban/internal/InfrastructureLayer"
-	Uttiltesss2 "Kaban/internal/Service/Helpers"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"log/slog"
-	"mime"
 	"net/http"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -22,10 +18,8 @@ import (
 func (sa *HandlerPackCollect) DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext context.Context) (error, string) {
 
 	slog.Info("Func DownloadWithNonEncrypt starts")
-	ctx, cancel := Uttiltesss2.ContextForDownloading(IncomeContext)
-	defer cancel()
 
-	fileNameInBytes, err := sa.S.RedisConn.GetFileInfo(name)
+	fileNameInBytes, err := sa.RedisControlling.Reader.GetFileInfo(name, IncomeContext)
 	if err != nil {
 		return err, ""
 	}
@@ -36,16 +30,10 @@ func (sa *HandlerPackCollect) DownloadWithNonEncrypt(w http.ResponseWriter, name
 		slog.Error("Unmarshal err", err.Error())
 		return err, ""
 	}
-	sees, err := Uttiltesss2.Inzelire()
-	if err != nil {
-		slog.Error("Error in create s3 server", "err:", err)
 
-		return err, ""
-	}
+	downloader := s3.New(sa.S3.S3OldConnect)
 
-	downloader := s3.New(sees)
-
-	o, err := downloader.GetObjectWithContext(ctx, &s3.GetObjectInput{
+	o, err := downloader.GetObjectWithContext(IncomeContext, &s3.GetObjectInput{
 		Bucket:      aws.String(Bucket),
 		IfNoneMatch: aws.String(""),
 
@@ -62,9 +50,6 @@ func (sa *HandlerPackCollect) DownloadWithNonEncrypt(w http.ResponseWriter, name
 
 	}
 
-	fileExtension := filepath.Ext(trueFileName)
-	FileExtension := mime.TypeByExtension(fileExtension)
-
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
@@ -73,7 +58,7 @@ func (sa *HandlerPackCollect) DownloadWithNonEncrypt(w http.ResponseWriter, name
 		}
 	}(o.Body)
 
-	w.Header().Set("Content-Type", FileExtension)
+	w.Header().Set("Content-Type", sa.FileInfo.FileManaging.FindFormatOfFile(trueFileName))
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", trueFileName))
 	w.Header().Set("Content-Length", strconv.FormatInt(*o.ContentLength, 10))
 
@@ -85,9 +70,7 @@ func (sa *HandlerPackCollect) DownloadWithNonEncrypt(w http.ResponseWriter, name
 
 	slog.Info("start delete func in download  ")
 
-	S3Interaction := *InfrastructureLayer.NewConnectToS3()
-
-	err = S3Interaction.Manage.DeleteFileFromS3(trueFileName, Bucket)
+	err = sa.S3.Deleter.DeleteFileFromS3(trueFileName, context.Background())
 	if err != nil {
 		return err, ""
 	}

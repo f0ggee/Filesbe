@@ -5,7 +5,7 @@ import (
 	"log/slog"
 )
 
-func (d *Writing) EnableDownloadingParameter(nameOfFileInfo string) error {
+func (d *Writing) EnableDownloadingParameter(nameOfFileInfo string, ctx context.Context) error {
 
 	err := d.Re.HSet(context.Background(), nameOfFileInfo, "IsStartDownload", true).Err()
 	if err != nil {

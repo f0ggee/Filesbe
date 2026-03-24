@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (d *Writer) CreateUser(Name, Email, HashPassword, ScryptKey string, ctx context.Context) (int, error) {
+func (d *Writer) CreateUser(Name string, Email string, HashPassword string, ctx context.Context) (int, error) {
 
 	var UnitId int
 
@@ -26,7 +26,7 @@ func (d *Writer) CreateUser(Name, Email, HashPassword, ScryptKey string, ctx con
 		}
 	}(tx, context.Background())
 
-	err = tx.QueryRow(ctx, "INSERT INTO person(name,email,password,scrypt_salt,created_at) VALUES ($1,$2,$3,$4,$5) RETURNING unic_id", Name, Email, HashPassword, ScryptKey, time.Now()).Scan(&UnitId)
+	err = tx.QueryRow(ctx, "INSERT INTO person(name,email,password,created_at) VALUES ($1,$2,$3,$4,$5) RETURNING unic_id", Name, Email, HashPassword, time.Now()).Scan(&UnitId)
 
 	switch {
 	case errors.Is(err, context.DeadlineExceeded):

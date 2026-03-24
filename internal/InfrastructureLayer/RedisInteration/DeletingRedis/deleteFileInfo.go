@@ -6,9 +6,9 @@ import (
 	"golang.org/x/exp/slog"
 )
 
-func (d *DeleterRedis) DeleteFileInfo(nameFileinfo string) error {
+func (d *DeleterRedis) DeleteFileInfo(nameFileinfo string, ctx context.Context) error {
 
-	err := d.Re.Del(context.Background(), nameFileinfo).Err()
+	err := d.Re.Del(ctx, nameFileinfo).Err()
 	if err != nil {
 		slog.Error("Error in func deleteFileInfo in Redis", err)
 		return err
