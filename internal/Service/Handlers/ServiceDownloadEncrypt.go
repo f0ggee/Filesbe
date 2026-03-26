@@ -24,11 +24,9 @@ func (sa *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs contex
 		return err
 	}
 
-	Keys.Mut.RLock()
-	newPrivateKey := Keys.NewPrivateKey
-	oldPrivateKey := Keys.OldPrivateKey
-	Keys.Mut.RUnlock()
-	aesKey, realFileName, err := sa.Crypto.Decrypt.DecryptFileInfo(fileInfoInBytes, newPrivateKey.Bytes(), oldPrivateKey.Bytes())
+	newPrivateKey := sa.Keys.ControllerKey.GetKey()
+	oldPrivateKey := sa.Keys.ControllerKey.GetOldKey()
+	aesKey, realFileName, err := sa.Crypto.Decrypt.DecryptFileInfo(fileInfoInBytes, newPrivateKey, oldPrivateKey)
 	if err != nil {
 		return err
 	}

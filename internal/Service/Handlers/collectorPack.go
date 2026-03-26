@@ -46,6 +46,9 @@ type RedisControlling struct {
 	CheckerRedis DomainLevel.RedisChecker
 }
 
+type KeysControlling struct {
+	ControllerKey DomainLevel.KeysManager
+}
 type Converter struct {
 	Converting DomainLevel.DataConvert
 }
@@ -58,8 +61,9 @@ type HandlerPackCollect struct {
 	RedisControlling    RedisControlling
 	Grpc                HandlerGrpc
 	Convert             Converter
+	Keys                KeysControlling
 }
 
-func NewHandlerPackCollect(s3 S3Controlling, crypto HandlerPackCrypto, fileInfo HandlerFileManagerPack, authTokens HandlerPackAuthTokens, databaseControlling DatabaseControlling, redisControlling RedisControlling, grpc HandlerGrpc, converter Converter) *HandlerPackCollect {
-	return &HandlerPackCollect{S3: s3, Crypto: crypto, FileInfo: fileInfo, AuthTokens: authTokens, DatabaseControlling: databaseControlling, RedisControlling: redisControlling, Grpc: grpc, Convert: converter}
+func NewHandlerPackCollect(s3 S3Controlling, crypto HandlerPackCrypto, fileInfo HandlerFileManagerPack, authTokens HandlerPackAuthTokens, databaseControlling DatabaseControlling, redisControlling RedisControlling, grpc HandlerGrpc, convert Converter, keys KeysControlling) *HandlerPackCollect {
+	return &HandlerPackCollect{S3: s3, Crypto: crypto, FileInfo: fileInfo, AuthTokens: authTokens, DatabaseControlling: databaseControlling, RedisControlling: redisControlling, Grpc: grpc, Convert: convert, Keys: keys}
 }

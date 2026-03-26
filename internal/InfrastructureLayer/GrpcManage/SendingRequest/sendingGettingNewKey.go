@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func (s *SenderRequests) RequestingGettingNewKey(data []byte) ([]byte, error) {
+func (s SenderRequests) RequestingGettingNewKey(data []byte) ([]byte, error) {
 	slog.Info("We started sending data")
 	conn, err := grpc.NewClient("localhost:8081", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

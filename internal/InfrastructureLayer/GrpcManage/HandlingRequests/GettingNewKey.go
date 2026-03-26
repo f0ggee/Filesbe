@@ -3,18 +3,20 @@ package HandlingRequests
 import (
 	"Kaban/internal/Dto"
 	"Kaban/internal/Service/Handlers"
-	"crypto/rand"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"time"
 
 	"github.com/awnumar/memguard"
+	"golang.org/x/exp/rand"
 )
 
 func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration, error) {
 
-	slog.Info("Start handling")
+	slog.Info("Start handling", "ID", rand.Int())
 	PacketLook := Dto.GrpcOutComingPacketForSending{
 		AesKeyData: nil,
 		CipherData: nil,
@@ -25,8 +27,6 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 		slog.Error("Error while unmarshalling Packet", "Error", err.Error())
 		return 0, err
 	}
-
-	slog.Debug("Packet Look Json", "Packet", PacketLook)
 
 	DecryptedAesKey, err := h.CryptoDecrypt.DecryptAesKey(Handlers.ControlPrivateKeyStruct.OurPrivateKeyIntoBytes, PacketLook.AesKeyData)
 	if err != nil {
@@ -53,30 +53,25 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 
 	err = json.Unmarshal(PacketData.Bytes(), &PacketInfo)
 	if err != nil {
-		slog.Info("PacketInfo", PacketInfo)
 		slog.Error("Error while unmarshalling PacketInfo", "Error", err.Error())
 		return 0, err
 	}
 	NewSavingRsa := memguard.NewBuffer(len(PacketInfo.RsaKey))
 	NewSavingRsa.Copy(PacketInfo.RsaKey)
 	memguard.WipeBytes(PacketInfo.RsaKey)
+	defer NewSavingRsa.Destroy()
 
-	err = h.CryptoValidate.CheckSignKey(PacketInfo.Sign, NewSavingRsa.Bytes(), Handlers.ControlPrivateKeyStruct.MasterServerPublicKeyBytes)
+	Hash := sha256.New()
+
+	Hash.Write(NewSavingRsa.Bytes())
+
+	err = h.CryptoValidate.CheckSignKey(PacketInfo.Sign, Hash.Sum([]byte(nil)), Handlers.ControlPrivateKeyStruct.MasterServerPublicKeyBytes)
 	if err != nil {
 		return 0, err
 	}
 
-	Handlers.Keys.Mut.Lock()
-	Handlers.Keys.NewPrivateKey = memguard.NewBuffer(NewSavingRsa.Size())
-	Handlers.Keys.NewPrivateKey.Copy(NewSavingRsa.Bytes())
-	Handlers.Keys.Mut.Unlock()
-
-	Handlers.Keys.NewPrivateKey, err = memguard.NewBufferFromReader(rand.Reader, 32)
-
-	if err != nil {
-		slog.Error("Error while generating NewPrivateKey", "Error", err.Error())
-	}
-
+	h.Keys.UpdateKey(NewSavingRsa)
+	fmt.Println("NewSavingRsa", h.Keys.GetKey())
 	slog.Info("Finish handling")
 
 	return (PacketInfo.T1), nil
