@@ -4,18 +4,7 @@ import (
 	"Kaban/internal/Dto"
 	"context"
 	"log/slog"
-
-	"github.com/joho/godotenv"
 )
-
-func init() {
-	err := godotenv.Load("iternal/Service/.env")
-	if err != nil {
-		slog.Error("cannot load env file", err)
-		return
-
-	}
-}
 
 func (s *Writing) WriteData(shortName string, InfoAboutFile []byte, ctx context.Context) error {
 

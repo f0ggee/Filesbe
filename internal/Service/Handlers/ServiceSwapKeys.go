@@ -4,31 +4,12 @@ import (
 	"context"
 	"crypto/sha256"
 	"log/slog"
-	"sync"
-
-	"github.com/awnumar/memguard"
 )
-
-var Keys struct {
-	Mut           sync.RWMutex
-	NewPrivateKey *memguard.LockedBuffer
-	OldPrivateKey *memguard.LockedBuffer
-}
-
-func ChangerOldKey() {
-	Keys.Mut.Lock()
-	Keys.OldPrivateKey.Destroy()
-	Keys.OldPrivateKey = memguard.NewBuffer(Keys.NewPrivateKey.Size())
-	Keys.OldPrivateKey.Copy(Keys.NewPrivateKey.Bytes())
-	Keys.Mut.Unlock()
-}
 
 func (sa *HandlerPackCollect) SwapKeys() bool {
 
 	slog.Info("SwapKeys", "Start", true)
-	defer Keys.NewPrivateKey.Destroy()
-	ChangerOldKey()
-
+	sa.Keys.ControllerKey.UpdateOldKey()
 	aesKey, plaintext, sign, err := sa.RedisControlling.Reader.GetKey(context.Background())
 	if err != nil {
 		return false
@@ -49,16 +30,14 @@ func (sa *HandlerPackCollect) SwapKeys() bool {
 		return false
 	}
 
-	NewRsaKey := (sa.Crypto.Decrypt.DecryptPacket(AesKeyDecrypted1, plaintext))
+	NewRsaKey := sa.Crypto.Decrypt.DecryptPacket(AesKeyDecrypted1, plaintext)
 	if NewRsaKey == nil {
 		return false
 	}
 	defer NewRsaKey.Destroy()
 
-	Keys.Mut.Lock()
-	Keys.NewPrivateKey = memguard.NewBuffer(NewRsaKey.Size())
-	Keys.NewPrivateKey.Copy(NewRsaKey.Bytes())
-	Keys.Mut.Unlock()
+	sa.Keys.ControllerKey.UpdateKey(NewRsaKey)
+
 	slog.Info("SwapKeys", "End", true)
 	return true
 }

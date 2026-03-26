@@ -3,6 +3,10 @@ package main
 import (
 	Controller2 "Kaban/internal/Controller"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
+	"Kaban/internal/InfrastructureLayer/KeysManager"
+	"crypto/rand"
+	"fmt"
+	"sync"
 
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ControllingTokens"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage/Generating"
@@ -54,6 +58,8 @@ func main() {
 	}
 	redisConn := RedisInteration.ConnectToRedis()
 	defer redisConn.Close()
+	NewPrivate, err := memguard.NewBufferFromReader(rand.Reader, 32)
+	OldPrivate, err := memguard.NewBufferFromReader(rand.Reader, 32)
 
 	ManagingAuthTokens := ControllingTokens.ManageTokens{}
 	GeneratingAuthTokens := Generating.CreatingTokens{}
@@ -69,12 +75,17 @@ func main() {
 	ProcessedFile := HandlerFile.ProcessingFile{}
 	ProcessedFileInfo := HandleFileInfo.ProcessingFileInfo{}
 	PacketValidate := PacketChecking.PacketValidating{}
-
+	KeysController := &KeysManager.Updater{
+		Mu:            &sync.RWMutex{},
+		NewPrivateKey: NewPrivate,
+		OldPrivateKey: OldPrivate,
+	}
 	GrpcHandlingRequests := HandlingRequests.HandlerGrpcRequest{
 		CryptoEncrypt:    &CryptoEncryption,
 		CryptoDecrypt:    CryptoDecryption,
 		CryptoValidate:   &CryptoCheck,
 		ValidationPacket: PacketValidate,
+		Keys:             KeysController,
 	}
 
 	SendingGrcp := SendingRequest.SenderRequests{}
@@ -82,6 +93,7 @@ func main() {
 	DeleterRds := DeletingRedis.DeleterRedis{Re: redisConn}
 	ReaderRedis := ReadingRedis.RedisReader{Re: redisConn}
 	WriterRedis := WritingRedis.Writing{Re: redisConn}
+
 	//CheckerRedis := RedisChecking.ValidationRedis{Re: redisConn}
 
 	S3Deleter := DeleterS3.DeleterS3{Conf: cfg}
@@ -121,8 +133,9 @@ func main() {
 			ProcessingRequests: GrpcHandlingRequests,
 		},
 		Convert: Handlers.Converter{Converting: ConverterJson},
+		Keys:    Handlers.KeysControlling{ControllerKey: KeysController},
 	}
-	Sa := Handlers.NewHandlerPackCollect(HandlerPack.S3, HandlerPack.Crypto, HandlerPack.FileInfo, HandlerPack.AuthTokens, HandlerPack.DatabaseControlling, HandlerPack.RedisControlling, HandlerPack.Grpc, HandlerPack.Convert)
+	Sa := Handlers.NewHandlerPackCollect(HandlerPack.S3, HandlerPack.Crypto, HandlerPack.FileInfo, HandlerPack.AuthTokens, HandlerPack.DatabaseControlling, HandlerPack.RedisControlling, HandlerPack.Grpc, HandlerPack.Convert, HandlerPack.Keys)
 
 	slog.Info("Starting server", Sa.Crypto.Decrypt.SayHello("EE"))
 	router := mux.NewRouter()
@@ -132,20 +145,21 @@ func main() {
 
 	router.HandleFunc("/aboutProject", func(writer http.ResponseWriter, request *http.Request) {
 
-		http.ServeFile(writer, request, "iternal/Service/Fronted/InfoPageAboutApp.html")
+		http.ServeFile(writer, request, "internal/Service/Fronted/InfoPageAboutApp.html")
 
 	})
 
-	StaticFiles.Handle("/favicon.png", http.FileServer(http.Dir("iternal/Service")))
+	StaticFiles.Handle("/favicon.png", http.FileServer(http.Dir("internal/Service")))
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
-			http.ServeFile(w, r, "iternal/Service/Fronted/Maine.html")
+			http.ServeFile(w, r, "internal/Service/Fronted/Maine.html")
 		}
 
 	})
 	TimeSwaping := Sa.SwapKeyFirst()
 
+	fmt.Println(TimeSwaping)
 	ticker := time.NewTicker(time.Until(time.Now().Add(TimeSwaping)))
 	defer ticker.Stop()
 
@@ -158,7 +172,7 @@ func main() {
 
 	router.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 
-		http.ServeFile(w, r, "iternal/Service/Fronted/Login.html")
+		http.ServeFile(w, r, "internal/Service/Fronted/Login.html")
 
 	})
 
@@ -169,29 +183,29 @@ func main() {
 	})
 
 	router.HandleFunc("/informationPage", func(writer http.ResponseWriter, request *http.Request) {
-		http.ServeFile(writer, request, "iternal/Service/Fronted/InformationPage.html")
+		http.ServeFile(writer, request, "internal/Service/Fronted/InformationPage.html")
 
 	}).Name("NameFile")
 	router.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "iternal/Service/Fronted/Register.html")
+		http.ServeFile(w, r, "internal/Service/Fronted/Register.html")
 	})
 	router.HandleFunc("/main", func(writer http.ResponseWriter, request *http.Request) {
 
-		http.ServeFile(writer, request, "iternal/Service/Fronted/Main_Page.html")
+		http.ServeFile(writer, request, "internal/Service/Fronted/Main_Page.html")
 
 	})
 	router.HandleFunc("/sitemap.xml", func(writer http.ResponseWriter, request *http.Request) {
-		http.ServeFile(writer, request, "iternal/Service/Fronted/sitemap.xml")
+		http.ServeFile(writer, request, "internal/Service/Fronted/sitemap.xml")
 
 	})
 
 	router.HandleFunc("/protect", func(writer http.ResponseWriter, request *http.Request) {
-		http.ServeFile(writer, request, "iternal/Service/Fronted/Protecion.html")
+		http.ServeFile(writer, request, "internal/Service/Fronted/Protecion.html")
 
 	})
 
 	router.HandleFunc("/URL/{name}/{bool}", func(writer http.ResponseWriter, request *http.Request) {
-		http.ServeFile(writer, request, "iternal/Service/Fronted/UrlFronted.html")
+		http.ServeFile(writer, request, "internal/Service/Fronted/UrlFronted.html")
 
 	}).Name("fileName")
 
