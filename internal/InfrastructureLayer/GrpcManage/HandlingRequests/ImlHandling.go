@@ -7,4 +7,5 @@ type HandlerGrpcRequest struct {
 	CryptoDecrypt    DomainLevel.Decryption
 	CryptoValidate   DomainLevel.CryptoValidating
 	ValidationPacket DomainLevel.PacketChecker
+	Keys             DomainLevel.KeysManager
 }

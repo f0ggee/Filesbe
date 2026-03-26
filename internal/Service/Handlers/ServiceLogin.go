@@ -4,7 +4,6 @@ import (
 	Dto2 "Kaban/internal/Dto"
 	"context"
 	"crypto/rand"
-	"encoding/hex"
 	"log/slog"
 	"time"
 
@@ -24,12 +23,7 @@ func (sa *HandlerPackCollect) LoginService(s Dto2.UserLoginData, ctx context.Con
 		return "", "", err
 	}
 
-	PasswordBytes, err := hex.DecodeString(password)
-	if err != nil {
-		slog.Error("func decoding login user's password", "err", err)
-		return "", "", err
-	}
-	err = sa.Crypto.Validate.PasswordVerify([]byte(password), PasswordBytes)
+	err = sa.Crypto.Validate.PasswordVerify([]byte(password), []byte(s.Password))
 	if err != nil {
 		return "", "", err
 	}

@@ -12,11 +12,12 @@ var ControlPrivateKeyStruct struct {
 	MasterServerPublicKeyBytes []byte
 	OurPrivateKeyIntoBytes     []byte
 }
+
 var Bucket string
 
 func init() {
 
-	err := godotenv.Load("iternal/Service/.env")
+	err := godotenv.Load("internal/Service/.env")
 	if err != nil {
 		slog.Error("cannot load env file", err.Error())
 		return

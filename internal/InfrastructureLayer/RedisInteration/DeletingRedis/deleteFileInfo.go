@@ -10,7 +10,7 @@ func (d *DeleterRedis) DeleteFileInfo(nameFileinfo string, ctx context.Context) 
 
 	err := d.Re.Del(ctx, nameFileinfo).Err()
 	if err != nil {
-		slog.Error("Error in func deleteFileInfo in Redis", err)
+		slog.Error("File info's already been deleted", err)
 		return err
 	}
 	return nil
