@@ -24,10 +24,10 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 
 	err := CookieGet2(w, r, s)
 	if err != nil {
-		w.Header().Set("Content-Type", JsonExample)
+		w.Header().Set("Content-Type", Json)
 		w.WriteHeader(http.StatusUnauthorized)
 		if err = json.NewEncoder(w).Encode(Answer{
-			StatusOperation: "NotStart",
+			StatusOperation: NotStart,
 			UrlToRedict:     "/login",
 		}); err != nil {
 			slog.Error("Err in json encode", err)
@@ -39,10 +39,10 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 	filName, err := s.FileUploader(r)
 	if err != nil {
 
-		w.Header().Set("Content-Type", JsonExample)
+		w.Header().Set("Content-Type", Json)
 		w.WriteHeader(http.StatusBadRequest)
 		if err = json.NewEncoder(w).Encode(Answer{
-			StatusOperation: "BREAK",
+			StatusOperation: Break,
 			UrlToRedict:     "",
 			Error:           err.Error(),
 		}); err != nil {
@@ -56,10 +56,10 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 	if err != nil {
 		slog.Error("Error can't treate", err)
 
-		w.Header().Set("Content-Type", JsonExample)
+		w.Header().Set("Content-Type", Json)
 		w.WriteHeader(http.StatusBadRequest)
 		if err = json.NewEncoder(w).Encode(Answer{
-			StatusOperation: "BREAK",
+			StatusOperation: Break,
 			UrlToRedict:     "",
 		}); err != nil {
 			slog.Error("Err in json encode", err)
@@ -68,10 +68,10 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 		return
 	}
 
-	w.Header().Set("Content-Type", JsonExample)
+	w.Header().Set("Content-Type", Json)
 	w.WriteHeader(http.StatusOK)
 	if err = json.NewEncoder(w).Encode(Answer{
-		StatusOperation: "SUCCESS",
+		StatusOperation: Success,
 		UrlToRedict:     url.Path,
 	}); err != nil {
 		slog.Error("Err in json encode", err)
@@ -81,9 +81,9 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 }
 
 func CookieGet2(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) error {
-	store := Store()
+	//store := SessionStore()
 
-	session, err := store.Get(r, "token6")
+	session, err := SessionStore.Get(r, "token6")
 	if err != nil {
 		slog.Error("cookie don't send", err)
 		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
@@ -95,13 +95,13 @@ func CookieGet2(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackC
 		return errors.New("Cookie time expired")
 	}
 
-	rtToken, ok := session.Values["RT"].(string)
+	rtToken, ok := session.Values[RTCookieName].(string)
 	if !ok {
 		slog.Error("Cookie dont set RT")
 		return errors.New("Cookie dont get RT")
 	}
 
-	jwts, _ := session.Values["JWT"].(string)
+	jwts, _ := session.Values[JwtCookieName].(string)
 	Jwts, err := s.Auth(rtToken, jwts)
 	if err != nil {
 		slog.Error("cookie doesn't set up ",
@@ -109,7 +109,7 @@ func CookieGet2(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackC
 		return err
 	}
 	if jwts != "" {
-		session.Values["JWT"] = Jwts
+		session.Values[RTCookieName] = Jwts
 	}
 
 	return nil

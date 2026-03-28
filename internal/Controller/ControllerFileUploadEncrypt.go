@@ -20,9 +20,9 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 	}
 	if r.Method != http.MethodPost {
 		slog.Error("Err in controller uploader")
-		w.Header().Set("Content-Type", JsonExample)
+		w.Header().Set(ContentType, Json)
 		err := json.NewEncoder(w).Encode(Answer{
-			StatusOperation: "NotStart",
+			StatusOperation: NotStart,
 			Error:           "method don't allow",
 
 			UrlToRedict: "nil",
@@ -36,16 +36,14 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 
 	err := CookieGet(w, r, s)
 	if err != nil {
-		w.Header().Set("Content-Type", JsonExample)
+		w.Header().Set(ContentType, Json)
 		w.WriteHeader(401)
-		err := json.NewEncoder(w).Encode(Answer{
-			StatusOperation: "NotStart",
+		if err := json.NewEncoder(w).Encode(Answer{
+			StatusOperation: NotStart,
 			Error:           fmt.Sprint(err),
 
 			UrlToRedict: "/login",
-		})
-
-		if err != nil {
+		}); err != nil {
 			return
 		}
 		return
@@ -56,15 +54,14 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 	if err != nil {
 		fmt.Println(err)
 
-		w.Header().Set("Content-Type", JsonExample)
+		w.Header().Set(ContentType, Json)
 		w.WriteHeader(400)
-		err = json.NewEncoder(w).Encode(Answer{
-			StatusOperation: "NotStart",
+		if err := json.NewEncoder(w).Encode(Answer{
+			StatusOperation: NotStart,
 			Error:           fmt.Sprint(err),
 			UrlToRedict:     "",
-		})
-		if err != nil {
-			slog.Info("Error in controller ", err)
+		}); err != nil {
+			slog.Info("Error in encoding json ", "Error", err)
 			return
 		}
 
@@ -77,21 +74,22 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 		return
 	}
 
-	w.Header().Set("Content-Type", JsonExample)
+	w.Header().Set(ContentType, Json)
 	w.WriteHeader(200)
-	err = json.NewEncoder(w).Encode(Answer{
-		StatusOperation: "SUCCES",
-		Error:           "",
+	if err := json.NewEncoder(w).Encode(Answer{StatusOperation: Success,
+		Error: "",
 
-		UrlToRedict: url.Path,
-	})
+		UrlToRedict: url.Path}); err != nil {
+		slog.Info("Error in FileUploadingControlling", "Error", err)
+		return
+	}
 
 }
 
 func CookieGet(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) error {
-	store := Store()
+	//store := SessionStore()
 
-	session, err := store.Get(r, "token6")
+	session, err := SessionStore.Get(r, TokenName)
 
 	if err != nil {
 		slog.Error("cookie don't send", err)
@@ -99,21 +97,18 @@ func CookieGet(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCo
 		return errors.New("cookie don't set")
 	}
 
-	rtToken, ok := session.Values["RT"].(string)
+	rtToken, ok := session.Values[RTCookieName].(string)
 	if !ok {
 		return errors.New("cookie dont get RT")
 	}
-	slog.Info("cookie get", rtToken)
-
-	jwts, _ := session.Values["JWT"].(string)
+	jwts, _ := session.Values[JwtCookieName].(string)
 	jwts, err = s.Auth(rtToken, jwts)
 	if err != nil {
-		slog.Error("Auth error", err)
+		ControllerErrorLogger.ErrorContext(r.Context(), "Error generate a cokkie", err)
 		return errors.New("can't validate a tokens")
 	}
 	if jwts != "" {
-		session.Values["JWT"] = jwts
+		session.Values[JwtCookieName] = jwts
 	}
-
 	return nil
 }

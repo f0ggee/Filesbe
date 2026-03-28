@@ -2,6 +2,7 @@ package main
 
 import (
 	Controller2 "Kaban/internal/Controller"
+	"Kaban/internal/Controller/Middlewares"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	"Kaban/internal/InfrastructureLayer/KeysManager"
 	"crypto/rand"
@@ -137,10 +138,11 @@ func main() {
 	}
 	Sa := Handlers.NewHandlerPackCollect(HandlerPack.S3, HandlerPack.Crypto, HandlerPack.FileInfo, HandlerPack.AuthTokens, HandlerPack.DatabaseControlling, HandlerPack.RedisControlling, HandlerPack.Grpc, HandlerPack.Convert, HandlerPack.Keys)
 
-	slog.Info("Starting server", Sa.Crypto.Decrypt.SayHello("EE"))
 	router := mux.NewRouter()
+
+	router.Use(Middlewares.Logging)
 	newRouter := router.PathPrefix("/").Subrouter()
-	newRouter.Use(Controller2.CheckBots)
+	newRouter.Use(Middlewares.CheckBots)
 	StaticFiles := router.PathPrefix("/Fronted").Subrouter()
 
 	router.HandleFunc("/aboutProject", func(writer http.ResponseWriter, request *http.Request) {
@@ -249,7 +251,7 @@ func main() {
 	}).Methods("GET")
 	router.HandleFunc("/doUrl/api", func(writer http.ResponseWriter, request *http.Request) {
 
-		Controller2.CUrlUp(writer, request)
+		Controller2.BuildUrl(writer, request)
 
 	}).Methods(http.MethodGet)
 

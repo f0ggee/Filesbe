@@ -14,8 +14,6 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-const ContentType = "Content-Type"
-
 func checkJsonRegister(r *http.Request) (*Dto.UserDataRegister, error) {
 
 	var err error
@@ -41,7 +39,7 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 
 	if r.Method != http.MethodPost {
 		slog.Error("Error from Controller_register, method don't allow ", "err")
-		http.Error(w, "M don't allow", http.StatusNotFound)
+		http.Error(w, "Method don't allow", http.StatusNotFound)
 		return
 	}
 
@@ -53,16 +51,34 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 
 	DataRegister, err := checkJsonRegister(r)
 	if err != nil {
-		slog.Error("Error sesseion", err)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		if err := json.NewEncoder(w).Encode(RegisterAnswer{
+			StatusOfOperation: NotStart,
+			UrlToRedict:       "",
+			Error:             "Something went wrong with data",
+		}); err != nil {
+			slog.Error("Error is closing the body in the controller register", "Error", err)
+			return
+		}
 
 		slog.Error("Error from Controller_register", "err", err)
 		return
 	}
 	err = ValiDateDataForRegister(DataRegister)
 	if err != nil {
-		slog.Error("Error sesseion", err)
 
-		http.Error(w, "Error treate", http.StatusBadRequest)
+		w.Header().Set(ContentType, Json)
+		w.WriteHeader(http.StatusBadRequest)
+		if err := json.NewEncoder(w).Encode(RegisterAnswer{
+			StatusOfOperation: Break,
+			UrlToRedict:       "",
+			Error:             err.Error(),
+		}); err != nil {
+			slog.Error("Error sesseion", err, "ID", r.Context().Value(RequestId))
+			return
+		}
 		return
 	}
 
@@ -70,7 +86,7 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 
 	switch {
 	case errors.Is(err, errors.New("person already exist")):
-		w.Header().Set(ContentType, JsonExample)
+		w.Header().Set(ContentType, Json)
 		w.WriteHeader(http.StatusBadRequest)
 		err := json.NewEncoder(w).Encode(RegisterAnswer{
 			StatusOfOperation: "BREAK",
@@ -84,25 +100,24 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 		return
 	}
 	if err != nil {
-		slog.Error("Error sesseion", err)
+		slog.Error("Error session", err)
 
-		w.Header().Set(ContentType, JsonExample)
+		w.Header().Set(ContentType, Json)
 		w.WriteHeader(http.StatusBadRequest)
-		err := json.NewEncoder(w).Encode(RegisterAnswer{
-			StatusOfOperation: "BREAK",
+		if err := json.NewEncoder(w).Encode(RegisterAnswer{
+			StatusOfOperation: Break,
 			UrlToRedict:       "",
-		})
-		if err != nil {
+		}); err != nil {
 			slog.Error("Error is  Processing the json register response", "Error", err)
 			return
 		}
 		return
 	}
 
-	err = SetSession(w, r, err, jwt, rt)
+	err = NewSession(w, r, jwt, rt)
 	if err != nil {
-		slog.Error("Error sesseion", err)
-		w.Header().Set(ContentType, JsonExample)
+		slog.Error("Error creating session", "Error", err)
+		w.Header().Set(ContentType, Json)
 		w.WriteHeader(http.StatusBadRequest)
 		err := json.NewEncoder(w).Encode(RegisterAnswer{
 			StatusOfOperation: "BREAK",
@@ -114,7 +129,7 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 		}
 		return
 	}
-	w.Header().Set(ContentType, JsonExample)
+	w.Header().Set(ContentType, Json)
 	w.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(w).Encode(RegisterAnswer{
 		StatusOfOperation: "SUCCESS",
@@ -127,22 +142,23 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 
 }
 
-func SetSession(w http.ResponseWriter, r *http.Request, err error, jwt string, rt string) error {
-	store := Store()
-	session, err := store.Get(r, "token6")
+func NewSession(w http.ResponseWriter, r *http.Request, jwt string, rt string) error {
+	//store := SessionStore()
+	session, err := SessionStore.Get(r, "token6")
 	if err != nil {
 		slog.Error("Error get session", err)
 		return err
 
 	}
-	session.Values["JWT"] = jwt
-	session.Values["RT"] = rt
+	session.Values[JwtCookieName] = jwt
+	session.Values[RTCookieName] = rt
 	session.Options = &sessions.Options{
 		Path:     "/",
 		MaxAge:   int((100 * time.Hour).Seconds()),
 		Secure:   true,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
+		Domain:   r.Host,
 	}
 
 	if err := session.Save(r, w); err != nil {
@@ -154,12 +170,13 @@ func SetSession(w http.ResponseWriter, r *http.Request, err error, jwt string, r
 
 }
 func ValiDateDataForRegister(p *Dto.UserDataRegister) error {
-	validater := validator.New()
+	validating := validator.New()
 
-	err := validater.Struct(p)
+	err := validating.Struct(p)
 	if err != nil {
 		slog.Error("Can't validate because", "Err", err)
-		return err
+		errsa := err.(validator.ValidationErrors)
+		return errsa
 
 	}
 	return nil
