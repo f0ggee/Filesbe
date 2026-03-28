@@ -5,30 +5,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
-	"time"
 )
-
-func LoggingRequest(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-
-		formatForOutput := "01/02/2006 03:04 PM"
-
-		t := time.Now()
-
-		if request.Header.Get("User-Agent") == "" {
-			return
-		}
-
-		if request != nil {
-			slog.String("Method ", request.Method)
-			slog.String("Time", t.Format(formatForOutput))
-			slog.String("URL", request.URL.String())
-			slog.String("Host", request.Host)
-		}
-
-		next.ServeHTTP(writer, request)
-	})
-}
 
 func GetFrom(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) {
 
@@ -41,32 +18,30 @@ func GetFrom(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackColl
 		StatusRedict string `json:"status_redict"`
 	}
 
-	store := Store()
-	seSession, err := store.Get(r, "token6")
+	//store := SessionStore()
+	seSession, err := SessionStore.Get(r, "token6")
 	if err != nil {
 		slog.Error("Error check", "Err", err)
 		return
 	}
-	rtToken, ok := seSession.Values["RT"].(string)
+	rtToken, ok := seSession.Values[RTCookieName].(string)
 	if !ok {
-		w.Header().Set(ContentType, JsonExample)
+		w.Header().Set(ContentType, Json)
 		w.WriteHeader(http.StatusUnauthorized)
 
+		ControllerErrorLogger.ErrorContext(r.Context(), "Error the refresh token has expired or destroyed", "Error check")
 		if err := json.NewEncoder(w).Encode(AnswerStruct{StatusRedict: "/login"}); err != nil {
 			slog.Error("Error decode the json", "Err", err)
 			return
 		}
 		return
 	}
-	jwts, _ := seSession.Values["JWT"].(string)
-	slog.Info("JWT", "JWT", jwts)
+	jwts, _ := seSession.Values[JwtCookieName].(string)
 
 	NewJwt, err := s.Auth(rtToken, jwts)
 	if err != nil {
-
-		w.Header().Set(ContentType, JsonExample)
+		w.Header().Set(ContentType, Json)
 		w.WriteHeader(http.StatusUnauthorized)
-
 		if err := json.NewEncoder(w).Encode(AnswerStruct{StatusRedict: "/login"}); err != nil {
 			slog.Error("Error decode the json", "Err", err)
 			return
@@ -74,10 +49,10 @@ func GetFrom(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackColl
 		return
 	}
 	if NewJwt != "" {
-		seSession.Values["JWT"] = NewJwt
+		seSession.Values[JwtCookieName] = NewJwt
 
 	}
-	w.Header().Set(ContentType, JsonExample)
+	w.Header().Set(ContentType, Json)
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(AnswerStruct{StatusRedict: "/main"}); err != nil {
 		slog.Error("Error decode the json", "Err", err)

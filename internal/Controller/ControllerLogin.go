@@ -15,17 +15,27 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-func Store() sessions.Store {
+var KeyCookie = []byte{}
+
+func init() {
 	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
 	if err != nil {
 		slog.Error("Err decode the key", "Err", err)
-		return nil
+		return
 	}
-
-	Store := sessions.NewCookieStore(store1z)
-	return Store
+	KeyCookie = store1z
 
 }
+
+var SessionStore = sessions.NewCookieStore(KeyCookie)
+
+//func Store() sessions.Store {
+//
+//
+//	Store := sessions.NewCookieStore(store1z)
+//	return Store
+//
+//}
 
 func checkJson(r *http.Request) (*Dto.UserLoginData, error) {
 	var err error
@@ -51,37 +61,47 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 	type AnswerLogin struct {
 		StatusOfOperation string `json:"StatusOperation"`
 		UrlToRedict       string `json:"UrlToRedict"`
+		ErrorMessage      string `json:"ErrorMessage"`
 	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Dont' allow", http.StatusUnauthorized)
 		slog.Error("Error", "err")
 		return
 	}
-	store := Store()
-	Session, err := store.Get(r, "token6")
+	//store := SessionStore()
+	Session, err := SessionStore.Get(r, TokenName)
 	if err != nil {
 
 		slog.Error("cookie don't send 1 ", err)
-		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
+		w.WriteHeader(http.StatusUnauthorized)
+		if err := json.NewEncoder(w).Encode(AnswerLogin{
+			StatusOfOperation: Break,
+			UrlToRedict:       "",
+			ErrorMessage:      "User is not unauthorized",
+		}); err != nil {
+			slog.Error("Err in controller login", "Err", err)
+			w.Header().Set(ContentType, Json)
+		}
 		return
 	}
 
 	sa, err := checkJson(r)
 	if err != nil {
-		slog.Error("Err", "error", err)
 		return
 
 	}
 	err = ValiDateData(sa)
 	if err != nil {
 		per := AnswerLogin{
-			StatusOfOperation: "BREAK",
+			StatusOfOperation: Break,
+			ErrorMessage:      "Data has not been validated",
 		}
-		w.Header().Set("Content-Type", JsonExample)
+		w.Header().Set("Content-Type", Json)
 		w.WriteHeader(http.StatusBadRequest)
-		err = json.NewEncoder(w).Encode(&per)
-		if err != nil {
-			slog.Error("Json in Login can't treated", "Err", err)
+		if err := json.NewEncoder(w).Encode(&per); err != nil {
+			ControllerErrorLogger.Error("Json in Login can't treated", "Err", err)
+			return
+
 		}
 		return
 
@@ -90,21 +110,20 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 	JwtToken, RefreshToken, err := realization.LoginService(*sa, r.Context())
 	if err != nil {
 		per := AnswerLogin{
-			StatusOfOperation: "NotStart",
+			StatusOfOperation: NotStart,
 		}
-		w.Header().Set("Content-Type", JsonExample)
-		http.Error(w, "Cant' processed ", http.StatusConflict)
-
+		w.Header().Set("Content-Type", Json)
+		w.WriteHeader(http.StatusBadRequest)
 		err = json.NewEncoder(w).Encode(&per)
 		if err != nil {
-			slog.Error("Json in Login can't treated", "Err", err)
+			ControllerErrorLogger.Error("Json in Login can't treated", "Err", err)
 			return
 		}
 		return
 	}
 
-	Session.Values["RT"] = RefreshToken
-	Session.Values["JWT"] = JwtToken
+	Session.Values[RTCookieName] = RefreshToken
+	Session.Values[JwtCookieName] = JwtToken
 
 	Session.Options = &sessions.Options{
 		Path:     "/",
@@ -112,6 +131,7 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 		Secure:   false,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
+		Domain:   r.Host,
 	}
 
 	if err := Session.Save(r, w); err != nil {
@@ -119,16 +139,13 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 
 	}
 
-	per := AnswerLogin{
-		StatusOfOperation: "SUCCESS",
-		UrlToRedict:       "/main",
-	}
-	w.Header().Set("Content-Type", JsonExample)
+	w.Header().Set("Content-Type", Json)
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(&per); err != nil {
-		slog.Error("Can't json Encode", "Err", err)
-
-		http.Error(w, "sda", http.StatusUnauthorized)
+	if err := json.NewEncoder(w).Encode(AnswerLogin{
+		StatusOfOperation: Success,
+		UrlToRedict:       "/main",
+	}); err != nil {
+		ControllerErrorLogger.ErrorContext(r.Context(), "Json in Login can't treated", "Err", err)
 		return
 
 	}

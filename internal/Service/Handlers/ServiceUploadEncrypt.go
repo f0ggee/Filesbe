@@ -202,7 +202,7 @@ func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.
 
 	case errors.As(err, &ns):
 
-		slog.Error("file was")
+		slog.Error("file was used", "Error", err.Error())
 		return "", errors.New("file was used")
 
 	case errors.Is(err, context.Canceled):
