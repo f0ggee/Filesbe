@@ -14,6 +14,5 @@ FROM alpine:latest
 WORKDIR /app
 COPY --from=builder /build/app .
 COPY --from=builder /build/internal ./internal/
-COPY internal/Service/.env .env
 EXPOSE 443
 CMD ["./app"]
