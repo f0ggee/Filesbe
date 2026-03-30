@@ -143,8 +143,8 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 }
 
 func NewSession(w http.ResponseWriter, r *http.Request, jwt string, rt string) error {
-	//store := SessionStore()
-	session, err := SessionStore.Get(r, "token6")
+	store := SessionStore()
+	session, err := store.Get(r, "token6")
 	if err != nil {
 		slog.Error("Error get session", err)
 		return err

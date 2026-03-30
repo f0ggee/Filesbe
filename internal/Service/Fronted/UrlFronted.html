@@ -16,7 +16,6 @@
     :root{
       --bg:#0a0a0a; --panel:#000; --text:#e5fff4; --muted:#34d399; --border:#0f3a2e;
       --primary:#10b981; --focus:#22c55e;
-      /* Переменная для цвета "Инфо" плашки */
       --info-border: #10b981;
     }
     *,*::before,*::after{ box-sizing:border-box; }
@@ -31,21 +30,34 @@
       padding: clamp(16px, 4vw, 24px) clamp(12px, 3vw, 16px) 64px;
     }
 
-    .header{ display:flex; align-items:center; margin-bottom: clamp(16px, 4vw, 24px); }
+    /* Обновленная шапка: flex-box раскидывает логотип и кнопку по краям */
+    .header{
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom: clamp(16px, 4vw, 24px);
+    }
     .brand{ font-weight:700; color:var(--primary); font-size: clamp(18px, 4vw, 20px); letter-spacing:.4px; }
 
-    /* --- СТИЛИ ИНФО-ПЛАШКИ (BRUTALIST ADAPTED) --- */
+    /* Стили для кнопки с лампочкой */
+    .btn-icon {
+      background: transparent; border: none; cursor: pointer;
+      color: var(--muted); padding: 8px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-icon:hover { background: #0c221a; color: var(--primary); }
+    .btn-icon svg { width: 24px; height: 24px; fill: currentColor; }
+
+    /* --- СТИЛИ ИНФО-ПЛАШКИ --- */
     .brutalist-card {
-      display: none; /* Скрыто по умолчанию, JS покажет если нужно */
+      display: none;
       flex-direction: column;
       width: 100%;
       background-color: #050505;
       border: 2px solid var(--info-border);
       padding: 20px;
-      /* Жесткая тень в цвет темы */
       box-shadow: 6px 6px 0px var(--info-border);
       margin-bottom: 32px;
-      font-family: "JetBrains Mono", monospace; /* Технический шрифт */
+      font-family: "JetBrains Mono", monospace;
       animation: slideIn 0.4s ease-out;
     }
 
@@ -69,7 +81,6 @@
       display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap;
     }
 
-    /* Кнопка "Mark as read" - залитая */
     .btn-brutal-primary {
       background: var(--info-border); color: #000;
       border: 1px solid var(--info-border);
@@ -82,7 +93,6 @@
     }
     .btn-brutal-primary:active { transform: translate(0,0); box-shadow: none; }
 
-    /* Кнопка "Dismiss" - контурная */
     .btn-brutal-outline {
       background: transparent; color: var(--info-border);
       border: 1px solid var(--info-border);
@@ -116,7 +126,6 @@
     }
 
     .center-wrap{ display:flex; align-items:center; justify-content:center; min-height:60vh; }
-    /* Если показываем инфо-карту, центрирование может сдвигаться, это нормально */
 
     .field{ display:grid; gap:12px; width:min(600px, 100%); }
     .label{ font-weight:600; color:var(--muted); font-size:14px; margin-top: 12px; }
@@ -164,7 +173,15 @@
 </head>
 <body>
 <div class="container">
-  <header class="header"><div class="brand">Filesb</div></header>
+
+  <header class="header">
+    <div class="brand">Filesb</div>
+    <button class="btn-icon" onclick="showInfoCard()" aria-label="Help">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
+      </svg>
+    </button>
+  </header>
 
   <div id="infoCard" class="brutalist-card">
     <div class="brutalist-card__header">
@@ -189,6 +206,7 @@
       </button>
     </div>
   </div>
+
   <main class="card center-wrap">
     <section class="field">
       <h1 class="title" data-i18n="dlTitle">Your Download Link</h1>
@@ -211,24 +229,28 @@
     en: {
       copy: "Copy", copied: "Copied!", dlTitle: "Your Download Link",
       dlSub: "Click the input field to download or use the copy button.",
+      copyPasteHint: "You can also copy and paste this link into the browser where you want to download the file.",
       directLabel: "Direct Link", ready: "Link is ready.",
       paramError: "Parameters not found.", fetchError: "Error loading link.", noCopy: "Nothing to copy.",
-      // Новые переводы для плашки
       infoTitle: "How to use this link",
       infoMsg: "This is your custom download link. Open the browser on the device where you want to save the file and enter this link.",
       btnDismiss: "Close",
-      btnMarkRead: "Don't show again"
+      btnMarkRead: "Don't show again",
+      "Invalid token": "Invalid token",
+      "File expired": "The file link has expired."
     },
     ru: {
       copy: "Копировать", copied: "Готово!", dlTitle: "Ваша ссылка на файл",
       dlSub: "Нажмите на поле для скачивания или кнопку копирования.",
+      copyPasteHint: "Вы также можете скопировать и вставить эту ссылку в браузер, где хотите скачать файл.",
       directLabel: "Прямая ссылка", ready: "Ссылка готова.",
       paramError: "Параметры не найдены.", fetchError: "Ошибка загрузки.", noCopy: "Нечего копировать.",
-      // Новые переводы для плашки
       infoTitle: "Как использовать ссылку",
       infoMsg: "Это ваша персональная ссылка для скачивания. Откройте браузер на устройстве, где хотите сохранить файл, и введите эту ссылку.",
       btnDismiss: "Закрыть",
-      btnMarkRead: "Больше не показывать"
+      btnMarkRead: "Больше не показывать",
+      "Invalid token": "Неверный токен доступа.",
+      "File expired": "Срок действия ссылки на файл истёк."
     }
   };
 
@@ -246,25 +268,27 @@
 
   // --- ЛОГИКА ИНФО-ПЛАШКИ ---
   const infoCard = document.getElementById('infoCard');
-  const STORAGE_KEY_HINT = 'filesb_download_hint_seen'; // Уникальный ключ
+  const STORAGE_KEY_HINT = 'filesb_download_hint_seen';
 
   function checkInfoCard() {
-    // Проверяем, нажимал ли пользователь "Больше не показывать"
     const isSeen = localStorage.getItem(STORAGE_KEY_HINT);
     if (!isSeen) {
-      infoCard.style.display = 'flex'; // Показываем
+      infoCard.style.display = 'flex';
     }
   }
 
   window.closeInfoCard = function() {
-    // Просто скрываем (Dismiss)
     infoCard.style.display = 'none';
   }
 
   window.markAsRead = function() {
-    // Запоминаем выбор и скрываем
     localStorage.setItem(STORAGE_KEY_HINT, 'true');
     infoCard.style.display = 'none';
+  }
+
+  // Функция для кнопки лампочки: показывает плашку принудительно
+  window.showInfoCard = function() {
+    infoCard.style.display = 'flex';
   }
   // ---------------------------
 
@@ -292,17 +316,32 @@
   async function fetchLink() {
     const match = window.location.pathname.match(/\/URL\/([^\/?#]+)\/([^\/?#]+)/i);
     if (!match) return showMessage('paramError', true);
+
     try {
       const res = await fetch(`/doUrl/api?name=${encodeURIComponent(match[1])}&bool=${encodeURIComponent(match[2])}`);
       const data = await res.json();
-      if (data && data.Url) { input.value = data.Url; showMessage('ready'); }
-      else showMessage('fetchError', true);
-    } catch (e) { showMessage('fetchError', true); }
+
+      if (!res.ok) {
+        if (data && data.ErrorMessage) {
+          return showMessage(data.ErrorMessage, true);
+        }
+        return showMessage('fetchError', true);
+      }
+
+      if (data && data.Url) {
+        input.value = data.Url;
+        showMessage('ready');
+      } else {
+        showMessage('fetchError', true);
+      }
+    } catch (e) {
+      showMessage('fetchError', true);
+    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     applyLanguage();
-    checkInfoCard(); // Проверяем, нужно ли показать плашку
+    checkInfoCard();
     fetchLink();
   });
 </script>
