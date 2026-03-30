@@ -22,7 +22,7 @@ func BuildUrl(w http.ResponseWriter, r *http.Request) {
 	}
 	type Answer struct {
 		StatusOperation string `json:"StatusOperation"`
-		UrlToRedict     string `json:"UrlToRedict"`
+		Url             string `json:"Url"`
 		ErrorMessage    string `json:"ErrorMessage"`
 	}
 
@@ -33,7 +33,7 @@ func BuildUrl(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(w).Encode(Answer{
 			StatusOperation: NotStart,
-			UrlToRedict:     "nil",
+			Url:             "nil",
 			ErrorMessage:    "Can't handle the URL",
 		}); err != nil {
 			ControllerErrorLogger.ErrorContext(r.Context(), "Error collecting the url", "Error", err)
@@ -42,38 +42,45 @@ func BuildUrl(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", Json)
+	w.WriteHeader(http.StatusOK)
 	switch {
 	case bols == "true":
 		if err := json.NewEncoder(w).Encode(Answer{
 			StatusOperation: Success,
-			UrlToRedict:     DomainName + "d2/" + nameFile,
+			Url:             DomainName + "d2/" + nameFile,
 			ErrorMessage:    "",
 		}); err != nil {
 			ControllerErrorLogger.ErrorContext(r.Context(), "Can't handle the URL", slog.Group("Url parameters"),
 				slog.Any("Url parameters", r.URL.Query()), slog.String("Type of downloading", bols))
+			slog.ErrorContext(r.Context(), "Error collecting the url", "Error", err)
+
 			return
 		}
 		return
 
 	case bols == "false":
+
 		if err := json.NewEncoder(w).Encode(Answer{
 			StatusOperation: Success,
-			UrlToRedict:     DomainName + nameFile,
+			Url:             DomainName + "d/" + nameFile,
 			ErrorMessage:    "",
 		}); err != nil {
-			return
+			slog.ErrorContext(r.Context(), "Error collecting the url here", "Error", err)
+
+			ControllerErrorLogger.ErrorContext(r.Context(), "Can't handle the URL", slog.Group("Url parameters"),
+				slog.Any("Url parameters", r.URL.Query()), slog.String("Type of downloading", bols))
+			w.Header().Set("Content-Type", Json)
+			w.WriteHeader(http.StatusBadRequest)
+			if err := json.NewEncoder(w).Encode(Answer{
+				StatusOperation: Break,
+				Url:             "nil",
+				ErrorMessage:    "The url isn't valid",
+			}); err != nil {
+				slog.Error("Json in Login can't treated", "Err", err)
+			}
 		}
-		ControllerErrorLogger.ErrorContext(r.Context(), "Can't handle the URL", slog.Group("Url parameters"),
-			slog.Any("Url parameters", r.URL.Query()), slog.String("Type of downloading", bols))
-		w.Header().Set("Content-Type", Json)
-		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode(Answer{
-			StatusOperation: Break,
-			UrlToRedict:     "nil",
-			ErrorMessage:    "The url isn't valid",
-		}); err != nil {
-			slog.Error("Json in Login can't treated", "Err", err)
-		}
+
 	}
 
 }

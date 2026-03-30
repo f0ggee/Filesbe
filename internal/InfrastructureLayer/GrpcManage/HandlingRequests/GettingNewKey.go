@@ -6,7 +6,6 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log/slog"
 	"time"
 
@@ -71,7 +70,6 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 	}
 
 	h.Keys.UpdateKey(NewSavingRsa)
-	fmt.Println("NewSavingRsa", h.Keys.GetKey())
 	slog.Info("Finish handling")
 
 	return (PacketInfo.T1), nil

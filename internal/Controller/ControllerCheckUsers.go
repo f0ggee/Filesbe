@@ -18,8 +18,8 @@ func GetFrom(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackColl
 		StatusRedict string `json:"status_redict"`
 	}
 
-	//store := SessionStore()
-	seSession, err := SessionStore.Get(r, "token6")
+	store := SessionStore()
+	seSession, err := store.Get(r, TokenName)
 	if err != nil {
 		slog.Error("Error check", "Err", err)
 		return
@@ -29,7 +29,7 @@ func GetFrom(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackColl
 		w.Header().Set(ContentType, Json)
 		w.WriteHeader(http.StatusUnauthorized)
 
-		ControllerErrorLogger.ErrorContext(r.Context(), "Error the refresh token has expired or destroyed", "Error check")
+		ControllerErrorLogger.ErrorContext(r.Context(), "Error the refresh token has expired or destroyed", "Error check", rtToken)
 		if err := json.NewEncoder(w).Encode(AnswerStruct{StatusRedict: "/login"}); err != nil {
 			slog.Error("Error decode the json", "Err", err)
 			return
