@@ -18,28 +18,25 @@ import (
 var KeyCookie = []byte{}
 
 func init() {
-	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
-	if err != nil {
-		slog.Error("Err decode the key", "Err", err)
-		return
-	}
-	KeyCookie = store1z
 
 }
 
-var SessionStore = sessions.NewCookieStore(KeyCookie)
+func SessionStore() sessions.Store {
 
-//func Store() sessions.Store {
-//
-//
-//	Store := sessions.NewCookieStore(store1z)
-//	return Store
-//
-//}
+	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
+	if err != nil {
+		slog.Error("Err decode the key", "Err", err)
+		return nil
+	}
+	Store := sessions.NewCookieStore(store1z)
+	return Store
+
+}
 
 func checkJson(r *http.Request) (*Dto.UserLoginData, error) {
 	var err error
 	var e Dto.UserLoginData
+	slog.Info("Key cookie is ", string(KeyCookie))
 
 	if err := json.NewDecoder(r.Body).Decode(&e); err != nil {
 		return nil, err
@@ -68,8 +65,8 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 		slog.Error("Error", "err")
 		return
 	}
-	//store := SessionStore()
-	Session, err := SessionStore.Get(r, TokenName)
+	store := SessionStore()
+	Session, err := store.Get(r, TokenName)
 	if err != nil {
 
 		slog.Error("cookie don't send 1 ", err)
@@ -122,6 +119,7 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 		return
 	}
 
+	slog.Info("RefreshToken", "RefreshToken", RefreshToken)
 	Session.Values[RTCookieName] = RefreshToken
 	Session.Values[JwtCookieName] = JwtToken
 
@@ -131,7 +129,7 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 		Secure:   false,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
-		Domain:   r.Host,
+		//Domain:   r.Host,
 	}
 
 	if err := Session.Save(r, w); err != nil {

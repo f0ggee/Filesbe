@@ -87,9 +87,9 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 }
 
 func CookieGet(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) error {
-	//store := SessionStore()
+	store := SessionStore()
 
-	session, err := SessionStore.Get(r, TokenName)
+	session, err := store.Get(r, TokenName)
 
 	if err != nil {
 		slog.Error("cookie don't send", err)
@@ -99,6 +99,7 @@ func CookieGet(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCo
 
 	rtToken, ok := session.Values[RTCookieName].(string)
 	if !ok {
+		slog.Error("cookie dont get token")
 		return errors.New("cookie dont get RT")
 	}
 	jwts, _ := session.Values[JwtCookieName].(string)
