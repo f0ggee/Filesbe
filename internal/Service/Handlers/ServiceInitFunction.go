@@ -24,12 +24,12 @@ func init() {
 
 	}
 	Bucket = os.Getenv("BUCKET")
-	PublickKeyIntoBytes, err := hex.DecodeString(os.Getenv("PublickKeyMasterServer"))
+	PublickKeyIntoBytes, err := hex.DecodeString(os.Getenv("Publick_Key_Master_Server"))
 	if err != nil {
-		slog.Error("Error decode publickKeyMasterServer", "Error", err.Error())
+		slog.Error("Error decode Publick_Key_Master_Server", "Error", err.Error())
 		return
 	}
-	OurPrivateKeyIntoBytes, err := hex.DecodeString(os.Getenv("OurPrivateKey"))
+	OurPrivateKeyIntoBytes, err := hex.DecodeString(os.Getenv("Our_Private_Key"))
 	if err != nil {
 		slog.Error("Error decode Server1SecretKey", "Error", err.Error())
 		return

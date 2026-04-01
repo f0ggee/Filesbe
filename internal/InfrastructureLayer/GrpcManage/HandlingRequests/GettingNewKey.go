@@ -44,17 +44,17 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 		T1:      0,
 		TimeNow: time.Now(),
 	}
+	err = json.Unmarshal(PacketData.Bytes(), &PacketInfo)
+	if err != nil {
+		slog.Error("Error while unmarshalling PacketInfo", "Error", err.Error())
+		return 0, err
+	}
 
 	err = h.ValidationPacket.CheckTime(PacketInfo.TimeNow)
 	if err != nil {
 		return 0, err
 	}
 
-	err = json.Unmarshal(PacketData.Bytes(), &PacketInfo)
-	if err != nil {
-		slog.Error("Error while unmarshalling PacketInfo", "Error", err.Error())
-		return 0, err
-	}
 	NewSavingRsa := memguard.NewBuffer(len(PacketInfo.RsaKey))
 	NewSavingRsa.Copy(PacketInfo.RsaKey)
 	memguard.WipeBytes(PacketInfo.RsaKey)
@@ -68,8 +68,8 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 	if err != nil {
 		return 0, err
 	}
-
 	h.Keys.UpdateKey(NewSavingRsa)
+
 	slog.Info("Finish handling")
 
 	return (PacketInfo.T1), nil

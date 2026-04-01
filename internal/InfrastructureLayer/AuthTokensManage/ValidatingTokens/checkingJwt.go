@@ -10,7 +10,6 @@ import (
 )
 
 func (c Checking) CheckJwt(JWT string) (*jwt.Token, error) {
-	slog.Info("JWT TOKEN", "JWT", JWT)
 	key := []byte(os.Getenv("KEYFORJWT"))
 	JwtToken, err := jwt.ParseWithClaims(JWT, &Dto.JwtCustomStruct{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

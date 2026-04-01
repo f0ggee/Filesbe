@@ -6,6 +6,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/rsa"
 	"crypto/x509"
 	"encoding/hex"
 	"errors"
@@ -75,7 +76,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 			if err != nil {
 				err := writer.CloseWithError(err)
 				if err != nil {
-					slog.Error("Error in file writing", err)
+					slog.Error("Error closing a file during encryption ", "Error", err)
 					return err
 				}
 			}
@@ -91,13 +92,21 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 	shortNameForFile := sa.Crypto.Generate.GenerateShortName()
 	FileExtension := sa.FileInfo.FileManaging.FindFormatOfFile(sizeAndName.Filename)
 
-	Public, err := x509.ParsePKCS1PublicKey(sa.Keys.ControllerKey.GetKey())
+	Public, err := x509.ParsePKCS1PrivateKey(sa.Keys.ControllerKey.GetKey())
 	if err != nil {
+		slog.Error("Error parsing a key", "Error", err)
 		err := writer.CloseWithError(err)
 		if err != nil {
-			slog.Error("Error in file writing", err)
+			slog.Error("Error in file writing wile a key parsing ", err)
 			return "", err
 		}
+		err = reader.CloseWithError(err)
+		if err != nil {
+			slog.Error("Error in file reading wile a key parsing ", err)
+			return "", err
+		}
+
+		return "", err
 	}
 
 	FileInfoInBytes, err := sa.Convert.Converting.JsonConverter(Dto.FileLabelsBytes{
@@ -106,7 +115,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 	})
 	if err != nil {
 		err := writer.CloseWithError(err)
-		slog.Error("Error in file writing", err)
+		slog.Error("Error in file writing 2 ", err)
 		return "", err
 	}
 	g.Go(func() error {
@@ -117,15 +126,16 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 		}
 		_, err3 := uploadFileEncrypt(sa.S3.S3Connect, BesParts, goroutine, r.Context(), shortNameForFile, FileExtension, reader)
 		if err3 != nil {
+			slog.Error("Error in file uploading file", "Error", err)
+			//return "", err3
 			return err3
 		}
 		return nil
 	})
 	if err := g.Wait(); err != nil {
-		slog.Error("Error in file writing", err)
 		return "", err
 	}
-	EncryptFileInfo, err := sa.Crypto.Encrypt.EncryptFileInfo(FileInfoInBytes, Public)
+	EncryptFileInfo, err := sa.Crypto.Encrypt.EncryptFileInfo(FileInfoInBytes, Public.Public().(*rsa.PublicKey))
 	if err != nil {
 		slog.Error("Error in file writing", err)
 		return "", err
@@ -138,27 +148,37 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 		return "", err
 	}
 
-	time.AfterFunc(5*time.Minute, func() {
+	//TODO Change time for the func
+	time.AfterFunc(2*time.Second, func() {
 		slog.Info("Func  Auto-FileDelete start")
 
-		DownloadingHaveStarted := sa.RedisControlling.CheckerRedis.ChekIsStartDownload(shortNameForFile, context.Background())
+		slog.Info("Short name of file", "file name", shortNameForFile)
+		g2, Ctx := errgroup.WithContext(context.Background())
+
+		Ctx, cancel := context.WithTimeout(Ctx, 5*time.Second)
+		defer cancel()
+
+		DownloadingHaveStarted := sa.RedisControlling.CheckerRedis.ChekIsStartDownload(shortNameForFile, Ctx)
 		if DownloadingHaveStarted {
 			return
 		}
 
-		g2, _ := errgroup.WithContext(context.Background())
-
 		g2.Go(func() error {
-			err := sa.RedisControlling.Deleter.DeleteFileInfo(shortNameForFile, r.Context())
+
+			err := sa.RedisControlling.Deleter.DeleteFileInfo(shortNameForFile, Ctx)
 			if err != nil {
-				return nil
+				ctx.Done()
+				slog.Error("Error in file deleting file", "Error", err)
+				return ctx.Err()
 			}
 			return nil
 		})
 		g2.Go(func() error {
-			err = sa.S3.Deleter.DeleteFileFromS3(shortNameForFile, context.Background())
+			err = sa.S3.Deleter.DeleteFileFromS3(shortNameForFile, Ctx)
 			if err != nil {
-				return nil
+				ctx.Done()
+				slog.Error("Error in file deleting file from s3 ", "Error", err)
+				return ctx.Err()
 			}
 			return nil
 		})
@@ -177,7 +197,6 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 }
 
 func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.Context, shortFileName string, ContentType string, reader *io.PipeReader) (string, error) {
-	slog.Info("Func uploadFileEncrypt starts", ContentType)
 	uploader := manager.NewUploader(cfg, func(uploader *manager.Uploader) {
 
 		uploader.MaxUploadParts = 200
@@ -213,6 +232,10 @@ func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.
 		slog.Error("Time was exceeded")
 		return "", errors.New("time was exceeded")
 
+	}
+	if err != nil {
+		slog.Error("Error in file writing", err)
+		return "", err
 	}
 	slog.Error("file upload failed", err)
 	return "", errors.New("file upload failed")

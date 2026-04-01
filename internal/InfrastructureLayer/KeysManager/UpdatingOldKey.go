@@ -2,7 +2,7 @@ package KeysManager
 
 import "github.com/awnumar/memguard"
 
-func (u Updater) UpdateOldKey() {
+func (u *Updater) UpdateOldKey() {
 	defer u.Mu.Unlock()
 	u.Mu.Lock()
 

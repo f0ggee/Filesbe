@@ -8,7 +8,6 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/sessions"
@@ -143,7 +142,7 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 }
 
 func NewSession(w http.ResponseWriter, r *http.Request, jwt string, rt string) error {
-	store := SessionStore()
+	//store := SessionStore()
 	session, err := store.Get(r, "token6")
 	if err != nil {
 		slog.Error("Error get session", err)
@@ -153,8 +152,8 @@ func NewSession(w http.ResponseWriter, r *http.Request, jwt string, rt string) e
 	session.Values[JwtCookieName] = jwt
 	session.Values[RTCookieName] = rt
 	session.Options = &sessions.Options{
-		Path:     "/",
-		MaxAge:   int((100 * time.Hour).Seconds()),
+		Path: "/",
+		//MaxAge:   int((100 * time.Hour).Seconds()),
 		Secure:   true,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
