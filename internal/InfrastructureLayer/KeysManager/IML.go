@@ -14,20 +14,24 @@ type Updater struct {
 	OldPrivateKey *memguard.LockedBuffer
 }
 
-func (u Updater) FillOldKey() {
+func (u *Updater) FillOldKey() {
 
 	defer u.Mu.Unlock()
 	u.Mu.Lock()
+
+	slog.Info("Start filling keys")
 	err := error(nil)
-	u.NewPrivateKey, err = memguard.NewBufferFromReader(rand.Reader, 32)
+	u.NewPrivateKey, err = memguard.NewBufferFromReader(rand.Reader, 2)
 	if err != nil {
-		slog.Error("Error filling old key", err.Error())
+		slog.Error("Error filling new key", err.Error())
 		return
 	}
+
 	u.OldPrivateKey, err = memguard.NewBufferFromReader(rand.Reader, 32)
 	if err != nil {
 		slog.Error("Error filling old key", err.Error())
 		return
 	}
+	slog.Info("Keys fill up", "Result", u.NewPrivateKey.Size(), u.OldPrivateKey.Size())
 
 }

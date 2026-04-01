@@ -82,9 +82,9 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 }
 
 func CookieGet2(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) error {
-	store := SessionStore()
+	//store := SessionStore()
 
-	session, err := store.Get(r, "token6")
+	session, err := store.Get(r, TokenName)
 	if err != nil {
 		slog.Error("cookie don't send", err)
 		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
@@ -96,11 +96,7 @@ func CookieGet2(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackC
 		return errors.New("Cookie time expired")
 	}
 
-	rtToken, ok := session.Values[RTCookieName].(string)
-	if !ok {
-		slog.Error("Cookie dont set RT")
-		return errors.New("Cookie dont get RT")
-	}
+	rtToken, _ := session.Values[RTCookieName].(string)
 
 	jwts, _ := session.Values[JwtCookieName].(string)
 	Jwts, err := s.Auth(rtToken, jwts)

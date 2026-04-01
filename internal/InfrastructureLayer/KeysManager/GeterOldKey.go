@@ -1,6 +1,6 @@
 package KeysManager
 
-func (u Updater) GetOldKey() []byte {
+func (u *Updater) GetOldKey() []byte {
 
 	return u.OldPrivateKey.Bytes()
 }
