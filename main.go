@@ -5,7 +5,8 @@ import (
 	"Kaban/internal/Controller/Middlewares"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	"Kaban/internal/InfrastructureLayer/KeysManager"
-	"crypto/rand"
+	"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
+	"Kaban/internal/InfrastructureLayer/s3Interation"
 	"fmt"
 	"sync"
 
@@ -59,8 +60,6 @@ func main() {
 	}
 	redisConn := RedisInteration.ConnectToRedis()
 	defer redisConn.Close()
-	NewPrivate, err := memguard.NewBufferFromReader(rand.Reader, 32)
-	OldPrivate, err := memguard.NewBufferFromReader(rand.Reader, 32)
 
 	ManagingAuthTokens := ControllingTokens.ManageTokens{}
 	GeneratingAuthTokens := Generating.CreatingTokens{}
@@ -78,8 +77,8 @@ func main() {
 	PacketValidate := PacketChecking.PacketValidating{}
 	KeysController := &KeysManager.Updater{
 		Mu:            &sync.RWMutex{},
-		NewPrivateKey: NewPrivate,
-		OldPrivateKey: OldPrivate,
+		NewPrivateKey: &memguard.LockedBuffer{},
+		OldPrivateKey: &memguard.LockedBuffer{},
 	}
 	GrpcHandlingRequests := HandlingRequests.HandlerGrpcRequest{
 		CryptoEncrypt:    &CryptoEncryption,
@@ -95,10 +94,11 @@ func main() {
 	ReaderRedis := ReadingRedis.RedisReader{Re: redisConn}
 	WriterRedis := WritingRedis.Writing{Re: redisConn}
 
-	//CheckerRedis := RedisChecking.ValidationRedis{Re: redisConn}
+	CheckerRedis := RedisChecking.ValidationRedis{Re: redisConn}
 
 	S3Deleter := DeleterS3.DeleterS3{Conf: cfg}
 
+	s3Interation.S3Info.Bucket = os.Getenv("BUCKET")
 	HandlerPack := Handlers.HandlerPackCollect{
 		S3: Handlers.S3Controlling{
 			Deleter:   &S3Deleter,
@@ -125,9 +125,10 @@ func main() {
 			Checker: &DbCheck,
 		},
 		RedisControlling: Handlers.RedisControlling{
-			Deleter: &DeleterRds,
-			Reader:  &ReaderRedis,
-			Writer:  &WriterRedis,
+			Deleter:      &DeleterRds,
+			Reader:       &ReaderRedis,
+			Writer:       &WriterRedis,
+			CheckerRedis: &CheckerRedis,
 		},
 		Grpc: Handlers.HandlerGrpc{
 			GrpcSendingRequest: &SendingGrcp,
@@ -159,6 +160,8 @@ func main() {
 		}
 
 	})
+
+	KeysController.FillOldKey()
 	TimeSwaping := Sa.SwapKeyFirst()
 
 	fmt.Println(TimeSwaping)

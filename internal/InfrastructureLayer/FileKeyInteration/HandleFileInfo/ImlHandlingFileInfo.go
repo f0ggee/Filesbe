@@ -14,7 +14,6 @@ func (p ProcessingFileInfo) GetRealNameFile(TemporallyName string) string {
 }
 
 func (p ProcessingFileInfo) SayHi() string {
-	//TODO implement me
 
 	return "Hi"
 }

@@ -3,13 +3,11 @@ package Controller
 import (
 	"Kaban/internal/Dto"
 	"Kaban/internal/Service/Handlers"
-	"encoding/hex"
 	"encoding/json"
 	"io"
 	"log/slog"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/sessions"
@@ -21,17 +19,19 @@ func init() {
 
 }
 
-func SessionStore() sessions.Store {
+var store = sessions.NewCookieStore([]byte(os.Getenv("KEY1")))
 
-	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
-	if err != nil {
-		slog.Error("Err decode the key", "Err", err)
-		return nil
-	}
-	Store := sessions.NewCookieStore(store1z)
-	return Store
-
-}
+//func SessionStore() sessions.Store {
+//
+//	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
+//	if err != nil {
+//		slog.Error("Err decode the key", "Err", err)
+//		return nil
+//	}
+//	Store := sessions.NewCookieStore(store1z)
+//	return Store
+//
+//}
 
 func checkJson(r *http.Request) (*Dto.UserLoginData, error) {
 	var err error
@@ -65,7 +65,7 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 		slog.Error("Error", "err")
 		return
 	}
-	store := SessionStore()
+	//store := SessionStore()
 	Session, err := store.Get(r, TokenName)
 	if err != nil {
 
@@ -119,20 +119,19 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 		return
 	}
 
-	slog.Info("RefreshToken", "RefreshToken", RefreshToken)
 	Session.Values[RTCookieName] = RefreshToken
 	Session.Values[JwtCookieName] = JwtToken
 
 	Session.Options = &sessions.Options{
 		Path:     "/",
-		MaxAge:   int((100 * time.Hour).Hours()),
-		Secure:   true,
+		Secure:   false,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
-		//Domain:   r.Host,
+		Domain:   r.Host,
 	}
 
 	if err := Session.Save(r, w); err != nil {
+		slog.Error("Error saving session", "Err", err)
 		return
 
 	}

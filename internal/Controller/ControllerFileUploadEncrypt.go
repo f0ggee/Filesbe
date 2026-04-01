@@ -3,7 +3,6 @@ package Controller
 import (
 	"Kaban/internal/Service/Handlers"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -80,36 +79,37 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 		Error: "",
 
 		UrlToRedict: url.Path}); err != nil {
-		slog.Info("Error in FileUploadingControlling", "Error", err)
+		ControllerErrorLogger.ErrorContext(r.Context(), "Error in FileUploadingControlling", "Error", err)
 		return
 	}
 
 }
 
 func CookieGet(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) error {
-	store := SessionStore()
-
-	session, err := store.Get(r, TokenName)
-
-	if err != nil {
-		slog.Error("cookie don't send", err)
-		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
-		return errors.New("cookie don't set")
-	}
-
-	rtToken, ok := session.Values[RTCookieName].(string)
-	if !ok {
-		slog.Error("cookie dont get token")
-		return errors.New("cookie dont get RT")
-	}
-	jwts, _ := session.Values[JwtCookieName].(string)
-	jwts, err = s.Auth(rtToken, jwts)
-	if err != nil {
-		ControllerErrorLogger.ErrorContext(r.Context(), "Error generate a cokkie", err)
-		return errors.New("can't validate a tokens")
-	}
-	if jwts != "" {
-		session.Values[JwtCookieName] = jwts
-	}
+	//TODO Unparse this
+	//store := SessionStore()
+	//
+	//session, err := store.Get(r, TokenName)
+	//
+	//if err != nil {
+	//	slog.Error("cookie don't send", err)
+	//	http.Error(w, "cookie dont sen", http.StatusUnauthorized)
+	//	return errors.New("cookie don't set")
+	//}
+	//
+	//rtToken, ok := session.Values[RTCookieName].(string)
+	//if !ok {
+	//	slog.Error("cookie dont get token")
+	//	return errors.New("cookie dont get RT")
+	//}
+	//jwts, _ := session.Values[JwtCookieName].(string)
+	//jwts, err = s.Auth(rtToken, jwts)
+	//if err != nil {
+	//	ControllerErrorLogger.ErrorContext(r.Context(), "Error generate a cokkie", err)
+	//	return errors.New("can't validate a tokens")
+	//}
+	//if jwts != "" {
+	//	session.Values[JwtCookieName] = jwts
+	//}
 	return nil
 }
