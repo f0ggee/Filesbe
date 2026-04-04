@@ -48,7 +48,7 @@ func BuildUrl(w http.ResponseWriter, r *http.Request) {
 	case bols == "true":
 		if err := json.NewEncoder(w).Encode(Answer{
 			StatusOperation: Success,
-			Url:             DomainName + "d2/" + nameFile,
+			Url:             LocalHostName + "d2/" + nameFile,
 			ErrorMessage:    "",
 		}); err != nil {
 			ControllerErrorLogger.ErrorContext(r.Context(), "Can't handle the URL", slog.Group("Url parameters"),
@@ -63,7 +63,7 @@ func BuildUrl(w http.ResponseWriter, r *http.Request) {
 
 		if err := json.NewEncoder(w).Encode(Answer{
 			StatusOperation: Success,
-			Url:             DomainName + "d/" + nameFile,
+			Url:             LocalHostName + "d/" + nameFile,
 			ErrorMessage:    "",
 		}); err != nil {
 			slog.ErrorContext(r.Context(), "Error collecting the url here", "Error", err)

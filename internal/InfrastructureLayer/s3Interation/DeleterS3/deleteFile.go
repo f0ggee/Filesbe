@@ -15,8 +15,6 @@ func (d *DeleterS3) DeleteFileFromS3(key string, ctx context.Context) error {
 		Bucket: aws.String(s3Interation.S3Info.Bucket),
 		Key:    &key,
 	}
-
-	slog.Info("Bucket name", s3Interation.S3Info.Bucket)
 	_, err := d.Conf.DeleteObject(ctx, s)
 	if err != nil {
 		slog.Error("Error in delete func", err)

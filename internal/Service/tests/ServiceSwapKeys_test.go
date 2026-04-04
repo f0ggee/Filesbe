@@ -18,8 +18,6 @@ func TestSwapKeys(t *testing.T) {
 		{name: "TestSwapKeys"},
 		{name: "TestSwapKeys"},
 		{name: "TestSwapKeys"},
-
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Logf("Test: %s id : %v", tt.name, i)

@@ -8,6 +8,7 @@ const Break = "BREAK"
 const Json = "application/json"
 const Success = "Success"
 const DomainName = "https://filesbes.com/"
+const LocalHostName = "http://localhost:8080/"
 
 const Bots = "Bot"
 const RequestId = "RequestId"
