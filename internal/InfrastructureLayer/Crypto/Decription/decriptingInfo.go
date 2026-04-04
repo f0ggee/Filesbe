@@ -26,7 +26,7 @@ func (d DecryptionData) DecryptFileInfo(FileInfo []byte, NewRsaKey []byte, OldRs
 		slog.Error("Key is old")
 		keyRsaOld, err := x509.ParsePKCS1PrivateKey(OldRsaKey)
 		if err != nil {
-			slog.Error("Func EncryptAes ParsePKCS1PrivateKey fail", err)
+			slog.Error("Func DecryptFileInfo ParsePKCS1PrivateKey fail", "Error", err)
 			return nil, "", err
 		}
 		decryptFileInfo, err = rsa.DecryptOAEP(sha256.New(), rand.Reader, keyRsaOld, FileInfo, nil)

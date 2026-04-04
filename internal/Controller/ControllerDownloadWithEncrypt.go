@@ -3,6 +3,7 @@ package Controller
 import (
 	"Kaban/internal/Service/Handlers"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -30,7 +31,13 @@ func DownloadWithEncrypt(w http.ResponseWriter, r *http.Request, s *Handlers.Han
 
 	err := s.DownloadEncrypt(w, r.Context(), name)
 	if err != nil {
+
+		http.Redirect(w, r, "/informationPage", http.StatusFound)
 		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: Break, Error: []string{"File was used"}, Url: "/informationPage"}); err != nil {
+
+			slog.Error("Error json encoder in file downloader", "Error", err.Error())
+			return
+
 		}
 		return
 	}

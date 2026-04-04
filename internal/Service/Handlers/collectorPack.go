@@ -2,15 +2,11 @@ package Handlers
 
 import (
 	"Kaban/internal/DomainLevel"
-
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 type S3Controlling struct {
-	Deleter      DomainLevel.DeleterS3
-	S3Connect    *s3.Client
-	S3OldConnect *session.Session
+	Deleter  DomainLevel.DeleterS3
+	Uploader DomainLevel.S3Uploader
 }
 
 type HandlerPackCrypto struct {

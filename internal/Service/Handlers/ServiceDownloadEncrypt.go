@@ -15,6 +15,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"golang.org/x/sync/errgroup"
 )
 
 func (sa *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs context.Context, name string) error {
@@ -87,11 +88,12 @@ func (sa *HandlerPackCollect) downloadFileToClient(w http.ResponseWriter, ctx co
 
 	}
 	if err != nil {
-		slog.Error("ServiceDownload:", err.Error())
+		slog.Error("ServiceDownload:", "Error", err.Error())
 		return err
 	}
 
-	go func() {
+	g, ctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
 		defer func(writer *io.PipeWriter) {
 			err := writer.Close()
 			if err != nil {
@@ -104,21 +106,30 @@ func (sa *HandlerPackCollect) downloadFileToClient(w http.ResponseWriter, ctx co
 			err := writer.CloseWithError(err)
 			if err != nil {
 				slog.Error("Error", "err", err)
-				return
+				return nil
 			}
 
 		}
-	}()
+		return nil
+	})
 
 	FormatFile := sa.FileInfo.FileManaging.FindFormatOfFile(realFileName)
 	w.Header().Set("Content-Type", FormatFile)
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", realFileName))
 	w.Header().Set("Content-Length", strconv.FormatInt(*o.ContentLength-aes.BlockSize, 10))
 
-	if _, err = io.Copy(w, Reader); err != nil {
-		slog.Error("Err In file Service Downloader EncryptFile", "err", err)
-		return errors.New("connect close")
+	g.Go(func() error {
+		if _, err = io.Copy(w, Reader); err != nil {
+			slog.Error("Err In file Service Downloader EncryptFile", "err", err)
+			return errors.New("connect close")
+		}
+		return nil
+	})
+
+	if err := g.Wait(); err != nil {
+		return err
 	}
+
 	return nil
 }
 
@@ -135,14 +146,14 @@ func DecryptFile(AesKey []byte, o *s3.GetObjectOutput, writer *io.PipeWriter) er
 
 	block, err := aes.NewCipher(AesKey)
 	if err != nil {
-		slog.Error("Error in  create file", err.Error())
+		slog.Error("Error in  create file", "Error", err.Error())
 		return err
 	}
 
 	nonce := make([]byte, aes.BlockSize)
 	_, err = io.ReadFull(o.Body, nonce)
 	if err != nil {
-		slog.Error("Error in read", err.Error())
+		slog.Error("Error in read", "Error", err.Error())
 		return err
 	}
 
@@ -154,7 +165,7 @@ func DecryptFile(AesKey []byte, o *s3.GetObjectOutput, writer *io.PipeWriter) er
 	for {
 		n, err := file.Read(plaintext)
 		if err != nil && err != io.EOF {
-			slog.Error("Error in file", err.Error())
+			slog.Error("Error in file", "Error", err.Error())
 			return err
 		}
 		if err == io.EOF {

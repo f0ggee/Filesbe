@@ -1,16 +1,11 @@
 package Handlers
 
 import (
-	"context"
 	"errors"
 	"log/slog"
-	"mime/multipart"
 	"net/http"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go/aws"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -20,7 +15,7 @@ func (sa *HandlerPackCollect) FileUploader(r *http.Request) (string, error) {
 
 	file, sizeAndName, err := r.FormFile("file")
 	if err != nil {
-		slog.Error("Err from FileUploader 1 ", err.Error())
+		slog.Error("Err from FileUploader 1 ", "Error", err.Error())
 		return "", err
 	}
 	if sizeAndName.Size >= FileMaxSize {
@@ -47,15 +42,10 @@ func (sa *HandlerPackCollect) FileUploader(r *http.Request) (string, error) {
 		slog.Info("Time of downloading", "Time", sa)
 	}()
 
+	fileFormat := sa.FileInfo.FileManaging.FindFormatOfFile(sizeAndName.Filename)
 	g.Go(func() error {
-		select {
-		case <-ctx.Done():
-			slog.Info("Context done")
 
-			return ctx.Err()
-		default:
-		}
-		err2 := sa.uploadFile(Parts, goroutines, r.Context(), sizeAndName, file)
+		err2 := sa.S3.Uploader.UploadFile(Parts, goroutines, ctx, fileFormat, sizeAndName.Filename, file)
 		if err2 != nil {
 			return err2
 		}
@@ -80,35 +70,4 @@ func (sa *HandlerPackCollect) FileUploader(r *http.Request) (string, error) {
 
 	return shortNameFile, nil
 
-}
-
-func (sa *HandlerPackCollect) uploadFile(parts int, goroutines int, ctx context.Context, sizeAndName *multipart.FileHeader, file multipart.File) error {
-	uploader := manager.NewUploader(sa.S3.S3Connect, func(uploader *manager.Uploader) {
-		uploader.MaxUploadParts = 1000
-		uploader.PartSize = int64(parts * 1024 * 1024)
-		uploader.Concurrency = goroutines
-	})
-
-	FileExtension := sa.FileInfo.FileManaging.FindFormatOfFile(sizeAndName.Filename)
-
-	slog.Info("File extension", FileExtension)
-	_, err := uploader.Upload(ctx, &s3.PutObjectInput{
-		Bucket:      aws.String(Bucket),
-		Key:         aws.String(sizeAndName.Filename),
-		ContentType: aws.String(FileExtension),
-
-		Body: file,
-	})
-
-	switch {
-	case errors.Is(err, context.Canceled):
-		slog.Info("a user has been cancelled download ")
-		return errors.New("a user has been cancelled download")
-
-	}
-	if err != nil {
-		slog.Error("Error in uploader", err)
-		return err
-	}
-	return nil
 }

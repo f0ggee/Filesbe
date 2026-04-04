@@ -1,5 +1,6 @@
 package Handlers
 
+import "C"
 import (
 	"Kaban/internal/Dto"
 	"context"
@@ -18,10 +19,7 @@ import (
 	"time"
 
 	"github.com/awnumar/memguard"
-	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go-v2/service/s3/types"
-	"github.com/aws/aws-sdk-go/aws"
+
 	"golang.org/x/sync/errgroup"
 )
 
@@ -30,7 +28,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 	slog.Info("Func FileUploaderEncrypt starts")
 	file, sizeAndName, err := r.FormFile("file")
 	if err != nil {
-		slog.Error("Err from FileUploader 1 ", err)
+		slog.Error("Err from FileUploader 1 ", "Error", err)
 		return "", errors.New("can't get file")
 	}
 	if sizeAndName.Size >= FileMaxSize {
@@ -79,6 +77,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 					slog.Error("Error closing a file during encryption ", "Error", err)
 					return err
 				}
+				return err
 			}
 			return nil
 		}
@@ -97,12 +96,12 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 		slog.Error("Error parsing a key", "Error", err)
 		err := writer.CloseWithError(err)
 		if err != nil {
-			slog.Error("Error in file writing wile a key parsing ", err)
+			slog.Error("Error in file writing wile a key parsing ", "Error", err)
 			return "", err
 		}
 		err = reader.CloseWithError(err)
 		if err != nil {
-			slog.Error("Error in file reading wile a key parsing ", err)
+			slog.Error("Error in file reading wile a key parsing ", "Error", err)
 			return "", err
 		}
 
@@ -115,7 +114,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 	})
 	if err != nil {
 		err := writer.CloseWithError(err)
-		slog.Error("Error in file writing 2 ", err)
+		slog.Error("Error in file writing 2 ", "Error", err)
 		return "", err
 	}
 	g.Go(func() error {
@@ -124,70 +123,60 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 			return ctx.Err()
 		default:
 		}
-		_, err3 := uploadFileEncrypt(sa.S3.S3Connect, BesParts, goroutine, r.Context(), shortNameForFile, FileExtension, reader)
-		if err3 != nil {
-			slog.Error("Error in file uploading file", "Error", err)
+		errS3 := sa.S3.Uploader.UploadFileEncrypt(BesParts, goroutine, r.Context(), shortNameForFile, FileExtension, reader)
+		if errS3 != nil {
 			//return "", err3
-			return err3
+			return errS3
 		}
 		return nil
 	})
+
 	if err := g.Wait(); err != nil {
 		return "", err
 	}
+
 	EncryptFileInfo, err := sa.Crypto.Encrypt.EncryptFileInfo(FileInfoInBytes, Public.Public().(*rsa.PublicKey))
 	if err != nil {
-		slog.Error("Error in file writing", err)
 		return "", err
 	}
 
 	err = sa.RedisControlling.Writer.WriteData(shortNameForFile, EncryptFileInfo, r.Context())
 	if err != nil {
 		err := writer.CloseWithError(err)
-		slog.Error("Error in file writing", err)
 		return "", err
 	}
 
-	//TODO Change time for the func
-	time.AfterFunc(2*time.Second, func() {
+	time.AfterFunc(5*time.Minute, func() {
 		slog.Info("Func  Auto-FileDelete start")
 
-		slog.Info("Short name of file", "file name", shortNameForFile)
-		g2, Ctx := errgroup.WithContext(context.Background())
+		g2, Ctx := errgroup.WithContext(ctx)
 
 		Ctx, cancel := context.WithTimeout(Ctx, 5*time.Second)
 		defer cancel()
-
 		DownloadingHaveStarted := sa.RedisControlling.CheckerRedis.ChekIsStartDownload(shortNameForFile, Ctx)
 		if DownloadingHaveStarted {
 			return
 		}
-
 		g2.Go(func() error {
 
 			err := sa.RedisControlling.Deleter.DeleteFileInfo(shortNameForFile, Ctx)
 			if err != nil {
-				ctx.Done()
-				slog.Error("Error in file deleting file", "Error", err)
-				return ctx.Err()
+				return err
 			}
 			return nil
 		})
 		g2.Go(func() error {
-			err = sa.S3.Deleter.DeleteFileFromS3(shortNameForFile, Ctx)
+			err := sa.S3.Deleter.DeleteFileFromS3(shortNameForFile, Ctx)
 			if err != nil {
-				ctx.Done()
-				slog.Error("Error in file deleting file from s3 ", "Error", err)
-				return ctx.Err()
+				return err
 			}
 			return nil
 		})
 		if err := g2.Wait(); err != nil {
-			slog.Error("Error in file writing", err)
-
 			return
 		}
 		slog.Info("Func Auto-deleteFile ends")
+		return
 	})
 
 	slog.Info("File success upload ")
@@ -196,49 +185,40 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 
 }
 
-func uploadFileEncrypt(cfg *s3.Client, BesParts int, goroutine int, ctx context.Context, shortFileName string, ContentType string, reader *io.PipeReader) (string, error) {
-	uploader := manager.NewUploader(cfg, func(uploader *manager.Uploader) {
+func (sa *HandlerPackCollect) Tester(shortNameForFile string, ctx context.Context) error {
+	g2, Ctx2 := errgroup.WithContext(ctx)
 
-		uploader.MaxUploadParts = 200
-		uploader.PartSize = int64(BesParts) * 1024 * 1024
-		uploader.Concurrency = goroutine
-		//uploader.BufferProvider = manager.NewBufferedReadSeekerWriteToPool(BesParts)
+	Ctx, cancel := context.WithTimeout(Ctx2, 1*time.Second)
+	defer cancel()
+
+	DownloadingHaveStarted := sa.RedisControlling.CheckerRedis.ChekIsStartDownloadTest(shortNameForFile, Ctx)
+	if DownloadingHaveStarted {
+		slog.Info("Check downloading was break", "State", DownloadingHaveStarted)
+		return errors.New("downloading have started")
+	}
+
+	g2.Go(func() error {
+
+		err := sa.RedisControlling.Deleter.DeleteFileInfo(shortNameForFile, Ctx)
+		if err != nil {
+			Ctx.Done()
+			return err
+		}
+		return nil
 	})
+	g2.Go(func() error {
 
-	_, err := uploader.Upload(ctx, &s3.PutObjectInput{
-		Bucket:      aws.String(Bucket),
-		Key:         aws.String(shortFileName),
-		ContentType: aws.String(ContentType),
-		Body:        reader,
+		err := sa.S3.Deleter.DeleterS3Test(shortNameForFile, Ctx)
+		if err != nil {
+			Ctx.Done()
+			return err
+		}
+		return nil
 	})
-	if err == nil {
-		return "", nil
+	if err := g2.Wait(); err != nil {
+		return err
 	}
-
-	var ns *types.NoSuchKey
-
-	switch {
-
-	case errors.As(err, &ns):
-
-		slog.Error("file was used", "Error", err.Error())
-		return "", errors.New("file was used")
-
-	case errors.Is(err, context.Canceled):
-		slog.Error("file downloading was cancelled")
-		return "", errors.New("file was cancelled")
-
-	case errors.Is(err, context.DeadlineExceeded):
-		slog.Error("Time was exceeded")
-		return "", errors.New("time was exceeded")
-
-	}
-	if err != nil {
-		slog.Error("Error in file writing", err)
-		return "", err
-	}
-	slog.Error("file upload failed", err)
-	return "", errors.New("file upload failed")
+	return nil
 }
 
 func (sa *HandlerPackCollect) EncryptFile(file multipart.File, writer io.Writer, channelForBytes chan memguard.LockedBuffer) error {
@@ -275,7 +255,7 @@ func (sa *HandlerPackCollect) EncryptFile(file multipart.File, writer io.Writer,
 	for {
 		n, err := file.Read(buf)
 		if err != nil && err != io.EOF {
-			slog.Error("Error in file upload", err.Error())
+			slog.Error("Error in file upload", "error", err.Error())
 			return err
 		}
 		if err == io.EOF {
@@ -284,7 +264,7 @@ func (sa *HandlerPackCollect) EncryptFile(file multipart.File, writer io.Writer,
 		stream.XORKeyStream(buf[:n], buf[:n])
 		_, err = writer.Write(buf[:n])
 		if err != nil {
-			slog.Error("Err write in process", err.Error())
+			slog.Error("Err write in process", "Error", err.Error())
 			return err
 		}
 

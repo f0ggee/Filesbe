@@ -7,6 +7,7 @@ import (
 	"Kaban/internal/InfrastructureLayer/KeysManager"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
 	"Kaban/internal/InfrastructureLayer/s3Interation"
+	"Kaban/internal/InfrastructureLayer/s3Interation/S3Uploader"
 	"fmt"
 	"sync"
 
@@ -61,6 +62,12 @@ func main() {
 	redisConn := RedisInteration.ConnectToRedis()
 	defer redisConn.Close()
 
+	OldS3Connect, err := Helpers.Inzelire()
+	if err != nil {
+		slog.Error("Error connect to s3 old ", "Error", err)
+		return
+	}
+
 	ManagingAuthTokens := ControllingTokens.ManageTokens{}
 	GeneratingAuthTokens := Generating.CreatingTokens{}
 	CheckingAuthToken := ValidatingTokens.Checking{}
@@ -98,11 +105,15 @@ func main() {
 
 	S3Deleter := DeleterS3.DeleterS3{Conf: cfg}
 
-	s3Interation.S3Info.Bucket = os.Getenv("BUCKET")
+	S3Uploading := S3Uploader.Uploading{
+		S3Connect: cfg,
+		Bucket:    os.Getenv("BUCKET"),
+	}
+
 	HandlerPack := Handlers.HandlerPackCollect{
 		S3: Handlers.S3Controlling{
-			Deleter:   &S3Deleter,
-			S3Connect: cfg,
+			Deleter:  &S3Deleter,
+			Uploader: &S3Uploading,
 		},
 		Crypto: Handlers.HandlerPackCrypto{
 			Validate: &CryptoCheck,

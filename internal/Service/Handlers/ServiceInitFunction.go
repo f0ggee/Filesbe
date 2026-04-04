@@ -19,7 +19,7 @@ func init() {
 
 	err := godotenv.Load("internal/Service/.env")
 	if err != nil {
-		slog.Error("cannot load env file", err.Error())
+		slog.Error("cannot load env file", "Error", err.Error())
 		return
 
 	}

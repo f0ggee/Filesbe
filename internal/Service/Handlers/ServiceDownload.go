@@ -27,7 +27,7 @@ func (sa *HandlerPackCollect) DownloadWithNonEncrypt(w http.ResponseWriter, name
 	trueFileName := ""
 	err = json.Unmarshal(fileNameInBytes, &trueFileName)
 	if err != nil {
-		slog.Error("Unmarshal err", err.Error())
+		slog.Error("Unmarshal err", "Error", err.Error())
 		return err, ""
 	}
 
