@@ -41,10 +41,7 @@ func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Handlers.
 	switch {
 	case strings.Contains(fmt.Sprint(err), "file was used"):
 		slog.Error("Error sesseion", err, "ID", r.Context().Value(RequestId))
-		w.Header().Set("Content-Type", Json)
-		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: Break, Error: []string{"File was used"}, Url: "/informationPage"}); err != nil {
-		}
+		//w.WriteHeader(http.StatusBadRequest)
 		http.Redirect(w, r, "/informationPage", http.StatusFound)
 		return
 

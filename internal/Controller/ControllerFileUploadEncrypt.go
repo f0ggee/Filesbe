@@ -87,6 +87,7 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 
 func CookieGet(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) error {
 	//TODO Unparse this
+
 	//store := SessionStore()
 	//
 	//session, err := store.Get(r, TokenName)
