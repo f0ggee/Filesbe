@@ -19,7 +19,8 @@ func (sa *Uploading) UploadFileEncrypt(BesParts int, goroutine int, ctx context.
 		slog.String("Parts", fmt.Sprint(BesParts)),
 		slog.String("Goroutines", fmt.Sprint(goroutine)),
 	)
-	uploader := manager.NewUploader(sa.S3Connect, func(uploader *manager.Uploader) {
+
+	uploader := manager.NewUploader(sa.S3Info.S3Connect, func(uploader *manager.Uploader) {
 
 		uploader.MaxUploadParts = 200
 		uploader.PartSize = int64(BesParts) * 1024 * 1024
@@ -28,7 +29,7 @@ func (sa *Uploading) UploadFileEncrypt(BesParts int, goroutine int, ctx context.
 	})
 
 	_, err := uploader.Upload(ctx, &s3.PutObjectInput{
-		Bucket:      aws.String(sa.Bucket),
+		Bucket:      aws.String(sa.S3Info.Bucket),
 		Key:         aws.String(shortFileName),
 		ContentType: aws.String(ContentType),
 		Body:        reader,

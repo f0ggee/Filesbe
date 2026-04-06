@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"golang.org/x/sync/errgroup"
 )
@@ -57,7 +58,7 @@ func (sa *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs contex
 
 func (sa *HandlerPackCollect) downloadFileToClient(w http.ResponseWriter, ctx context.Context, name string, writer *io.PipeWriter, aesKey []byte, realFileName string, Reader *io.PipeReader) error {
 
-	downloader := s3.New(sa.S3.S3OldConnect)
+	downloader := *s3.New(session.Must(session.NewSession()))
 
 	o, err := downloader.GetObjectWithContext(ctx, &s3.GetObjectInput{
 		Bucket:      aws.String(Bucket),

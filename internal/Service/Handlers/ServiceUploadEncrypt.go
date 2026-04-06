@@ -88,7 +88,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 
 	defer GottenAesKey.Destroy()
 
-	shortNameForFile := sa.Crypto.Generate.GenerateShortName()
+	shortNameFile := sa.Crypto.Generate.GenerateShortName()
 	FileExtension := sa.FileInfo.FileManaging.FindFormatOfFile(sizeAndName.Filename)
 
 	Public, err := x509.ParsePKCS1PrivateKey(sa.Keys.ControllerKey.GetKey())
@@ -123,7 +123,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 			return ctx.Err()
 		default:
 		}
-		errS3 := sa.S3.Uploader.UploadFileEncrypt(BesParts, goroutine, r.Context(), shortNameForFile, FileExtension, reader)
+		errS3 := sa.S3.Uploader.UploadFileEncrypt(BesParts, goroutine, r.Context(), shortNameFile, FileExtension, reader)
 		if errS3 != nil {
 			//return "", err3
 			return errS3
@@ -140,39 +140,38 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 		return "", err
 	}
 
-	err = sa.RedisControlling.Writer.WriteData(shortNameForFile, EncryptFileInfo, r.Context())
+	err = sa.RedisControlling.Writer.WriteData(shortNameFile, EncryptFileInfo, r.Context())
 	if err != nil {
 		err := writer.CloseWithError(err)
 		return "", err
 	}
 
 	time.AfterFunc(5*time.Minute, func() {
-		slog.Info("Func  Auto-FileDelete start")
+		g2, Ctx := errgroup.WithContext(context.Background())
 
-		g2, Ctx := errgroup.WithContext(ctx)
-
-		Ctx, cancel := context.WithTimeout(Ctx, 5*time.Second)
+		Ctx, cancel := context.WithTimeout(Ctx, 25*time.Second)
 		defer cancel()
-		DownloadingHaveStarted := sa.RedisControlling.CheckerRedis.ChekIsStartDownload(shortNameForFile, Ctx)
+		DownloadingHaveStarted := sa.RedisControlling.CheckerRedis.ChekIsStartDownload(shortNameFile, Ctx)
 		if DownloadingHaveStarted {
 			return
 		}
 		g2.Go(func() error {
 
-			err := sa.RedisControlling.Deleter.DeleteFileInfo(shortNameForFile, Ctx)
+			err := sa.RedisControlling.Deleter.DeleteFileInfo(shortNameFile, Ctx)
 			if err != nil {
 				return err
 			}
 			return nil
 		})
 		g2.Go(func() error {
-			err := sa.S3.Deleter.DeleteFileFromS3(shortNameForFile, Ctx)
+			err := sa.S3.Deleter.DeleteFileFromS3(shortNameFile, Ctx)
 			if err != nil {
 				return err
 			}
 			return nil
 		})
 		if err := g2.Wait(); err != nil {
+			slog.Error("Error in file writing 2 ", "Error", err)
 			return
 		}
 		slog.Info("Func Auto-deleteFile ends")
@@ -181,7 +180,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 
 	slog.Info("File success upload ")
 
-	return shortNameForFile, nil
+	return shortNameFile, nil
 
 }
 

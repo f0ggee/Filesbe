@@ -9,10 +9,6 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
-	"strings"
-
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 func (sa *HandlerPackCollect) DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext context.Context) (error, string) {
@@ -31,50 +27,32 @@ func (sa *HandlerPackCollect) DownloadWithNonEncrypt(w http.ResponseWriter, name
 		return err, ""
 	}
 
-	downloader := s3.New(sa.S3.S3OldConnect)
-
-	o, err := downloader.GetObjectWithContext(IncomeContext, &s3.GetObjectInput{
-		Bucket:      aws.String(Bucket),
-		IfNoneMatch: aws.String(""),
-
-		Key: &trueFileName,
-	})
-
-	switch {
-	case strings.Contains(fmt.Sprint(err), "NoSuchKey"):
-		return errors.New("file was used"), ""
-
-	case err != nil:
-		slog.Error("ServiceDownload:", "err", err)
+	FileBody, err := sa.S3.S3Download.Download(trueFileName, IncomeContext)
+	if err != nil {
 		return err, ""
-
 	}
+	defer func() {
+		slog.Info("Downloading was completed")
+		FileBody.Body.Close()
 
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			slog.Error("Error close the body", "Err", err)
-			return
-		}
-	}(o.Body)
+	}()
 
 	w.Header().Set("Content-Type", sa.FileInfo.FileManaging.FindFormatOfFile(trueFileName))
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", trueFileName))
-	w.Header().Set("Content-Length", strconv.FormatInt(*o.ContentLength, 10))
+	w.Header().Set("Content-Length", strconv.FormatUint(uint64(*FileBody.ContentLength), 10))
 
-	if _, err = io.Copy(w, o.Body); err != nil {
+	if _, err = io.Copy(w, FileBody.Body); err != nil {
 		slog.Error("Err In file Service Downloader", "err", err)
 		return errors.New("connect close"), ""
 
 	}
 
-	slog.Info("start delete func in download  ")
-
-	err = sa.S3.Deleter.DeleteFileFromS3(trueFileName, context.Background())
+	slog.Info("Start deleting function")
+	err = sa.S3.Deleter.DeleteFileFromS3(trueFileName, IncomeContext)
 	if err != nil {
 		return err, ""
 	}
-	slog.Info("ends delete func in download  ")
+	slog.Info("Finish deleting function")
 
 	return nil, ""
 }

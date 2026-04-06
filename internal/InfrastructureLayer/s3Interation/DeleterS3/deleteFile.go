@@ -4,18 +4,16 @@ import (
 	"context"
 	"log/slog"
 
-	"Kaban/internal/InfrastructureLayer/s3Interation"
-
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go/aws"
 )
 
 func (d *DeleterS3) DeleteFileFromS3(key string, ctx context.Context) error {
 	s := &s3.DeleteObjectInput{
-		Bucket: aws.String(s3Interation.S3Info.Bucket),
+		Bucket: aws.String(d.S3Info.Bucket),
 		Key:    &key,
 	}
-	_, err := d.Conf.DeleteObject(ctx, s)
+	_, err := d.S3Info.S3Connect.DeleteObject(ctx, s)
 	if err != nil {
 		slog.Error("Error in delete func", err)
 		return err

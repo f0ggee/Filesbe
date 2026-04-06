@@ -68,7 +68,6 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 		return
 	}
 
-	slog.Info("Url is ", url.String())
 	w.Header().Set("Content-Type", Json)
 	w.WriteHeader(http.StatusOK)
 	if err = json.NewEncoder(w).Encode(Answer{
