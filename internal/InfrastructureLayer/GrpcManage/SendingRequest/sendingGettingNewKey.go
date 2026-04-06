@@ -11,7 +11,7 @@ import (
 )
 
 func (s SenderRequests) RequestingGettingNewKey(data []byte) ([]byte, error) {
-	slog.Info("We started sending data")
+	slog.Info("We started sending a request for a new key")
 	conn, err := grpc.NewClient("localhost:8081", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		slog.Error("Error while creating gRPC connection", "Error", err)

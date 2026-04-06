@@ -5,8 +5,9 @@ import (
 )
 
 type S3Controlling struct {
-	Deleter  DomainLevel.DeleterS3
-	Uploader DomainLevel.S3Uploader
+	Deleter    DomainLevel.DeleterS3
+	Uploader   DomainLevel.S3Uploader
+	S3Download DomainLevel.DownloadingS3
 }
 
 type HandlerPackCrypto struct {

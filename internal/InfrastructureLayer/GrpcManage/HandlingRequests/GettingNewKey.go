@@ -15,7 +15,8 @@ import (
 
 func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration, error) {
 
-	slog.Info("Start handling", "ID", rand.Int())
+	Id := rand.Int()
+	slog.Info("Start accepting the new key", slog.Int("ID", Id))
 	PacketLook := Dto.GrpcOutComingPacketForSending{
 		AesKeyData: nil,
 		CipherData: nil,
@@ -32,7 +33,7 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 		return 0, err
 	}
 
-	PacketData := (h.CryptoDecrypt.DecryptPacket(DecryptedAesKey, PacketLook.CipherData))
+	PacketData := h.CryptoDecrypt.DecryptPacket(DecryptedAesKey, PacketLook.CipherData)
 	if PacketData == nil {
 		return 0, errors.New("NewRsaKey error")
 	}
@@ -71,7 +72,7 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 	h.Keys.UpdateKey(NewSavingRsa)
 	h.Keys.UpdateOldKey()
 
-	slog.Info("Finish handling")
+	slog.Info("Finish accepting the new key", slog.Int("Id", Id))
 
 	return (PacketInfo.T1), nil
 }
