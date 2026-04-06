@@ -13,7 +13,7 @@ import (
 )
 
 func (sa *Uploading) UploadFile(parts int, goroutines int, ctx context.Context, fileFormat string, fileName string, file multipart.File) error {
-	uploader := manager.NewUploader(sa.S3Connect, func(uploader *manager.Uploader) {
+	uploader := manager.NewUploader(sa.S3Info.S3Connect, func(uploader *manager.Uploader) {
 		uploader.MaxUploadParts = 1000
 		uploader.PartSize = int64(parts * 1024 * 1024)
 		uploader.Concurrency = goroutines
@@ -26,7 +26,7 @@ func (sa *Uploading) UploadFile(parts int, goroutines int, ctx context.Context, 
 		slog.String("Size", fmt.Sprint()),
 	)
 	_, err := uploader.Upload(ctx, &s3.PutObjectInput{
-		Bucket:      aws.String(sa.Bucket),
+		Bucket:      aws.String(sa.S3Info.Bucket),
 		Key:         aws.String(fileName),
 		ContentType: aws.String(fileFormat),
 		Body:        file,

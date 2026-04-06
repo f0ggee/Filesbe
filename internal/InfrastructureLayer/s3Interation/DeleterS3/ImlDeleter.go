@@ -1,15 +1,14 @@
 package DeleterS3
 
 import (
+	"Kaban/internal/InfrastructureLayer/s3Interation"
 	"context"
 	"errors"
 	"time"
-
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 type DeleterS3 struct {
-	Conf *s3.Client
+	S3Info s3Interation.Variables
 }
 
 func (d *DeleterS3) DeleterS3Test(s string, Cont context.Context) error {
