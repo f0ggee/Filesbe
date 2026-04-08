@@ -21,5 +21,5 @@ type S3Uploader interface {
 
 type DownloadingS3 interface {
 	Download(string, context.Context) (*s3.GetObjectOutput, error)
-	DownloadSecure(ctx context.Context, name string, writer *io.PipeWriter, aesKey []byte, realFileName string, Reader *io.PipeReader) (*io.PipeReader, error)
+	DownloadSecure(context.Context, string) (io.ReadCloser, int64, error)
 }
