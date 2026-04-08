@@ -8,12 +8,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 )
 
-func (s *S3Downloading) Download(TrueFileName string, ctx context.Context) (*s3.GetObjectOutput, error) {
-
-	NewDownloader := s.S3Info.S3Connect
+func (s S3Download) Download(TrueFileName string, ctx context.Context) (*s3.GetObjectOutput, error) {
 
 	InputData := &s3.GetObjectInput{Bucket: aws.String(s.S3Info.Bucket), Key: aws.String(TrueFileName)}
-	S, err := NewDownloader.GetObject(ctx, InputData, func(options *s3.Options) {
+
+	S, err := s.S3Info.S3Connect.GetObject(ctx, InputData, func(options *s3.Options) {
 		options.DisableLogOutputChecksumValidationSkipped = true
 
 	})
