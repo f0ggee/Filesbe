@@ -7,6 +7,7 @@ import (
 	"Kaban/internal/InfrastructureLayer/KeysManager"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
 	"Kaban/internal/InfrastructureLayer/s3Interation"
+	"Kaban/internal/InfrastructureLayer/s3Interation/S3Downloader"
 	"Kaban/internal/InfrastructureLayer/s3Interation/S3Uploader"
 	"Kaban/internal/Service/Helpers"
 	"fmt"
@@ -62,11 +63,11 @@ func main() {
 	redisConn := RedisInteration.ConnectToRedis()
 	defer redisConn.Close()
 
-	//OldS3Connect, err := Helpers.Inzelire()
-	//if err != nil {
-	//	slog.Error("Error connect to s3 old ", "Error", err)
-	//	return
-	//}
+	OldS3Connect, err := Helpers.Inzelire()
+	if err != nil {
+		slog.Error("Error connect to s3 old ", "Error", err)
+		return
+	}
 
 	ManagingAuthTokens := ControllingTokens.ManageTokens{}
 	GeneratingAuthTokens := Generating.CreatingTokens{}
@@ -104,8 +105,9 @@ func main() {
 	CheckerRedis := RedisChecking.ValidationRedis{Re: redisConn}
 
 	S3Information := s3Interation.Variables{
-		Bucket:    os.Getenv("BUCKET"),
-		S3Connect: cfg,
+		Bucket:     os.Getenv("BUCKET"),
+		S3Connect:  cfg,
+		OldConnect: OldS3Connect,
 	}
 
 	S3Deleter := DeleterS3.DeleterS3{
@@ -114,10 +116,13 @@ func main() {
 	S3Uploading := S3Uploader.Uploading{
 		S3Info: S3Information}
 
+	S3Download := S3Downloader.S3Download{S3Info: S3Information}
+
 	HandlerPack := Handlers.HandlerPackCollect{
 		S3: Handlers.S3Controlling{
-			Deleter:  &S3Deleter,
-			Uploader: &S3Uploading,
+			Deleter:    &S3Deleter,
+			Uploader:   &S3Uploading,
+			S3Download: S3Download,
 		},
 		Crypto: Handlers.HandlerPackCrypto{
 			Validate: &CryptoCheck,
@@ -284,19 +289,6 @@ func main() {
 		WriteTimeout:                 0,
 		IdleTimeout:                  60 * time.Second,
 		MaxHeaderBytes:               1 << 20,
-		HTTP2: &http.HTTP2Config{
-			MaxConcurrentStreams:          0,
-			MaxDecoderHeaderTableSize:     0,
-			MaxEncoderHeaderTableSize:     0,
-			MaxReadFrameSize:              0,
-			MaxReceiveBufferPerConnection: 0,
-			MaxReceiveBufferPerStream:     0,
-			SendPingTimeout:               0,
-			PingTimeout:                   0,
-			WriteByteTimeout:              0,
-			PermitProhibitedCipherSuites:  false,
-			CountError:                    nil,
-		},
 	}
 
 	//err := server.ListenAndServeTLS("/etc/letsencrypt/live/filesbes.com/fullchain.pem", "/etc/letsencrypt/live/filesbes.com/privkey.pem")
