@@ -2,7 +2,6 @@ package HandlingRequests
 
 import (
 	"Kaban/internal/Dto"
-	"Kaban/internal/Service/Handlers"
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
@@ -28,7 +27,7 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 		return 0, err
 	}
 
-	DecryptedAesKey, err := h.CryptoDecrypt.DecryptAesKey(Handlers.ControlPrivateKeyStruct.OurPrivateKeyIntoBytes, PacketLook.AesKeyData)
+	DecryptedAesKey, err := h.CryptoDecrypt.DecryptAesKey(h.Keys.GetOurKey(), PacketLook.AesKeyData)
 	if err != nil {
 		return 0, err
 	}
@@ -65,10 +64,11 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 
 	Hash.Write(NewSavingRsa.Bytes())
 
-	err = h.CryptoValidate.CheckSignKey(PacketInfo.Sign, Hash.Sum([]byte(nil)), Handlers.ControlPrivateKeyStruct.MasterServerPublicKeyBytes)
+	err = h.CryptoValidate.CheckSignKey(PacketInfo.Sign, Hash.Sum([]byte(nil)), h.Keys.GetMasterKey())
 	if err != nil {
 		return 0, err
 	}
+
 	h.Keys.UpdateKey(NewSavingRsa)
 	h.Keys.UpdateOldKey()
 

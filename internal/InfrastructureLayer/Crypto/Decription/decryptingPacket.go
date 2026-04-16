@@ -9,6 +9,7 @@ import (
 )
 
 func (d DecryptionData) DecryptPacket(aesKey []byte, plainText []byte) *memguard.LockedBuffer {
+	slog.Info("Start decrypting a packet")
 	aesBlock, err := aes.NewCipher(aesKey)
 	if err != nil {
 		slog.Error("Error create new aes block", "Error", err.Error())
@@ -27,5 +28,6 @@ func (d DecryptionData) DecryptPacket(aesKey []byte, plainText []byte) *memguard
 	}
 	defer memguard.WipeBytes(sa)
 	saz := memguard.NewBufferFromBytes(sa)
+	slog.Info("Finish decrypting a packet")
 	return saz
 }

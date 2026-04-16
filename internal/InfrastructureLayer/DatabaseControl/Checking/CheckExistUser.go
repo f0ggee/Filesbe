@@ -14,7 +14,6 @@ func (db *CheckerDb) CheckerUser(email string, ctx context.Context) error {
 	err := db.Db.QueryRow(ctx, "SELECT EXISTS (select 1 FROM person WHERE email=$1)", email).Scan(&existingPerson)
 
 	switch {
-
 	case errors.Is(err, context.DeadlineExceeded):
 		slog.Error("In register,context exceeded", "err - ", err)
 		return err
@@ -24,7 +23,6 @@ func (db *CheckerDb) CheckerUser(email string, ctx context.Context) error {
 		return err
 
 	}
-
 	if existingPerson {
 		return errors.New("person already exist")
 	}

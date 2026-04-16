@@ -23,6 +23,7 @@ func (sa *HandlerPackCollect) FileUploader(r *http.Request) (string, error) {
 
 		return "", errors.New("file too big")
 	}
+
 	defer func() {
 		err = file.Close()
 		if err != nil {

@@ -2,6 +2,7 @@ package KeysManager
 
 import (
 	"crypto/rand"
+	"encoding/hex"
 	"log/slog"
 	"sync"
 
@@ -12,6 +13,27 @@ type Updater struct {
 	Mu            *sync.RWMutex
 	NewPrivateKey *memguard.LockedBuffer
 	OldPrivateKey *memguard.LockedBuffer
+	OurPrivateKey string
+	MasterKey     string
+}
+
+func (u *Updater) GetOurKey() []byte {
+	e, err := hex.DecodeString(u.OurPrivateKey)
+	if err != nil {
+
+		return nil
+	}
+	return e
+}
+
+func (u *Updater) GetMasterKey() []byte {
+
+	e, err := hex.DecodeString(u.MasterKey)
+
+	if err != nil {
+		return nil
+	}
+	return e
 }
 
 func (u *Updater) FillOldKey() {
@@ -19,7 +41,6 @@ func (u *Updater) FillOldKey() {
 	defer u.Mu.Unlock()
 	u.Mu.Lock()
 
-	slog.Info("Start filling keys")
 	err := error(nil)
 	u.NewPrivateKey, err = memguard.NewBufferFromReader(rand.Reader, 2)
 	if err != nil {
@@ -32,6 +53,5 @@ func (u *Updater) FillOldKey() {
 		slog.Error("Error filling old key", err.Error())
 		return
 	}
-	slog.Info("Keys fill up", "Result", u.NewPrivateKey.Size(), u.OldPrivateKey.Size())
 
 }

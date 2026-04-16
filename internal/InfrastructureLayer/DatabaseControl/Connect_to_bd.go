@@ -21,7 +21,7 @@ var dbDbname = os.Getenv("POSTGRESQL_DBNAME")
 
 func init() {
 
-	err := godotenv.Load("internal/Service/.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		slog.Info("Error loading the file ")
 		return

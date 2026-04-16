@@ -1,50 +1,46 @@
 package ReadingRedis
 
 import (
-	"Kaban/internal/Dto"
 	"context"
 	"errors"
 	"log/slog"
+	"os"
 	"time"
 )
 
-func (d *RedisReader) GetKey(ctx context.Context) ([]byte, []byte, []byte, error) {
-	count := 0
+func (d *RedisReader) GetKey(Ctx context.Context) ([]byte, error) {
+	count, sec := 0, 0
 
+	ctx, cancel := context.WithTimeout(Ctx, time.Second*10)
+	defer cancel()
 	for {
-
 		if count > 20 {
-			return nil, nil, nil, errors.New("timeout")
+			return nil, errors.New("timeout")
 		}
-		err := d.Re.HGetAll(ctx, "server1").Err()
+		err := d.Re.Get(ctx, os.Getenv("serverName")).Err()
 
 		if err != nil {
-			slog.Error("We got the error", "Error", err)
-			count++
-			time.Sleep(4 * time.Second)
+			count, sec = +1, +1
+			time.Sleep(time.Duration(sec) * time.Second)
 			continue
-
 		}
-
-		zs := Dto.RedisPacketStructFromMasterServer{
-			AesKey:    nil,
-			PlainText: nil,
-			Signature: nil,
-		}
-		err = d.Re.HGetAll(ctx, "server1").Scan(&zs)
+		var data []byte
+		err = d.Re.Get(ctx, os.Getenv("serverName")).Scan(&data)
 		if err != nil {
 			slog.Error("We got the error when try get the data", "Error", err)
-			return nil, nil, nil, errors.New(err.Error())
+			return nil, errors.New(err.Error())
 		}
 
-		err = d.Re.Del(ctx, "server2").Err()
+		err = d.Re.Del(ctx, os.Getenv("serverName")).Err()
 		if err != nil {
 			slog.Error("We got the error", "Error", err)
-			return nil, nil, nil, errors.New(err.Error())
+			return nil, errors.New(err.Error())
 		}
 
-		slog.Info("We got the key", "key", true)
-		return zs.AesKey, zs.PlainText, zs.Signature, nil
+		slog.Group("Data was gotten", "info",
+			slog.Int("count", count),
+			slog.Int("sec", sec))
+		return data, nil
 
 	}
 }

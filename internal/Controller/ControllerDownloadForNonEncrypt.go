@@ -28,7 +28,7 @@ func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Handlers.
 		w.Header().Set("Content-Type", Json)
 		w.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: Break, Error: []string{"Method don't allow"}}); err != nil {
-			slog.Error("Error parse json in answer", err)
+			slog.Error("Error parse json in answer", "error", err)
 			return
 		}
 		return
@@ -40,14 +40,14 @@ func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Handlers.
 
 	switch {
 	case strings.Contains(fmt.Sprint(err), "file was used"):
-		slog.Error("Error sesseion", err, "ID", r.Context().Value(RequestId))
+		slog.Error("Error sesseion", "error", err, "ID", r.Context().Value(RequestId))
 		//w.WriteHeader(http.StatusBadRequest)
 		http.Redirect(w, r, "/informationPage", http.StatusFound)
 		return
 
 	}
 	if err != nil {
-		ControllerErrorLogger.ErrorContext(r.Context(), "Error downloading file", err)
+		ControllerErrorLogger.ErrorContext(r.Context(), "Error downloading file", "Error", err)
 		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: Break, Error: []string{"File was used"}, Url: "/informationPage"}); err != nil {
 		}
 		return
