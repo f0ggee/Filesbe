@@ -36,7 +36,6 @@ var store = sessions.NewCookieStore([]byte(os.Getenv("KEY1")))
 func checkJson(r *http.Request) (*Dto.UserLoginData, error) {
 	var err error
 	var e Dto.UserLoginData
-	slog.Info("Key cookie is ", string(KeyCookie))
 
 	if err := json.NewDecoder(r.Body).Decode(&e); err != nil {
 		return nil, err
@@ -62,14 +61,14 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Dont' allow", http.StatusUnauthorized)
-		slog.Error("Error", "err")
+		slog.Error("Method Dont' allow", "Method", http.StatusUnauthorized)
 		return
 	}
 	//store := SessionStore()
 	Session, err := store.Get(r, TokenName)
 	if err != nil {
 
-		slog.Error("cookie don't send 1 ", err)
+		slog.Error("cookie don't send ")
 		w.WriteHeader(http.StatusUnauthorized)
 		if err := json.NewEncoder(w).Encode(AnswerLogin{
 			StatusOfOperation: Break,

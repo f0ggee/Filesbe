@@ -1,39 +1,37 @@
-package SendingRequest
+package Sender
 
 import (
 	pb "Kaban/internal/InfrastructureLayer/GrpcManage/protoFiles"
 	"context"
 	"log/slog"
-	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 func (s SenderRequests) RequestingGettingNewKey(data []byte) ([]byte, error) {
-	slog.Info("We started sending a request for a new key")
+	slog.Info("Start a request for a key")
+
+	//TODO Change the addr of the master Server
 	conn, err := grpc.NewClient("localhost:8081", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		slog.Error("Error while creating gRPC connection", "Error", err)
 		return nil, err
 	}
-
 	defer conn.Close()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
+	//ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	//defer cancel()
 	clientRequest := pb.NewSendingGettingClient(conn)
 
-	OutputData, err := clientRequest.GettingNewKey(ctx, &pb.InputSendData{SendData: data})
+	OutputData, err := clientRequest.GetNewKey(context.Background(), &pb.InputSendData{SendData: data})
 	if err != nil {
 		slog.Error("Error while sending data", "Error", err)
 		return nil, err
 	}
-
 	if OutputData.Error != nil {
-		slog.Error("we got the error ", "Error", OutputData.Error)
+		slog.Error("Got the error", "Error", OutputData.Error)
 		return nil, err
 	}
-
 	return OutputData.BytesOutput, nil
 }

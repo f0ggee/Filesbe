@@ -19,6 +19,6 @@ type RedisChecker interface {
 }
 
 type ReadingRedis interface {
-	GetKey(context.Context) ([]byte, []byte, []byte, error)
+	GetKey(context.Context) ([]byte, error)
 	GetFileInfo(string, context.Context) ([]byte, error)
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var ControlPrivateKeyStruct struct {
+type ControlPrivateKeyStruct struct {
 	MasterServerPublicKeyBytes []byte
 	OurPrivateKeyIntoBytes     []byte
 }
@@ -17,16 +17,17 @@ var Bucket string
 
 func init() {
 
-	err := godotenv.Load("internal/Service/.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		slog.Error("cannot load env file", "Error", err.Error())
 		return
 
 	}
+	s := *new(ControlPrivateKeyStruct)
 	Bucket = os.Getenv("BUCKET")
-	PublickKeyIntoBytes, err := hex.DecodeString(os.Getenv("Publick_Key_Master_Server"))
+	PublickKeyIntoBytes, err := hex.DecodeString(os.Getenv("Public_Key_Master_Server"))
 	if err != nil {
-		slog.Error("Error decode Publick_Key_Master_Server", "Error", err.Error())
+		slog.Error("Error decode Public_Key_Master_Server", "Error", err.Error())
 		return
 	}
 	OurPrivateKeyIntoBytes, err := hex.DecodeString(os.Getenv("Our_Private_Key"))
@@ -34,7 +35,8 @@ func init() {
 		slog.Error("Error decode Server1SecretKey", "Error", err.Error())
 		return
 	}
-	ControlPrivateKeyStruct.MasterServerPublicKeyBytes = PublickKeyIntoBytes
-	ControlPrivateKeyStruct.OurPrivateKeyIntoBytes = OurPrivateKeyIntoBytes
+
+	s.MasterServerPublicKeyBytes = PublickKeyIntoBytes
+	s.OurPrivateKeyIntoBytes = OurPrivateKeyIntoBytes
 
 }

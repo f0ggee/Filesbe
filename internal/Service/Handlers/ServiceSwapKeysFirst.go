@@ -16,7 +16,7 @@ import (
 func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 
 	slog.Info("SwapKeyFirst", "start", true)
-	SignedServerName, err := sa.Crypto.Generate.GenerateSignature([]byte(os.Getenv("serverName")), ControlPrivateKeyStruct.OurPrivateKeyIntoBytes)
+	SignedServerName, err := sa.Crypto.Generate.GenerateSignature([]byte(os.Getenv("serverName")), sa.Keys.ControllerKey.GetOurKey())
 	if err != nil {
 		return 0
 	}
@@ -65,17 +65,18 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
-			Key, err1 := x509.ParsePKCS1PublicKey(ControlPrivateKeyStruct.MasterServerPublicKeyBytes)
+			Key, err1 := x509.ParsePKCS1PublicKey(sa.Keys.ControllerKey.GetMasterKey())
 			if err1 != nil {
-				slog.Error("Error while parsing AesKey", "err", err)
-				return ctx.Err()
+				slog.Error("Error while parsing Master Server's public key", "err", err)
+				return err1
 			}
 
-			EncryptedDataAesKey1, err1 := sa.Crypto.Encrypt.EncryptFileInfo(AesKey.Data(), Key)
-			if err1 != nil {
+			EncryptedDataAesKey1, err2 := sa.Crypto.Encrypt.EncryptFileInfo(AesKey.Data(), Key)
+			if err2 != nil {
 				slog.Error("Error while encrypting Info", "err", err1)
 				return err1
 			}
+
 			EncryptedDataAesKey = EncryptedDataAesKey1
 			return nil
 		}
@@ -95,10 +96,14 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 		return DefaultErrorTime
 	}
 
+	return MakerRequests(sa, convertedDataGrpcDataLooks)
+}
+
+func MakerRequests(sa *HandlerPackCollect, convertedDataGrpcDataLooks []byte) time.Duration {
 	attempts, sec := 1, 1
 
 	for {
-		if attempts >= 12 {
+		if attempts > 12 {
 			return 12 * time.Hour
 		}
 		OutputData, err := sa.Grpc.GrpcSendingRequest.RequestingGettingNewKey(convertedDataGrpcDataLooks)

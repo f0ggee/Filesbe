@@ -1,12 +1,14 @@
-internal/Service/.env
 notes.txt
 internal/Service/Диаграмма без названия.drawio.png
 cmds/Dockerfile
 
 
 
+.env
+
+.gitignore
 robots.txt
 qodana.yaml
-
+Lae.json
 internal/InfrastructureLayer/RedisInteration/ConnectToRids.go
 internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go
