@@ -69,7 +69,7 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 
 	url, err := router.Get("fileName").URL("name", filName, "bool", "true")
 	if err != nil {
-		slog.Error("Error can't treat", err)
+		slog.Error("Error can't treat", "error", err)
 		return
 	}
 

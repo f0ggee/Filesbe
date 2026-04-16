@@ -15,6 +15,7 @@ type HandlerPackCrypto struct {
 	Encrypt  DomainLevel.Encryption
 	Decrypt  DomainLevel.Decryption
 	Generate DomainLevel.CryptoGenerating
+	//Keys  DomainLevel.CryptoKey
 }
 
 type HandlerFileManagerPack struct {
@@ -28,8 +29,9 @@ type HandlerPackAuthTokens struct {
 	Checking        DomainLevel.CheckingAuthTokens
 }
 type HandlerGrpc struct {
-	GrpcSendingRequest DomainLevel.SendingRequestGrpc
+	GrpcSendingRequest DomainLevel.SendRequestGrpc
 	ProcessingRequests DomainLevel.HandlingRequests
+	GrpcTest           DomainLevel.GrpcTest
 }
 type DatabaseControlling struct {
 	Writer  DomainLevel.WriteDb

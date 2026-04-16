@@ -1,4 +1,4 @@
-package SendingRequest
+package Sender
 
 type SenderRequests struct{}
 

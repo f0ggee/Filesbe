@@ -1,9 +1,11 @@
 package main
 
 import (
+	"Kaban/cmds"
 	Controller2 "Kaban/internal/Controller"
 	"Kaban/internal/Controller/Middlewares"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
+	"Kaban/internal/InfrastructureLayer/GrpcManage/Grpctest"
 	"Kaban/internal/InfrastructureLayer/KeysManager"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
 	"Kaban/internal/InfrastructureLayer/s3Interation"
@@ -28,7 +30,7 @@ import (
 	"Kaban/internal/InfrastructureLayer/FileKeyInteration/HandlerFile"
 	"Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests"
 	"Kaban/internal/InfrastructureLayer/GrpcManage/PacketChecking"
-	"Kaban/internal/InfrastructureLayer/GrpcManage/SendingRequest"
+	"Kaban/internal/InfrastructureLayer/GrpcManage/Sender"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/DeletingRedis"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/ReadingRedis"
@@ -45,14 +47,14 @@ import (
 )
 
 func main() {
-	SettingSlog()
+	cmds.SettingSlog()
 
 	memguard.CatchInterrupt()
 	defer memguard.Purge()
 
 	db, err := DatabaseControl.Connect()
 	if err != nil {
-		slog.Error("Err_from_register 1 ", err)
+		slog.Error("Error connect to database", err)
 		return
 	}
 	defer db.Close()
@@ -87,6 +89,8 @@ func main() {
 		Mu:            &sync.RWMutex{},
 		NewPrivateKey: &memguard.LockedBuffer{},
 		OldPrivateKey: &memguard.LockedBuffer{},
+		OurPrivateKey: os.Getenv("Our_Private_Key"),
+		MasterKey:     os.Getenv("Publick_Key_Master_Server"),
 	}
 	GrpcHandlingRequests := HandlingRequests.HandlerGrpcRequest{
 		CryptoEncrypt:    &CryptoEncryption,
@@ -96,7 +100,7 @@ func main() {
 		Keys:             KeysController,
 	}
 
-	SendingGrcp := SendingRequest.SenderRequests{}
+	SendingGrcp := Sender.SenderRequests{}
 
 	DeleterRds := DeletingRedis.DeleterRedis{Re: redisConn}
 	ReaderRedis := ReadingRedis.RedisReader{Re: redisConn}
@@ -104,6 +108,7 @@ func main() {
 
 	CheckerRedis := RedisChecking.ValidationRedis{Re: redisConn}
 
+	GrpcTest := Grpctest.EncryptWrongKEy{}
 	S3Information := s3Interation.Variables{
 		Bucket:     os.Getenv("BUCKET"),
 		S3Connect:  cfg,
@@ -153,6 +158,7 @@ func main() {
 		Grpc: Handlers.HandlerGrpc{
 			GrpcSendingRequest: &SendingGrcp,
 			ProcessingRequests: GrpcHandlingRequests,
+			GrpcTest:           GrpcTest,
 		},
 		Convert: Handlers.Converter{Converting: ConverterJson},
 		Keys:    Handlers.KeysControlling{ControllerKey: KeysController},
@@ -185,6 +191,7 @@ func main() {
 	TimeSwaping := Sa.SwapKeyFirst()
 
 	fmt.Println(TimeSwaping)
+
 	ticker := time.NewTicker(time.Until(time.Now().Add(TimeSwaping)))
 	defer ticker.Stop()
 
@@ -277,40 +284,10 @@ func main() {
 		Controller2.BuildUrl(writer, request)
 
 	}).Methods(http.MethodGet)
-
-	//##
-	server := http.Server{
-		Addr:                         ":8080", // I must change on 443
-		Handler:                      router,
-		DisableGeneralOptionsHandler: false,
-		TLSConfig:                    nil,
-		ReadTimeout:                  0,
-		ReadHeaderTimeout:            6 * time.Second,
-		WriteTimeout:                 0,
-		IdleTimeout:                  60 * time.Second,
-		MaxHeaderBytes:               1 << 20,
-	}
-
-	//err := server.ListenAndServeTLS("/etc/letsencrypt/live/filesbes.com/fullchain.pem", "/etc/letsencrypt/live/filesbes.com/privkey.pem")
-	//if err != nil {
-	//	slog.Error("Err cant' do this", "err", err)
-	//	return
-	//}
-
-	err = server.ListenAndServe()
+	err = cmds.ServerConfig(router).ListenAndServe()
 	if err != nil {
 		slog.Error("Server couldn't start", err)
 		return
 
 	}
-
-}
-
-func SettingSlog() {
-	handler := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	child := handler.With(
-		"Time", time.Now().Format("2006-01-02 15:04:05"),
-	)
-
-	slog.SetDefault(child)
 }

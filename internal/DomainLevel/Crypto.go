@@ -18,6 +18,11 @@ type CryptoValidating interface {
 	//CheckSignatureGrpc([]byte, []byte, []byte) error
 	PasswordVerify([]byte, []byte) error
 }
+
+type CryptoKey interface {
+	GetMasterKey() []byte
+	GetOurKey() []byte
+}
 type CryptoGenerating interface {
 	GenerateShortName() string
 	GenerateSignature(message []byte, key []byte) ([]byte, error)

@@ -11,4 +11,6 @@ type KeysManager interface {
 	GetKey() []byte
 	GetOldKey() []byte
 	UpdateOldKey()
+	GetMasterKey() []byte
+	GetOurKey() []byte
 }

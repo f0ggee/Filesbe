@@ -37,7 +37,7 @@ func checkJsonRegister(r *http.Request) (*Dto.UserDataRegister, error) {
 func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) {
 
 	if r.Method != http.MethodPost {
-		slog.Error("Error from Controller_register, method don't allow ", "err")
+		slog.Error("Method is not POST")
 		http.Error(w, "Method don't allow", http.StatusNotFound)
 		return
 	}
@@ -75,7 +75,7 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 			UrlToRedict:       "",
 			Error:             err.Error(),
 		}); err != nil {
-			slog.Error("Error sesseion", err, "ID", r.Context().Value(RequestId))
+			ControllerErrorLogger.Error("Error is closing the body in the controller register", "Error", err)
 			return
 		}
 		return
@@ -99,7 +99,7 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 		return
 	}
 	if err != nil {
-		slog.Error("Error session", err)
+		ControllerErrorLogger.Error("Error is closing the body in the controller register", "Error", err)
 
 		w.Header().Set(ContentType, Json)
 		w.WriteHeader(http.StatusBadRequest)
@@ -145,7 +145,7 @@ func NewSession(w http.ResponseWriter, r *http.Request, jwt string, rt string) e
 	//store := SessionStore()
 	session, err := store.Get(r, "token6")
 	if err != nil {
-		slog.Error("Error get session", err)
+		ControllerErrorLogger.Error("Error is closing the session", "Error", err)
 		return err
 
 	}

@@ -20,7 +20,7 @@ var EndPoint = os.Getenv("end")
 
 func init() {
 
-	err := godotenv.Load("internal/Service/.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		slog.Error("cannot load env file", err)
 		return

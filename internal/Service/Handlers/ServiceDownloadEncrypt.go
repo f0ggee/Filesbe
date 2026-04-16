@@ -40,7 +40,7 @@ func (sa *HandlerPackCollect) DownloadEncrypt(w http.ResponseWriter, ctxs contex
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
-			slog.Error("Error closing body", err)
+			slog.Error("Error closing body", "error", err)
 			return
 		}
 		return

@@ -30,7 +30,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 			StatusOperation: NotStart,
 			UrlToRedict:     "/login",
 		}); err != nil {
-			slog.Error("Err in json encode", err)
+			slog.Error("Err in json encode", "error", err)
 			return
 		}
 		return
@@ -46,7 +46,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 			UrlToRedict:     "",
 			Error:           err.Error(),
 		}); err != nil {
-			slog.Error("Err in json encode", err)
+			slog.Error("Err in json encode", "error", err)
 			return
 		}
 		return
@@ -54,7 +54,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 
 	url, err := router.Get("fileName").URL("name", filName, "bool", "false")
 	if err != nil {
-		slog.Error("Error can't treate", err)
+		slog.Error("Error can't treate", "Error", err)
 
 		w.Header().Set("Content-Type", Json)
 		w.WriteHeader(http.StatusBadRequest)
@@ -62,7 +62,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 			StatusOperation: Break,
 			UrlToRedict:     "",
 		}); err != nil {
-			slog.Error("Err in json encode", err)
+			slog.Error("Err in json encode", "error", err)
 			return
 		}
 		return
@@ -74,7 +74,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 		StatusOperation: Success,
 		UrlToRedict:     url.Path,
 	}); err != nil {
-		slog.Error("Err in json encode", err)
+		slog.Error("Err in json encode", "Error", err)
 		return
 	}
 
@@ -85,7 +85,7 @@ func CookieGet2(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackC
 
 	session, err := store.Get(r, TokenName)
 	if err != nil {
-		slog.Error("cookie don't send", err)
+		slog.Error("cookie don't send", "error", err)
 		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
 		return err
 	}
