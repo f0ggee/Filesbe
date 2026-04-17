@@ -76,7 +76,7 @@ func main() {
 	CryptoEncryption := Encryption.Encrypter{}
 	CryptoDecryption := Decription.DecryptionData{}
 	CryptoGenerate := CryptoGenerater.Generating{}
-	CryptoCheck := CryptoChecking.Checking{}
+	CryptoCheck := CryptoChecking.Validating{}
 	DbCheck := Checking.CheckerDb{Db: db}
 	DbReading := Reading.Read{Db: db}
 	DbWriting := Writinig.Writer{Db: db}
@@ -281,7 +281,11 @@ func main() {
 		Controller2.BuildUrl(writer, request)
 
 	}).Methods(http.MethodGet)
-	err = cmds.ServerConfig(router).ListenAndServe()
+
+	serverConfig := cmds.ServerConfig(router)
+	defer serverConfig.Close()
+
+	err = serverConfig.ListenAndServe()
 	if err != nil {
 		slog.Error("Server couldn't start", err)
 		return

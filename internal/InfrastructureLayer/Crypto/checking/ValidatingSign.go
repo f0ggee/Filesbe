@@ -7,7 +7,7 @@ import (
 	"log/slog"
 )
 
-func (c *Checking) CheckSignKey(sign []byte, hash []byte, PublicKeyMasterServer []byte) error {
+func (c *Validating) CheckSignKey(sign []byte, hash []byte, PublicKeyMasterServer []byte) error {
 	publicKeyMasterServer, err := x509.ParsePKCS1PublicKey(PublicKeyMasterServer)
 	if err != nil {
 		slog.Error("Error marshalling public key", "Error", err.Error())
