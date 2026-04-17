@@ -5,7 +5,6 @@ import (
 	Controller2 "Kaban/internal/Controller"
 	"Kaban/internal/Controller/Middlewares"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
-	"Kaban/internal/InfrastructureLayer/GrpcManage/Grpctest"
 	"Kaban/internal/InfrastructureLayer/KeysManager"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
 	"Kaban/internal/InfrastructureLayer/s3Interation"
@@ -108,7 +107,6 @@ func main() {
 
 	CheckerRedis := RedisChecking.ValidationRedis{Re: redisConn}
 
-	GrpcTest := Grpctest.EncryptWrongKEy{}
 	S3Information := s3Interation.Variables{
 		Bucket:     os.Getenv("BUCKET"),
 		S3Connect:  cfg,
@@ -158,7 +156,6 @@ func main() {
 		Grpc: Handlers.HandlerGrpc{
 			GrpcSendingRequest: &SendingGrcp,
 			ProcessingRequests: GrpcHandlingRequests,
-			GrpcTest:           GrpcTest,
 		},
 		Convert: Handlers.Converter{Converting: ConverterJson},
 		Keys:    Handlers.KeysControlling{ControllerKey: KeysController},

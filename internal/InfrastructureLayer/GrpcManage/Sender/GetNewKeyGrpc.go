@@ -4,6 +4,7 @@ import (
 	pb "Kaban/internal/InfrastructureLayer/GrpcManage/protoFiles"
 	"context"
 	"log/slog"
+	"os"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -13,7 +14,7 @@ func (s SenderRequests) RequestingGettingNewKey(data []byte) ([]byte, error) {
 	slog.Info("Start a request for a key")
 
 	//TODO Change the addr of the master Server
-	conn, err := grpc.NewClient("localhost:8081", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(os.Getenv("GRPC_ADDR"), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		slog.Error("Error while creating gRPC connection", "Error", err)
 		return nil, err
