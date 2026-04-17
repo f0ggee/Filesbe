@@ -10,7 +10,7 @@ import (
 func ServerConfig(r *mux.Router) *http.Server {
 
 	server := http.Server{
-		Addr:                         ":8080",
+		Addr:                         ":443",
 		Handler:                      r,
 		DisableGeneralOptionsHandler: false,
 		TLSConfig:                    nil,
