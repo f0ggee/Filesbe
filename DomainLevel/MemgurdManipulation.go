@@ -1,6 +1,6 @@
 package DomainLevel
 
-type MudguardManageKeys interface {
+type KeyManage interface {
 	SwapingOldKey()
 	InstallingNewKey([]byte)
 }

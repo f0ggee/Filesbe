@@ -20,7 +20,6 @@ import (
 	Cmds "MasterServer_/cmd"
 	GrcpCmds "MasterServer_/cmd/GrpcConn"
 	"crypto/rand"
-	"log"
 	"log/slog"
 	"os"
 	"time"
@@ -30,21 +29,19 @@ import (
 )
 
 func init() {
-
 	err := godotenv.Load(".env")
 	if err != nil {
 		slog.Error("cannot load env file", err.Error())
 		return
 
 	}
+}
+
+func main() {
 
 	Dto.Keys.NewPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
 	Dto.Keys.OldPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
 	Dto.Keys.MasterServerKey = os.Getenv("Our_Key")
-
-}
-
-func main() {
 
 	handler := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	child := handler.With(
@@ -103,13 +100,14 @@ func main() {
 
 func SwapRsaKey(RsaKey DipendsInjective.RsaKeyManipulationWithRsaAndMemory) {
 
-	slog.Info("Swaping starts")
-	TemporallySaving := memguard.NewBufferFromBytes(RsaKey.RsaKey.GenerateRsaKey())
+	slog.Info("Swaping RSA key in memory START")
+	TemporallySaving := memguard.NewBufferFromBytes(RsaKey.Key.GenerateRsaKey())
 	defer TemporallySaving.Destroy()
 
 	Dto.Keys.Mu.Lock()
 	RsaKey.KeyAndMemory.SwapingOldKey()
 	RsaKey.KeyAndMemory.InstallingNewKey(TemporallySaving.Bytes())
-	log.Println("Swaping End")
 	Dto.Keys.Mu.Unlock()
+
+	slog.Info("Swaping RSA key in memory END")
 }

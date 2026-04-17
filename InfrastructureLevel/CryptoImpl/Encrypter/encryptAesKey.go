@@ -11,7 +11,7 @@ import (
 func (s *Encryption) EncryptAesKey(AesKey []byte, RsaKey []byte) ([]byte, error) {
 	RsaKeyInPublic, err := x509.ParsePKCS1PublicKey(RsaKey)
 	if err != nil {
-		slog.Error("Error Parsing RsaKey", "Func: EncryptAesKey", "Error", err.Error())
+		slog.Error("Error Parsing Key", "Func: EncryptAesKey", "Error", err.Error())
 		return nil, err
 	}
 	encryptedText, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, RsaKeyInPublic, AesKey, nil)
