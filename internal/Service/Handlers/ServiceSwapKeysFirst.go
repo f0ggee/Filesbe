@@ -16,14 +16,15 @@ import (
 func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 
 	slog.Info("SwapKeyFirst", "start", true)
-	SignedServerName, err := sa.Crypto.Generate.GenerateSignature([]byte(os.Getenv("serverName")), sa.Keys.ControllerKey.GetOurKey())
+	serverName := []byte(os.Getenv("serverName"))
+	SignedServerName, err := sa.Crypto.Generate.GenerateSignature(serverName, sa.Keys.ControllerKey.GetOurKey())
 	if err != nil {
 		return 0
 	}
 	GrpcStruct := Dto.GrpcOutComingPacketDetails{
 		Time:             time.Now(),
 		SignedServerName: SignedServerName,
-		ServerName:       []byte(os.Getenv("serverName")),
+		ServerName:       serverName,
 	}
 
 	AesKey, err := memguard.NewBufferFromReader(rand.Reader, 32)
@@ -31,16 +32,13 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 		slog.Error("Error while generating AesKey", "err", err)
 	}
 	defer AesKey.Destroy()
-
 	ConvertedData, err := sa.Convert.Converting.JsonConverter(GrpcStruct)
 	if err != nil {
 		slog.Error("Error while converting", "err", err)
 		return DefaultErrorTime
 	}
-
 	EncryptedData := []byte(nil)
 	EncryptedDataAesKey := []byte(nil)
-
 	g, ctx := errgroup.WithContext(context.Background())
 
 	g.Go(func() error {
@@ -55,7 +53,8 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 
 				return ctx.Err()
 			}
-			EncryptedData = EncryptedData1
+			Sa := &EncryptedData1
+			EncryptedData = *Sa
 			return nil
 		}
 
@@ -88,6 +87,11 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 		return DefaultErrorTime
 	}
 
+	if EncryptedData == nil || EncryptedDataAesKey == nil {
+		slog.Error("Error with data", slog.Group("Data", slog.Any("AesKey", EncryptedDataAesKey), slog.Any("EncryptedData", EncryptedData)))
+		return DefaultErrorTime
+	}
+
 	convertedDataGrpcDataLooks, err := sa.Convert.Converting.JsonConverter(Dto.GrpcOutComingPacketForSending{
 		AesKeyData: EncryptedDataAesKey,
 		CipherData: EncryptedData,
@@ -101,7 +105,6 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 
 func MakerRequests(sa *HandlerPackCollect, convertedDataGrpcDataLooks []byte) time.Duration {
 	attempts, sec := 1, 1
-
 	for {
 		if attempts > 12 {
 			return 12 * time.Hour
@@ -109,7 +112,10 @@ func MakerRequests(sa *HandlerPackCollect, convertedDataGrpcDataLooks []byte) ti
 		OutputData, err := sa.Grpc.GrpcSendingRequest.RequestingGettingNewKey(convertedDataGrpcDataLooks)
 		if err != nil {
 			slog.Error("Error while SendRequestGrpc", "err", err)
-			return DefaultErrorTime
+			attempts++
+			sec++
+			time.Sleep(time.Duration(sec) * time.Second)
+			continue
 		}
 		TimeNextSwapping, err := sa.Grpc.ProcessingRequests.CheckingGettingNewKey(OutputData)
 		if err != nil {
