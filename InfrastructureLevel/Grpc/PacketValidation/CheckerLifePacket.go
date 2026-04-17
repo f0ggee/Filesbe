@@ -1,14 +1,12 @@
 package PacketValidation
 
 import (
-	"log/slog"
 	"time"
 )
 
 func (s *ValidatePacketData) CheckLifePacket(duration time.Time) bool {
 
-	if ResultComparing := duration.Compare(time.Now()); ResultComparing == 1 {
-		slog.Error("Packet's expired", "time packet's life", duration.Hour())
+	if time.Since(duration) > 5*time.Minute {
 		return true
 	}
 	return false

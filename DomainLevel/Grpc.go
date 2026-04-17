@@ -10,3 +10,5 @@ type PacketChecker interface {
 	CheckLifePacket(time.Time) bool
 	CheckSignature([]byte, []byte, []byte) error
 }
+type GrpcHandleRequest interface {
+}

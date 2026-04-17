@@ -6,7 +6,7 @@ option go_package = "github.com/f0ggee/Filesbe";
 
 
 service SendingGetting{
-  rpc GettingNewKey(InputSendData) returns(OutputSendData);
+  rpc GetNewKey(InputSendData) returns(OutputSendData);
 }
 
 message InputSendData{

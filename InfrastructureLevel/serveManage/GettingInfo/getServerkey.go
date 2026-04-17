@@ -14,7 +14,7 @@ func (s *SeverManage) GetServerKey(Num int) []byte {
 	switch Num {
 	case 1:
 
-		rsaKey, err := hex.DecodeString(os.Getenv("server1"))
+		rsaKey, err := hex.DecodeString(os.Getenv("server_1"))
 		if err != nil {
 			slog.Error("Error in getting the server key", "ServerNumber", Num)
 			return nil
@@ -24,7 +24,7 @@ func (s *SeverManage) GetServerKey(Num int) []byte {
 		return rsaKey
 
 	case 2:
-		rsaKey, err := hex.DecodeString(os.Getenv("server2"))
+		rsaKey, err := hex.DecodeString(os.Getenv("server_2"))
 		if err != nil {
 			slog.Error("Error in getting the server key", "ServerNumber", Num)
 			return nil

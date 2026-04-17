@@ -5,6 +5,7 @@ import (
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/sha256"
 	"crypto/x509"
 	"encoding/hex"
 	"log/slog"
@@ -24,7 +25,7 @@ func (s *CryprtoGenerating) GrpcSignerKey() ([]byte, error) {
 		return nil, err
 	}
 
-	hash := s.GenerateHash(Dto.Keys.NewPrivateKey.Bytes(), nil)
+	hash := sha256.Sum256(Dto.Keys.NewPrivateKey.Bytes())
 	SignedMassage, err := rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, hash[:])
 	if err != nil {
 		slog.Error("GenerateSignatureFromKey Error while trying to sign signature", "error", err.Error())

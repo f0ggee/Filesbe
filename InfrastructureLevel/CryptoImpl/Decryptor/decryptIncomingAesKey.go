@@ -24,7 +24,7 @@ func (g Decrypting) GrpcDecrypterAesKey(AesKey []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	DecryptedAesKey, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, KeyRsaType, AesKey, []byte{})
+	DecryptedAesKey, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, KeyRsaType, AesKey, nil)
 	if err != nil {
 		slog.Error("Error decrypting master server key RSA", "error", err.Error())
 		return nil, err

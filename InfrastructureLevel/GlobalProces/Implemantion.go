@@ -7,6 +7,7 @@ type ProcessController struct {
 	CryptoGen        DomainLevel.CryptoGenerator
 	RedisInteracting DomainLevel.RedisUse
 	ServerManagement DomainLevel.GettingServersInfo
+	CryptoKey        DomainLevel.CryptoKeyManager
 }
 
 type ControllingExchange struct {

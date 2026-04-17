@@ -3,8 +3,8 @@ package Dto
 import "time"
 
 type GrpcOutcomingDataPacket struct {
-	Sign   []byte `json:"Sign"`
-	RsaKey []byte `json:"RsaKey"`
-	T1     time.Time
-	T2     time.Duration
+	Sign    []byte        `json:"Sign"`
+	RsaKey  []byte        `json:"RsaKey"`
+	T2      time.Duration `json:"T1"`
+	TimeNow time.Time     `json:"TimeNow"`
 }
