@@ -23,9 +23,9 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, error) {
+func (sa *HandlerPackCollect) FileUploadEncrypt(r *http.Request) (string, error) {
 
-	slog.Info("Func FileUploaderEncrypt starts")
+	slog.Info("Func FileUploadEncrypt starts")
 	file, sizeAndName, err := r.FormFile("file")
 	if err != nil {
 		slog.Error("Err from FileUploader 1 ", "Error", err)
@@ -182,42 +182,6 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 
 	return shortNameFile, nil
 
-}
-
-func (sa *HandlerPackCollect) Tester(shortNameForFile string, ctx context.Context) error {
-	g2, Ctx2 := errgroup.WithContext(ctx)
-
-	Ctx, cancel := context.WithTimeout(Ctx2, 1*time.Second)
-	defer cancel()
-
-	DownloadingHaveStarted := sa.RedisControlling.CheckerRedis.ChekIsStartDownloadTest(shortNameForFile, Ctx)
-	if DownloadingHaveStarted {
-		slog.Info("Check downloading was break", "State", DownloadingHaveStarted)
-		return errors.New("downloading have started")
-	}
-
-	g2.Go(func() error {
-
-		err := sa.RedisControlling.Deleter.DeleteFileInfo(shortNameForFile, Ctx)
-		if err != nil {
-			Ctx.Done()
-			return err
-		}
-		return nil
-	})
-	g2.Go(func() error {
-
-		err := sa.S3.Deleter.DeleterS3Test(shortNameForFile, Ctx)
-		if err != nil {
-			Ctx.Done()
-			return err
-		}
-		return nil
-	})
-	if err := g2.Wait(); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (sa *HandlerPackCollect) EncryptFile(file multipart.File, writer io.Writer, channelForBytes chan memguard.LockedBuffer) error {

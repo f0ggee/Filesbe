@@ -49,7 +49,7 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 
 	}
 
-	filName, err := s.FileUploaderEncrypt(r)
+	filName, err := s.FileUploadEncrypt(r)
 	if err != nil {
 		fmt.Println(err)
 

@@ -15,7 +15,7 @@ type HandlerPackCrypto struct {
 	Encrypt  DomainLevel.Encryption
 	Decrypt  DomainLevel.Decryption
 	Generate DomainLevel.CryptoGenerating
-	//Keys  DomainLevel.CryptoKey
+	Keys     DomainLevel.CryptoKey
 }
 
 type HandlerFileManagerPack struct {
