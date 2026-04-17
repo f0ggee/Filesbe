@@ -1,4 +1,4 @@
-package checking
+package Checking
 
 import (
 	"log/slog"
@@ -11,7 +11,7 @@ type Validating struct{}
 func (c *Validating) PasswordVerify(hashOfPassword []byte, password []byte) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hashOfPassword), []byte(password))
 	if err != nil {
-		slog.Error("Error while checking the password", "Error", err.Error())
+		slog.Error("Error while Validator the password", "Error", err.Error())
 		return err
 
 	}

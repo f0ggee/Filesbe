@@ -15,15 +15,15 @@ import (
 	"sync"
 
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ControllingTokens"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage/Generating"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage/Creating"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens"
-	CryptoChecking "Kaban/internal/InfrastructureLayer/Crypto/Checking"
+	"Kaban/internal/InfrastructureLayer/Crypto/Checking"
 	"Kaban/internal/InfrastructureLayer/Crypto/Decription"
 	"Kaban/internal/InfrastructureLayer/Crypto/Encryption"
-	CryptoGenerater "Kaban/internal/InfrastructureLayer/Crypto/Generating"
+	"Kaban/internal/InfrastructureLayer/Crypto/Generating"
 	"Kaban/internal/InfrastructureLayer/DataConverting"
-	"Kaban/internal/InfrastructureLayer/DatabaseControl/Checking"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl/Reading"
+	"Kaban/internal/InfrastructureLayer/DatabaseControl/Validator"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl/Writinig"
 	"Kaban/internal/InfrastructureLayer/FileKeyInteration/HandleFileInfo"
 	"Kaban/internal/InfrastructureLayer/FileKeyInteration/HandlerFile"
@@ -71,13 +71,13 @@ func main() {
 	}
 
 	ManagingAuthTokens := ControllingTokens.ManageTokens{}
-	GeneratingAuthTokens := Generating.CreatingTokens{}
+	GeneratingAuthTokens := Creating.CreatingTokens{}
 	CheckingAuthToken := ValidatingTokens.Checking{}
 	CryptoEncryption := Encryption.Encrypter{}
 	CryptoDecryption := Decription.DecryptionData{}
-	CryptoGenerate := CryptoGenerater.Generating{}
-	CryptoCheck := CryptoChecking.Validating{}
-	DbCheck := Checking.CheckerDb{Db: db}
+	CryptoGenerate := Generating.Generating{}
+	CryptoCheck := Checking.Validating{}
+	DbCheck := Validator.CheckerDb{Db: db}
 	DbReading := Reading.Read{Db: db}
 	DbWriting := Writinig.Writer{Db: db}
 	ConverterJson := DataConverting.ConvertingData{}

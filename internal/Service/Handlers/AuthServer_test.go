@@ -2,7 +2,7 @@ package Handlers
 
 import (
 	"Kaban/internal/Dto"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage/Generating"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage/Creating"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens"
 	"testing"
 	"time"
@@ -19,7 +19,7 @@ func Test_funcName(t *testing.T) {
 
 	sa := &HandlerPackAuthTokens{
 		Checking:        ValidatingTokens.Checking{},
-		GeneratingToken: Generating.CreatingTokens{},
+		GeneratingToken: Creating.CreatingTokens{},
 	}
 	tests := []struct {
 		name    string
@@ -31,8 +31,8 @@ func Test_funcName(t *testing.T) {
 			name: "Test_1",
 			args: args{
 
-				Rt:       R(time.Now().Add(-10000*time.Hour), &Generating.CreatingTokens{}),
-				JwtToken: J(time.Now().Add(-10000*time.Hour), &Generating.CreatingTokens{}),
+				Rt:       R(time.Now().Add(-10000*time.Hour), &Creating.CreatingTokens{}),
+				JwtToken: J(time.Now().Add(-10000*time.Hour), &Creating.CreatingTokens{}),
 				sa:       sa,
 			},
 			wantErr: true,
@@ -42,7 +42,7 @@ func Test_funcName(t *testing.T) {
 
 			args: args{
 				JwtToken: "",
-				Rt:       R(time.Now().Add(10000*time.Hour), &Generating.CreatingTokens{}),
+				Rt:       R(time.Now().Add(10000*time.Hour), &Creating.CreatingTokens{}),
 				sa:       sa,
 			},
 			wantErr: false,
@@ -59,7 +59,7 @@ func Test_funcName(t *testing.T) {
 		{
 			name: "Test_4",
 			args: args{
-				JwtToken: J(time.Now().Add(10000*time.Hour), &Generating.CreatingTokens{}),
+				JwtToken: J(time.Now().Add(10000*time.Hour), &Creating.CreatingTokens{}),
 				Rt:       "",
 				sa:       sa,
 			},
@@ -75,7 +75,7 @@ func Test_funcName(t *testing.T) {
 	}
 }
 
-func R(time2 time.Time, sa *Generating.CreatingTokens) string {
+func R(time2 time.Time, sa *Creating.CreatingTokens) string {
 
 	e, err := sa.GenerateRT(Dto.JwtCustomStruct{
 		UserID: 0,
@@ -90,7 +90,7 @@ func R(time2 time.Time, sa *Generating.CreatingTokens) string {
 
 }
 
-func J(time2 time.Time, sa *Generating.CreatingTokens) string {
+func J(time2 time.Time, sa *Creating.CreatingTokens) string {
 	e1, err := sa.GenerateJWT(Dto.JwtCustomStruct{
 		UserID: 0,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -109,7 +109,7 @@ func TestHandlerPackAuthTokens_AuthTest(t *testing.T) {
 	}
 	sa := &HandlerPackAuthTokens{
 		Checking:        ValidatingTokens.Checking{},
-		GeneratingToken: Generating.CreatingTokens{},
+		GeneratingToken: Creating.CreatingTokens{},
 	}
 	type args struct {
 		Rt       string
@@ -130,8 +130,8 @@ func TestHandlerPackAuthTokens_AuthTest(t *testing.T) {
 				Sa: sa,
 			},
 			args: args{
-				Rt:       R(time.Now().Add(durationPosi), &Generating.CreatingTokens{}),
-				JwtToken: J(time.Now().Add(durationPosi), &Generating.CreatingTokens{}),
+				Rt:       R(time.Now().Add(durationPosi), &Creating.CreatingTokens{}),
+				JwtToken: J(time.Now().Add(durationPosi), &Creating.CreatingTokens{}),
 			},
 
 			wantErr: false,
@@ -143,7 +143,7 @@ func TestHandlerPackAuthTokens_AuthTest(t *testing.T) {
 			},
 			args: args{
 				JwtToken: "",
-				Rt:       R(time.Now().Add(durationPosi), &Generating.CreatingTokens{}),
+				Rt:       R(time.Now().Add(durationPosi), &Creating.CreatingTokens{}),
 			},
 			wantErr: false,
 		},
@@ -164,8 +164,8 @@ func TestHandlerPackAuthTokens_AuthTest(t *testing.T) {
 				Sa: sa,
 			},
 			args: args{
-				JwtToken: J(time.Now().Add(durationNegative), &Generating.CreatingTokens{}),
-				Rt:       R(time.Now().Add(durationNegative), &Generating.CreatingTokens{}),
+				JwtToken: J(time.Now().Add(durationNegative), &Creating.CreatingTokens{}),
+				Rt:       R(time.Now().Add(durationNegative), &Creating.CreatingTokens{}),
 			},
 			wantErr: true,
 		},
@@ -175,8 +175,8 @@ func TestHandlerPackAuthTokens_AuthTest(t *testing.T) {
 				Sa: sa,
 			},
 			args: args{
-				JwtToken: J(time.Now().Add(durationNegative), &Generating.CreatingTokens{}),
-				Rt:       R(time.Now().Add(durationPosi), &Generating.CreatingTokens{}),
+				JwtToken: J(time.Now().Add(durationNegative), &Creating.CreatingTokens{}),
+				Rt:       R(time.Now().Add(durationPosi), &Creating.CreatingTokens{}),
 			},
 
 			wantErr: false,

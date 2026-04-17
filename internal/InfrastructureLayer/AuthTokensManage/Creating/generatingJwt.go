@@ -1,4 +1,4 @@
-package Generating
+package Creating
 
 import (
 	"os"

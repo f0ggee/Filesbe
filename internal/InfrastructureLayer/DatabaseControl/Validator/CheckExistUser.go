@@ -1,4 +1,4 @@
-package Checking
+package Validator
 
 import (
 	"context"

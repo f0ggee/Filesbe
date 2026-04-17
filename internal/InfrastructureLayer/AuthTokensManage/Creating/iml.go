@@ -1,5 +1,3 @@
-package Generating
-
-import ()
+package Creating
 
 type CreatingTokens struct{}
