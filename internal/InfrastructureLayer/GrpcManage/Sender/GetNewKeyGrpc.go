@@ -13,7 +13,6 @@ import (
 func (s SenderRequests) RequestingGettingNewKey(data []byte) ([]byte, error) {
 	slog.Info("Start a request for a key")
 
-	//TODO Change the addr of the master Server
 	conn, err := grpc.NewClient(os.Getenv("GRPC_ADDR"), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		slog.Error("Error while creating gRPC connection", "Error", err)
