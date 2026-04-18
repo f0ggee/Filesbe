@@ -23,8 +23,6 @@ func init() {
 	err := godotenv.Load(".env")
 	if err != nil {
 		slog.Error("cannot load env file", err)
-		return
-
 	}
 
 	accessKey = os.Getenv("Access_Key")

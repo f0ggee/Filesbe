@@ -20,7 +20,6 @@ func init() {
 	err := godotenv.Load(".env")
 	if err != nil {
 		slog.Error("cannot load env file", "Error", err.Error())
-		return
 
 	}
 	s := *new(ControlPrivateKeyStruct)

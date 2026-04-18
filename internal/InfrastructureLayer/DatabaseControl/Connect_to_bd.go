@@ -24,7 +24,6 @@ func init() {
 	err := godotenv.Load(".env")
 	if err != nil {
 		slog.Info("Error loading the file ")
-		return
 	}
 
 	dbIp = os.Getenv("POSTGRESQL_HOST")
@@ -41,8 +40,6 @@ func config() *pgxpool.Config {
 	const Lifetime = time.Hour
 	const IdelTime = time.Minute * 20
 	const Health = time.Minute
-
-	_ = godotenv.Load()
 
 	connstr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", dbIp, dbPort, dbUser, dbPassword, dbDbname)
 
