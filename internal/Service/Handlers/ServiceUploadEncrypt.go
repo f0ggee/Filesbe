@@ -183,6 +183,10 @@ func (sa *HandlerPackCollect) FileUploadEncrypt(r *http.Request) (string, error)
 
 }
 
+func (sa *HandlerPackCollect) FileUploadEncryptTest(fileName string) (string, error) {
+	return "Hello World!", nil
+}
+
 func (sa *HandlerPackCollect) EncryptFile(file multipart.File, writer io.Writer, channelForBytes chan memguard.LockedBuffer) error {
 	aesKey, err := memguard.NewBufferFromReader(rand.Reader, 32)
 	if err != nil {

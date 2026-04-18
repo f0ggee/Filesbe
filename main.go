@@ -162,6 +162,7 @@ func main() {
 	}
 	Sa := Handlers.NewHandlerPackCollect(HandlerPack.S3, HandlerPack.Crypto, HandlerPack.FileInfo, HandlerPack.AuthTokens, HandlerPack.DatabaseControlling, HandlerPack.RedisControlling, HandlerPack.Grpc, HandlerPack.Convert, HandlerPack.Keys)
 
+	fmt.Println(Sa.FileUploadEncryptTest(""))
 	router := mux.NewRouter()
 	router.Use(Middlewares.Logging)
 	newRouter := router.PathPrefix("/").Subrouter()
