@@ -59,58 +59,58 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Go Build.go build .executor": "Run",
-    "Go Build.go build Kaban.executor": "Run",
-    "Go Test.TestHandlerPackAuthTokens_AuthTest/Test_1 in Kaban/internal/Service/Handlers.executor": "Run",
-    "Go Test.TestHandlerPackAuthTokens_AuthTest/Test_2 in Kaban/internal/Service/Handlers.executor": "Run",
-    "Go Test.TestHandlerPackAuthTokens_AuthTest/Test_3 in Kaban/internal/Service/Handlers.executor": "Run",
-    "Go Test.TestHandlerPackAuthTokens_AuthTest/Test_4 in Kaban/internal/Service/Handlers.executor": "Run",
-    "Go Test.TestHandlerPackAuthTokens_AuthTest/Test_5 in Kaban/internal/Service/Handlers.executor": "Run",
-    "Go Test.TestTester in Kaban/internal/Service/Handlers.executor": "Run",
-    "Go Test.TestTester/Tester3 in Kaban/internal/Service/Handlers.executor": "Run",
-    "Go Test.TestValiDateDataForRegister/test_1 in Kaban/internal/Controller.executor": "Run",
-    "Go Test.TestValiDateDataForRegister/test_2 in Kaban/internal/Controller.executor": "Run",
-    "Go Test.TestValiDateDataForRegister/test_3 in Kaban/internal/Controller.executor": "Run",
-    "Go Test.Test_eee/Test_1 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor": "Run",
-    "Go Test.Test_eee/Test_2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor": "Run",
-    "Go Test.Test_eee/Test_3 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor": "Run",
-    "Go Test.Test_eee/Test_4 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor": "Run",
-    "Go Test.Test_eee/Test_5 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor": "Run",
-    "Go Test.Test_funcName in Kaban/internal/Service/Handlers.executor": "Run",
-    "Go Test.Test_funcName/Test_1 in Kaban/internal/Service/Handlers.executor": "Run",
-    "Go Test.Test_funcName/Test_2 in Kaban/internal/Service/Handlers.executor": "Run",
-    "Go Test.go test Kaban/internal/Service/Handlers.executor": "Run",
-    "Go сборка.go build .executor": "Run",
-    "Go сборка.go build Kaban.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "OpenAPI/Swagger Code Generator.UserAuthSpec.json.executor": "Run",
-    "RunOnceActivity.GoLinterPluginOnboardingV2": "true",
-    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.go.analysis.ui.options.defaults": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "full.screen.before.presentation.mode": "false",
-    "git-widget-placeholder": "main",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/pasabaranov/GolandProject/Kaban/internal/Service",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Go Build.go build .executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build Kaban.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestHandlerPackAuthTokens_AuthTest/Test_1 in Kaban/internal/Service/Handlers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestHandlerPackAuthTokens_AuthTest/Test_2 in Kaban/internal/Service/Handlers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestHandlerPackAuthTokens_AuthTest/Test_3 in Kaban/internal/Service/Handlers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestHandlerPackAuthTokens_AuthTest/Test_4 in Kaban/internal/Service/Handlers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestHandlerPackAuthTokens_AuthTest/Test_5 in Kaban/internal/Service/Handlers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestTester in Kaban/internal/Service/Handlers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestTester/Tester3 in Kaban/internal/Service/Handlers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestValiDateDataForRegister/test_1 in Kaban/internal/Controller.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestValiDateDataForRegister/test_2 in Kaban/internal/Controller.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestValiDateDataForRegister/test_3 in Kaban/internal/Controller.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.Test_eee/Test_1 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.Test_eee/Test_2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.Test_eee/Test_3 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.Test_eee/Test_4 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.Test_eee/Test_5 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.Test_funcName in Kaban/internal/Service/Handlers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.Test_funcName/Test_1 in Kaban/internal/Service/Handlers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.Test_funcName/Test_2 in Kaban/internal/Service/Handlers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.go test Kaban/internal/Service/Handlers.executor&quot;: &quot;Run&quot;,
+    &quot;Go сборка.go build .executor&quot;: &quot;Run&quot;,
+    &quot;Go сборка.go build Kaban.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;OpenAPI/Swagger Code Generator.UserAuthSpec.json.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.GoLinterPluginOnboardingV2&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.analysis.ui.options.defaults&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/pasabaranov/GolandProject/Kaban/internal/Service&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   },
-  "keyToStringList": {
-    "ChangesTree.GroupingKeys": [
-      "repository"
+  &quot;keyToStringList&quot;: {
+    &quot;ChangesTree.GroupingKeys&quot;: [
+      &quot;repository&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/internal/Service" />
