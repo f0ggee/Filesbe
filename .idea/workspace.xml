@@ -5,11 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f94305bc-4a4d-4a37-879a-5a784f5d7718" name="Changes" comment="SV 04.18.26&#10;&#10;&#10;This is stateful version">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmds/HttpsServerConfig.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/HttpsServerConfig.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerCheckUsers.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadNotEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadNotEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerLogin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/Controller_Register.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/Controller_Register.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/GrpcIncomingPacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/GrpcIncomingPacket.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Generating/GeneratingBcryptHash.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Generating/GeneratingBcryptHash.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Writinig/CreateUser.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Writinig/CreateUser.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests/GettingNewKey.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests/GettingNewKey.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Handlers/ServiceRegister.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Handlers/ServiceUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +75,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/pkg" />
     </key>
   </component>
@@ -115,5 +124,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="SV 04.18.26&#10;&#10;&#10;This is stateful version" />
     <option name="LAST_COMMIT_MESSAGE" value="SV 04.18.26&#10;&#10;&#10;This is stateful version" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Kaban$go_build_Kaban.out" NAME="go build Kaban Coverage Results" MODIFIED="1776521897803" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

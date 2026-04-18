@@ -22,9 +22,9 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func (sa *HandlerPackCollect) FileUploadEncrypt(r *http.Request) (string, error) {
+func (sa *HandlerPackCollect) UploadEncrypt(r *http.Request) (string, error) {
 
-	slog.Info("Func FileUploadEncrypt starts")
+	slog.Info("Func UploadEncrypt starts")
 	file, sizeAndName, err := r.FormFile("file")
 	if err != nil {
 		slog.Error("Err from FileUploader 1 ", "Error", err)

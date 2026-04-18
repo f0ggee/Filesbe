@@ -2,6 +2,7 @@ package Writinig
 
 import (
 	"context"
+	"crypto/rand"
 	"errors"
 	"log/slog"
 	"time"
@@ -26,7 +27,7 @@ func (d *Writer) CreateUser(Name string, Email string, HashPassword string, ctx 
 		}
 	}(tx, context.Background())
 
-	err = tx.QueryRow(ctx, "INSERT INTO person(name,email,password,created_at) VALUES ($1,$2,$3,$4,$5) RETURNING unic_id", Name, Email, HashPassword, time.Now()).Scan(&UnitId)
+	err = tx.QueryRow(ctx, "INSERT INTO person(name,email,password,created_at,scrypt_salt) VALUES ($1,$2,$3,$4,$5) RETURNING unic_id", Name, Email, HashPassword, time.Now(), rand.Text()).Scan(&UnitId)
 
 	switch {
 	case errors.Is(err, context.DeadlineExceeded):

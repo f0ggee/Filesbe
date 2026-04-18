@@ -18,7 +18,7 @@ func GetFrom(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackColl
 		StatusRedict string `json:"status_redict"`
 	}
 
-	//store := SessionStore()
+	store := SessionStore()
 	seSession, err := store.Get(r, TokenName)
 	if err != nil {
 		slog.Error("Error check", "Err", err)

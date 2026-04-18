@@ -7,7 +7,7 @@ import (
 )
 
 func (g Generating) GenerateHashFromPassword(password []byte) ([]byte, error) {
-	bytes, err := bcrypt.GenerateFromPassword(password, 10)
+	bytes, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	if err != nil {
 		slog.Error("Error generating hash from password", "Error", err.Error())
 		return nil, err

@@ -50,7 +50,7 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 
 	}
 
-	filName, err := s.FileUploadEncrypt(r)
+	filName, err := s.UploadEncrypt(r)
 	if err != nil {
 		w.Header().Set(ContentType, Json)
 		w.WriteHeader(400)

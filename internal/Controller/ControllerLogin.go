@@ -3,6 +3,7 @@ package Controller
 import (
 	"Kaban/internal/Dto"
 	"Kaban/internal/Service/Handlers"
+	"encoding/hex"
 	"encoding/json"
 	"io"
 	"log/slog"
@@ -21,17 +22,17 @@ func init() {
 
 var store = sessions.NewCookieStore([]byte(os.Getenv("KEY1")))
 
-//func SessionStore() sessions.Store {
-//
-//	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
-//	if err != nil {
-//		slog.Error("Err decode the key", "Err", err)
-//		return nil
-//	}
-//	Store := sessions.NewCookieStore(store1z)
-//	return Store
-//
-//}
+func SessionStore() sessions.Store {
+
+	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
+	if err != nil {
+		slog.Error("Err decode the key", "Err", err)
+		return nil
+	}
+	Store := sessions.NewCookieStore(store1z)
+	return Store
+
+}
 
 func checkJson(r *http.Request) (*Dto.UserLoginData, error) {
 	var err error
@@ -64,7 +65,6 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 		slog.Error("Method Dont' allow", "Method", http.StatusUnauthorized)
 		return
 	}
-	//store := SessionStore()
 	Session, err := store.Get(r, TokenName)
 	if err != nil {
 
@@ -102,6 +102,7 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 		return
 
 	}
+	slog.Info("User login", "User", sa.Email, sa.Password)
 
 	JwtToken, RefreshToken, err := realization.LoginService(*sa, r.Context())
 	if err != nil {
@@ -123,10 +124,9 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 
 	Session.Options = &sessions.Options{
 		Path:     "/",
-		Secure:   false,
+		Secure:   true,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
-		Domain:   r.Host,
 	}
 
 	if err := Session.Save(r, w); err != nil {

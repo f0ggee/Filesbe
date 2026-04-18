@@ -157,7 +157,6 @@ func NewSession(w http.ResponseWriter, r *http.Request, jwt string, rt string) e
 		Secure:   true,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
-		Domain:   r.Host,
 	}
 
 	if err := session.Save(r, w); err != nil {
@@ -173,8 +172,9 @@ func ValiDateDataForRegister(p *Dto.UserDataRegister) error {
 
 	err := validating.Struct(p)
 	if err != nil {
-		slog.Error("Can't validate because", "Err", err)
 		errsa := err.(validator.ValidationErrors)
+
+		slog.Error("Can't validate because", "Err", errsa)
 		return errsa
 
 	}

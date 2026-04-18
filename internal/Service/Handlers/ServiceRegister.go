@@ -4,7 +4,6 @@ import (
 	"Kaban/internal/Dto"
 	"context"
 	"crypto/rand"
-	"encoding/hex"
 	"errors"
 	"log/slog"
 	"time"
@@ -28,7 +27,7 @@ func (sa *HandlerPackCollect) RegisterService(de *Dto.UserDataRegister, ctx cont
 		return "", "", err
 	}
 
-	UnitIdUser, err := sa.DatabaseControlling.Writer.CreateUser(de.Name, de.Email, hex.EncodeToString(HashPassword), ctx)
+	UnitIdUser, err := sa.DatabaseControlling.Writer.CreateUser(de.Name, de.Email, string(HashPassword), ctx)
 	if err != nil {
 		return "", "", err
 	}

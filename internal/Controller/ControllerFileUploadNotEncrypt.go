@@ -81,7 +81,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 }
 
 func CookieGet2(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) error {
-	//store := SessionStore()
+	store := SessionStore()
 
 	session, err := store.Get(r, TokenName)
 	if err != nil {
