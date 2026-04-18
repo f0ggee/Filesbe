@@ -32,7 +32,6 @@ func init() {
 	err := godotenv.Load(".env")
 	if err != nil {
 		slog.Error("cannot load env file", err.Error())
-		return
 
 	}
 }
