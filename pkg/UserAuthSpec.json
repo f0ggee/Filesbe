@@ -1,0 +1,51 @@
+{
+
+  "openapi": "3.0.3",
+  "info": {
+    "title": "UserAuth",
+    "description": "How auth scheme looks like",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Paolo"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://filesbes.com/login",
+      "description": "This is the api for clients requesters"
+    },
+      {
+        "url": "https://filesbes.com/login/api",
+        "description": "This is the api for fronted's requests"
+      }
+  ],
+
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": ["User login"],
+        "summary": "User's login date",
+        "requestBody": {
+          "description": "Parametrs for login auth",
+          "required": true,
+          "content": {
+            "type": "application/json",
+             
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "": ""
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

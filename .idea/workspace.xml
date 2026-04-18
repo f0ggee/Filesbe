@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="40b367b3-0dc0-4024-9b79-0209df7eb479" name="Изменения" comment="SV 04.08.26&#10;The stateful version" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+      <option value="repository" />
+    </option>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="OpenAPI" />
+        <option value="Swagger" />
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" url="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.7.darwin-arm64" />
+  <component name="Git.Settings">
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;f0ggee&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/f0ggee/Kaban.git&quot;,
+    &quot;accountId&quot;: &quot;4956bb8d-0926-4a66-a014-066e84a60539&quot;
+  }
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="3AiG28F8o2treCdbWwYZdcij7ft" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "Go Build.go build .executor": "Run",
+    "Go Build.go build Kaban.executor": "Run",
+    "Go Test.TestHandlerPackAuthTokens_AuthTest/Test_1 in Kaban/internal/Service/Handlers.executor": "Run",
+    "Go Test.TestHandlerPackAuthTokens_AuthTest/Test_2 in Kaban/internal/Service/Handlers.executor": "Run",
+    "Go Test.TestHandlerPackAuthTokens_AuthTest/Test_3 in Kaban/internal/Service/Handlers.executor": "Run",
+    "Go Test.TestHandlerPackAuthTokens_AuthTest/Test_4 in Kaban/internal/Service/Handlers.executor": "Run",
+    "Go Test.TestHandlerPackAuthTokens_AuthTest/Test_5 in Kaban/internal/Service/Handlers.executor": "Run",
+    "Go Test.TestTester in Kaban/internal/Service/Handlers.executor": "Run",
+    "Go Test.TestTester/Tester3 in Kaban/internal/Service/Handlers.executor": "Run",
+    "Go Test.TestValiDateDataForRegister/test_1 in Kaban/internal/Controller.executor": "Run",
+    "Go Test.TestValiDateDataForRegister/test_2 in Kaban/internal/Controller.executor": "Run",
+    "Go Test.TestValiDateDataForRegister/test_3 in Kaban/internal/Controller.executor": "Run",
+    "Go Test.Test_eee/Test_1 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor": "Run",
+    "Go Test.Test_eee/Test_2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor": "Run",
+    "Go Test.Test_eee/Test_3 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor": "Run",
+    "Go Test.Test_eee/Test_4 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor": "Run",
+    "Go Test.Test_eee/Test_5 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor": "Run",
+    "Go Test.Test_funcName in Kaban/internal/Service/Handlers.executor": "Run",
+    "Go Test.Test_funcName/Test_1 in Kaban/internal/Service/Handlers.executor": "Run",
+    "Go Test.Test_funcName/Test_2 in Kaban/internal/Service/Handlers.executor": "Run",
+    "Go Test.go test Kaban/internal/Service/Handlers.executor": "Run",
+    "Go сборка.go build .executor": "Run",
+    "Go сборка.go build Kaban.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "OpenAPI/Swagger Code Generator.UserAuthSpec.json.executor": "Run",
+    "RunOnceActivity.GoLinterPluginOnboardingV2": "true",
+    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.analysis.ui.options.defaults": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "full.screen.before.presentation.mode": "false",
+    "git-widget-placeholder": "main",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "/Users/pasabaranov/GolandProject/Kaban/internal/Service",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
+  },
+  "keyToStringList": {
+    "ChangesTree.GroupingKeys": [
+      "repository"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/internal/Service" />
+      <recent name="$PROJECT_DIR$/iternal/Dto" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/pkg" />
+      <recent name="$PROJECT_DIR$/cmds" />
+      <recent name="$PROJECT_DIR$/internal/Service/tests" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/cmd" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Go Build.go build ">
+    <configuration name="go build " type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$" />
+      <useCustomBuildTags value="true" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        </ENTRIES>
+      </EXTENSION>
+      <kind value="PACKAGE" />
+      <package value="Kaban" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test_eee/Test_1 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTest_eee\E$/^\QTest_1\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test_eee/Test_2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTest_eee\E$/^\QTest_2\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test_eee/Test_3 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTest_eee\E$/^\QTest_3\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test_eee/Test_4 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTest_eee\E$/^\QTest_4\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test_eee/Test_5 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTest_eee\E$/^\QTest_5\E$" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Go Build.go build " />
+      <item itemvalue="Go Test.Test_eee/Test_1 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <item itemvalue="Go Test.Test_eee/Test_2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <item itemvalue="Go Test.Test_eee/Test_3 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <item itemvalue="Go Test.Test_eee/Test_4 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      <item itemvalue="Go Test.Test_eee/Test_5 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Test.Test_eee/Test_5 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+        <item itemvalue="Go Test.Test_eee/Test_4 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+        <item itemvalue="Go Test.Test_eee/Test_3 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+        <item itemvalue="Go Test.Test_eee/Test_2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+        <item itemvalue="Go Test.Test_eee/Test_1 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-gosdk-72a9cf600ed8-dfa3e7267ae0-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-253.32098.60" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-GO-253.32098.60" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Задача по умолчанию">
+      <changelist id="40b367b3-0dc0-4024-9b79-0209df7eb479" name="Изменения" comment="" />
+      <created>1773067768523</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1773067768523</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="WIP 03.09.26&#10;What I've done:&#10;1) I've written the client for grpc connection &#10;2) Also I've written the grpc files" />
+    <MESSAGE value="WIP 03.09.26&#10;What I've done:&#10;1)I've completed the writing of the master server &#10;2)Also,I've regrouped  a little bit the structure of the project(files and others)" />
+    <MESSAGE value="WIP 03.13.26&#10;What I've done:&#10;1)Now server sends a packet to the Master server and decrypts it" />
+    <MESSAGE value="WIP 03.17.26&#10;What I've done(the stateful version):&#10;1)Now server sends a packet to the Master server and decrypts it" />
+    <MESSAGE value="WIP 03.17.26&#10;What I've done(the stateful version):&#10;1)I refactored interfaces&#10;1.1) Auth interfaces has been break on small useful packs(like an example: Generator generates auth tokens)   &#10;1.2)KeyInteraction has been changed on the Crypto small logical blocks(like an example: the Decryption interface has all description methods. Despite the changes, all methods in the crypto have a logical name of an interface)&#10;1.3) Also other interfaces have been changed like these" />
+    <MESSAGE value="WIP 03.17.26&#10;What I've done(the stateful version):&#10;1)I've refactored all interfaces&#10;2)And started adding realizations of interfaces  in the main file" />
+    <MESSAGE value="WIP 03.23.26&#10;What I've done(the stateful version):&#10;1)I've finished adding implements in the main file &#10;2) I start fixing all micro bugs from the refactoring" />
+    <MESSAGE value="WP 03.25.26&#10;What I've done(the stateful version):&#10;1)I've refactored the project" />
+    <MESSAGE value="WP 03.26.26&#10;What I've done():&#10;I've added the keys interface which now manipulate a incoming keys" />
+    <MESSAGE value="WP 03.28.26&#10;What I've done:&#10;1)I started refactoring some functions in controller &#10;2) I finished refactoring Conroller" />
+    <MESSAGE value="WP 03.30.26&#10;What I've done:&#10;1) I fixed a little bug which is associated with auth and UrlUploader" />
+    <MESSAGE value="WP 04.01.26&#10;What I've done:&#10;1)I've fixed the bug which didn't allow to upload a file using the encryption mode" />
+    <MESSAGE value="WP 04.04.26&#10;What I've done:&#10;1)I've moved logic of uploading and uploadingSecure into the interface" />
+    <MESSAGE value="WP 04.04.26&#10;What I've done:&#10;1)I moved a half of logic with downloading to another file" />
+    <MESSAGE value="WP 04.08.26&#10;What I've done:&#10;1)I already moved the logic downloading and downloading with secure" />
+    <MESSAGE value="SV 04.08.26&#10;The stateful version" />
+    <option name="LAST_COMMIT_MESSAGE" value="SV 04.08.26&#10;The stateful version" />
+  </component>
+</project>
