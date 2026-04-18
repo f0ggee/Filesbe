@@ -9,7 +9,6 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -19,20 +18,6 @@ var dbUser = os.Getenv("POSTGRESQL_USER")
 var dbPassword = os.Getenv("POSTGRESQL_PASSWORD")
 var dbDbname = os.Getenv("POSTGRESQL_DBNAME")
 
-func init() {
-
-	err := godotenv.Load(".env")
-	if err != nil {
-		slog.Info("Error loading the file ")
-	}
-
-	dbIp = os.Getenv("POSTGRESQL_HOST")
-	dbPort = os.Getenv("POSTGRESQL_PORT")
-	dbUser = os.Getenv("POSTGRESQL_USER")
-	dbPassword = os.Getenv("POSTGRESQL_PASSWORD")
-	dbDbname = os.Getenv("POSTGRESQL_DBNAME")
-
-}
 func config() *pgxpool.Config {
 
 	const Maxconns = int32(5)

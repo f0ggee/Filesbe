@@ -11,24 +11,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/joho/godotenv"
 )
 
 var accessKey = os.Getenv("Access_Key")
 var secretKey = os.Getenv("Secret_key")
 var EndPoint = os.Getenv("end")
-
-func init() {
-
-	err := godotenv.Load(".env")
-	if err != nil {
-		slog.Error("cannot load env file", err)
-	}
-
-	accessKey = os.Getenv("Access_Key")
-	secretKey = os.Getenv("Secret_key")
-	EndPoint = os.Getenv("end")
-}
 
 func S3Helper() (*s3.Client, error) {
 
@@ -36,6 +23,9 @@ func S3Helper() (*s3.Client, error) {
 	//secretKey := os.Getenv("Secret_key")
 	//EndPoint := os.Getenv("end")
 
+	accessKey = os.Getenv("Access_Key")
+	secretKey = os.Getenv("Secret_key")
+	EndPoint = os.Getenv("end")
 	tr := &http.Transport{
 		MaxConnsPerHost:     300,
 		MaxIdleConns:        512,

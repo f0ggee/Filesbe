@@ -1,51 +1,61 @@
 package main
 
 import (
-	"Kaban/cmds"
-	Controller2 "Kaban/internal/Controller"
-	"Kaban/internal/Controller/Middlewares"
-	"Kaban/internal/InfrastructureLayer/DatabaseControl"
-	"Kaban/internal/InfrastructureLayer/KeysManager"
-	"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
-	"Kaban/internal/InfrastructureLayer/s3Interation"
-	"Kaban/internal/InfrastructureLayer/s3Interation/S3Downloader"
-	"Kaban/internal/InfrastructureLayer/s3Interation/S3Uploader"
-	"Kaban/internal/Service/Helpers"
-	"fmt"
-	"sync"
 
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ControllingTokens"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage/Creating"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens"
-	"Kaban/internal/InfrastructureLayer/Crypto/Checking"
-	"Kaban/internal/InfrastructureLayer/Crypto/Decription"
-	"Kaban/internal/InfrastructureLayer/Crypto/Encryption"
-	"Kaban/internal/InfrastructureLayer/Crypto/Generating"
-	"Kaban/internal/InfrastructureLayer/DataConverting"
-	"Kaban/internal/InfrastructureLayer/DatabaseControl/Reading"
-	"Kaban/internal/InfrastructureLayer/DatabaseControl/Validator"
-	"Kaban/internal/InfrastructureLayer/DatabaseControl/Writinig"
-	"Kaban/internal/InfrastructureLayer/FileKeyInteration/HandleFileInfo"
-	"Kaban/internal/InfrastructureLayer/FileKeyInteration/HandlerFile"
-	"Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests"
-	"Kaban/internal/InfrastructureLayer/GrpcManage/PacketChecking"
-	"Kaban/internal/InfrastructureLayer/GrpcManage/Sender"
-	"Kaban/internal/InfrastructureLayer/RedisInteration"
-	"Kaban/internal/InfrastructureLayer/RedisInteration/DeletingRedis"
-	"Kaban/internal/InfrastructureLayer/RedisInteration/ReadingRedis"
-	"Kaban/internal/InfrastructureLayer/RedisInteration/WritingRedis"
-	"Kaban/internal/InfrastructureLayer/s3Interation/DeleterS3"
-	"Kaban/internal/Service/Handlers"
-	"log/slog"
-	"net/http"
-	"os"
-	"time"
+"Kaban/cmds"
+Controller2 "Kaban/internal/Controller"
+"Kaban/internal/Controller/Middlewares"
+"Kaban/internal/InfrastructureLayer/AuthTokensManage/ControllingTokens"
+"Kaban/internal/InfrastructureLayer/AuthTokensManage/Creating"
+"Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens"
+"Kaban/internal/InfrastructureLayer/Crypto/Checking"
+"Kaban/internal/InfrastructureLayer/Crypto/Decription"
+"Kaban/internal/InfrastructureLayer/Crypto/Encryption"
+"Kaban/internal/InfrastructureLayer/Crypto/Generating"
+"Kaban/internal/InfrastructureLayer/DataConverting"
+"Kaban/internal/InfrastructureLayer/DatabaseControl"
+"Kaban/internal/InfrastructureLayer/DatabaseControl/Reading"
+"Kaban/internal/InfrastructureLayer/DatabaseControl/Validator"
+"Kaban/internal/InfrastructureLayer/DatabaseControl/Writinig"
+"Kaban/internal/InfrastructureLayer/FileKeyInteration/HandleFileInfo"
+"Kaban/internal/InfrastructureLayer/FileKeyInteration/HandlerFile"
+"Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests"
+"Kaban/internal/InfrastructureLayer/GrpcManage/PacketChecking"
+"Kaban/internal/InfrastructureLayer/GrpcManage/Sender"
+"Kaban/internal/InfrastructureLayer/KeysManager"
+"Kaban/internal/InfrastructureLayer/RedisInteration"
+"Kaban/internal/InfrastructureLayer/RedisInteration/DeletingRedis"
+"Kaban/internal/InfrastructureLayer/RedisInteration/ReadingRedis"
+"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
+"Kaban/internal/InfrastructureLayer/RedisInteration/WritingRedis"
+"Kaban/internal/InfrastructureLayer/s3Interation"
+"Kaban/internal/InfrastructureLayer/s3Interation/DeleterS3"
+"Kaban/internal/InfrastructureLayer/s3Interation/S3Downloader"
+"Kaban/internal/InfrastructureLayer/s3Interation/S3Uploader"
+"Kaban/internal/Service/Handlers"
+"Kaban/internal/Service/Helpers"
+"fmt"
+"log/slog"
+"net/http"
+"os"
+"sync"
+"time"
 
-	"github.com/awnumar/memguard"
-	"github.com/gorilla/mux"
+"github.com/awnumar/memguard"
+"github.com/gorilla/mux"
+"github.com/joho/godotenv"
+)"github.com/joho/godotenv"
+
 )
 
 func main() {
+
+	err := godotenv.Load()
+	if err != nil {
+		slog.Error("cannot load env file", err)
+	}
+
+	Handlers.ConfigureKeyData()
 	cmds.SettingSlog()
 
 	memguard.CatchInterrupt()

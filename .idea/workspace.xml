@@ -6,18 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="f94305bc-4a4d-4a37-879a-5a784f5d7718" name="Changes" comment="SV 04.18.26&#10;&#10;&#10;This is stateful version">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/HttpsServerConfig.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/HttpsServerConfig.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerCheckUsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadNotEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadNotEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerLogin.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/Controller_Register.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/Controller_Register.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/GrpcIncomingPacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/GrpcIncomingPacket.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Generating/GeneratingBcryptHash.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Generating/GeneratingBcryptHash.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Writinig/CreateUser.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Writinig/CreateUser.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests/GettingNewKey.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests/GettingNewKey.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Handlers/ServiceRegister.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Handlers/ServiceUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceInitFunction.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Handlers/ServiceConfigure.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/ConnectionToS3ServerV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Helpers/ConnectionToS3ServerV2.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,22 +23,25 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "f0ggee"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;f0ggee&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/f0ggee/Kaban.git",
-    "accountId": "4956bb8d-0926-4a66-a014-066e84a60539"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/f0ggee/Kaban.git&quot;,
+    &quot;accountId&quot;: &quot;4956bb8d-0926-4a66-a014-066e84a60539&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7,
-  "fromUser": false
-}]]></component>
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7,
+  &quot;fromUser&quot;: false
+}</component>
   <component name="ProjectId" id="3CWsmCJsDoDi5pT9ArWeAtW2IEp" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -65,7 +60,7 @@
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
     "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "git-widget-placeholder": "Test-branch-main-pushing",
+    "git-widget-placeholder": "main",
     "go.sdk.automatically.set": "true",
     "last_opened_file_path": "/Users/pasabaranov",
     "node.js.detected.package.eslint": "true",

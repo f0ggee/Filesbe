@@ -4,8 +4,6 @@ import (
 	"encoding/hex"
 	"log/slog"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 type ControlPrivateKeyStruct struct {
@@ -15,13 +13,7 @@ type ControlPrivateKeyStruct struct {
 
 var Bucket string
 
-func init() {
-
-	err := godotenv.Load(".env")
-	if err != nil {
-		slog.Error("cannot load env file", "Error", err.Error())
-
-	}
+func ConfigureKeyData() {
 	s := *new(ControlPrivateKeyStruct)
 	Bucket = os.Getenv("BUCKET")
 	PublickKeyIntoBytes, err := hex.DecodeString(os.Getenv("Public_Key_Master_Server"))
