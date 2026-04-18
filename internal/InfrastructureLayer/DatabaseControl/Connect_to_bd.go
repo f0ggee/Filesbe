@@ -12,14 +12,13 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var dbIp = os.Getenv("POSTGRESQL_HOST")
-var dbPort = os.Getenv("POSTGRESQL_PORT")
-var dbUser = os.Getenv("POSTGRESQL_USER")
-var dbPassword = os.Getenv("POSTGRESQL_PASSWORD")
-var dbDbname = os.Getenv("POSTGRESQL_DBNAME")
-
 func config() *pgxpool.Config {
 
+	dbIp := os.Getenv("POSTGRESQL_HOST")
+	dbPort := os.Getenv("POSTGRESQL_PORT")
+	dbUser := os.Getenv("POSTGRESQL_USER")
+	dbPassword := os.Getenv("POSTGRESQL_PASSWORD")
+	dbDbname := os.Getenv("POSTGRESQL_DBNAME")
 	const Maxconns = int32(5)
 	const Mincons = int32(2)
 	const Lifetime = time.Hour
@@ -63,7 +62,7 @@ func Connect() (*pgxpool.Pool, error) {
 
 	connPool, err := pgxpool.NewWithConfig(context.Background(), config())
 	if err != nil {
-		slog.Error("Err create new config", err)
+		slog.Error("Err create new сonfig", err)
 		return nil, err
 	}
 	connectiom, err := connPool.Acquire(context.Background())

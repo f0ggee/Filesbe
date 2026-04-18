@@ -58,6 +58,7 @@ func main() {
 	memguard.CatchInterrupt()
 	defer memguard.Purge()
 
+	slog.Info("HERE IS TEST", os.Getenv("GRPC_ADDR"))
 	db, err := DatabaseControl.Connect()
 	if err != nil {
 		slog.Error("Error connect to database", err)

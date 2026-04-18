@@ -7,8 +7,6 @@
     <list default="true" id="f94305bc-4a4d-4a37-879a-5a784f5d7718" name="Changes" comment="SV 04.18.26&#10;&#10;&#10;This is stateful version">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceInitFunction.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Handlers/ServiceConfigure.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/ConnectionToS3ServerV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Helpers/ConnectionToS3ServerV2.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
