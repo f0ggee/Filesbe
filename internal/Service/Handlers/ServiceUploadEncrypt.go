@@ -1,6 +1,5 @@
 package Handlers
 
-import "C"
 import (
 	"Kaban/internal/Dto"
 	"context"
