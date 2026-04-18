@@ -19,7 +19,6 @@ import (
 	"time"
 
 	"github.com/awnumar/memguard"
-
 	"golang.org/x/sync/errgroup"
 )
 
