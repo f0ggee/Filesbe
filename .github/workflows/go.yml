@@ -24,10 +24,14 @@ jobs:
       - name: Test
         run: go test -v ./...
 
+
+
   deploy:
     runs-on: self-hosted
     needs: build
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Build Docker image
         run: sudo docker build -t filesbe:latest .
 
