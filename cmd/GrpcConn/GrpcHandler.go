@@ -19,7 +19,7 @@ import (
 func (g GrpcConnection) GrpcHandleRequests(GrpcHandlingData GrpcHandleData.GrpcDataManagement, ServerInfo GettingInfo.SeverManage, Encrypting Encrypter.Encryption, PacketValidating PacketValidation.ValidatePacketData, CryptoGenerate CryprtoGenerator.CryprtoGenerating, ConvertData ConverterData.ConvertingData, Decrypted Decryptor.Decrypting) {
 	lis, err := net.Listen(g.Network, g.Address)
 	if err != nil {
-		slog.Error("failed to listen:", err.Error())
+		slog.Error("failed to listen:", "error", err.Error())
 		return
 	}
 	grpcServer := grpc.NewServer()
@@ -36,7 +36,7 @@ func (g GrpcConnection) GrpcHandleRequests(GrpcHandlingData GrpcHandleData.GrpcD
 		},
 	})
 	if err := grpcServer.Serve(lis); err != nil {
-		slog.Error("failed to serve:", err.Error())
+		slog.Error("failed to serve:", "Error", err.Error())
 		return
 	}
 
