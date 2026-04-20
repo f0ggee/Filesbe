@@ -14,19 +14,19 @@ func (g Decrypting) GrpcDecrypterAesKey(AesKey []byte) ([]byte, error) {
 
 	KeyInBytes, err := hex.DecodeString(Dto.Keys.MasterServerKey)
 	if err != nil {
-		slog.Error("Error decoding master server key", "error", err.Error())
+		slog.Error("Error decoding master server key", err.Error())
 		return nil, err
 	}
 
 	KeyRsaType, err := x509.ParsePKCS1PrivateKey(KeyInBytes)
 	if err != nil {
-		slog.Error("Error parsing the master server key", "Func: DecryptIncomingAesKey ", "error", err.Error())
+		slog.Error("Error parsing the master server key", err.Error())
 		return nil, err
 	}
 
 	DecryptedAesKey, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, KeyRsaType, AesKey, nil)
 	if err != nil {
-		slog.Error("Error decrypting master server key RSA", "error", err.Error())
+		slog.Error("Error decrypting master server key RSA", err.Error())
 		return nil, err
 	}
 	return DecryptedAesKey, nil
