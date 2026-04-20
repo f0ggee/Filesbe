@@ -119,7 +119,6 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 			slog.Error("Marshal Error", "Error", err.Error())
 			return &pb.OutputSendData{}, errors.New("something gone wrong")
 		}
-
 		AesKey, err := memguard.NewBufferFromReader(rand.Reader, 32)
 		if err != nil {
 			slog.Error("Generate AesKey Error", "Error", err.Error())
@@ -177,7 +176,6 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 			return &pb.OutputSendData{}, errors.New("something gone wrong")
 		}
 
-		fmt.Println(len(OutcomingPacket))
 		slog.Info("finished the exchange")
 		return &pb.OutputSendData{
 			BytesOutput: OutcomingPacket,

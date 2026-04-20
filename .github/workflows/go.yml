@@ -1,0 +1,59 @@
+name: Go
+
+on:
+  push:
+    branches: [ "MasterServerCreating" ]
+  pull_request:
+    branches: [ "MasterServerCreating" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24.4'
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Test
+        run: go test -v ./...
+
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: sudo docker build -t filesbe:latest .
+
+      - name: Run Docker container
+        env:
+          # Объявляем переменные окружения из секретов для этого шага
+          SERVER_1: ${{ secrets.server_1 }}
+          OUR_KEY: ${{ secrets.Our_Key }}
+          GRPC_ADDRESS: ${{ secrets.GRPC_ADDRESS }}
+          REDIS_ADDR: ${{ secrets.REDIS_ADDR }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+        run: |
+          sudo docker stop filesbe || true
+          sudo docker rm filesbe || true
+          sudo docker run -d \
+            --name filesbe \
+            -p 8080:8080 \
+            --restart always \
+            -e SERVER_1="$SERVER_1" \
+            -e OUR_KEY="$OUR_KEY" \
+            -e GRPC_ADDRESS="$GRPC_ADDRESS" \
+            -e REDIS_ADDR="$REDIS_ADDR" \
+            -e REDIS_PASSWORD="$REDIS_PASSWORD" \
+            filesbe:latest
