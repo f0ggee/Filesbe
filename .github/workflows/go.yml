@@ -33,7 +33,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Build Docker image
-        run: sudo docker build -t filesbe:latest .
+        run:  docker build -t filesbe:latest .
 
       - name: Run Docker container
         env:
@@ -44,9 +44,9 @@ jobs:
                  REDIS_ADDR: ${{ secrets.REDIS_ADDR }}
                  REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
         run: |
-                 sudo docker stop filesbe || true
-                 sudo docker rm filesbe || true
-                 sudo docker run -d \
+                  docker stop filesbe || true
+                  docker rm filesbe || true
+                  docker run -d \
                    --name filesbe \
                    -p 8080:8080 \
                    --restart always \
