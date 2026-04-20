@@ -5,7 +5,14 @@ name: Go
 
 on:
   push:
-    branches: [ "main" ]
+    branches:  
+    - main
+  workflow_dispatch:
+    inputs:
+      logLevel:
+       description: "Log-level"
+    
+      
   pull_request:
     branches: [ "main" ]
 
