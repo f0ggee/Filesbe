@@ -20,6 +20,7 @@ import (
 	Cmds "MasterServer_/cmds"
 	GrcpCmds "MasterServer_/cmds/GrpcConn"
 	"crypto/rand"
+	"fmt"
 	"log/slog"
 	"os"
 	"time"
@@ -38,6 +39,7 @@ func init() {
 
 func main() {
 
+	fmt.Println("Our key", os.Getenv("server_1"))
 	Dto.Keys.NewPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
 	Dto.Keys.OldPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
 	Dto.Keys.MasterServerKey = os.Getenv("Our_Key")

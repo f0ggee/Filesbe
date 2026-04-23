@@ -33,26 +33,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Build Docker image
-        run: sudo docker build -t filesbe:latest .
+        run:  docker build -t filesbe:latest .
 
       - name: Run Docker container
         env:
-                 # Объявляем переменные окружения из секретов для этого шага
-                 SERVER_1: ${{ secrets.server_1 }}
-                 OUR_KEY: ${{ secrets.Our_Key }}
-                 GRPC_ADDRESS: ${{ secrets.GRPC_ADDRESS }}
-                 REDIS_ADDR: ${{ secrets.REDIS_ADDR }}
-                 REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          # Объявляем переменные окружения из секретов для этого шага
+          SERVER_1: ${{ secrets.server_1 }}
+          OUR_KEY: ${{ secrets.Our_Key }}
+          GRPC_ADDRESS: ${{ secrets.GRPC_ADDRESS }}
+          REDIS_ADDR: ${{ secrets.REDIS_ADDR }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
         run: |
-                 sudo docker stop filesbe || true
-                 sudo docker rm filesbe || true
-                 sudo docker run -d \
-                   --name MasterServer \
-                   -p 8080:8080 \
-                   --restart always \
-                   -e SERVER_1="$SERVER_1" \
-                   -e OUR_KEY="$OUR_KEY" \
-                   -e GRPC_ADDRESS="$GRPC_ADDRESS" \
-                   -e REDIS_ADDR="$REDIS_ADDR" \
-                   -e REDIS_PASSWORD="$REDIS_PASSWORD" \
-                   master_server:latest
+          docker stop filesbe || true
+          docker rm filesbe || true
+           docker run -d \
+           --name MasterServer \
+           -p 8080:8080 \
+           --restart always \
+           -e SERVER_1="$SERVER_1" \
+           -e OUR_KEY="$OUR_KEY" \
+           -e GRPC_ADDRESS="$GRPC_ADDRESS" \
+           -e REDIS_ADDR="$REDIS_ADDR" \
+           -e REDIS_PASSWORD="$REDIS_PASSWORD" \
+           master_server:latest
