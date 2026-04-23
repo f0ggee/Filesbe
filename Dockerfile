@@ -25,5 +25,6 @@ COPY --from=build-stage /bu/DipendsInjective ./
 COPY --from=build-stage /bu/Dto ./
 COPY --from=build-stage /bu/InfrastructureLevel ./
 COPY --from=build-stage /bu/DomainLevel ./
+EXPOSE 80
 RUN echo "We completed"
 CMD ["./app"]
