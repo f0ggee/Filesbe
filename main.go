@@ -39,7 +39,6 @@ func init() {
 
 func main() {
 
-	fmt.Println("Our key", os.Getenv("server_1"))
 	Dto.Keys.NewPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
 	Dto.Keys.OldPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
 	Dto.Keys.MasterServerKey = os.Getenv("Our_Key")
@@ -102,6 +101,8 @@ func main() {
 func SwapRsaKey(RsaKey DipendsInjective.RsaKeyManipulationWithRsaAndMemory) {
 
 	slog.Info("Swaping RSA key in memory START")
+	fmt.Println("Our key", os.Getenv("server_1"))
+
 	TemporallySaving := memguard.NewBufferFromBytes(RsaKey.Key.GenerateRsaKey())
 	defer TemporallySaving.Destroy()
 
