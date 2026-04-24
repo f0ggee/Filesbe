@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     steps:
       - name: Checking a hash
@@ -16,22 +15,20 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.24.4'
-
       - name: Print a path
         shell: bash
         run:
           echo $PATH
-
 
       - name: Download depends
         run: |
           go mod download 
           go mod tidy
       - name: Build
-        run:
-          go build -o ./app
-      - name: Test
-        run: |
+        run: | 
           ls
           ls | less
+          go build -o ./app
+      - name: Test
+        run:
          go build -v ./..
