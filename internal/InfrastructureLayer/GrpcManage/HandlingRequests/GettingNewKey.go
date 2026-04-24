@@ -2,6 +2,7 @@ package HandlingRequests
 
 import (
 	"Kaban/internal/Dto"
+	"Kaban/internal/InfrastructureLayer/Crypto/Checking"
 	"Kaban/internal/InfrastructureLayer/Crypto/Decription"
 	"crypto/sha256"
 	"encoding/json"
@@ -75,6 +76,14 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 	return PacketInfo.T1, nil
 }
 
+func TestSign(h Checking.Validating, Databyte, Hash, Key []byte) error {
+
+	err := h.CheckSignKey(Databyte, Hash, Key)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func Ee2(sa *Decription.DecryptionData, key, data []byte) error {
 
 	_, err := sa.DecryptAesKey(key, data)

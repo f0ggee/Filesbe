@@ -26,12 +26,12 @@ func (d DecryptionData) DecryptFileInfo(FileInfo []byte, NewRsaKey []byte, OldRs
 		slog.Error("Key is old")
 		keyRsaOld, err := x509.ParsePKCS1PrivateKey(OldRsaKey)
 		if err != nil {
-			slog.Error("Func DecryptFileInfo ParsePKCS1PrivateKey fail", "Error", err)
+			slog.Error("Func DecryptFileInfo ParsePKCS1PrivateKey fail", "ERROR", err.Error())
 			return nil, "", err
 		}
 		decryptFileInfo, err = rsa.DecryptOAEP(sha256.New(), rand.Reader, keyRsaOld, FileInfo, nil)
 		if err != nil {
-			slog.Error("Error also decrypt with an old key ", err)
+			slog.Error("Error also decrypt with an old key", "ERROR", err.Error())
 			return nil, "", err
 		}
 
@@ -49,7 +49,7 @@ func (d DecryptionData) DecryptFileInfo(FileInfo []byte, NewRsaKey []byte, OldRs
 
 	aesKeyIntoByte, err := hex.DecodeString(sa.AesKey)
 	if err != nil {
-		slog.Error("Error decode aes key into string", err)
+		slog.Error("Error decode aes key into string", "Error", err.Error())
 		return nil, "", err
 	}
 

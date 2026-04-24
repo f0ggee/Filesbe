@@ -14,7 +14,7 @@ func (d *RedisReader) GetFileInfo(fileInfoName string, ctx context.Context) ([]b
 
 	err := d.Re.HGetAll(ctx, fileInfoName).Scan(&StructOfFileInfo)
 	if err != nil {
-		slog.Error("Error in  read data", err)
+		slog.Error("Error in  read data", "Error", err)
 		return nil, err
 	}
 

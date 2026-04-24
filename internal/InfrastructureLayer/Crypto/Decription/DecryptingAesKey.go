@@ -13,7 +13,7 @@ func (d DecryptionData) DecryptAesKey(RsaKey []byte, aesKey []byte) ([]byte, err
 	slog.Info("Start decrypting the new  AES key")
 	RsaKeyPrivate, err := x509.ParsePKCS1PrivateKey(RsaKey)
 	if err != nil {
-		slog.Error("Error Parsing RsaKey", "Func: DecryptAesKey", "Error", err)
+		slog.Error("Error Parsing RsaKey", "Func decrypt error", err)
 		return nil, err
 	}
 

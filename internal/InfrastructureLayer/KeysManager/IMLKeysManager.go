@@ -44,13 +44,13 @@ func (u *Updater) FillOldKey() {
 	err := error(nil)
 	u.NewPrivateKey, err = memguard.NewBufferFromReader(rand.Reader, 2)
 	if err != nil {
-		slog.Error("Error filling new key", err.Error())
+		slog.Error("Error filling new key", "Error", err.Error())
 		return
 	}
 
 	u.OldPrivateKey, err = memguard.NewBufferFromReader(rand.Reader, 32)
 	if err != nil {
-		slog.Error("Error filling old key", err.Error())
+		slog.Error("Error filling old key", "Error", err.Error())
 		return
 	}
 

@@ -40,7 +40,7 @@ func S3Helper() (*s3.Client, error) {
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")),
 		config.WithRegion("ru-1"))
 	if err != nil {
-		slog.Error("Error Initialization", err)
+		slog.Error("Error Initialization", "Error", err)
 		return nil, err
 	}
 

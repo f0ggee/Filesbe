@@ -89,7 +89,7 @@ func CookieGet(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCo
 	session, err := store.Get(r, TokenName)
 
 	if err != nil {
-		slog.Error("cookie don't send", err)
+		slog.Error("cookie don't send", "ERROR", err.Error())
 		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
 		return errors.New("cookie don't set")
 	}
@@ -102,7 +102,7 @@ func CookieGet(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCo
 	jwts, _ := session.Values[JwtCookieName].(string)
 	jwts, err = s.Auth(rtToken, jwts)
 	if err != nil {
-		ControllerErrorLogger.ErrorContext(r.Context(), "Error generate a cokkie", err)
+		ControllerErrorLogger.ErrorContext(r.Context(), "Error generate a cookie", "ERROR", err.Error())
 		return errors.New("can't validate a tokens")
 	}
 	if jwts != "" {

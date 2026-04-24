@@ -13,7 +13,7 @@ func (s *Writing) WriteData(shortName string, InfoAboutFile []byte, ctx context.
 		IsStartDownload: false,
 	}).Err()
 	if err != nil {
-		slog.Error("redis set err", err)
+		slog.Error("redis set err", "Error", err.Error())
 		return err
 	}
 

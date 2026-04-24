@@ -15,7 +15,7 @@ func (d *ValidationRedis) ChekIsStartDownload(name string, ctx context.Context) 
 	err := d.Re.HGetAll(context.Background(), name).Scan(&isExit)
 
 	if err != nil {
-		slog.Error("Can't get the label IsStartDownload", err)
+		slog.Error("Can't get the label IsStartDownload", "Error", err)
 		return false
 	}
 	if isExit.IsStartDownload {

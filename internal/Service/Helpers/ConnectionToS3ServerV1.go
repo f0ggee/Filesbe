@@ -22,7 +22,7 @@ func Inzelire() (*session.Session, error) {
 	})
 
 	if err != nil {
-		slog.Error("err", err)
+		slog.Error("err", "Error", err)
 		return nil, err
 	}
 

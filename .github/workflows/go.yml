@@ -30,5 +30,6 @@ jobs:
           go build -o ./app
       - name: Test
         run: | 
-          cd .. 
-          go test -v -race ./..
+          
+        
+          go test -v -race ./...

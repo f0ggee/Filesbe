@@ -102,7 +102,6 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 		return
 
 	}
-	slog.Info("User login", "User", sa.Email, sa.Password)
 
 	JwtToken, RefreshToken, err := realization.LoginService(*sa, r.Context())
 	if err != nil {

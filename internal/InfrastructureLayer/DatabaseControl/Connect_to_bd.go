@@ -29,7 +29,7 @@ func config() *pgxpool.Config {
 
 	dbconfige, err := pgxpool.ParseConfig(connstr)
 	if err != nil {
-		slog.Error("Error loading database connection", err)
+		slog.Error("Error loading database connection", "error", err)
 		return nil
 
 	}
@@ -62,19 +62,19 @@ func Connect() (*pgxpool.Pool, error) {
 
 	connPool, err := pgxpool.NewWithConfig(context.Background(), config())
 	if err != nil {
-		slog.Error("Err create new сonfig", err)
+		slog.Error("Err create new сonfig", "error", err)
 		return nil, err
 	}
 	connectiom, err := connPool.Acquire(context.Background())
 	if err != nil {
-		slog.Error("Err to connect database", err)
+		slog.Error("Err to connect database", "error", err)
 		return nil, err
 	}
 	defer connectiom.Release()
 
 	err = connectiom.Ping(context.Background())
 	if err != nil {
-		slog.Error("Err ping", err)
+		slog.Error("Err ping", "error", err)
 		return nil, err
 	}
 	slog.Info("Connect to db")

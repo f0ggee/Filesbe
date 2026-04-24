@@ -9,7 +9,7 @@ func (d *ValidationRedis) CheckFileInfoExists(FileName string, ctx context.Conte
 
 	c, err := d.Re.Exists(ctx, FileName).Result()
 	if err != nil {
-		slog.Error("CheckExistFileInfo error:", err)
+		slog.Error("CheckExistFileInfo error:", "Error", err)
 		return false
 	}
 

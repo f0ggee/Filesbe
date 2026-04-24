@@ -25,7 +25,7 @@ func (d *ValidationRedis) ChekIsStartDownloadTest(s string, context context.Cont
 		}
 		return false
 	case <-context.Done():
-		slog.Error("Erro context status", context.Err())
+		slog.Error("Erro context status", "Error", context.Err())
 		return true
 	}
 

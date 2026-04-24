@@ -49,7 +49,7 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-		slog.Error("cannot load env file", err)
+		slog.Error("cannot load env file", "Error", err)
 	}
 
 	Handlers.ConfigureKeyData()
@@ -58,10 +58,10 @@ func main() {
 	memguard.CatchInterrupt()
 	defer memguard.Purge()
 
-	slog.Info("HERE IS TEST", os.Getenv("GRPC_ADDR"))
+	slog.Info("HERE IS TEST", "Test", os.Getenv("GRPC_ADDR"))
 	db, err := DatabaseControl.Connect()
 	if err != nil {
-		slog.Error("Error connect to database", err)
+		slog.Error("Error connect to database", "error", err)
 		return
 	}
 	defer db.Close()
@@ -202,7 +202,7 @@ func main() {
 
 	go func() {
 		for t := range ticker.C {
-			slog.Info("Got a ticker", t)
+			slog.Time("Got a ticker", t)
 			Sa.SwapKeys()
 		}
 	}()
@@ -295,7 +295,7 @@ func main() {
 
 	err = serverConfig.ListenAndServe()
 	if err != nil {
-		slog.Error("Server couldn't start", err)
+		slog.Error("Server couldn't start", "Error", err)
 		return
 
 	}
