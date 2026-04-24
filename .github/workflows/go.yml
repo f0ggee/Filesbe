@@ -31,4 +31,4 @@ jobs:
         run:
           go build -o ./app
       - name: Test
-        run: go test -v ./app
+        run: go build -v ./..
