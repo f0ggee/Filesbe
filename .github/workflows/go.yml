@@ -32,7 +32,6 @@ jobs:
           go build -o ./app
       - name: Test
         run: |
-         
-         echo ls
-          
+          ls
+          ls | less
          go build -v ./..
