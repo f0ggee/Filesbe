@@ -17,10 +17,16 @@ jobs:
         with:
           go-version: '1.24.4'
 
+      - name: Print a path
+        shell: bash
+        run:
+          echo $PATH
+
+
+
       - name: Build
         shell: bash
-        run: |
-          echo $PATH
+        run:
           go build -v ./...
       - name: Test
         run: go test -v ./...
