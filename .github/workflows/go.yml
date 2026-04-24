@@ -23,7 +23,10 @@ jobs:
           echo $PATH
 
 
-
+      - name: Download depends
+        run: |
+          go mod download 
+          go mod tidy 
       - name: Build
         shell: bash
         run:
