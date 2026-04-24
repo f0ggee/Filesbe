@@ -18,7 +18,7 @@ var logger = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 
 func (l *LoggerCustom) Handle(ctx context.Context, Attr slog.Record) error {
 
-	value, ok := ctx.Value(RequestId).(int)
+	ContextValue, ok := ctx.Value(RequestId).(int)
 	switch ok {
 
 	case false:
@@ -26,7 +26,7 @@ func (l *LoggerCustom) Handle(ctx context.Context, Attr slog.Record) error {
 		return l.Handler.Handle(ctx, Attr)
 
 	case true:
-		Attr.Add("REQUEST ID", value)
+		Attr.Add("REQUEST ID", ContextValue)
 		return l.Handler.Handle(ctx, Attr)
 
 	}

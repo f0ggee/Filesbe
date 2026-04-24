@@ -5,9 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f94305bc-4a4d-4a37-879a-5a784f5d7718" name="Changes" comment="SV 04.18.26&#10;&#10;&#10;This is stateful version">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/go.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/go.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/Consts.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/Consts.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerUrlUploader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerUrlUploader.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/LoggerSetting.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/LoggerSetting.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +66,8 @@
     "last_opened_file_path": "/Users/pasabaranov",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.sourceCode"
   }
 }]]></component>
   <component name="RecentsManager">
