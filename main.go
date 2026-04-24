@@ -101,7 +101,7 @@ func main() {
 func SwapRsaKey(RsaKey DipendsInjective.RsaKeyManipulationWithRsaAndMemory) {
 
 	slog.Info("Swaping RSA key in memory START")
-	fmt.Println("Our key", os.Getenv("server_1"))
+	fmt.Println("Our key", os.Getenv("GRPC_ADDRESS"))
 
 	TemporallySaving := memguard.NewBufferFromBytes(RsaKey.Key.GenerateRsaKey())
 	defer TemporallySaving.Destroy()
