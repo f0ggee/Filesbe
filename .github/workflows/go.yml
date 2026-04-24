@@ -26,9 +26,8 @@ jobs:
       - name: Download depends
         run: |
           go mod download 
-          go mod tidy 
+          go mod tidy
       - name: Build
-        shell: bash
         run:
           go build -v ./...
       - name: Test
