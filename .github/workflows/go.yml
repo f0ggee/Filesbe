@@ -29,7 +29,7 @@ jobs:
           ls
           go build -o ./app
       - name: Test
-        run:
+        run: | 
           ls
           pwd
           go test -v -race ./..
