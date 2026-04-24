@@ -30,6 +30,5 @@ jobs:
           go build -o ./app
       - name: Test
         run: | 
-          ls
-          pwd
+          cd .. 
           go test -v -race ./..
