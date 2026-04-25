@@ -12,7 +12,7 @@ func (s *SeverManage) GetServerName(i int) string {
 
 	case 1:
 		slog.Info("Found the server name", "ServerNumber", i)
-		return "server_1"
+		return "SERVER_1"
 
 	case 2:
 		slog.Info("Found the server name", "ServerNumber", i)

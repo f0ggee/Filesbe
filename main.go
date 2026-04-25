@@ -41,7 +41,7 @@ func main() {
 
 	Dto.Keys.NewPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
 	Dto.Keys.OldPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
-	Dto.Keys.MasterServerKey = os.Getenv("Our_Key")
+	Dto.Keys.MasterServerKey = os.Getenv("OUR_KEY")
 
 	handler := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	child := handler.With(
@@ -59,7 +59,7 @@ func main() {
 	Decrypted := Decryptor.Decrypting{}
 	Encrypting := Encrypter.Encryption{}
 
-	CryptoKey := CryptoKey2.CryptoManging{M: CryptoImpl.CryptoData{MasterServerSecret: os.Getenv("Our_Key")}}
+	CryptoKey := CryptoKey2.CryptoManging{M: CryptoImpl.CryptoData{MasterServerSecret: os.Getenv("OUR_KEY")}}
 
 	GrpcHandlingData := GrpcHandleData.GrpcDataManagement{}
 	PacketValidating := PacketValidation.ValidatePacketData{}
@@ -90,7 +90,8 @@ func main() {
 	for _ = range ticker.C {
 		slog.Info("We got the tick")
 		SwapRsaKey(*Injective1)
-		if Cmds.StartHandling(&ServerInfo, &AnotherProcessController) {
+		handling := Cmds.StartHandling(&ServerInfo, &AnotherProcessController)
+		if handling {
 			return
 		}
 		slog.Info("Finished the exchange")
@@ -110,6 +111,5 @@ func SwapRsaKey(RsaKey DipendsInjective.RsaKeyManipulationWithRsaAndMemory) {
 	RsaKey.KeyAndMemory.SwapingOldKey()
 	RsaKey.KeyAndMemory.InstallingNewKey(TemporallySaving.Bytes())
 	Dto.Keys.Mu.Unlock()
-
 	slog.Info("Swaping RSA key in memory END")
 }

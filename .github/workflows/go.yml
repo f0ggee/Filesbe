@@ -8,11 +8,12 @@ on:
   workflow_dispatch:
 
 jobs:
+
+
   build:
-    runs-on: ubuntu-latest
+    strategy:
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
@@ -33,13 +34,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Build Docker image
-        run:  docker build -t filesbe:latest .
+        run: docker build -t filesbe:latest .
 
       - name: Run Docker container
         env:
           # Объявляем переменные окружения из секретов для этого шага
-          SERVER_1: ${{ secrets.server_1 }}
-          OUR_KEY: ${{ secrets.Our_Key }}
+          SERVER_1: ${{ secrets.SERVER_1 }}
+          OUR_KEY: ${{ secrets.OUR_KEY }}
           GRPC_ADDRESS: ${{ secrets.GRPC_ADDRESS }}
           REDIS_ADDR: ${{ secrets.REDIS_ADDR }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
