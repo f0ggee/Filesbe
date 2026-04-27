@@ -86,6 +86,7 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 		}
 		slog.Info("ServerName", "Name", string(DataIntoPacket.ServerName))
 
+		fmt.Println("ServerName:", os.Getenv("SERVER_1"))
 		slog.Info("SignedServerName", "Name", os.Getenv(string(DataIntoPacket.ServerName)))
 		serversKey := os.Getenv(string(DataIntoPacket.ServerName))
 		if serversKey == "" {
