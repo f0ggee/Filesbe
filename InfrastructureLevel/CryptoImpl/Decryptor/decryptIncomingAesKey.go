@@ -18,7 +18,6 @@ func (g Decrypting) GrpcDecrypterAesKey(AesKey []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	slog.Info("Decoding master server key", "KeyInBytes", string(KeyInBytes))
 	KeyRsaType, err := x509.ParsePKCS1PrivateKey(KeyInBytes)
 	if err != nil {
 		slog.Error("Error parsing the master server key", "Error", err.Error())

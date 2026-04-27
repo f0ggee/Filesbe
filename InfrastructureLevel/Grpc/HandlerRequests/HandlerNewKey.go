@@ -63,7 +63,6 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 			return &pb.OutputSendData{}, errors.New("something gone wrong")
 		}
 
-		slog.Info("Data", "Data", DataIncomingLook)
 		DecryptedAesKey, err := s.S.Decrypting.GrpcDecrypterAesKey(DataIncomingLook.AesKeyData)
 		if err != nil {
 			return &pb.OutputSendData{}, errors.New("something gone wrong")
