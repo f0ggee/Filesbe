@@ -42,6 +42,7 @@ jobs:
     runs-on: self-hosted
     needs: build
     environment: Master_Server
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -51,13 +52,13 @@ jobs:
       - name: Run Docker container
         env:
           # Объявляем переменные окружения из секретов для этого шага
-          SERVER_1: ${{ github.SERVER_1 }}
+          SERVER_1: ${{ secrets.SERVER_1 }}
           OUR_KEY: ${{ secrets.OUR_KEY }}
           GRPC_ADDRESS: ${{ secrets.GRPC_ADDRESS }}
           REDIS_ADDR: ${{ secrets.REDIS_ADDR }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
           REDIS_SERVER: ${{ secrets.REDIS_SERVER }}
-
+          SERVER_2: ${{ secrets.SERVER_2 }}
         run: |
           docker stop MasterServer || true
           docker rm MasterServer || true
