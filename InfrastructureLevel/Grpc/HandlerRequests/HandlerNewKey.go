@@ -86,6 +86,7 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 		}
 		slog.Info("ServerName", "Name", string(DataIntoPacket.ServerName))
 
+		slog.Info("SignedServerName", "Name", os.Getenv(string(DataIntoPacket.ServerName)))
 		serversKey := os.Getenv(string(DataIntoPacket.ServerName))
 		if serversKey == "" {
 			slog.Error("Server Key is empty", "ServerName", string(DataIntoPacket.ServerName))
