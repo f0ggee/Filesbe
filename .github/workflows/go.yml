@@ -5,21 +5,21 @@ on:
     branches: [ "MasterServerCreating" ]
   pull_request:
     branches: [ "MasterServerCreating" ]
-  workflow_dispatch:
-      inputs:
-        logLevel:
-          description: 'Log level'
-          required: true
-          default: 'warning'
-          type: choice
-          options:
-            - info
-            - warning
-            - debug
-        environment:
-          description: 'Environment to run tests against'
-          type: environment
-          required: true
+#  workflow_dispatch:
+#      inputs:
+#        logLevel:
+#          description: 'Log level'
+#          required: true
+#          default: 'warning'
+#          type: choice
+#          options:
+#            - info
+#            - warning
+#            - debug
+#        environment:
+#          description: 'Environment to run tests against'
+#          type: environment
+#          required: true
 jobs:
   build:
     runs-on: ubuntu-20.04
