@@ -45,7 +45,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Build Docker image
-        run: docker build -t filesbe:latest .
+        run: docker build -t MasterServer:latest .
 
       - name: Run Docker container
         env:
@@ -56,8 +56,8 @@ jobs:
           REDIS_ADDR: ${{ secrets.REDIS_ADDR }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
         run: |
-          docker stop filesbe || true
-          docker rm filesbe || true
+          docker stop MasterServer || true
+          docker rm MasterServer || true
            docker run -d \
            --name MasterServer \
            -p 8080:8080 \
