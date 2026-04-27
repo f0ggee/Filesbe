@@ -53,11 +53,11 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 			slog.Error("Data was getting empty")
 			return &pb.OutputSendData{}, errors.New("data is nil")
 		}
-
 		err2 := HashManipulate(s, data)
 		if err2 != nil {
 			return &pb.OutputSendData{}, err2
 		}
+
 		DataIncomingLook, err := DecodePacket(data.SendData)
 		if err != nil {
 			return &pb.OutputSendData{}, errors.New("something gone wrong")

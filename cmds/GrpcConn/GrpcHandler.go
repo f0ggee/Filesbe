@@ -41,8 +41,3 @@ func (g GrpcConnection) GrpcHandleRequests(GrpcHandlingData GrpcHandleData.GrpcD
 	}
 
 }
-
-func eres() {
-
-	sasa := "EE"
-}
