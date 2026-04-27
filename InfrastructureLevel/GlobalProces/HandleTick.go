@@ -11,7 +11,7 @@ import (
 	"github.com/awnumar/memguard"
 )
 
-func BytesPacked(EncryptedAesKey []byte, EncryptedRsaKey []byte, Sign []byte, err error) ([]byte, error) {
+func PacketPacking(EncryptedAesKey []byte, EncryptedRsaKey []byte, Sign []byte, err error) ([]byte, error) {
 	RedisDat := &Dto.RedisDataLooksLike{
 		AesKey:    EncryptedAesKey,
 		PlainText: EncryptedRsaKey,
@@ -55,7 +55,7 @@ func (psa *ControllingExchange) SwapKeys(KeyServer []byte, RsaKeyNew []byte, Nam
 		return err
 	}
 
-	DataJson, err2 := BytesPacked(EncryptedAesKey, EncryptedRsaKey, Sign, err)
+	DataJson, err2 := PacketPacking(EncryptedAesKey, EncryptedRsaKey, Sign, err)
 	if err2 != nil {
 		return err2
 	}

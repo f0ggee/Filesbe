@@ -22,7 +22,7 @@ func StartHandling(serverManagementPack *GettingInfo.SeverManage, Sa *GlobalProc
 			continue
 		}
 
-		err := Sa.SwapKeysTest(ServerKey, Dto.Keys.NewPrivateKey.Bytes(), ServerName)
+		err := Sa.SwapKeys(ServerKey, Dto.Keys.NewPrivateKey.Bytes(), ServerName)
 		if err != nil {
 			continue
 		}
