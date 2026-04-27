@@ -71,4 +71,5 @@ jobs:
            -e GRPC_ADDRESS="$GRPC_ADDRESS" \
            -e REDIS_ADDR="$REDIS_ADDR" \
            -e REDIS_PASSWORD="$REDIS_PASSWORD" \
+           -e SERVER_2="$SERVER_2"\
            master_server:latest
