@@ -84,8 +84,6 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 			slog.Info("ResultComparingTime", "Time", DataIntoPacket.Time.String())
 			return nil, errors.New("something gone wrong")
 		}
-		fmt.Println("s1", os.Getenv("SERVER_1"))
-		fmt.Println("sas", os.Getenv("SERVER_2"))
 
 		serversKey := os.Getenv(string(DataIntoPacket.ServerName))
 		if serversKey == "" {

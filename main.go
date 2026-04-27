@@ -39,10 +39,13 @@ func init() {
 
 func main() {
 
+	fmt.Println("s1", os.Getenv("SERVER_1"))
+
 	Dto.Keys.NewPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
 	Dto.Keys.OldPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
 	Dto.Keys.MasterServerKey = os.Getenv("OUR_KEY")
 
+	fmt.Println("sas", os.Getenv("SERVER_2"))
 	handler := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	child := handler.With(
 		"Time", time.Now(),
