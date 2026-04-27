@@ -43,6 +43,7 @@ func main() {
 	Dto.Keys.OldPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
 	Dto.Keys.MasterServerKey = os.Getenv("OUR_KEY")
 
+	fmt.Println("Sas", os.Getenv("REDIS_SERVER"))
 	fmt.Println("sas", os.Getenv("SERVER_2"))
 	handler := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	child := handler.With(
