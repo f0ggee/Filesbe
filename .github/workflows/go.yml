@@ -56,8 +56,8 @@ jobs:
           REDIS_ADDR: ${{ secrets.REDIS_ADDR }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
         run: |
-          docker stop master_server || true
-          docker rm master_server || true
+          docker stop MasterServer || true
+          docker rm MasterServer || true
            docker run -d \
            --name MasterServer \
            -p 8080:8080 \
