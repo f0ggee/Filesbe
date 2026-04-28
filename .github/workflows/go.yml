@@ -72,4 +72,5 @@ jobs:
            -e REDIS_ADDR="$REDIS_ADDR" \
            -e REDIS_PASSWORD="$REDIS_PASSWORD" \
            -e SERVER_2="$SERVER_2"\
+           -e REDIS_SERVER="$REDIS_SERVER" \
            master_server:latest
