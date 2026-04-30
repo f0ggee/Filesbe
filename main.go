@@ -52,6 +52,7 @@ func main() {
 		slog.Error("cannot load env file", "Error", err)
 	}
 
+	slog.Info("Dynamic variable", os.Getenv("PORT"))
 	Handlers.ConfigureKeyData()
 	cmds.SettingSlog()
 
