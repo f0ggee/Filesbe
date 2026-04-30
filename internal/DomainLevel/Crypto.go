@@ -26,7 +26,7 @@ type CryptoKey interface {
 type CryptoGenerating interface {
 	GenerateShortName() string
 	GenerateSignature(message []byte, key []byte) ([]byte, error)
-	GenerateHashFromPassword([]byte) ([]byte, error)
+	GenerateHash([]byte) ([]byte, error)
 }
 type Encryption interface {
 	EncryptAes([]byte, []byte) ([]byte, error)

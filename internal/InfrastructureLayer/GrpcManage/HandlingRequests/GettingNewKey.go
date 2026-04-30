@@ -76,7 +76,7 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 	return PacketInfo.T1, nil
 }
 
-func TestSign(h Checking.Validating, Databyte, Hash, Key []byte) error {
+func CheckSingTest(h Checking.Validating, Databyte, Hash, Key []byte) error {
 
 	err := h.CheckSignKey(Databyte, Hash, Key)
 	if err != nil {
@@ -84,7 +84,7 @@ func TestSign(h Checking.Validating, Databyte, Hash, Key []byte) error {
 	}
 	return nil
 }
-func Ee2(sa *Decription.DecryptionData, key, data []byte) error {
+func DecryptAesKeyTest(sa *Decription.DecryptionData, key, data []byte) error {
 
 	_, err := sa.DecryptAesKey(key, data)
 	if err != nil {

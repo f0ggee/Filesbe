@@ -19,10 +19,10 @@ func config() *pgxpool.Config {
 	dbUser := os.Getenv("POSTGRESQL_USER")
 	dbPassword := os.Getenv("POSTGRESQL_PASSWORD")
 	dbDbname := os.Getenv("POSTGRESQL_DBNAME")
-	const Maxconns = int32(5)
-	const Mincons = int32(2)
+	const MaxCons = int32(5)
+	const MinCons = int32(2)
 	const Lifetime = time.Hour
-	const IdelTime = time.Minute * 20
+	const IdleTime = time.Minute * 20
 	const Health = time.Minute
 
 	connstr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", dbIp, dbPort, dbUser, dbPassword, dbDbname)
@@ -33,10 +33,10 @@ func config() *pgxpool.Config {
 		return nil
 
 	}
-	dbconfige.MaxConns = Maxconns
-	dbconfige.MinConns = Mincons
+	dbconfige.MaxConns = MaxCons
+	dbconfige.MinConns = MinCons
 	dbconfige.MaxConnLifetime = Lifetime
-	dbconfige.MaxConnIdleTime = IdelTime
+	dbconfige.MaxConnIdleTime = IdleTime
 	dbconfige.HealthCheckPeriod = Health
 
 	dbconfige.BeforeAcquire = func(ctx context.Context, conn *pgx.Conn) bool {

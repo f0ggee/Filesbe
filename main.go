@@ -197,7 +197,7 @@ func main() {
 
 	fmt.Println(TimeSwaping)
 
-	ticker := time.NewTicker(time.Until(time.Now().Add(TimeSwaping)))
+	ticker := time.NewTicker(TimeSwaping)
 	defer ticker.Stop()
 
 	go func() {

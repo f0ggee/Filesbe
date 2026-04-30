@@ -98,8 +98,8 @@ func TestEe2(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := Ee2(tt.args.Sa, tt.args.key, tt.args.data); (err != nil) != tt.wantErr {
-				t.Errorf("Ee2() error = %v, wantErr %v", err, tt.wantErr)
+			if err := DecryptAesKeyTest(tt.args.Sa, tt.args.key, tt.args.data); (err != nil) != tt.wantErr {
+				t.Errorf("DecryptAesKeyTest() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
@@ -216,7 +216,7 @@ func Test_TestSign(t *testing.T) {
 
 			SASHA := sha256.New()
 			SASHA.Write(tt.args.Hash)
-			if err := TestSign(tt.args.h, tt.args.Data, SASHA.Sum([]byte(nil)), tt.args.Key); (err != nil) != tt.wantErr {
+			if err := CheckSingTest(tt.args.h, tt.args.Data, SASHA.Sum([]byte(nil)), tt.args.Key); (err != nil) != tt.wantErr {
 				t.Errorf("eee() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

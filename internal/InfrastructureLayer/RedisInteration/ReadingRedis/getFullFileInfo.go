@@ -3,6 +3,7 @@ package ReadingRedis
 import (
 	"Kaban/internal/Dto"
 	"context"
+	"fmt"
 	"log/slog"
 )
 
@@ -20,4 +21,9 @@ func (d *RedisReader) GetFileInfo(fileInfoName string, ctx context.Context) ([]b
 
 	return StructOfFileInfo.InfoAboutFile, nil
 
+}
+
+func Test() {
+
+	fmt.Println("Test")
 }

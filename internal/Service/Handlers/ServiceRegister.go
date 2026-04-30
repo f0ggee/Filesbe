@@ -21,7 +21,7 @@ func (sa *HandlerPackCollect) RegisterService(de *Dto.UserDataRegister, ctx cont
 	case err != nil:
 		return "", "", err
 	}
-	HashPassword, err := sa.Crypto.Generate.GenerateHashFromPassword([]byte(de.Password))
+	HashPassword, err := sa.Crypto.Generate.GenerateHash([]byte(de.Password))
 	if err != nil {
 		slog.Error("Err generate a password-scrypt", "err", err)
 		return "", "", err
