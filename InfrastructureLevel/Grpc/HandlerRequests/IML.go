@@ -13,6 +13,7 @@ type HandlingRequestsForNewKey struct {
 	Decrypting       DomainLevel.Decryptor
 	CryptoGenerating DomainLevel.CryptoGenerator
 	ConverterJson    DomainLevel.ConverterData
+	Time             DomainLevel.PreviousSwapTime
 }
 
 type GrpcHandlerGettingNewKey struct {

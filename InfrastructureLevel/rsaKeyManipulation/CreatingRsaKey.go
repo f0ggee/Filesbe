@@ -11,16 +11,16 @@ import (
 type RsaKeyManipulation struct{}
 
 func (r *RsaKeyManipulation) GenerateRsaKey() []byte {
-	slog.Info("Generating new RSA key")
+	slog.Info("Func GenerateRsaKey: Generating new RSA key")
 	RsaKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		slog.Group("Error generating RSA key",
+		slog.Error("Data", slog.Group("Error generating RSA key",
 			slog.String("error", err.Error()),
 			slog.String("stack", string(debug.Stack())),
-			slog.Bool("Generating Rsa key ERROR", false))
+			slog.Bool("Generating Rsa key ERROR", false)))
 		return nil
 	}
-	slog.Info("Generating Rsa key", "Success", true)
+	slog.Info("Func GenerateRsaKey: generating Rsa key", "Success", true)
 	return x509.MarshalPKCS1PrivateKey(RsaKey)
 
 }

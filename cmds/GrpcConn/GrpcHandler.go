@@ -1,6 +1,7 @@
 package GrpcConn
 
 import (
+	"MasterServer_/DomainLevel"
 	"MasterServer_/InfrastructureLevel/CryptoImpl/CryprtoGenerator"
 	"MasterServer_/InfrastructureLevel/CryptoImpl/Decryptor"
 	"MasterServer_/InfrastructureLevel/CryptoImpl/Encrypter"
@@ -16,7 +17,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func (g GrpcConnection) GrpcHandleRequests(GrpcHandlingData GrpcHandleData.GrpcDataManagement, ServerInfo GettingInfo.SeverManage, Encrypting Encrypter.Encryption, PacketValidating PacketValidation.ValidatePacketData, CryptoGenerate CryprtoGenerator.CryprtoGenerating, ConvertData ConverterData.ConvertingData, Decrypted Decryptor.Decrypting) {
+func (g GrpcConnection) GrpcHandleRequests(GrpcHandlingData GrpcHandleData.GrpcDataManagement, ServerInfo GettingInfo.SeverManage, Encrypting Encrypter.Encryption, PacketValidating PacketValidation.ValidatePacketData, CryptoGenerate CryprtoGenerator.CryprtoGenerating, ConvertData ConverterData.ConvertingData, Decrypted Decryptor.Decrypting, S *DomainLevel.PreviousSwapTime) {
 	lis, err := net.Listen(g.Network, g.Address)
 	if err != nil {
 		slog.Error("failed to listen:", "error", err.Error())
@@ -33,6 +34,7 @@ func (g GrpcConnection) GrpcHandleRequests(GrpcHandlingData GrpcHandleData.GrpcD
 			CryptoGenerating: &CryptoGenerate,
 			ConverterJson:    &ConvertData,
 			Decrypting:       &Decrypted,
+			Time:             *S,
 		},
 	})
 	if err := grpcServer.Serve(lis); err != nil {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"MasterServer_/DipendsInjective"
+	"MasterServer_/DomainLevel"
 	"MasterServer_/Dto"
 	InftarctionLevel "MasterServer_/InfrastructureLevel"
 	"MasterServer_/InfrastructureLevel/CryptoImpl"
@@ -20,7 +21,6 @@ import (
 	Cmds "MasterServer_/cmds"
 	GrcpCmds "MasterServer_/cmds/GrpcConn"
 	"crypto/rand"
-	"fmt"
 	"log/slog"
 	"os"
 	"time"
@@ -39,12 +39,16 @@ func init() {
 
 func main() {
 
+	s := DomainLevel.Get()
+	err := s.NewPreviousTime(rand.Text(), time.Now())
+	if err != nil {
+		panic(err)
+	}
+
 	Dto.Keys.NewPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
 	Dto.Keys.OldPrivateKey, _ = memguard.NewBufferFromReader(rand.Reader, 2048)
 	Dto.Keys.MasterServerKey = os.Getenv("OUR_KEY")
 
-	fmt.Println("Sas", os.Getenv("REDIS_SERVER"))
-	fmt.Println("sas", os.Getenv("SERVER_2"))
 	handler := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	child := handler.With(
 		"Time", time.Now(),
@@ -87,25 +91,22 @@ func main() {
 
 	G := GrcpCmds.GetGrpcConn("tcp", os.Getenv("GRPC_ADDRESS"))
 
-	go G.GrpcHandleRequests(GrpcHandlingData, ServerInfo, Encrypting, PacketValidating, CryptoGenerate, ConvertData, Decrypted)
+	go G.GrpcHandleRequests(GrpcHandlingData, ServerInfo, Encrypting, PacketValidating, CryptoGenerate, ConvertData, Decrypted, s)
 
 	for _ = range ticker.C {
-		slog.Info("We got the tick")
+		slog.Info("Func main", "We got a tick", ticker)
 		SwapRsaKey(*Injective1)
 		handling := Cmds.StartHandling(&ServerInfo, &AnotherProcessController)
 		if handling {
 			return
 		}
-		slog.Info("Finished the exchange")
+		s.NewPreviousTime(rand.Text(), time.Now())
 	}
 
 }
 
 func SwapRsaKey(RsaKey DipendsInjective.RsaKeyManipulationWithRsaAndMemory) {
-
-	slog.Info("Swaping RSA key in memory START")
-	fmt.Println("Our key", os.Getenv("GRPC_ADDRESS"))
-
+	slog.Info("Func SwapRsaKey: Swaping RSA key in memory START")
 	TemporallySaving := memguard.NewBufferFromBytes(RsaKey.Key.GenerateRsaKey())
 	defer TemporallySaving.Destroy()
 
@@ -113,5 +114,5 @@ func SwapRsaKey(RsaKey DipendsInjective.RsaKeyManipulationWithRsaAndMemory) {
 	RsaKey.KeyAndMemory.SwapingOldKey()
 	RsaKey.KeyAndMemory.InstallingNewKey(TemporallySaving.Bytes())
 	Dto.Keys.Mu.Unlock()
-	slog.Info("Swaping RSA key in memory END")
+	slog.Info("Func SwapRsaKey: Swaping RSA key in memory END")
 }
