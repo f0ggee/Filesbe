@@ -1,7 +1,9 @@
 package cmds
 
 import (
+	"log/slog"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -9,8 +11,10 @@ import (
 
 func ServerConfig(r *mux.Router) *http.Server {
 
+	Port := os.Getenv("PORT")
+	slog.Info("Func ServerConfig: Port:", Port)
 	server := http.Server{
-		Addr:                         ":8080",
+		Addr:                         ":Port",
 		Handler:                      r,
 		DisableGeneralOptionsHandler: false,
 		TLSConfig:                    nil,
