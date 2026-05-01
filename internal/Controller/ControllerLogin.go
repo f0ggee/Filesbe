@@ -16,7 +16,7 @@ import (
 
 //var store = sessions.NewCookieStore([]byte(os.Getenv("KEY_FOR_JWT")))
 
-func SessionStore() sessions.Store {
+func SessionStore() *sessions.CookieStore {
 
 	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
 	if err != nil {

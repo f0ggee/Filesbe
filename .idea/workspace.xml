@@ -7,16 +7,8 @@
     <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="SV">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerCheckUsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadNotEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadNotEncrypt.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerLogin.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/Controller_Register.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/Controller_Register.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/InfoPageAboutApp.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/InfoPageAboutApp.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Main_Page.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Main_Page.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Maine.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Maine.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/WaitDownload.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/d.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens/checkingRt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens/checkingRt.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +38,9 @@
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 7

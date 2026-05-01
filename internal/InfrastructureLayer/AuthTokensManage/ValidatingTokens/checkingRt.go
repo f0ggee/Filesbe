@@ -22,5 +22,6 @@ func (c Checking) CheckRt(Rt string) (*jwt.Token, error) {
 		slog.Error("Error in parse refresh token", "error", err.Error())
 		return nil, err
 	}
+
 	return Key, nil
 }

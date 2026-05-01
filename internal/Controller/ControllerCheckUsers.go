@@ -26,6 +26,7 @@ func GetFrom(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackColl
 	}
 	rtToken, _ := seSession.Values[RTCookieName].(string)
 	jwts, _ := seSession.Values[JwtCookieName].(string)
+	slog.Info("Func GetFrom", "rtToken", rtToken, "jwts", jwts)
 
 	NewJwt, err := s.Auth(rtToken, jwts)
 	if err != nil {
