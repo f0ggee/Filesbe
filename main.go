@@ -33,7 +33,6 @@ import (
 	"Kaban/internal/InfrastructureLayer/s3Interation/S3Uploader"
 	"Kaban/internal/Service/Handlers"
 	"Kaban/internal/Service/Helpers"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -51,15 +50,13 @@ func main() {
 	if err != nil {
 		slog.Error("cannot load env file", "Error", err)
 	}
-
-	slog.Info("Dynamic variable", os.Getenv("PORT"))
 	Handlers.ConfigureKeyData()
 	cmds.SettingSlog()
 
 	memguard.CatchInterrupt()
 	defer memguard.Purge()
 
-	slog.Info("HERE IS TEST", "Test", os.Getenv("GRPC_ADDR"))
+	slog.Info("HERE IS TEST", "Test", os.Getenv("TEST_VALUE"))
 	db, err := DatabaseControl.Connect()
 	if err != nil {
 		slog.Error("Error connect to database", "error", err)
@@ -171,7 +168,6 @@ func main() {
 	}
 	Sa := Handlers.NewHandlerPackCollect(HandlerPack.S3, HandlerPack.Crypto, HandlerPack.FileInfo, HandlerPack.AuthTokens, HandlerPack.DatabaseControlling, HandlerPack.RedisControlling, HandlerPack.Grpc, HandlerPack.Convert, HandlerPack.Keys)
 
-	fmt.Println(Sa.FileUploadEncryptTest(""))
 	router := mux.NewRouter()
 	router.Use(Middlewares.Logging)
 	newRouter := router.PathPrefix("/").Subrouter()
@@ -196,8 +192,6 @@ func main() {
 	KeysController.FillOldKey()
 	TimeSwaping := Sa.SwapKeyFirst()
 
-	fmt.Println(TimeSwaping)
-
 	ticker := time.NewTicker(TimeSwaping)
 	defer ticker.Stop()
 
@@ -216,7 +210,7 @@ func main() {
 
 	router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
 
-		http.ServeFile(w, r, "./robots.txt")
+		http.ServeFile(w, r, "./pkg/robots.txt")
 
 	})
 

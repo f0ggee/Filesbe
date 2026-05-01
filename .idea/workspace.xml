@@ -4,18 +4,18 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/go.imports.xml" beforeDir="false" />
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="SV">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/Crypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/Crypto.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Generating/GeneratingBcryptHash.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Generating/GeneratingBcryptHash.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests/GettingNewKey.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests/GettingNewKey.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests/GettingNewKey_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests/GettingNewKey_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/Sender/GetNewKeyGrpc.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/Sender/GetNewKeyGrpc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/ReadingRedis/getFullFileInfo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/ReadingRedis/getFullFileInfo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Handlers/ServiceRegister.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerCheckUsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadNotEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadNotEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerLogin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/Controller_Register.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/Controller_Register.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/InfoPageAboutApp.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/InfoPageAboutApp.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Main_Page.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Main_Page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Maine.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Maine.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/WaitDownload.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/d.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -113,6 +113,10 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="SV" />
+    <option name="LAST_COMMIT_MESSAGE" value="SV" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

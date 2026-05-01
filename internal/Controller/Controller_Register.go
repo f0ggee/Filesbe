@@ -142,7 +142,6 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 }
 
 func NewSession(w http.ResponseWriter, r *http.Request, jwt string, rt string) error {
-	//store := SessionStore()
 	session, err := store.Get(r, "token6")
 	if err != nil {
 		ControllerErrorLogger.Error("Error is closing the session", "Error", err)
@@ -152,8 +151,7 @@ func NewSession(w http.ResponseWriter, r *http.Request, jwt string, rt string) e
 	session.Values[JwtCookieName] = jwt
 	session.Values[RTCookieName] = rt
 	session.Options = &sessions.Options{
-		Path: "/",
-		//MaxAge:   int((100 * time.Hour).Seconds()),
+		Path:     "/",
 		Secure:   true,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,

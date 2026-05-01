@@ -3,9 +3,19 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/png" href="/Fronted/favicon.png">
+    <link rel="icon" type="image/png" href="./internal/Service/Fronted/favicon.png">
 
+    <!-- SEO ТЕГИ -->
     <title data-i18n="headTitle">Filesb — Secure File Sharing</title>
+    <meta name="description" content="Filesb — быстрый и защищенный файлообменник. Анонимная передача файлов с шифрованием, без логов и с автоматическим удалением данных.">
+    <meta name="keywords" content="файлообменник, защищенная передача файлов, анонимно, шифрование, передать файл, secure file sharing, anonymous transfer, encryption, no logs">
+
+    <!-- Open Graph (Превью в соцсетях и мессенджерах) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Filesb — Secure File Sharing">
+    <meta property="og:description" content="Быстрый и защищенный способ загрузки и обмена документами с шифрованием.">
+    <meta property="og:image" content="/Fronted/favicon.png"> <!-- Сюда можно поставить ссылку на логотип 1200x630 -->
+    <meta property="og:url" content="https://filesb.com">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +38,30 @@
         .container{ max-width:920px; margin:0 auto; padding: clamp(32px, 10vh, 64px) 16px; }
         .card{ background:#000; border:1px solid var(--border); border-radius:16px; padding: clamp(20px, 5vw, 48px); box-shadow:0 0 25px rgba(16,185,129,.15); }
 
-        .hero h1{ font-size: clamp(24px, 5vw, 36px); font-weight:700; color:var(--primary); margin-bottom:20px; }
+        .hero h1{
+            font-size: clamp(24px, 5vw, 36px);
+            font-weight:700;
+            color:var(--primary);
+            margin-bottom:20px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* BETA BADGE STYLE */
+        .brand-beta {
+            font-size: 14px;
+            padding: 2px 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
         .hero p, .hero li{ color:var(--muted); line-height:1.6; margin-bottom: 12px; }
         .divider{ height:1px; background:var(--border); margin:24px 0; opacity: 0.6; }
 
@@ -45,7 +78,10 @@
 
 <div class="container">
     <section class="card hero">
-        <h1 data-i18n="title">Filesb — Secure File Sharing</h1>
+        <h1>
+            <span data-i18n="title">Filesb — Secure File Sharing</span>
+            <span class="brand-beta">beta</span>
+        </h1>
 
         <p><strong data-i18n="descLabel">Description:</strong></p>
         <p data-i18n="fullDesc">Filesb provides a fast and secure way to upload and share your documents with encryption.</p>
