@@ -3,6 +3,7 @@ package Controller
 import (
 	"Kaban/internal/Dto"
 	"Kaban/internal/Service/Handlers"
+	"encoding/hex"
 	"encoding/json"
 	"io"
 	"log/slog"
@@ -13,19 +14,19 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-var store = sessions.NewCookieStore([]byte(os.Getenv("KEY_FOR_JWT")))
+//var store = sessions.NewCookieStore([]byte(os.Getenv("KEY_FOR_JWT")))
 
-//func SessionStore() sessions.Store {
-//
-//	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
-//	if err != nil {
-//		slog.Error("Err decode the key", "Err", err)
-//		return nil
-//	}
-//	Store := sessions.NewCookieStore(store1z)
-//	return Store
-//
-//}
+func SessionStore() sessions.Store {
+
+	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
+	if err != nil {
+		slog.Error("Err decode the key", "Err", err)
+		return nil
+	}
+	Store := sessions.NewCookieStore(store1z)
+	return Store
+
+}
 
 func checkJson(r *http.Request) (*Dto.UserLoginData, error) {
 	var err error
@@ -58,7 +59,7 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.Handler
 		slog.Error("Method Dont' allow", "Method", http.StatusUnauthorized)
 		return
 	}
-	Session, err := store.Get(r, TokenName)
+	Session, err := SessionStore().Get(r, TokenName)
 	if err != nil {
 
 		slog.Error("cookie don't send ")

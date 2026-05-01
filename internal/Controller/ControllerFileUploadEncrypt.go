@@ -86,7 +86,7 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 
 func CookieGet(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) error {
 
-	session, err := store.Get(r, TokenName)
+	session, err := SessionStore().Get(r, TokenName)
 	if err != nil {
 		slog.Error("cookie don't send", "ERROR", err.Error())
 		http.Error(w, "cookie dont sen", http.StatusUnauthorized)

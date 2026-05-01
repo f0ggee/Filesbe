@@ -142,7 +142,7 @@ func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCol
 }
 
 func NewSession(w http.ResponseWriter, r *http.Request, jwt string, rt string) error {
-	session, err := store.Get(r, "token6")
+	session, err := SessionStore().Get(r, TokenName)
 	if err != nil {
 		ControllerErrorLogger.Error("Error is closing the session", "Error", err)
 		return err

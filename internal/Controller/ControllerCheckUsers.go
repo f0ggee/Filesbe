@@ -19,7 +19,7 @@ func GetFrom(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackColl
 	}
 
 	//store := SessionStore()
-	seSession, err := store.Get(r, TokenName)
+	seSession, err := SessionStore().Get(r, TokenName)
 	if err != nil {
 		slog.Error("Func GetFrom: Error check", "Err", err)
 		return
