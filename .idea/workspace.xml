@@ -5,37 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="SV">
-      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/Application.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmds/HttpsServerConfig.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/HttpsServerConfig.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerCheckUsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerDownloadForNonEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerDownloadForNonEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerDownloadWithEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerDownloadWithEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadNotEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadNotEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerLogin.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/Controller_Register.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/Controller_Register.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/RedisFileStructFromMasterServer.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/RedisFileStructFromMasterServer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Decription/DecryptingAesKey.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Decription/DecryptingAesKey.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Decription/decryptingPacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Decription/decryptingPacket.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Generating/generatingSignatutre.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Generating/generatingSignatutre.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests/GettingNewKey.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests/GettingNewKey.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/Sender/GetNewKeyGrpc.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/Sender/GetNewKeyGrpc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Protecion.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Protecion.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/AuthServer.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/AuthServer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/AuthServer_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/AuthServer_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/Consts.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/Consts.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceConfigure.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceConfigure.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceDownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceDownloadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceLogin.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceRegister.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceSwapKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceSwapKeys.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceSwapKeysFirst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceSwapKeysFirst.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUpload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/collectorPack.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/collectorPack.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
