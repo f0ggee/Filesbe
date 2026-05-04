@@ -351,7 +351,6 @@
 
   chooseBtn.onclick = () => fileInput.click();
   fileInput.onchange = e => {
-    // Добавляем новые файлы к уже существующим (или заменяем - по твоему выбору)
     // Сейчас: замена списка (стандартное поведение input type file)
     selectedFiles = Array.from(e.target.files);
     renderList();
@@ -418,8 +417,6 @@
   });
   dropzone.addEventListener('drop', e => {
     e.preventDefault();
-    // При Drag & Drop обычно заменяем список или добавляем?
-    // Сделаю замену для консистентности
     selectedFiles = Array.from(e.dataTransfer.files);
     renderList();
   });

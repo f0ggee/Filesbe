@@ -1,13 +1,13 @@
 package Controller
 
 import (
-	"Kaban/internal/Service/Handlers"
+	"Kaban/internal/Service/Application"
 	"encoding/json"
 	"log/slog"
 	"net/http"
 )
 
-func GetFrom(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) {
+func GetFrom(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackCollect) {
 
 	if r.Method != http.MethodGet {
 		http.Error(w, "Cant' treat", http.StatusNotFound)

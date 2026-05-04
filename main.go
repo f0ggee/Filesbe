@@ -31,7 +31,7 @@ import (
 	"Kaban/internal/InfrastructureLayer/s3Interation/DeleterS3"
 	"Kaban/internal/InfrastructureLayer/s3Interation/S3Downloader"
 	"Kaban/internal/InfrastructureLayer/s3Interation/S3Uploader"
-	"Kaban/internal/Service/Handlers"
+	"Kaban/internal/Service/Application"
 	"Kaban/internal/Service/Helpers"
 	"log/slog"
 	"net/http"
@@ -50,7 +50,7 @@ func main() {
 	if err != nil {
 		slog.Error("cannot load env file", "Error", err)
 	}
-	Handlers.ConfigureKeyData()
+	Application.ConfigureKeyData()
 	cmds.SettingSlog()
 
 	memguard.CatchInterrupt()
@@ -127,46 +127,46 @@ func main() {
 
 	S3Download := S3Downloader.S3Download{S3Info: S3Information}
 
-	HandlerPack := Handlers.HandlerPackCollect{
-		S3: Handlers.S3Controlling{
+	HandlerPack := Application.HandlerPackCollect{
+		S3: Application.S3Controlling{
 			Deleter:    &S3Deleter,
 			Uploader:   &S3Uploading,
 			S3Download: S3Download,
 		},
-		Crypto: Handlers.HandlerPackCrypto{
+		Crypto: Application.HandlerPackCrypto{
 			Validate: &CryptoCheck,
 			Decrypt:  &CryptoDecryption,
 			Encrypt:  &CryptoEncryption,
 			Generate: &CryptoGenerate,
 		},
-		FileInfo: Handlers.HandlerFileManagerPack{
+		FileInfo: Application.HandlerFileManagerPack{
 			FileInfo:     ProcessedFileInfo,
 			FileManaging: ProcessedFile,
 		},
-		AuthTokens: Handlers.HandlerPackAuthTokens{
+		AuthTokens: Application.HandlerPackAuthTokens{
 			Manage:          ManagingAuthTokens,
 			GeneratingToken: GeneratingAuthTokens,
 			Checking:        CheckingAuthToken,
 		},
-		DatabaseControlling: Handlers.DatabaseControlling{
+		DatabaseControlling: Application.DatabaseControlling{
 			Writer:  &DbWriting,
 			Reader:  &DbReading,
 			Checker: &DbCheck,
 		},
-		RedisControlling: Handlers.RedisControlling{
+		RedisControlling: Application.RedisControlling{
 			Deleter:      &DeleterRds,
 			Reader:       &ReaderRedis,
 			Writer:       &WriterRedis,
 			CheckerRedis: &CheckerRedis,
 		},
-		Grpc: Handlers.HandlerGrpc{
+		Grpc: Application.HandlerGrpc{
 			GrpcSendingRequest: &SendingGrcp,
 			ProcessingRequests: GrpcHandlingRequests,
 		},
-		Convert: Handlers.Converter{Converting: ConverterJson},
-		Keys:    Handlers.KeysControlling{ControllerKey: KeysController},
+		Convert: Application.Converter{Converting: ConverterJson},
+		Keys:    Application.KeysControlling{ControllerKey: KeysController},
 	}
-	Sa := Handlers.NewHandlerPackCollect(HandlerPack.S3, HandlerPack.Crypto, HandlerPack.FileInfo, HandlerPack.AuthTokens, HandlerPack.DatabaseControlling, HandlerPack.RedisControlling, HandlerPack.Grpc, HandlerPack.Convert, HandlerPack.Keys)
+	Sa := Application.NewHandlerPackCollect(HandlerPack.S3, HandlerPack.Crypto, HandlerPack.FileInfo, HandlerPack.AuthTokens, HandlerPack.DatabaseControlling, HandlerPack.RedisControlling, HandlerPack.Grpc, HandlerPack.Convert, HandlerPack.Keys)
 
 	router := mux.NewRouter()
 	router.Use(Middlewares.Logging)
@@ -193,12 +193,15 @@ func main() {
 	TimeSwaping := Sa.SwapKeyFirst()
 
 	ticker := time.NewTicker(TimeSwaping)
+	slog.Duration("Func Ticker: Got tick", TimeSwaping)
 	defer ticker.Stop()
 
 	go func() {
 		for t := range ticker.C {
-			slog.Time("Got a ticker", t)
-			Sa.SwapKeys()
+			slog.Time("Func Ticker: Got a ticker", t)
+			Time := Sa.SwapKeys()
+			slog.Duration("Func Ticker: Time", Time)
+			ticker = time.NewTicker(Time)
 		}
 	}()
 
@@ -254,14 +257,14 @@ func main() {
 
 		Controller2.DownloadWithEncrypt(writer, request, Sa)
 
-		//Handlers.Delete(ch)
+		//Application.Delete(ch)
 
 	}).Methods(http.MethodGet)
 	newRouter.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
 
 		Controller2.DownloadWithNotEncrypt(writer, request, Sa)
 
-		//Handlers.Delete(ch)
+		//Application.Delete(ch)
 
 	}).Methods(http.MethodGet)
 

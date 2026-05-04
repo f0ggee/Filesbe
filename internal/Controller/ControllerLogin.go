@@ -2,7 +2,7 @@ package Controller
 
 import (
 	"Kaban/internal/Dto"
-	"Kaban/internal/Service/Handlers"
+	"Kaban/internal/Service/Application"
 	"encoding/hex"
 	"encoding/json"
 	"io"
@@ -47,7 +47,7 @@ func checkJson(r *http.Request) (*Dto.UserLoginData, error) {
 	return &e, err
 }
 
-func Login(w http.ResponseWriter, r *http.Request, realization *Handlers.HandlerPackCollect) {
+func Login(w http.ResponseWriter, r *http.Request, realization *Application.HandlerPackCollect) {
 
 	type AnswerLogin struct {
 		StatusOfOperation string `json:"StatusOperation"`

@@ -1,7 +1,7 @@
 package Controller
 
 import (
-	"Kaban/internal/Service/Handlers"
+	"Kaban/internal/Service/Application"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Router, s *Handlers.HandlerPackCollect) {
+func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Router, s *Application.HandlerPackCollect) {
 
 	type Answer struct {
 		StatusOperation string `json:"StatusOperation"`
@@ -84,7 +84,7 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 
 }
 
-func CookieGet(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) error {
+func CookieGet(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackCollect) error {
 
 	session, err := SessionStore().Get(r, TokenName)
 	if err != nil {

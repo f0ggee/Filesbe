@@ -1,7 +1,7 @@
 package Controller
 
 import (
-	"Kaban/internal/Service/Handlers"
+	"Kaban/internal/Service/Application"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -18,7 +18,7 @@ func getNameFromUrl2(r *http.Request) string {
 	return name
 
 }
-func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) {
+func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackCollect) {
 	type JsonAnswer struct {
 		StatusOperation string   `json:"StatusOperation"`
 		Error           []string `json:"Error"`

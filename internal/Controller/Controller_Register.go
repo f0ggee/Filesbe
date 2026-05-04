@@ -2,7 +2,7 @@ package Controller
 
 import (
 	"Kaban/internal/Dto"
-	"Kaban/internal/Service/Handlers"
+	"Kaban/internal/Service/Application"
 	"encoding/json"
 	"errors"
 	"io"
@@ -34,7 +34,7 @@ func checkJsonRegister(r *http.Request) (*Dto.UserDataRegister, error) {
 	return &e, err
 }
 
-func Register(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) {
+func Register(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackCollect) {
 
 	if r.Method != http.MethodPost {
 		slog.Error("Method is not POST")

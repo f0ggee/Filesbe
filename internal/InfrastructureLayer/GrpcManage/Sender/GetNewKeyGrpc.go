@@ -11,7 +11,7 @@ import (
 )
 
 func (s SenderRequests) RequestingGettingNewKey(data []byte) ([]byte, error) {
-	slog.Info("Start a request for a key")
+	slog.Info("Func RequestingGettingNewKey: Start a request for a key")
 
 	credentials := grpc.WithTransportCredentials(insecure.NewCredentials())
 	conn, err := grpc.NewClient(os.Getenv("GRPC_ADDR"), credentials)

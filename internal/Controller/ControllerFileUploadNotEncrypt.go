@@ -1,7 +1,7 @@
 package Controller
 
 import (
-	"Kaban/internal/Service/Handlers"
+	"Kaban/internal/Service/Application"
 	"encoding/json"
 	"errors"
 	"log/slog"
@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Router, s *Handlers.HandlerPackCollect) {
+func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Router, s *Application.HandlerPackCollect) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "err", http.StatusUnauthorized)
 		slog.Error("Err in Cottroler Uploader")
@@ -80,7 +80,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 
 }
 
-func CookieGet2(w http.ResponseWriter, r *http.Request, s *Handlers.HandlerPackCollect) error {
+func CookieGet2(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackCollect) error {
 	//store := SessionStore()
 
 	session, err := SessionStore().Get(r, TokenName)

@@ -1,4 +1,4 @@
-package Handlers
+package Application
 
 import (
 	Dto2 "Kaban/internal/Dto"
@@ -19,7 +19,7 @@ func (sa *HandlerPackCollect) LoginService(s Dto2.UserLoginData, ctx context.Con
 	Id, password, err := sa.DatabaseControlling.Reader.LoginData(s.Email, ctx)
 
 	if err != nil {
-		slog.Error("Error in LoginData", "error", err)
+		slog.Error("Func LoginService: Error in LoginData", "Error", err)
 		return "", "", err
 	}
 
