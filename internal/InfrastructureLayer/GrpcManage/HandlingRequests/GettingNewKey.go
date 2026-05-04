@@ -50,8 +50,6 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 		slog.Error("Error while unmarshalling PacketInfo", "Error", err.Error())
 		return 0, err
 	}
-	slog.Info("Func CheckingGettingNewKey: Time", PacketInfo.T1)
-
 	err = h.ValidationPacket.CheckTime(PacketInfo.TimeNow)
 	if err != nil {
 		return 0, err
