@@ -141,7 +141,7 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 			}
 			PlainText, err12 := s.S.Encryption.EncryptRsaKey(AesKey.Bytes(), OutcomingDataJson)
 			if err != nil {
-				slog.Error("Func GetNewKey: Encrypt Error", "Error", err.Error())
+				slog.Error("Func GetNewKey: Encrypt RSA-KEY Error ", "Error", err.Error())
 				return err12
 			}
 			plainText = PlainText
@@ -174,7 +174,7 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 			slog.Error("Func GetNewKey: Marshal Error", "Error", err.Error())
 			return &pb.OutputSendData{}, errors.New(DomainLevel.ErrorVerify)
 		}
-		slog.Info("Func GetNewKey:", slog.Group("Data", slog.Bool("Finish the exchange", true), slog.Any("Packet look", OutcomingPacket)))
+		slog.Info("Func GetNewKey:", slog.Group("Data", slog.Bool("Finish the exchange", true)))
 		return &pb.OutputSendData{
 			BytesOutput: OutcomingPacket,
 		}, nil

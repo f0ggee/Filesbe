@@ -1,21 +1,23 @@
 package GlobalProces
 
 import (
-	"MasterServer_/Dto"
+	"MasterServer_/DomainLevel"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"log/slog"
+	"time"
 
 	"github.com/awnumar/memguard"
 )
 
-func PacketPacking(EncryptedAesKey []byte, EncryptedRsaKey []byte, Sign []byte, err error) ([]byte, error) {
-	RedisDat := &Dto.RedisDataLooksLike{
-		AesKey:    EncryptedAesKey,
-		PlainText: EncryptedRsaKey,
-		Signature: Sign,
+func PacketPack(EncryptedAesKey []byte, EncryptedRsaKey []byte, Sign []byte, TimeNextSwaping time.Duration) ([]byte, error) {
+	RedisDat := &DomainLevel.RedisDataLooksLike{
+		AesKey:          EncryptedAesKey,
+		PlainText:       EncryptedRsaKey,
+		Signature:       Sign,
+		TimeNextSwaping: TimeNextSwaping,
 	}
 
 	DataJson, err := json.Marshal(RedisDat)
@@ -55,7 +57,7 @@ func (psa *ControllingExchange) SwapKeys(KeyServer []byte, RsaKeyNew []byte, Nam
 		return err
 	}
 
-	DataJson, err2 := PacketPacking(EncryptedAesKey, EncryptedRsaKey, Sign, err)
+	DataJson, err2 := PacketPack(EncryptedAesKey, EncryptedRsaKey, Sign, GetDuration(psa.E.TimeData.GetPreviousSwapTime()))
 	if err2 != nil {
 		return err2
 	}
@@ -68,6 +70,13 @@ func (psa *ControllingExchange) SwapKeys(KeyServer []byte, RsaKeyNew []byte, Nam
 	return nil
 }
 
+func GetDuration(Times time.Time) time.Duration {
+
+	xz := Times.Add(DomainLevel.TimeTick)
+	TimeUntil := time.Until(xz)
+
+	return TimeUntil
+}
 func (psa ControllingExchange) SwapKeysTest(KeyServer []byte, RsaKeyNew []byte, NameServer string) error {
 	if NameServer == "" {
 		return errors.New("NameServer is required")

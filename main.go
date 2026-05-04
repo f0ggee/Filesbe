@@ -96,11 +96,15 @@ func main() {
 	for _ = range ticker.C {
 		slog.Info("Func main", "We got a tick", ticker)
 		SwapRsaKey(*Injective1)
+		err := s.NewPreviousTime(rand.Text(), time.Now())
+		if err != nil {
+			slog.Error("Func NewPreviousTime", "Error", err.Error())
+		}
 		handling := Cmds.StartHandling(&ServerInfo, &AnotherProcessController)
 		if handling {
 			return
 		}
-		s.NewPreviousTime(rand.Text(), time.Now())
+
 	}
 
 }

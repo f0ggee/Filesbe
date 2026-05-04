@@ -8,6 +8,7 @@ type ProcessController struct {
 	RedisInteracting DomainLevel.RedisUse
 	ServerManagement DomainLevel.GettingServersInfo
 	CryptoKey        DomainLevel.CryptoKeyManager
+	TimeData         DomainLevel.PreviousSwapTime
 }
 
 type ControllingExchange struct {
