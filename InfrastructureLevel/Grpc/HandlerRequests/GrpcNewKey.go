@@ -3,6 +3,7 @@ package HandlerRequests
 import (
 	"MasterServer_/DomainLevel"
 	"MasterServer_/Dto"
+	InftarctionLevel "MasterServer_/InfrastructureLevel"
 	pb "MasterServer_/InfrastructureLevel/Grpc/Proto/protoFiles"
 	"context"
 	"crypto/rand"
@@ -184,7 +185,7 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 
 func (S *GrpcHandlerGettingNewKey) CalculateSwapingTime() time.Duration {
 	fmt.Println("CalculateSwapingTime", S.S.Time.GetPreviousSwapTime())
-	xz := S.S.Time.GetPreviousSwapTime().Add(50 * time.Second)
+	xz := S.S.Time.GetPreviousSwapTime().Add(InftarctionLevel.TimeForSwapping)
 	s := time.Until(xz)
 	slog.Info("Func CalculateSwapingTime", "Time for next swaping", s)
 	return s
