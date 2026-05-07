@@ -2,6 +2,6 @@ package InftarctionLevel
 
 import "time"
 
-const TimeForSwapping = time.Hour * 12
+const TimeForSwapping = 12 * time.Hour
 
 const ServersCount = 2

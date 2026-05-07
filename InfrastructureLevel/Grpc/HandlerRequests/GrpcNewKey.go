@@ -3,7 +3,6 @@ package HandlerRequests
 import (
 	"MasterServer_/DomainLevel"
 	"MasterServer_/Dto"
-	InftarctionLevel "MasterServer_/InfrastructureLevel"
 	pb "MasterServer_/InfrastructureLevel/Grpc/Proto/protoFiles"
 	"context"
 	"crypto/rand"
@@ -11,6 +10,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"os"
 	"time"
@@ -74,7 +74,7 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 		}
 
 		DataIntoPacket, err := BreakJsonPacket(err, Data)
-
+		slog.Info("Func GetNewKey", "A server is trying to connect", DataIntoPacket.ServerName)
 		if err != nil {
 			return &pb.OutputSendData{}, errors.New(DomainLevel.AnotherTypeError)
 		}
@@ -182,8 +182,9 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 
 }
 
-func (S GrpcHandlerGettingNewKey) CalculateSwapingTime() time.Duration {
-	xz := S.S.Time.GetPreviousSwapTime().Add(InftarctionLevel.TimeForSwapping)
+func (S *GrpcHandlerGettingNewKey) CalculateSwapingTime() time.Duration {
+	fmt.Println("CalculateSwapingTime", S.S.Time.GetPreviousSwapTime())
+	xz := S.S.Time.GetPreviousSwapTime().Add(50 * time.Second)
 	s := time.Until(xz)
 	slog.Info("Func CalculateSwapingTime", "Time for next swaping", s)
 	return s

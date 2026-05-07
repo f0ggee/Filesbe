@@ -2,6 +2,7 @@ package GlobalProces
 
 import (
 	"MasterServer_/DomainLevel"
+	InftarctionLevel "MasterServer_/InfrastructureLevel"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
@@ -57,7 +58,7 @@ func (psa *ControllingExchange) SwapKeys(KeyServer []byte, RsaKeyNew []byte, Nam
 		return err
 	}
 
-	DataJson, err2 := PacketPack(EncryptedAesKey, EncryptedRsaKey, Sign, GetDuration(psa.E.TimeData.GetPreviousSwapTime()))
+	DataJson, err2 := PacketPack(EncryptedAesKey, EncryptedRsaKey, Sign, psa.GetDuration())
 	if err2 != nil {
 		return err2
 	}
@@ -70,9 +71,8 @@ func (psa *ControllingExchange) SwapKeys(KeyServer []byte, RsaKeyNew []byte, Nam
 	return nil
 }
 
-func GetDuration(Times time.Time) time.Duration {
-
-	xz := Times.Add(DomainLevel.TimeTick)
+func (psa *ControllingExchange) GetDuration() time.Duration {
+	xz := psa.E.TimeData.GetPreviousSwapTime().Add(InftarctionLevel.TimeForSwapping)
 	TimeUntil := time.Until(xz)
 
 	return TimeUntil

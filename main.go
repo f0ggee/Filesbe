@@ -83,6 +83,7 @@ func main() {
 			RedisInteracting: &redisConn,
 			ServerManagement: &ServerInfo,
 			CryptoKey:        &CryptoKey,
+			TimeData:         s,
 		},
 	}
 	SwapRsaKey(*Injective1)
@@ -94,12 +95,13 @@ func main() {
 	go G.GrpcHandleRequests(GrpcHandlingData, ServerInfo, Encrypting, PacketValidating, CryptoGenerate, ConvertData, Decrypted, s)
 
 	for _ = range ticker.C {
-		slog.Info("Func main", "We got a tick", ticker)
-		SwapRsaKey(*Injective1)
 		err := s.NewPreviousTime(rand.Text(), time.Now())
 		if err != nil {
 			slog.Error("Func NewPreviousTime", "Error", err.Error())
 		}
+		slog.Info("Func main", "We got a tick", ticker)
+		SwapRsaKey(*Injective1)
+
 		handling := Cmds.StartHandling(&ServerInfo, &AnotherProcessController)
 		if handling {
 			return
@@ -118,5 +120,6 @@ func SwapRsaKey(RsaKey DipendsInjective.RsaKeyManipulationWithRsaAndMemory) {
 	RsaKey.KeyAndMemory.SwapingOldKey()
 	RsaKey.KeyAndMemory.InstallingNewKey(TemporallySaving.Bytes())
 	Dto.Keys.Mu.Unlock()
+
 	slog.Info("Func SwapRsaKey: Swaping RSA key in memory END")
 }
