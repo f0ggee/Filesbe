@@ -68,7 +68,6 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 	if err != nil {
 		return 0, err
 	}
-
 	h.Keys.UpdateKey(NewSavingRsa)
 	h.Keys.UpdateOldKey()
 
