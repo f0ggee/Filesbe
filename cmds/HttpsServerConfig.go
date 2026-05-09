@@ -12,7 +12,7 @@ func ServerConfig(r *mux.Router) *http.Server {
 	//Port := os.Getenv("PORT")
 	//addr := ":" + Port
 	server := http.Server{
-		Addr:                         ":8080",
+		Addr:                         ":443",
 		Handler:                      r,
 		DisableGeneralOptionsHandler: false,
 		TLSConfig:                    nil,
