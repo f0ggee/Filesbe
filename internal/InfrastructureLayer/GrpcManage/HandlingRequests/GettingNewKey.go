@@ -71,7 +71,9 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 	h.Keys.UpdateKey(NewSavingRsa)
 	h.Keys.UpdateOldKey()
 
-	slog.Info("Finish accepting the new key", slog.Int("Id", Id))
+	slog.Info("Finish accepting the new key", slog.Group("Data",
+		slog.Int("Id", Id),
+		slog.Duration("Time for next swapping", PacketInfo.T1)))
 
 	return PacketInfo.T1, nil
 }

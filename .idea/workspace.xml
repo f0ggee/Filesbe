@@ -78,11 +78,6 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
   }
 }</component>
-  <component name="QodanaReportsService">
-    <option name="descriptions">
-      <ReportDescription localRun="true" path="/private/var/folders/zl/zh1n0jhd2yqgdnnxs5ft3pmh0000gn/T/qodana_output/qodana.sarif.json" reportGuid="5d8f885f-b0fe-4169-a6a5-c1d4c505f85f" reportId="Kaban/qodana/2026-05-06" />
-    </option>
-  </component>
   <component name="RunManager">
     <configuration name="go build Kaban" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
