@@ -192,14 +192,6 @@ func (S GrpcHandlerGettingNewKey) CalculateSwapingTime() time.Duration {
 	slog.Info("Func CalculateSwapingTime", "Time for next swaping", s)
 	return s
 }
-func (S GrpcHandlerGettingNewKey) CalculateSwapingTimeTestFunc(TimeToAdd time.Duration) time.Duration {
-	slog.Info("Func CalculateSwapingTime", "Time before", S.S.Time.GetPreviousSwapTime())
-
-	xz := S.S.Time.GetPreviousSwapTime().Add(TimeToAdd)
-	s := time.Until(xz)
-	slog.Info("Func CalculateSwapingTime", "Time for next swaping", s)
-	return s
-}
 
 func HashManipulate(s GrpcHandlerGettingNewKey, data *pb.InputSendData) error {
 	if s.S.Checker.FindHash([32]byte(sha256.New().Sum(data.SendData[:]))) {
