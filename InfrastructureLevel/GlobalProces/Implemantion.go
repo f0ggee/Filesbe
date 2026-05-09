@@ -1,6 +1,9 @@
 package GlobalProces
 
-import "MasterServer_/DomainLevel"
+import (
+	"MasterServer_/DomainLevel"
+	"fmt"
+)
 
 type ProcessController struct {
 	Cryptos          DomainLevel.Encryption
@@ -13,6 +16,11 @@ type ProcessController struct {
 
 type ControllingExchange struct {
 	E ProcessController
+}
+
+func (receiver ControllingExchange) TestTime() {
+	fmt.Println("Time", receiver.E.TimeData.GetId())
+
 }
 
 func NewAnotherProcessController(e ProcessController) *ControllingExchange {

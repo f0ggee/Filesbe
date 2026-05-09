@@ -11,7 +11,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log/slog"
 	"os"
 	"time"
@@ -54,6 +53,7 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 			slog.Error("Data was empty")
 			return &pb.OutputSendData{}, errors.New(DomainLevel.DataNil)
 		}
+
 		err2 := HashManipulate(s, data)
 		if err2 != nil {
 			return &pb.OutputSendData{}, err2
@@ -75,7 +75,7 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 		}
 
 		DataIntoPacket, err := BreakJsonPacket(err, Data)
-		slog.Info("Func GetNewKey", "A server is trying to connect", DataIntoPacket.ServerName)
+		slog.Info("Func GetNewKey", "The server, which is trying to connect", DataIntoPacket.ServerName)
 		if err != nil {
 			return &pb.OutputSendData{}, errors.New(DomainLevel.AnotherTypeError)
 		}
@@ -175,7 +175,8 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 			slog.Error("Func GetNewKey: Marshal Error", "Error", err.Error())
 			return &pb.OutputSendData{}, errors.New(DomainLevel.ErrorVerify)
 		}
-		slog.Info("Func GetNewKey:", slog.Group("Data", slog.Bool("Finish the exchange", true)))
+
+		slog.Info("Func GetNewKey: finish an exchange", "The server", DataIntoPacket.ServerName)
 		return &pb.OutputSendData{
 			BytesOutput: OutcomingPacket,
 		}, nil
@@ -183,9 +184,18 @@ func (s GrpcHandlerGettingNewKey) GetNewKey(ctx context.Context, data *pb.InputS
 
 }
 
-func (S *GrpcHandlerGettingNewKey) CalculateSwapingTime() time.Duration {
-	fmt.Println("CalculateSwapingTime", S.S.Time.GetPreviousSwapTime())
+func (S GrpcHandlerGettingNewKey) CalculateSwapingTime() time.Duration {
+	slog.Info("Func CalculateSwapingTime", "Time before", S.S.Time.GetPreviousSwapTime())
+
 	xz := S.S.Time.GetPreviousSwapTime().Add(InftarctionLevel.TimeForSwapping)
+	s := time.Until(xz)
+	slog.Info("Func CalculateSwapingTime", "Time for next swaping", s)
+	return s
+}
+func (S GrpcHandlerGettingNewKey) CalculateSwapingTimeTestFunc(TimeToAdd time.Duration) time.Duration {
+	slog.Info("Func CalculateSwapingTime", "Time before", S.S.Time.GetPreviousSwapTime())
+
+	xz := S.S.Time.GetPreviousSwapTime().Add(TimeToAdd)
 	s := time.Until(xz)
 	slog.Info("Func CalculateSwapingTime", "Time for next swaping", s)
 	return s

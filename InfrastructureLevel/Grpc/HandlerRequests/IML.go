@@ -13,14 +13,14 @@ type HandlingRequestsForNewKey struct {
 	Decrypting       DomainLevel.Decryptor
 	CryptoGenerating DomainLevel.CryptoGenerator
 	ConverterJson    DomainLevel.ConverterData
-	Time             DomainLevel.PreviousSwapTime
+	Time             *DomainLevel.PreviousSwapTime
 }
 
 type GrpcHandlerGettingNewKey struct {
 	pb.UnimplementedSendingGettingServer
-	S HandlingRequestsForNewKey
+	S *HandlingRequestsForNewKey
 }
 
 func NewGrpcHandlerGettingNewKey(unimplementedSendingGettingServer *pb.UnimplementedSendingGettingServer, s *HandlingRequestsForNewKey) *GrpcHandlerGettingNewKey {
-	return &GrpcHandlerGettingNewKey{UnimplementedSendingGettingServer: *unimplementedSendingGettingServer, S: *s}
+	return &GrpcHandlerGettingNewKey{UnimplementedSendingGettingServer: *unimplementedSendingGettingServer, S: s}
 }

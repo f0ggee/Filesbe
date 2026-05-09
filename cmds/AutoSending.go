@@ -10,6 +10,7 @@ import (
 
 func StartHandling(serverManagementPack *GettingInfo.SeverManage, Sa *GlobalProces.ControllingExchange) bool {
 	for i := 1; i <= InftarctionLevel.ServersCount; i++ {
+		slog.Info("Func StartHandling", "Server", i)
 		ServerKey := serverManagementPack.GetServerKey(i)
 		if ServerKey == nil {
 			slog.Error("ServerKey is nil")

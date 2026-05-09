@@ -10,7 +10,6 @@ import (
 var MappingHash = make(map[[32]byte]time.Time)
 
 func (s *SeverManage) GetServerKey(Num int) []byte {
-	slog.Info("start getting the server key", "ServerNumber", Num)
 	switch Num {
 	case 1:
 
@@ -20,7 +19,6 @@ func (s *SeverManage) GetServerKey(Num int) []byte {
 			return nil
 		}
 
-		slog.Info("Got server key", "ServerNumber", Num)
 		return rsaKey
 
 	case 2:
@@ -29,7 +27,6 @@ func (s *SeverManage) GetServerKey(Num int) []byte {
 			slog.Error("Error in getting the server key", "ServerNumber", Num)
 			return nil
 		}
-		slog.Info("Got server key", "ServerNumber", Num)
 		return rsaKey
 
 	}

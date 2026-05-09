@@ -31,8 +31,6 @@ func PacketPack(EncryptedAesKey []byte, EncryptedRsaKey []byte, Sign []byte, Tim
 
 func (psa *ControllingExchange) SwapKeys(KeyServer []byte, RsaKeyNew []byte, NameServer string) error {
 
-	slog.Info("Starting HandlingRequests")
-
 	AesKey, err := memguard.NewBufferFromReader(rand.Reader, 32)
 	if err != nil {
 		slog.Error("Error creating the AesKey", "Error", err.Error())

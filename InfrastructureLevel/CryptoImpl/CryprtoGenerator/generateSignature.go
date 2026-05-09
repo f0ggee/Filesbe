@@ -10,7 +10,6 @@ import (
 
 func (s *CryprtoGenerating) SignerData(HashFromData []byte, privateKeyServer []byte) ([]byte, error) {
 
-	slog.Info("Func SignerData: Start signing data", "HashFromData", HashFromData)
 	MasterServerPrivateKey, err := x509.ParsePKCS1PrivateKey(privateKeyServer)
 	if err != nil {
 		slog.Error("Error Parsing Private Key Server", "Error", err.Error())

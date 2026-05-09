@@ -11,7 +11,6 @@ import (
 type RsaKeyManipulation struct{}
 
 func (r *RsaKeyManipulation) GenerateRsaKey() []byte {
-	slog.Info("Func GenerateRsaKey: Generating new RSA key")
 	RsaKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		slog.Error("Data", slog.Group("Error generating RSA key",
@@ -20,7 +19,6 @@ func (r *RsaKeyManipulation) GenerateRsaKey() []byte {
 			slog.Bool("Generating Rsa key ERROR", false)))
 		return nil
 	}
-	slog.Info("Func GenerateRsaKey: generating Rsa key", "Success", true)
 	return x509.MarshalPKCS1PrivateKey(RsaKey)
 
 }

@@ -24,9 +24,10 @@ func (g GrpcConnection) GrpcHandleRequests(GrpcHandlingData GrpcHandleData.GrpcD
 		return
 	}
 	grpcServer := grpc.NewServer()
+
 	pbProtoFiles.RegisterSendingGettingServer(grpcServer, &pbRealization.GrpcHandlerGettingNewKey{
 		UnimplementedSendingGettingServer: pbProtoFiles.UnimplementedSendingGettingServer{},
-		S: pbRealization.HandlingRequestsForNewKey{
+		S: &pbRealization.HandlingRequestsForNewKey{
 			Grpc:             &GrpcHandlingData,
 			ServerManagement: &ServerInfo,
 			Encryption:       &Encrypting,
@@ -34,9 +35,10 @@ func (g GrpcConnection) GrpcHandleRequests(GrpcHandlingData GrpcHandleData.GrpcD
 			CryptoGenerating: &CryptoGenerate,
 			ConverterJson:    &ConvertData,
 			Decrypting:       &Decrypted,
-			Time:             *S,
+			Time:             S,
 		},
 	})
+
 	if err := grpcServer.Serve(lis); err != nil {
 		slog.Error("failed to serve:", "Error", err.Error())
 		return

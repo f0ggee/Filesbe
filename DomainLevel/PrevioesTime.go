@@ -23,9 +23,11 @@ func (p *PreviousSwapTime) NewPreviousTime(id string, t time.Time) error {
 	p.Time = t
 	return nil
 }
-func (this PreviousSwapTime) GetPreviousSwapTime() time.Time { return this.Time }
 
+func (p *PreviousSwapTime) GetId() string { return p.Id }
 func Get() *PreviousSwapTime {
 
 	return &PreviousSwapTime{}
 }
+
+func (p *PreviousSwapTime) GetPreviousSwapTime() time.Time { return p.Time }

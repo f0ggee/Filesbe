@@ -93,13 +93,12 @@ func main() {
 	G := GrcpCmds.GetGrpcConn("tcp", os.Getenv("GRPC_ADDRESS"))
 
 	go G.GrpcHandleRequests(GrpcHandlingData, ServerInfo, Encrypting, PacketValidating, CryptoGenerate, ConvertData, Decrypted, s)
-
 	for _ = range ticker.C {
-		err := s.NewPreviousTime(rand.Text(), time.Now())
+		err = s.NewPreviousTime(rand.Text(), time.Now())
 		if err != nil {
 			slog.Error("Func NewPreviousTime", "Error", err.Error())
 		}
-		slog.Info("Func main", "We got a tick", ticker)
+		slog.Info("Func Tick", "New timer was created", s.GetId())
 		SwapRsaKey(*Injective1)
 
 		handling := Cmds.StartHandling(&ServerInfo, &AnotherProcessController)
@@ -107,6 +106,7 @@ func main() {
 			return
 		}
 
+		slog.Info("Func Tick", "Finish a planning exchange", true)
 	}
 
 }
