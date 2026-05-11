@@ -290,8 +290,7 @@ func main() {
 	serverConfig := cmds.ServerConfig(router)
 	defer serverConfig.Close()
 	slog.Info("The server started at ", "Configure", serverConfig.Addr)
-	err = serverConfig.ListenAndServe()
-	if err != nil {
+	if err = serverConfig.ListenAndServe(); err != nil {
 		slog.Error("Server couldn't start", "Error", err)
 		return
 
