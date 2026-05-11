@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -15,7 +16,11 @@ func ServerConfig(r *mux.Router) *http.Server {
 	if Port == "" {
 		Port = ":" + "8080"
 	}
-	Port = ":" + Port
+
+	if !strings.HasPrefix(Port, ":") {
+		Port = ":" + Port
+	}
+
 	slog.Info("Our new port", "Port", Port)
 	server := &http.Server{
 		Addr:                         Port,
