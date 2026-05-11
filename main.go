@@ -190,7 +190,7 @@ func main() {
 	})
 
 	KeysController.FillOldKey()
-	TimeSwaping := 12 * time.Hour
+	TimeSwaping := Sa.SwapKeyFirst()
 	slog.Info("This time", "Time", TimeSwaping)
 	ticker := time.NewTicker(TimeSwaping)
 	defer ticker.Stop()
