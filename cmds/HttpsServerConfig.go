@@ -12,6 +12,9 @@ import (
 func ServerConfig(r *mux.Router) *http.Server {
 
 	Port := os.Getenv("PORT")
+	if Port == "" {
+		Port = ":" + "8080"
+	}
 	slog.Info("Our new port", "Port", Port)
 	server := &http.Server{
 		Addr:                         Port,
