@@ -1,0 +1,19 @@
+FROM golang:latest AS builder
+WORKDIR /build
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY internal ./internal
+COPY cmds ./cmds
+COPY .. .
+RUN CGO_ENABLED=0 GOOS=linux go build -o app ./main.go
+
+
+
+FROM alpine:latest
+WORKDIR /app
+COPY --from=builder /build/app .
+COPY --from=builder /buid/app ./cmds/
+COPY --from=builder /build/internal ./internal/
+EXPOSE 8080
+CMD ["./app"]
