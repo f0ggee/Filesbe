@@ -190,7 +190,7 @@ func main() {
 	})
 
 	KeysController.FillOldKey()
-	TimeSwaping := Sa.SwapKeyFirst()
+	TimeSwaping := 12 * time.Hour
 	slog.Info("This time", "Time", TimeSwaping)
 	ticker := time.NewTicker(TimeSwaping)
 	defer ticker.Stop()
@@ -289,7 +289,7 @@ func main() {
 
 	serverConfig := cmds.ServerConfig(router)
 	defer serverConfig.Close()
-
+	slog.Info("The server started at ", "Configure", serverConfig.Addr)
 	err = serverConfig.ListenAndServe()
 	if err != nil {
 		slog.Error("Server couldn't start", "Error", err)
