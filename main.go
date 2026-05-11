@@ -188,17 +188,6 @@ func main() {
 		}
 
 	})
-	go func() {
-		serverConfig := cmds.ServerConfig(router)
-		defer serverConfig.Close()
-
-		slog.Info("The server started at ", "Configure", serverConfig.Addr)
-		if err = serverConfig.ListenAndServe(); err != nil {
-			slog.Error("Server couldn't start", "Error", err)
-			return
-
-		}
-	}()
 
 	KeysController.FillOldKey()
 	TimeSwaping := Sa.SwapKeyFirst()
@@ -297,5 +286,14 @@ func main() {
 		Controller2.BuildUrl(writer, request)
 
 	}).Methods(http.MethodGet)
+	serverConfig := cmds.ServerConfig(router)
+	defer serverConfig.Close()
+
+	slog.Info("The server started at ", "Configure", serverConfig.Addr)
+	if err = serverConfig.ListenAndServe(); err != nil {
+		slog.Error("Server couldn't start", "Error", err)
+		return
+
+	}
 
 }
