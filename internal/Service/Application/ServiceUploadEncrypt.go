@@ -1,6 +1,7 @@
 package Application
 
 import (
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
 	"context"
 	"crypto/aes"
@@ -29,7 +30,7 @@ func (sa *HandlerPackCollect) UploadEncrypt(r *http.Request) (string, error) {
 		slog.Error("Err from FileUploader 1 ", "Error", err)
 		return "", errors.New("can't get file")
 	}
-	if sizeAndName.Size >= FileMaxSize {
+	if sizeAndName.Size >= DomainLevel.FileMaxSize {
 		slog.Info("File too big")
 
 		return "", errors.New("file too big")

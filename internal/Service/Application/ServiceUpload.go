@@ -1,6 +1,7 @@
 package Application
 
 import (
+	"Kaban/internal/DomainLevel"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -18,7 +19,7 @@ func (sa *HandlerPackCollect) FileUploader(r *http.Request) (string, error) {
 		slog.Error("Err from FileUploader 1 ", "Error", err.Error())
 		return "", err
 	}
-	if sizeAndName.Size >= FileMaxSize {
+	if sizeAndName.Size >= DomainLevel.FileMaxSize {
 		slog.Info("File too big")
 
 		return "", errors.New("file too big")

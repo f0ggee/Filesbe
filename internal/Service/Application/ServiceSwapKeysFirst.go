@@ -1,6 +1,7 @@
 package Application
 
 import (
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
 	"context"
 	"crypto/rand"
@@ -35,7 +36,7 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 	ConvertedData, err := sa.Convert.Converting.JsonConverter(GrpcStruct)
 	if err != nil {
 		slog.Error("Error while converting", "err", err)
-		return DefaultErrorTime
+		return DomainLevel.DefaultErrorTime
 	}
 	EncryptedData := []byte(nil)
 	EncryptedDataAesKey := []byte(nil)
@@ -84,12 +85,12 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 
 	if err := g.Wait(); err != nil {
 		slog.Error("Error while generating AesKey", "err", err)
-		return DefaultErrorTime
+		return DomainLevel.DefaultErrorTime
 	}
 
 	if EncryptedData == nil || EncryptedDataAesKey == nil {
 		slog.Error("Error with data", slog.Group("Data", slog.Any("AesKey", EncryptedDataAesKey), slog.Any("EncryptedData", EncryptedData)))
-		return DefaultErrorTime
+		return DomainLevel.DefaultErrorTime
 	}
 
 	convertedDataGrpcDataLooks, err := sa.Convert.Converting.JsonConverter(Dto.GrpcOutComingPacketForSending{
@@ -97,7 +98,7 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 		CipherData: EncryptedData,
 	})
 	if err != nil {
-		return DefaultErrorTime
+		return DomainLevel.DefaultErrorTime
 	}
 
 	return MakerRequests(sa, convertedDataGrpcDataLooks)
@@ -125,7 +126,7 @@ func MakerRequests(sa *HandlerPackCollect, convertedDataGrpcDataLooks []byte) ti
 			continue
 		}
 		if TimeNextSwapping == 0 {
-			return DefaultErrorTime
+			return DomainLevel.DefaultErrorTime
 		}
 		return TimeNextSwapping
 	}

@@ -1,6 +1,7 @@
 package cmds
 
 import (
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -11,6 +12,7 @@ import (
 func ServerConfig(r *mux.Router) *http.Server {
 
 	Port := os.Getenv("PORT")
+	slog.Info("Our new port", "Port", Port)
 	server := http.Server{
 		Addr:                         Port,
 		Handler:                      r,
