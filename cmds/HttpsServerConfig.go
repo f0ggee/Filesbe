@@ -14,6 +14,7 @@ func ServerConfig(r *mux.Router) *http.Server {
 	Port := os.Getenv("PORT")
 	slog.Info("Our new port", "Port", Port)
 	server := &http.Server{
+		Addr:                         Port,
 		Handler:                      r,
 		DisableGeneralOptionsHandler: false,
 		TLSConfig:                    nil,
