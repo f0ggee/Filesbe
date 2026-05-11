@@ -13,7 +13,7 @@ func ServerConfig(r *mux.Router) *http.Server {
 
 	Port := os.Getenv("PORT")
 	slog.Info("Our new port", "Port", Port)
-	server := http.Server{
+	server := &http.Server{
 		Handler:                      r,
 		DisableGeneralOptionsHandler: false,
 		TLSConfig:                    nil,
@@ -24,5 +24,5 @@ func ServerConfig(r *mux.Router) *http.Server {
 		MaxHeaderBytes:               1 << 20,
 	}
 
-	return &server
+	return server
 }
