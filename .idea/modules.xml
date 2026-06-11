@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Kaban.iml" filepath="$PROJECT_DIR$/.idea/Kaban.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../j/.idea/j.iml" filepath="$PROJECT_DIR$/../j/.idea/j.iml" />
     </modules>
   </component>
 </project>

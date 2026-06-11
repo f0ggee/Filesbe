@@ -43,7 +43,6 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 		w.WriteHeader(http.StatusBadRequest)
 		if err = json.NewEncoder(w).Encode(Answer{
 			StatusOperation: Break,
-			UrlToRedict:     "",
 			Error:           err.Error(),
 		}); err != nil {
 			slog.Error("Err in json encode", "error", err)
@@ -60,7 +59,6 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 		w.WriteHeader(http.StatusBadRequest)
 		if err = json.NewEncoder(w).Encode(Answer{
 			StatusOperation: Break,
-			UrlToRedict:     "",
 		}); err != nil {
 			slog.Error("Err in json encode", "error", err)
 			return

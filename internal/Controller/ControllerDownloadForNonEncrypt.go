@@ -27,7 +27,7 @@ func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Applicati
 	if r.Method != http.MethodGet {
 		w.Header().Set("Content-Type", Json)
 		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: Break, Error: []string{"Method don't allow"}}); err != nil {
+		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: Break, Error: []string{"Method don't allow"}, Url: InfoPageUrl}); err != nil {
 			slog.Error("Error parse json in answer", "error", err)
 			return
 		}

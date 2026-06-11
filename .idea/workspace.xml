@@ -5,9 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="SV">
+      <change beforePath="$PROJECT_DIR$/.idea/Kaban.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Kaban.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/HttpsServerConfig.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/HttpsServerConfig.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/Consts.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/Consts.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerDownloadForNonEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerDownloadForNonEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerDownloadWithEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerDownloadWithEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/Application.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/FileConstants.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Main_Page.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Main_Page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Protecion.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Protecion.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/UrlFronted.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/UrlFronted.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,45 +66,45 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Docker.Dockerfile.executor": "Run",
-    "Go Build.go build Kaban.executor": "Run",
-    "Go Test.TestChecking_CheckJwt/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckJwt/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckJwt/Test_3 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.Test_funcName in Kaban/internal/Service/Application.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.GoLinterPluginOnboarding": "true",
-    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "git-widget-placeholder": "main",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/pasabaranov",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.keymap"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Docker.Dockerfile.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build Kaban.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestChecking_CheckJwt/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt/Test_3 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.Test_funcName in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/pasabaranov/GolandProjects/Kaban&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/internal/DomainLevel" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.Dockerfile">
+  <component name="RunManager" selected="Go Build.go build Kaban">
     <configuration name="go build Kaban" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
       <working_directory value="$PROJECT_DIR$" />
@@ -152,13 +160,15 @@
       <method v="2" />
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
-      <deployment type="dockerfile" />
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.Dockerfile" />
         <item itemvalue="Go Build.go build Kaban" />
+        <item itemvalue="Docker.Dockerfile" />
         <item itemvalue="Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application" />
         <item itemvalue="Go Test.Test_funcName in Kaban/internal/Service/Application" />
         <item itemvalue="Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens" />
@@ -169,6 +179,7 @@
     <attachedChunks>
       <set>
         <option value="bundled-gosdk-f466f9b0953e-61a6b8fd16fd-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-252.28539.22" />
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-GO-252.28539.22" />
       </set>
     </attachedChunks>
   </component>
@@ -191,5 +202,51 @@
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>113</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>114</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>115</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>117</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>120</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>116</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>119</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>118</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -57,7 +57,6 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 		if err := json.NewEncoder(w).Encode(Answer{
 			StatusOperation: NotStart,
 			Error:           fmt.Sprint(err),
-			UrlToRedict:     "",
 		}); err != nil {
 			slog.Info("Error in encoding json ", "Error", err)
 			return

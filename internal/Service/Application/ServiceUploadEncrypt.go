@@ -129,7 +129,6 @@ func (sa *HandlerPackCollect) UploadEncrypt(r *http.Request) (string, error) {
 		}
 		return nil
 	})
-
 	if err := g.Wait(); err != nil {
 		return "", err
 	}

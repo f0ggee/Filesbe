@@ -32,8 +32,7 @@ func DownloadWithEncrypt(w http.ResponseWriter, r *http.Request, s *Application.
 	err := s.DownloadEncrypt(w, r.Context(), name)
 	if err != nil {
 
-		http.Redirect(w, r, "/informationPage", http.StatusFound)
-		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: Break, Error: []string{"File was used"}, Url: "/informationPage"}); err != nil {
+		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: Break, Error: []string{"File was used"}, Url: InfoPageUrl}); err != nil {
 
 			slog.Error("Error json encoder in file downloader", "Error", err.Error())
 			return
