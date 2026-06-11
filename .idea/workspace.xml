@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="SV">
-      <change beforePath="$PROJECT_DIR$/.idea/Kaban.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Kaban.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/Consts.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/Consts.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerDownloadForNonEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerDownloadForNonEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerDownloadWithEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/ControllerDownloadWithEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/Application.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/FileConstants.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Main_Page.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Main_Page.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Protecion.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Protecion.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/UrlFronted.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/UrlFronted.html" afterDir="false" />
-    </list>
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="SV" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -40,12 +28,12 @@
     &quot;assignee&quot;: &quot;f0ggee&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/f0ggee/Kaban.git&quot;,
-    &quot;accountId&quot;: &quot;4956bb8d-0926-4a66-a014-066e84a60539&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/f0ggee/Kaban.git",
+    "accountId": "101cb072-109c-4fdf-a45f-ef8b739af46e"
   }
-}</component>
+}]]></component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/main.go" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -66,38 +54,38 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;Docker.Dockerfile.executor&quot;: &quot;Run&quot;,
-    &quot;Go Build.go build Kaban.executor&quot;: &quot;Debug&quot;,
-    &quot;Go Test.TestChecking_CheckJwt/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestChecking_CheckJwt/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestChecking_CheckJwt/Test_3 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.Test_funcName in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/pasabaranov/GolandProjects/Kaban&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "Docker.Dockerfile.executor": "Run",
+    "Go Build.go build Kaban.executor": "Run",
+    "Go Test.TestChecking_CheckJwt/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckJwt/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckJwt/Test_3 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor": "Run",
+    "Go Test.Test_funcName in Kaban/internal/Service/Application.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.GoLinterPluginOnboarding": "true",
+    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "git-widget-placeholder": "main",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "/Users/pasabaranov/GolandProjects/Kaban",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.keymap"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />

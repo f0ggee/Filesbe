@@ -42,14 +42,13 @@ func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Applicati
 	case strings.Contains(fmt.Sprint(err), "file was used"):
 		slog.Error("Error sesseion", "error", err, "ID", r.Context().Value(RequestId))
 		//w.WriteHeader(http.StatusBadRequest)
-		http.Redirect(w, r, "/informationPage", http.StatusFound)
+		http.Redirect(w, r, InfoPageUrl, http.StatusFound)
 		return
 
 	}
 	if err != nil {
 		ControllerErrorLogger.ErrorContext(r.Context(), "Error downloading file", "Error", err)
-		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: Break, Error: []string{"File was used"}, Url: "/informationPage"}); err != nil {
-		}
+		http.Redirect(w, r, InfoPageUrl, http.StatusFound)
 		return
 	}
 	return
