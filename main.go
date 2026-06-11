@@ -180,7 +180,7 @@ func main() {
 
 	})
 
-	StaticFiles.Handle("/favicon.png", http.FileServer(http.Dir("internal/Service")))
+	StaticFiles.Handle("/favicon.png", http.FileServer(http.Dir("internal/Service/Fronted/favicon.png")))
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
