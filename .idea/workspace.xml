@@ -4,7 +4,36 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="SV" />
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 27.06.26&#10;&#10;The register controller was refactored. Some methods were added in Dto register data">
+      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/DeliverErrors.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/SessionError.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/Parsers/JsonParsers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/Parsers/RealizationParsers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/RegisterRepo/getIncomingData.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/RegisterRepo/lmlData.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/SessionHandle/getSessionData.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/SessionHandle/repoSession.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/SessionHandle/setNewSession.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Kaban.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Kaban.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/Consts.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/DeliverRepo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerCheckUsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerDownloadForNonEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadForNonEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerDownloadWithEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadWithEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadNotEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadNotEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerLogin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerUrlUploader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerUrlUploader.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/Controller_Register.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/Controller_Register.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/Controller_Register_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/Controller_Register_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/LoggerSetting.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/LoggerSetting.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/Middlewares/CheckerBots.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckerBots.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/Middlewares/LoggingRequests.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/Middlewares/LoggingRequests.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/JsonLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/JsonLogin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/JsonRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/JsonRegister.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,12 +42,12 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Go File" />
         <option value="Dockerfile" />
+        <option value="Go File" />
       </list>
     </option>
   </component>
-  <component name="GOROOT" url="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.7.darwin-arm64" />
+  <component name="GOROOT" url="file://$USER_HOME$/go/go1.26.4" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -31,7 +60,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/f0ggee/Kaban.git&quot;,
-    &quot;accountId&quot;: &quot;101cb072-109c-4fdf-a45f-ef8b739af46e&quot;
+    &quot;accountId&quot;: &quot;77474cb1-4e2c-41c2-8870-8c753d5cc5a8&quot;
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
@@ -42,7 +71,7 @@
   &quot;isMigrated&quot;: true
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
+    <option name="selectedTabId" value="com.goide.dfa.ui.problems.view" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -54,97 +83,100 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;Docker.Dockerfile.executor&quot;: &quot;Run&quot;,
-    &quot;Go Build.go build Kaban.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestChecking_CheckJwt/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestChecking_CheckJwt/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestChecking_CheckJwt/Test_3 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.Test_funcName in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/pasabaranov/GolandProjects/Kaban&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "Docker.Dockerfile.executor": "Run",
+    "Go Build.go build Kaban.executor": "Run",
+    "Go Build.go build scratch.go (1).executor": "Run",
+    "Go Build.go build scratch.go (2).executor": "Run",
+    "Go Build.go build scratch.go (3).executor": "Run",
+    "Go Build.go build scratch.go (4).executor": "Debug",
+    "Go Build.go build scratch.go (5).executor": "Run",
+    "Go Build.go build scratch.go.executor": "Run",
+    "Go Build.go build scratch_1.go.executor": "Run",
+    "Go Test.TestChecking_CheckJwt/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckJwt/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckJwt/Test_3 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor": "Run",
+    "Go Test.Test_funcName in Kaban/internal/Service/Application.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.GoLinterPluginOnboarding": "true",
+    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "git-widget-placeholder": "RefactorDeliver",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "/Users/pasabaranov/GolandProjects/Kaban",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.keymap"
+  },
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "go"
+    ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/internal/DomainLevel" />
+      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build Kaban">
-    <configuration name="go build Kaban" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Build.go build scratch_1.go">
+    <configuration name="go build scratch_1.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
+      <kind value="FILE" />
       <package value="Kaban" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/main.go" />
+      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.go" />
       <method v="2" />
     </configuration>
-    <configuration name="TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="go build scratch.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="Kaban" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestChecking_CheckJwt\E$/^\QTest_4\E$" />
+      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch.go" />
       <method v="2" />
     </configuration>
-    <configuration name="TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="go build scratch.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/Service/Application" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="Kaban/internal/Service/Application" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="Kaban" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestHandlerPackAuthTokens_AuthTest\E$" />
+      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch.go" />
       <method v="2" />
     </configuration>
-    <configuration name="Test_funcName in Kaban/internal/Service/Application" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="go build scratch.go (5)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/Service/Application" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="Kaban/internal/Service/Application" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="Kaban" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTest_funcName\E$" />
+      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch.go" />
       <method v="2" />
     </configuration>
-    <configuration name="Dockerfile" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="Docker">
-      <deployment type="dockerfile">
-        <settings>
-          <option name="containerName" value="" />
-          <option name="sourceFilePath" value="Dockerfile" />
-        </settings>
-      </deployment>
+    <configuration name="go build scratch.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="Kaban" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch.go" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
@@ -155,11 +187,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build Kaban" />
-        <item itemvalue="Docker.Dockerfile" />
-        <item itemvalue="Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application" />
-        <item itemvalue="Go Test.Test_funcName in Kaban/internal/Service/Application" />
-        <item itemvalue="Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens" />
+        <item itemvalue="Go Build.go build scratch_1.go" />
+        <item itemvalue="Go Build.go build scratch.go (2)" />
+        <item itemvalue="Go Build.go build scratch.go (1)" />
+        <item itemvalue="Go Build.go build scratch.go" />
+        <item itemvalue="Go Build.go build scratch.go (5)" />
       </list>
     </recent_temporary>
   </component>
@@ -186,7 +218,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="SV" />
-    <option name="LAST_COMMIT_MESSAGE" value="SV" />
+    <MESSAGE value="WP 27.06.26&#10;&#10;The register controller was refactored. Some methods were added in Dto register data" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 27.06.26&#10;&#10;The register controller was refactored. Some methods were added in Dto register data" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

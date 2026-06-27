@@ -2,8 +2,8 @@ package main
 
 import (
 	"Kaban/cmds"
-	Controller2 "Kaban/internal/Controller"
-	"Kaban/internal/Controller/Middlewares"
+	Controller2 "Kaban/internal/Deliver"
+	"Kaban/internal/Deliver/Middlewares"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ControllingTokens"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage/Creating"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens"

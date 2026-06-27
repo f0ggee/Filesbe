@@ -1,6 +1,7 @@
-package Controller
+package Deliver
 
 import (
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Service/Application"
 	"encoding/json"
 	"fmt"
@@ -25,9 +26,9 @@ func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Applicati
 		Url             string   `json:"Url"`
 	}
 	if r.Method != http.MethodGet {
-		w.Header().Set("Content-Type", Json)
+		w.Header().Set("Content-Type", DomainLevel.Json)
 		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: Break, Error: []string{"Method don't allow"}, Url: InfoPageUrl}); err != nil {
+		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: DomainLevel.Break, Error: []string{"Method don't allow"}, Url: DomainLevel.InfoPageUrl}); err != nil {
 			slog.Error("Error parse json in answer", "error", err)
 			return
 		}
@@ -40,15 +41,15 @@ func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Applicati
 
 	switch {
 	case strings.Contains(fmt.Sprint(err), "file was used"):
-		slog.Error("Error sesseion", "error", err, "ID", r.Context().Value(RequestId))
+		slog.Error("Error session", "error", err, "ID", r.Context().Value(DomainLevel.RequestId))
 		//w.WriteHeader(http.StatusBadRequest)
-		http.Redirect(w, r, InfoPageUrl, http.StatusFound)
+		http.Redirect(w, r, DomainLevel.InfoPageUrl, http.StatusFound)
 		return
 
 	}
 	if err != nil {
 		ControllerErrorLogger.ErrorContext(r.Context(), "Error downloading file", "Error", err)
-		http.Redirect(w, r, InfoPageUrl, http.StatusFound)
+		http.Redirect(w, r, DomainLevel.InfoPageUrl, http.StatusFound)
 		return
 	}
 	return

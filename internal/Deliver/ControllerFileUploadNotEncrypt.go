@@ -1,6 +1,8 @@
-package Controller
+package Deliver
 
 import (
+	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/DeliverHandlers/SessionHandle"
 	"Kaban/internal/Service/Application"
 	"encoding/json"
 	"errors"
@@ -18,47 +20,33 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 	}
 	type Answer struct {
 		StatusOperation string `json:"StatusOperation"`
-		UrlToRedict     string `json:"UrlToRedict"`
+		UrlToRedict     string `json:"UrlRedict"`
 		Error           string `json:"Error"`
 	}
 
-	err := CookieGet2(w, r, s)
+	returnedData := SessionHandle.SessionControl.GetSessionData(DomainLevel.IncomingSessionData{Writer: w, Request: r})
+	if returnedData == nil || returnedData.Error != nil {
+		//TODO add handling the error
+	}
+	Jwts, err := s.Auth(returnedData.Rft, returnedData.Jwt)
 	if err != nil {
-		w.Header().Set("Content-Type", Json)
-		w.WriteHeader(http.StatusUnauthorized)
-		if err = json.NewEncoder(w).Encode(Answer{
-			StatusOperation: NotStart,
-			UrlToRedict:     "/login",
-		}); err != nil {
-			slog.Error("Err in json encode", "error", err)
-			return
-		}
+		//TODO add handling the error
 		return
 	}
 
 	filName, err := s.FileUploader(r)
 	if err != nil {
-
-		w.Header().Set("Content-Type", Json)
-		w.WriteHeader(http.StatusBadRequest)
-		if err = json.NewEncoder(w).Encode(Answer{
-			StatusOperation: Break,
-			Error:           err.Error(),
-		}); err != nil {
-			slog.Error("Err in json encode", "error", err)
-			return
-		}
-		return
+		///TODO add handling the error
 	}
 
 	url, err := router.Get("fileName").URL("name", filName, "bool", "false")
 	if err != nil {
 		slog.Error("Error can't treate", "Error", err)
 
-		w.Header().Set("Content-Type", Json)
+		w.Header().Set("Content-Type", DomainLevel.Json)
 		w.WriteHeader(http.StatusBadRequest)
 		if err = json.NewEncoder(w).Encode(Answer{
-			StatusOperation: Break,
+			StatusOperation: DomainLevel.Break,
 		}); err != nil {
 			slog.Error("Err in json encode", "error", err)
 			return
@@ -66,10 +54,10 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 		return
 	}
 
-	w.Header().Set("Content-Type", Json)
+	w.Header().Set("Content-Type", DomainLevel.Json)
 	w.WriteHeader(http.StatusOK)
 	if err = json.NewEncoder(w).Encode(Answer{
-		StatusOperation: Success,
+		StatusOperation: DomainLevel.Success,
 		UrlToRedict:     url.Path,
 	}); err != nil {
 		slog.Error("Err in json encode", "Error", err)
@@ -81,7 +69,7 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 func CookieGet2(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackCollect) error {
 	//store := SessionStore()
 
-	session, err := SessionStore().Get(r, TokenName)
+	session, err := SessionStore().Get(r, DomainLevel.TokenName)
 	if err != nil {
 		slog.Error("cookie don't send", "error", err)
 		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
@@ -93,9 +81,9 @@ func CookieGet2(w http.ResponseWriter, r *http.Request, s *Application.HandlerPa
 		return errors.New("Cookie time expired")
 	}
 
-	rtToken, _ := session.Values[RTCookieName].(string)
+	rtToken, _ := session.Values[DomainLevel.RTCookieName].(string)
 
-	jwts, _ := session.Values[JwtCookieName].(string)
+	jwts, _ := session.Values[DomainLevel.JwtCookieName].(string)
 	Jwts, err := s.Auth(rtToken, jwts)
 	if err != nil {
 		slog.Error("Func FileUploaderNoEncrypt", slog.Group("Token error",
@@ -103,7 +91,7 @@ func CookieGet2(w http.ResponseWriter, r *http.Request, s *Application.HandlerPa
 		return err
 	}
 	if jwts != "" {
-		session.Values[RTCookieName] = Jwts
+		session.Values[DomainLevel.RTCookieName] = Jwts
 	}
 
 	return nil

@@ -1,32 +1,17 @@
-package Controller
+package Deliver
 
 import (
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
+	"Kaban/internal/InfrastructureLayer/DeliverHandlers/SessionHandle"
 	"Kaban/internal/Service/Application"
-	"encoding/hex"
 	"encoding/json"
 	"io"
 	"log/slog"
 	"net/http"
-	"os"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gorilla/sessions"
 )
-
-//var store = sessions.NewCookieStore([]byte(os.Getenv("KEY_FOR_JWT")))
-
-func SessionStore() *sessions.CookieStore {
-
-	var store1z, err = hex.DecodeString(os.Getenv("KEY1"))
-	if err != nil {
-		slog.Error("Err decode the key", "Err", err)
-		return nil
-	}
-	Store := sessions.NewCookieStore(store1z)
-	return Store
-
-}
 
 func checkJson(r *http.Request) (*Dto.UserLoginData, error) {
 	var err error
@@ -51,27 +36,12 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Application.Hand
 
 	type AnswerLogin struct {
 		StatusOfOperation string `json:"StatusOperation"`
-		UrlToRedict       string `json:"UrlToRedict"`
+		UrlToRedict       string `json:"UrlRedict"`
 		ErrorMessage      string `json:"ErrorMessage"`
 	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Dont' allow", http.StatusUnauthorized)
 		slog.Error("Method Dont' allow", "Method", http.StatusUnauthorized)
-		return
-	}
-	Session, err := SessionStore().Get(r, TokenName)
-	if err != nil {
-
-		slog.Error("cookie don't send ")
-		w.WriteHeader(http.StatusUnauthorized)
-		if err := json.NewEncoder(w).Encode(AnswerLogin{
-			StatusOfOperation: Break,
-			UrlToRedict:       "",
-			ErrorMessage:      "User is not unauthorized",
-		}); err != nil {
-			slog.Error("Err in controller login", "Err", err)
-			w.Header().Set(ContentType, Json)
-		}
 		return
 	}
 
@@ -80,13 +50,13 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Application.Hand
 		return
 
 	}
-	err = ValiDateData(sa)
+	err = validateData(sa)
 	if err != nil {
 		per := AnswerLogin{
-			StatusOfOperation: Break,
+			StatusOfOperation: DomainLevel.Break,
 			ErrorMessage:      "Data has not been validated",
 		}
-		w.Header().Set("Content-Type", Json)
+		w.Header().Set("Content-Type", DomainLevel.Json)
 		w.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(w).Encode(&per); err != nil {
 			ControllerErrorLogger.Error("Json in Login can't treated", "Err", err)
@@ -100,9 +70,9 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Application.Hand
 	JwtToken, RefreshToken, err := realization.LoginService(*sa, r.Context())
 	if err != nil {
 		per := AnswerLogin{
-			StatusOfOperation: NotStart,
+			StatusOfOperation: DomainLevel.NotStart,
 		}
-		w.Header().Set("Content-Type", Json)
+		w.Header().Set("Content-Type", DomainLevel.Json)
 		w.WriteHeader(http.StatusBadRequest)
 		err = json.NewEncoder(w).Encode(&per)
 		if err != nil {
@@ -112,26 +82,19 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Application.Hand
 		return
 	}
 
-	Session.Values[RTCookieName] = RefreshToken
-	Session.Values[JwtCookieName] = JwtToken
-
-	Session.Options = &sessions.Options{
-		Path:     "/",
-		Secure:   true,
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
+	ReturnedData := SessionHandle.SessionControl.SetNewSession(DomainLevel.IncomingSessionData{
+		Writer:  w,
+		Request: r,
+		Jwt:     JwtToken,
+		Rt:      RefreshToken,
+	})
+	if ReturnedData == nil || ReturnedData.Error != nil {
+		//TODO add handling the error
 	}
-
-	if err := Session.Save(r, w); err != nil {
-		slog.Error("Error saving session", "Err", err)
-		return
-
-	}
-
-	w.Header().Set("Content-Type", Json)
+	w.Header().Set("Content-Type", DomainLevel.Json)
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(AnswerLogin{
-		StatusOfOperation: Success,
+		StatusOfOperation: DomainLevel.Success,
 		UrlToRedict:       "/main",
 	}); err != nil {
 		ControllerErrorLogger.ErrorContext(r.Context(), "Json in Login can't treated", "Err", err)
@@ -141,12 +104,12 @@ func Login(w http.ResponseWriter, r *http.Request, realization *Application.Hand
 
 }
 
-func ValiDateData(p *Dto.UserLoginData) error {
+func validateData(p *Dto.UserLoginData) error {
 	validate := validator.New()
 
 	err := validate.Struct(p)
 	if err != nil {
-		slog.Error("Can't validate because", "Err", err)
+		slog.Error("validate: can't validate because", "Err", err)
 		return err
 
 	}

@@ -1,6 +1,8 @@
-package Controller
+package Deliver
 
 import (
+	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/DeliverHandlers/SessionHandle"
 	"Kaban/internal/Service/Application"
 	"encoding/json"
 	"log/slog"
@@ -18,19 +20,10 @@ func GetFrom(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackC
 		StatusRedict string `json:"status_redict"`
 	}
 
-	//store := SessionStore()
-	seSession, err := SessionStore().Get(r, TokenName)
+	returnedData := SessionHandle.SessionControl.GetSessionData(DomainLevel.IncomingSessionData{Writer: w, Request: r})
+	NewJwt, err := s.Auth(returnedData.Rft, returnedData.Jwt)
 	if err != nil {
-		slog.Error("Func GetFrom: Error check", "Err", err)
-		return
-	}
-	rtToken, _ := seSession.Values[RTCookieName].(string)
-	jwts, _ := seSession.Values[JwtCookieName].(string)
-	slog.Info("Func GetFrom", "rtToken", rtToken, "jwts", jwts)
-
-	NewJwt, err := s.Auth(rtToken, jwts)
-	if err != nil {
-		w.Header().Set(ContentType, Json)
+		w.Header().Set(DomainLevel.ContentType, DomainLevel.Json)
 		w.WriteHeader(http.StatusUnauthorized)
 		if err := json.NewEncoder(w).Encode(AnswerStruct{StatusRedict: "/login"}); err != nil {
 			slog.Error("Error decode the json", "Err", err)
@@ -38,11 +31,12 @@ func GetFrom(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackC
 		}
 		return
 	}
-	if NewJwt != "" {
-		seSession.Values[JwtCookieName] = NewJwt
 
+	returnedData = SessionHandle.SessionControl.GetSessionData(DomainLevel.IncomingSessionData{Jwt: NewJwt})
+	if returnedData == nil || returnedData.Error != nil {
+		//TODO add handle the error
 	}
-	w.Header().Set(ContentType, Json)
+	w.Header().Set(DomainLevel.ContentType, DomainLevel.Json)
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(AnswerStruct{StatusRedict: "/main"}); err != nil {
 		slog.Error("Error decode the json", "Err", err)

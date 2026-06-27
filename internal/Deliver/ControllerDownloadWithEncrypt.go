@@ -1,6 +1,7 @@
-package Controller
+package Deliver
 
 import (
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Service/Application"
 	"encoding/json"
 	"log/slog"
@@ -32,7 +33,7 @@ func DownloadWithEncrypt(w http.ResponseWriter, r *http.Request, s *Application.
 	err := s.DownloadEncrypt(w, r.Context(), name)
 	if err != nil {
 
-		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: Break, Error: []string{"File was used"}, Url: InfoPageUrl}); err != nil {
+		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: DomainLevel.Break, Error: []string{"File was used"}, Url: DomainLevel.InfoPageUrl}); err != nil {
 
 			slog.Error("Error json encoder in file downloader", "Error", err.Error())
 			return

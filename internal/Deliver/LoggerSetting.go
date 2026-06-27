@@ -1,6 +1,7 @@
-package Controller
+package Deliver
 
 import (
+	"Kaban/internal/DomainLevel"
 	"context"
 	"log/slog"
 	"os"
@@ -18,7 +19,7 @@ var logger = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 
 func (l *LoggerCustom) Handle(ctx context.Context, Attr slog.Record) error {
 
-	ContextValue, ok := ctx.Value(RequestId).(int)
+	ContextValue, ok := ctx.Value(DomainLevel.RequestId).(int)
 	switch ok {
 
 	case false:

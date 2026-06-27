@@ -1,4 +1,4 @@
-package Controller
+package Deliver
 
 //func TestValiDateDataForRegister(t *testing.T) {
 //	type args struct {

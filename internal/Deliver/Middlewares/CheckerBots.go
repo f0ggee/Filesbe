@@ -1,7 +1,7 @@
 package Middlewares
 
 import (
-	"Kaban/internal/Controller"
+	"Kaban/internal/DomainLevel"
 	"encoding/json"
 	"log/slog"
 	"net/http"
@@ -13,14 +13,14 @@ func CheckBots(next http.Handler) http.Handler {
 		type Answer struct {
 			StatusOperation string `json:"StatusOperation"`
 			Error           string `json:"Error"`
-			UrlToRedict     string `json:"UrlToRedict"`
+			UrlToRedict     string `json:"UrlRedict"`
 		}
 		UserAgent := r.Header.Get("User-Agent")
-		if strings.Contains(UserAgent, Controller.Bots) {
-			w.Header().Set("Content-Type", Controller.Json)
+		if strings.Contains(UserAgent, DomainLevel.Bots) {
+			w.Header().Set("Content-Type", DomainLevel.Json)
 			w.WriteHeader(http.StatusBadRequest)
 			if err := json.NewEncoder(w).Encode(&Answer{
-				StatusOperation: Controller.Break,
+				StatusOperation: DomainLevel.Break,
 				Error:           "Request isn't correct",
 				UrlToRedict:     "",
 			}); err != nil {

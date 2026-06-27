@@ -1,6 +1,7 @@
-package Controller
+package Deliver
 
 import (
+	"Kaban/internal/DomainLevel"
 	"encoding/json"
 	"log/slog"
 	"net/http"
@@ -8,9 +9,9 @@ import (
 
 func UrlUploader(r *http.Request) (string, string) {
 	name := r.URL.Query().Get("name")
-	bols := r.URL.Query().Get("bool")
+	boolParametric := r.URL.Query().Get("bool")
 
-	return name, bols
+	return name, boolParametric
 }
 
 func BuildUrl(w http.ResponseWriter, r *http.Request) {
@@ -29,10 +30,10 @@ func BuildUrl(w http.ResponseWriter, r *http.Request) {
 	nameFile, bols := UrlUploader(r)
 	if nameFile == "" {
 		slog.Error("UrlUploader name file empty", "Host", r.Host)
-		w.Header().Set("Content-Type", Json)
+		w.Header().Set("Content-Type", DomainLevel.Json)
 		w.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(w).Encode(Answer{
-			StatusOperation: NotStart,
+			StatusOperation: DomainLevel.NotStart,
 			Url:             "nil",
 			ErrorMessage:    "Can't handle the URL",
 		}); err != nil {
@@ -42,13 +43,13 @@ func BuildUrl(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", Json)
+	w.Header().Set("Content-Type", DomainLevel.Json)
 	w.WriteHeader(http.StatusOK)
 	switch {
 	case bols == "true":
 		if err := json.NewEncoder(w).Encode(Answer{
-			StatusOperation: Success,
-			Url:             DomainName + "d2/" + nameFile,
+			StatusOperation: DomainLevel.Success,
+			Url:             DomainLevel.DomainName + "d2/" + nameFile,
 			ErrorMessage:    "",
 		}); err != nil {
 			ControllerErrorLogger.ErrorContext(r.Context(), "Can't handle the URL", slog.Group("Url parameters"),
@@ -62,18 +63,18 @@ func BuildUrl(w http.ResponseWriter, r *http.Request) {
 	case bols == "false":
 
 		if err := json.NewEncoder(w).Encode(Answer{
-			StatusOperation: Success,
-			Url:             DomainName + "d/" + nameFile,
+			StatusOperation: DomainLevel.Success,
+			Url:             DomainLevel.DomainName + "d/" + nameFile,
 			ErrorMessage:    "",
 		}); err != nil {
 			slog.ErrorContext(r.Context(), "Error collecting the url here", "Error", err)
 
 			ControllerErrorLogger.ErrorContext(r.Context(), "Can't handle the URL", slog.Group("Url parameters"),
 				slog.Any("Url parameters", r.URL.Query()), slog.String("Type of downloading", bols))
-			w.Header().Set("Content-Type", Json)
+			w.Header().Set("Content-Type", DomainLevel.Json)
 			w.WriteHeader(http.StatusBadRequest)
 			if err := json.NewEncoder(w).Encode(Answer{
-				StatusOperation: Break,
+				StatusOperation: DomainLevel.Break,
 				Url:             "nil",
 				ErrorMessage:    "The url isn't valid",
 			}); err != nil {
