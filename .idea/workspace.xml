@@ -5,39 +5,47 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 27.06.26&#10;&#10;The register controller was refactored. Some methods were added in Dto register data">
-      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/DeliverErrors.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/SessionError.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/Parsers/JsonParsers.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/Parsers/RealizationParsers.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/RegisterRepo/getIncomingData.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/RegisterRepo/lmlData.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/SessionHandle/getSessionData.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/SessionHandle/repoSession.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/SessionHandle/setNewSession.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Kaban.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Kaban.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckPostRequsts.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Deliver/Register.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Dto/JsonLogin_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Dto/JsonRegister_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/Parsers/JsonParsers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/Parsers/JsonParsers_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RegisterRepo/lmlData.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RegisterRepo/setBadClientAnswer.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RegisterRepo/setGoodClientAnswer.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/UsersCheckAuth/RealizationUsersAuth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/Consts.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/DeliverRepo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerCheckUsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerDownloadForNonEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadForNonEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerDownloadWithEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadWithEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerFileUploadNotEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadNotEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerLogin.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/ControllerUrlUploader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerUrlUploader.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/Controller_Register.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/Controller_Register.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/Controller_Register_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/Controller_Register_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/LoggerSetting.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/LoggerSetting.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/Middlewares/CheckerBots.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckerBots.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Controller/Middlewares/LoggingRequests.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/Middlewares/LoggingRequests.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerCheckUsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadForNonEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadForNonEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadWithEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadWithEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadNotEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadNotEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerLogin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/Controller_Register.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/Controller_Register_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/Middlewares/LoggingRequests.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/Middlewares/LoggingRequests.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/DeliverErrors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/DeliverErrors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/DeliverRepo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/DeliverRepo.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Dto/JsonLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/JsonLogin.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Dto/JsonRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/JsonRegister.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/Parsers/JsonParsers.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/Parsers/RealizationParsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/Parsers/RealizationParsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/RegisterRepo/getIncomingData.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/RegisterRepo/lmlData.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/SessionHandle/getSessionData.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/SessionHandle/getSessionData.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/SessionHandle/repoSession.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/SessionHandle/repoSession.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverHandlers/SessionHandle/setNewSession.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/SessionHandle/setNewSession.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExportToHTMLSettings">
+    <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/exportToHTML" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -65,6 +73,8 @@
 }</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/main.go" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/go/go1.26.4/src/runtime/panic.go" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/go/pkg/mod/github.com/go-playground/validator/v10@v10.28.0/errors.go" root0="SKIP_INSPECTION" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -87,7 +97,7 @@
   "keyToString": {
     "DefaultGoTemplateProperty": "Go File",
     "Docker.Dockerfile.executor": "Run",
-    "Go Build.go build Kaban.executor": "Run",
+    "Go Build.go build Kaban.executor": "Debug",
     "Go Build.go build scratch.go (1).executor": "Run",
     "Go Build.go build scratch.go (2).executor": "Run",
     "Go Build.go build scratch.go (3).executor": "Run",
@@ -102,7 +112,33 @@
     "Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
     "Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
     "Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor": "Run",
+    "Go Test.TestParsing_JsonParsers in Kaban/internal/InfrastructureLayer/DeliverHandlers/Parsers.executor": "Run",
+    "Go Test.TestParsing_JsonParsers/test1 in Kaban/internal/InfrastructureLayer/DeliverHandlers/Parsers.executor": "Run",
+    "Go Test.TestParsing_JsonParsers/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/Parsers.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test1 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test10 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test2 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test3 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test4 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test5 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test6 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test7 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test8 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test9 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test9#01 in Kaban/internal/Dto.executor": "Debug",
+    "Go Test.TestUserDataRegister_getEmailError/test1 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getEmailError/test2 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getEmailError/test3 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getEmailError/test4 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getNameError in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getPasswordError in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getPasswordError/test3 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getPasswordError/test4 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserLoginData_ValidateData in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserLoginData_getPasswordError in Kaban/internal/Dto.executor": "Run",
     "Go Test.Test_funcName in Kaban/internal/Service/Application.executor": "Run",
+    "Go Test.gobench Kaban/internal/Dto.executor": "Profiler#1",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.GoLinterPluginOnboarding": "true",
     "RunOnceActivity.GoLinterPluginStorageMigration": "true",
@@ -119,7 +155,8 @@
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.keymap"
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "editor.preferences.inline.completion"
   },
   "keyToStringList": {
     "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
@@ -129,54 +166,76 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/internal/DomainLevel" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/internal/DomainLevel" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build scratch_1.go">
-    <configuration name="go build scratch_1.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="GoApplicationRunConfiguration" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Go Test.TestUserLoginData_getPasswordError in Kaban/internal/Dto">
+    <configuration name="TestUserDataRegister_ValidateDate/test10 in Kaban/internal/Dto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <package value="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/Dto" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/Dto" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.go" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestUserDataRegister_ValidateDate\E$/^\Qtest10\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="go build scratch.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="TestUserDataRegister_getEmailError/test4 in Kaban/internal/Dto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <package value="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/Dto" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/Dto" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch.go" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestUserDataRegister_getEmailError\E$/^\Qtest4\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="go build scratch.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="TestUserDataRegister_getNameError in Kaban/internal/Dto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <package value="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/Dto" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/Dto" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch.go" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestUserDataRegister_getNameError\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="go build scratch.go (5)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="TestUserLoginData_ValidateData in Kaban/internal/Dto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <package value="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/Dto" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/Dto" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch.go" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestUserLoginData_ValidateData\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="go build scratch.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="TestUserLoginData_getPasswordError in Kaban/internal/Dto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <package value="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/Dto" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/Dto" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch.go" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestUserLoginData_getPasswordError\E$" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
@@ -187,11 +246,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build scratch_1.go" />
-        <item itemvalue="Go Build.go build scratch.go (2)" />
-        <item itemvalue="Go Build.go build scratch.go (1)" />
-        <item itemvalue="Go Build.go build scratch.go" />
-        <item itemvalue="Go Build.go build scratch.go (5)" />
+        <item itemvalue="Go Test.TestUserLoginData_getPasswordError in Kaban/internal/Dto" />
+        <item itemvalue="Go Test.TestUserLoginData_ValidateData in Kaban/internal/Dto" />
+        <item itemvalue="Go Test.TestUserDataRegister_ValidateDate/test10 in Kaban/internal/Dto" />
+        <item itemvalue="Go Test.TestUserDataRegister_getNameError in Kaban/internal/Dto" />
+        <item itemvalue="Go Test.TestUserDataRegister_getEmailError/test4 in Kaban/internal/Dto" />
       </list>
     </recent_temporary>
   </component>
@@ -267,7 +326,55 @@
           <line>118</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/main.go</url>
+          <line>62</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/Parsers/JsonParsers_test.go</url>
+          <line>37</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/Parsers/JsonParsers_test.go</url>
+          <line>41</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
+          <line>24</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
+          <line>26</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
+          <line>23</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
+          <line>22</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
+          <line>25</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
+          <line>28</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Kaban$TestUserDataRegister_ValidateDate_in_Kaban_internal_Dto.out" NAME="TestUserDataRegister_ValidateDate in Kaban/internal/Dto Coverage Results" MODIFIED="1782797612206" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

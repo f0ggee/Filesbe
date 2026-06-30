@@ -6,7 +6,7 @@ internal/Service/Диаграмма без названия.drawio.png
 .env
 
 .gitignore
-pkg/robots.txt
+robots.txt
 pkg/qodana.yaml
 pkg/Lae.json
 internal/InfrastructureLayer/RedisInteration/ConnectToRids.go

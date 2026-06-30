@@ -10,13 +10,13 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-func (s *SessionConnect) SetNewSession(data DomainLevel.IncomingSessionData) *DomainLevel.ReturnedSessionKey {
+func (s *SessionConnect) SetNewSession(data DomainLevel.IncomingSessionData) DomainLevel.ReturnedSessionKey {
 	connect, err := s.getUserConnect(data.Request)
 	if err != nil {
-		return &DomainLevel.ReturnedSessionKey{Error: errors.New(DomainLevel.ErrorGetCookie)}
+		return DomainLevel.ReturnedSessionKey{Error: errors.New(DomainLevel.ErrorGetCookie)}
 	}
 	if connect.Options.MaxAge == 0 {
-		return &DomainLevel.ReturnedSessionKey{Error: errors.New(DomainLevel.ErrorAuthExpired)}
+		return DomainLevel.ReturnedSessionKey{Error: errors.New(DomainLevel.ErrorAuthExpired)}
 	}
 
 	if data.Jwt != "" {
@@ -37,9 +37,13 @@ func (s *SessionConnect) SetNewSession(data DomainLevel.IncomingSessionData) *Do
 	s.mut.Lock()
 	if err := connect.Save(data.Request, data.Writer); err != nil {
 		slog.Error("Error in save cookie", "Err", err)
-		return &DomainLevel.ReturnedSessionKey{Error: errors.New(DomainLevel.ErrorSaveCookie)}
+		return DomainLevel.ReturnedSessionKey{Error: errors.New(DomainLevel.ErrorSaveCookie)}
 
 	}
 	s.mut.Unlock()
-	return nil
+	return DomainLevel.ReturnedSessionKey{
+		Rft:   "",
+		Jwt:   "",
+		Error: nil,
+	}
 }

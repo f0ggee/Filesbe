@@ -2,7 +2,7 @@ package Deliver
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/DeliverHandlers/SessionHandle"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/SessionHandle"
 	"Kaban/internal/Service/Application"
 	"encoding/json"
 	"errors"
@@ -27,6 +27,8 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 	returnedData := SessionHandle.SessionControl.GetSessionData(DomainLevel.IncomingSessionData{Writer: w, Request: r})
 	if returnedData == nil || returnedData.Error != nil {
 		//TODO add handling the error
+
+		return
 	}
 	Jwts, err := s.Auth(returnedData.Rft, returnedData.Jwt)
 	if err != nil {
@@ -64,35 +66,4 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 		return
 	}
 
-}
-
-func CookieGet2(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackCollect) error {
-	//store := SessionStore()
-
-	session, err := SessionStore().Get(r, DomainLevel.TokenName)
-	if err != nil {
-		slog.Error("cookie don't send", "error", err)
-		http.Error(w, "cookie dont sen", http.StatusUnauthorized)
-		return err
-	}
-
-	if session.Options.MaxAge == 0 {
-		slog.Error("Cookie time expired")
-		return errors.New("Cookie time expired")
-	}
-
-	rtToken, _ := session.Values[DomainLevel.RTCookieName].(string)
-
-	jwts, _ := session.Values[DomainLevel.JwtCookieName].(string)
-	Jwts, err := s.Auth(rtToken, jwts)
-	if err != nil {
-		slog.Error("Func FileUploaderNoEncrypt", slog.Group("Token error",
-			slog.Any("Error", err.Error())))
-		return err
-	}
-	if jwts != "" {
-		session.Values[DomainLevel.RTCookieName] = Jwts
-	}
-
-	return nil
 }

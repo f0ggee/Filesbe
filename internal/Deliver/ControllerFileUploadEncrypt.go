@@ -2,10 +2,9 @@ package Deliver
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/DeliverHandlers/SessionHandle"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/SessionHandle"
 	"Kaban/internal/Service/Application"
 	"encoding/json"
-	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -20,17 +19,7 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 		UrlToRedict     string `json:"UrlRedict"`
 	}
 	if r.Method != http.MethodPost {
-		slog.Error("Err in controller uploader")
-		w.Header().Set(DomainLevel.ContentType, DomainLevel.Json)
-		err := json.NewEncoder(w).Encode(Answer{
-			StatusOperation: DomainLevel.NotStart,
-			Error:           "method don't allow",
-
-			UrlToRedict: "nil",
-		})
-		if err != nil {
-			return
-		}
+		//TODO add handling the error
 
 		return
 	}
@@ -44,19 +33,12 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 	}
 	filName, err := s.UploadEncrypt(r)
 	if err != nil {
-		w.Header().Set(DomainLevel.ContentType, DomainLevel.Json)
-		w.WriteHeader(400)
-		if err := json.NewEncoder(w).Encode(Answer{
-			StatusOperation: DomainLevel.NotStart,
-			Error:           fmt.Sprint(err),
-		}); err != nil {
-			slog.Info("Error in encoding json ", "Error", err)
-			return
-		}
+		//TODO add handling the error
 
 		return
 	}
 
+	//TODO need to remove lines which are below
 	url, err := router.Get("fileName").URL("name", filName, "bool", "true")
 	if err != nil {
 		slog.Error("Error can't treat", "error", err)

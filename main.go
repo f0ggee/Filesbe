@@ -172,6 +172,8 @@ func main() {
 	router.Use(Middlewares.Logging)
 	newRouter := router.PathPrefix("/").Subrouter()
 	newRouter.Use(Middlewares.CheckBots)
+	checkingPost := newRouter.PathPrefix("/").Subrouter()
+	checkingPost.Use(Middlewares.CheckPostRequest)
 	StaticFiles := router.PathPrefix("/Fronted").Subrouter()
 
 	router.HandleFunc("/aboutProject", func(writer http.ResponseWriter, request *http.Request) {
@@ -220,7 +222,7 @@ func main() {
 		http.ServeFile(writer, request, "internal/Service/Fronted/InformationPage.html")
 
 	}).Name("NameFile")
-	router.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+	checkingPost.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "internal/Service/Fronted/Register.html")
 	})
 	router.HandleFunc("/main", func(writer http.ResponseWriter, request *http.Request) {
@@ -233,7 +235,7 @@ func main() {
 
 	})
 
-	router.HandleFunc("/protect", func(writer http.ResponseWriter, request *http.Request) {
+	checkingPost.HandleFunc("/protect", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "internal/Service/Fronted/Protecion.html")
 
 	})
@@ -243,11 +245,11 @@ func main() {
 
 	}).Name("fileName")
 
-	router.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
+	checkingPost.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
 		Controller2.Login(writer, request, Sa)
 
 	}).Methods("POST")
-	router.HandleFunc("/register/api", func(writer http.ResponseWriter, request *http.Request) {
+	checkingPost.HandleFunc("/register/api", func(writer http.ResponseWriter, request *http.Request) {
 		Controller2.Register(writer, request, Sa)
 
 	}).Methods("POST")

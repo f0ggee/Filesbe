@@ -7,14 +7,24 @@ const (
 	PasswordEmpty     = "the password field is empty"
 )
 const NonIdentifyError = "the strange error"
-const ErrorParseInfo = "happened an error during parsing data"
+const ErrorParseInfo = "happened an error during getting data"
 
 // The email's errors
 const (
 	NotCorrectEmail = "the email isn't correct"
 	EmailEmpty      = "the email's filed is empty"
+	EmailMaxSize    = "the email's size is bigger than the default size"
 )
 const (
 	NameMaxSize = "the name size is bigger than the default size"
-	NameMinSize = "the name size is smaller then the default sise"
+	NameMinSize = "the name size is smaller then the default size"
+)
+
+// Operations' errors
+const (
+	Break    = "break"
+	NotStart = "not_start"
+)
+const (
+	ErrorUSerNotAuthed = "the user isn't authed"
 )

@@ -25,22 +25,13 @@ func DownloadWithEncrypt(w http.ResponseWriter, r *http.Request, s *Application.
 		Url             string   `json:"Url"`
 	}
 	if r.Method != http.MethodGet {
-		http.Error(w, "Status method don't allow", http.StatusBadRequest)
-		return
+		//TODO add handling the error
 	}
 	name := getNameFromUrl(r)
 
 	err := s.DownloadEncrypt(w, r.Context(), name)
-	if err != nil {
 
-		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: DomainLevel.Break, Error: []string{"File was used"}, Url: DomainLevel.InfoPageUrl}); err != nil {
-
-			slog.Error("Error json encoder in file downloader", "Error", err.Error())
-			return
-
-		}
-		return
-	}
+	//TODO add handling the error
 
 	return
 

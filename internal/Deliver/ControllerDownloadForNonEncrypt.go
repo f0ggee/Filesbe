@@ -3,22 +3,12 @@ package Deliver
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Service/Application"
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
-
-	"github.com/gorilla/mux"
 )
 
-func getNameFromUrl2(r *http.Request) string {
-	vars := mux.Vars(r)
-
-	name := vars["name"]
-	return name
-
-}
 func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackCollect) {
 	type JsonAnswer struct {
 		StatusOperation string   `json:"StatusOperation"`
@@ -26,32 +16,15 @@ func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Applicati
 		Url             string   `json:"Url"`
 	}
 	if r.Method != http.MethodGet {
-		w.Header().Set("Content-Type", DomainLevel.Json)
-		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode(JsonAnswer{StatusOperation: DomainLevel.Break, Error: []string{"Method don't allow"}, Url: DomainLevel.InfoPageUrl}); err != nil {
-			slog.Error("Error parse json in answer", "error", err)
-			return
-		}
-		return
+		//TODO add handling the error
 	}
 
-	name := getNameFromUrl2(r)
+	//TODO remove the line below
+	name := getNameFromUrl(r)
 
 	err, _ := s.DownloadWithNonEncrypt(w, name, r.Context())
 
-	switch {
-	case strings.Contains(fmt.Sprint(err), "file was used"):
-		slog.Error("Error session", "error", err, "ID", r.Context().Value(DomainLevel.RequestId))
-		//w.WriteHeader(http.StatusBadRequest)
-		http.Redirect(w, r, DomainLevel.InfoPageUrl, http.StatusFound)
-		return
-
-	}
-	if err != nil {
-		ControllerErrorLogger.ErrorContext(r.Context(), "Error downloading file", "Error", err)
-		http.Redirect(w, r, DomainLevel.InfoPageUrl, http.StatusFound)
-		return
-	}
+	//TODO add handling the error
 	return
 
 }

@@ -2,7 +2,7 @@ package Deliver
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/DeliverHandlers/SessionHandle"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/SessionHandle"
 	"Kaban/internal/Service/Application"
 	"encoding/json"
 	"log/slog"
