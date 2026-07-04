@@ -190,7 +190,7 @@
         <button id="chooseBtn" class="btn-primary" type="button" data-i18n="chooseBtn">Choose file</button>
         <button id="uploadBtn" class="btn-outline" type="button" disabled data-i18n="uploadBtn">Upload</button>
       </div>
-      <div style="color:#dc2626; font-size:13px; margin-top:10px;"><span data-i18n="maxSize">Max size</span>: 1 GB</div>
+      <div style="color:#dc2626; font-size:13px; margin-top:10px;"><span data-i18n="maxSize">Max size</span>: 500 MB</div>
       <input id="fileInput" type="file" multiple hidden />
     </div>
 
@@ -351,7 +351,6 @@
 
   chooseBtn.onclick = () => fileInput.click();
   fileInput.onchange = e => {
-    // Добавляем новые файлы к уже существующим (или заменяем - по твоему выбору)
     // Сейчас: замена списка (стандартное поведение input type file)
     selectedFiles = Array.from(e.target.files);
     renderList();
@@ -418,8 +417,6 @@
   });
   dropzone.addEventListener('drop', e => {
     e.preventDefault();
-    // При Drag & Drop обычно заменяем список или добавляем?
-    // Сделаю замену для консистентности
     selectedFiles = Array.from(e.dataTransfer.files);
     renderList();
   });

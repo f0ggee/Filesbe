@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 30.06.26&#10;I added some updates in my code(Checking register data and login data). Also, I finished refactoring Register controller. Also, it was started changing the check user function">
+      <change afterPath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckGetRequests.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Deliver/deliveryUrlUploader.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/CryptoErrors.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/DatabaseErrors.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/FileInfoErrors.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/PrivatesKeys.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/RedisErrors.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/S3Errors.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/AuthChecking/RepoAuthChecking.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/newAuthCheck/RealizationRepo.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoDownloadEncryptRepo/DownloadEncryptRepo.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt/DownloadNoEncryptRepo.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoLoginRealizations/LoginRepo.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoParsers/RealizationParsers_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoRegisterRepository/registerRepo.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoUsersCheckAuth/repoUsersCheck.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoUsersCheckAuth/setGoodAnswerCheckUser.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderEncryptRepo/RepoUploaderEncrypt.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderNoEncryptRepo/repoUploaderNoEncrypt.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepourlBuilder/repoUrlBuilder.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/deliverCheckUsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadForNonEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadForNonEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadWithEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadWithEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadNotEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadNotEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerLogin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerUrlUploader.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/Register.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/deliverRegister.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/AuthTokens.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/AuthTokens.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/Crypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/Crypto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/DataManage.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/DataManage.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/DatabaseManage.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/DatabaseManage.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/DeliverErrors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/DeliverErrors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/DeliverRepo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/DeliverRepo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/S3Interation.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/S3Interation.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/SessionError.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/SessionError.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/GrpcIncomingPacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/GrpcIncomingPacket.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/JwtType.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/JwtType.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/Creating/generatingJwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/Creating/generatingJwt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/Creating/iml.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/Creating/iml.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens/checkingJwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens/checkingJwt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens/checkingJwt_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens/checkingJwt_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens/checkingRt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens/checkingRt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens/iml.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens/RepoTokenValidating.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Checking/ValidaterSign.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Checking/ValidaterSign.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Checking/imlCryptoChecking.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Checking/imlCryptoChecking.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Decription/decriptingInfo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Decription/decriptingInfo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Generating/GeneratingBcryptHash.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Generating/GeneratingBcryptHash.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Reading/ReadLoginData.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Reading/ReadLoginData.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Validator/CheckExistUser.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Validator/CheckExistUser.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Writinig/CreateUser.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Writinig/CreateUser.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/Parsers/JsonParsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoParsers/JsonParsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/Parsers/JsonParsers_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoParsers/JsonParsers_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/Parsers/RealizationParsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoParsers/RealizationParsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RegisterRepo/lmlData.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RegisterRepo/setBadClientAnswer.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoRegisterRepository/setBadClientAnswer.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RegisterRepo/setGoodClientAnswer.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoRegisterRepository/setGoodClientAnswer.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/SessionHandle/getSessionData.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle/getSessionData.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/SessionHandle/repoSession.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle/repoUserSessions.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/SessionHandle/setNewSession.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle/setNewSession.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/UsersCheckAuth/RealizationUsersAuth.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoUsersCheckAuth/setBadAnswerCheckUser.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests/GettingNewKey.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests/GettingNewKey.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/KeysManager/GetKey.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/KeysManager/GeterOldKey.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/KeysManager/IMLKeysManager.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/KeysManager/UpdaterKey.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/KeysManager/UpdatingOldKey.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/DeletingRedis/deleteFileInfo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/DeletingRedis/deleteFileInfo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/ReadingRedis/getFullFileInfo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/ReadingRedis/getFullFileInfo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Interation/DeleterS3/deleteFile.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Interation/DeleterS3/deleteFile.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Interation/S3Downloader/DownloadFile.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Interation/S3Downloader/DownloadFile.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Interation/S3Downloader/LmlS3Downloader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Interation/S3Downloader/LmlS3Downloader.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/AuthServer.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/AuthServer_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceConfigure.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceConfigure.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceLogin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceRegister.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceSwapKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceSwapKeys.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceSwapKeysFirst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceSwapKeysFirst.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/collectorPack.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/collectorPack.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/Context.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/validator/checkFileSize.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Диаграмма без названия.drawio.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExportToHTMLSettings">
+    <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/exportToHTML" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Dockerfile" />
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" url="file://$USER_HOME$/go/go1.26.4" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;f0ggee&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/f0ggee/Kaban.git&quot;,
+    &quot;accountId&quot;: &quot;f153002c-8081-47b9-ace3-5a9f1676ed26&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/main.go" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/go/go1.26.4/src/io/io.go" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/go/go1.26.4/src/runtime/panic.go" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/go/pkg/mod/github.com/go-playground/validator/v10@v10.28.0/errors.go" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="com.goide.dfa.ui.problems.view" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="3Cr2EPhlrz79qWolrskU6BYpZgB" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "Docker.Dockerfile.executor": "Run",
+    "Go Build.go build Kaban.executor": "Debug",
+    "Go Build.go build scratch.go (1).executor": "Run",
+    "Go Build.go build scratch.go (2).executor": "Run",
+    "Go Build.go build scratch.go (3).executor": "Run",
+    "Go Build.go build scratch.go (4).executor": "Debug",
+    "Go Build.go build scratch.go (5).executor": "Run",
+    "Go Build.go build scratch.go.executor": "Run",
+    "Go Build.go build scratch_1.go.executor": "Run",
+    "Go Test.TestChecking_CheckJwt/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckJwt/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckJwt/Test_3 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
+    "Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor": "Run",
+    "Go Test.TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers.executor": "Run",
+    "Go Test.TestParsing_JsonParseNotThread/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers.executor": "Run",
+    "Go Test.TestParsing_JsonParsers in Kaban/internal/InfrastructureLayer/DeliverHandlers/Parsers.executor": "Run",
+    "Go Test.TestParsing_JsonParsers/test1 in Kaban/internal/InfrastructureLayer/DeliverHandlers/Parsers.executor": "Run",
+    "Go Test.TestParsing_JsonParsers/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/Parsers.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test1 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test10 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test2 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test3 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test4 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test5 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test6 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test7 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test8 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test9 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_ValidateDate/test9#01 in Kaban/internal/Dto.executor": "Debug",
+    "Go Test.TestUserDataRegister_getEmailError/test1 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getEmailError/test2 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getEmailError/test3 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getEmailError/test4 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getNameError in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getPasswordError in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getPasswordError/test3 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserDataRegister_getPasswordError/test4 in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserLoginData_ValidateData in Kaban/internal/Dto.executor": "Run",
+    "Go Test.TestUserLoginData_getPasswordError in Kaban/internal/Dto.executor": "Run",
+    "Go Test.Test_funcName in Kaban/internal/Service/Application.executor": "Run",
+    "Go Test.gobench Kaban/internal/Dto.executor": "Profiler#1",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.GoLinterPluginOnboarding": "true",
+    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "git-widget-placeholder": "RefactorDeliver",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "/Users/pasabaranov/GolandProjects/Kaban",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "editor.preferences.inline.completion"
+  },
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "go"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$APPLICATION_CONFIG_DIR$/scratches" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/internal/DomainLevel" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="GoApplicationRunConfiguration" />
+      </set>
+    </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="GoApplicationRunConfiguration">
+          <value>
+            <map>
+              <entry key="go build scratch.go" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="RunManager" selected="Go Test.TestParsing_JsonParseNotThread/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers">
+    <configuration name="go build scratch.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="Kaban" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoParsers" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestParsing_JsonParseNotThread\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestParsing_JsonParseNotThread/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoParsers" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestParsing_JsonParseNotThread\E$/^\Qtest1\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestUserLoginData_ValidateData in Kaban/internal/Dto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/Dto" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/Dto" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestUserLoginData_ValidateData\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestUserLoginData_getPasswordError in Kaban/internal/Dto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/Dto" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/Dto" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestUserLoginData_getPasswordError\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Test.TestParsing_JsonParseNotThread/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers" />
+        <item itemvalue="Go Test.TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers" />
+        <item itemvalue="Go Build.go build scratch.go" />
+        <item itemvalue="Go Test.TestUserLoginData_getPasswordError in Kaban/internal/Dto" />
+        <item itemvalue="Go Test.TestUserLoginData_ValidateData in Kaban/internal/Dto" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-gosdk-f466f9b0953e-61a6b8fd16fd-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-252.28539.22" />
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-GO-252.28539.22" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="" />
+      <created>1777129255508</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1777129255508</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="SV" />
+    <MESSAGE value="WP 27.06.26&#10;&#10;The register controller was refactored. Some methods were added in Dto register data" />
+    <MESSAGE value="WP 30.06.26&#10;I added some updates in my code(Checking register data and login data). Also, I finished refactoring Register controller. Also, it was started changing the check user function" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 30.06.26&#10;I added some updates in my code(Checking register data and login data). Also, I finished refactoring Register controller. Also, it was started changing the check user function" />
+  </component>
+  <component name="VgoProject">
+    <settings-migrated>true</settings-migrated>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>113</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>114</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>115</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>117</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>120</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>116</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>119</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>118</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/main.go</url>
+          <line>61</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoParsers/JsonParsers_test.go</url>
+          <line>37</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoParsers/JsonParsers_test.go</url>
+          <line>41</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
+          <line>24</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
+          <line>26</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
+          <line>23</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
+          <line>22</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
+          <line>25</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
+          <line>28</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/DomainLevel/Crypto.go</url>
+          <line>21</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Kaban$TestUserDataRegister_ValidateDate_in_Kaban_internal_Dto.out" NAME="TestUserDataRegister_ValidateDate in Kaban/internal/Dto Coverage Results" MODIFIED="1782797612206" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+</project>

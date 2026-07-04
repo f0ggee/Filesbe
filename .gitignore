@@ -1,6 +1,5 @@
-notes.txt
+pkg/notes.txt
 internal/Service/Диаграмма без названия.drawio.png
-cmds/Dockerfile
 
 
 
@@ -8,7 +7,7 @@ cmds/Dockerfile
 
 .gitignore
 robots.txt
-qodana.yaml
-Lae.json
+pkg/qodana.yaml
+pkg/Lae.json
 internal/InfrastructureLayer/RedisInteration/ConnectToRids.go
 internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go

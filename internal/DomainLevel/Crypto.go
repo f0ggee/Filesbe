@@ -13,8 +13,13 @@ type Decryption interface {
 	SayHello(string) string
 }
 
+type CheckSignKeyIncomingData struct {
+	Sign            []byte
+	Hash            []byte
+	MasterPublicKey []byte
+}
 type CryptoValidating interface {
-	CheckSignKey([]byte, []byte, []byte) error
+	CheckSignKey(CheckSignKeyIncomingData) error
 	//CheckSignatureGrpc([]byte, []byte, []byte) error
 	PasswordVerify([]byte, []byte) error
 }
@@ -26,7 +31,7 @@ type CryptoKey interface {
 type CryptoGenerating interface {
 	GenerateShortName() string
 	GenerateSignature(message []byte, key []byte) ([]byte, error)
-	GenerateHashFromPassword([]byte) ([]byte, error)
+	GenerateHash([]byte) ([]byte, error)
 }
 type Encryption interface {
 	EncryptAes([]byte, []byte) ([]byte, error)

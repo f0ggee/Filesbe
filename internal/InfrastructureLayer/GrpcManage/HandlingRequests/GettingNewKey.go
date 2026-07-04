@@ -2,8 +2,8 @@ package HandlingRequests
 
 import (
 	"Kaban/internal/Dto"
+	"Kaban/internal/InfrastructureLayer/Crypto/Checking"
 	"Kaban/internal/InfrastructureLayer/Crypto/Decription"
-	"Kaban/internal/InfrastructureLayer/Crypto/checking"
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
@@ -17,7 +17,7 @@ import (
 func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration, error) {
 
 	Id := rand.Int()
-	slog.Info("Start accepting the new key", slog.Int("ID", Id))
+	slog.Info("Func CheckingGettingNewKey: Start accepting the new key", slog.Int("ID", Id))
 	PacketLook := Dto.GrpcOutComingPacketForSending{
 		AesKeyData: nil,
 		CipherData: nil,
@@ -39,8 +39,7 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 		return 0, errors.New("NewRsaKey error")
 	}
 	defer PacketData.Destroy()
-
-	PacketInfo := Dto.GrpcIncomingPacketDetails{
+	PacketInfo := &Dto.GrpcIncomingPacketDetails{
 		Sign:    nil,
 		RsaKey:  nil,
 		T1:      0,
@@ -51,7 +50,6 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 		slog.Error("Error while unmarshalling PacketInfo", "Error", err.Error())
 		return 0, err
 	}
-
 	err = h.ValidationPacket.CheckTime(PacketInfo.TimeNow)
 	if err != nil {
 		return 0, err
@@ -66,28 +64,29 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 
 	Hash.Write(NewSavingRsa.Bytes())
 
-	err = h.CryptoValidate.CheckSignKey(PacketInfo.Sign, Hash.Sum([]byte(nil)), h.Keys.GetMasterKey())
+	err = h.CryptoValidate.CheckSignKey()
 	if err != nil {
 		return 0, err
 	}
-
 	h.Keys.UpdateKey(NewSavingRsa)
 	h.Keys.UpdateOldKey()
 
-	slog.Info("Finish accepting the new key", slog.Int("Id", Id))
+	slog.Info("Finish accepting the new key", slog.Group("Data",
+		slog.Int("Id", Id),
+		slog.Duration("Time for next swapping", PacketInfo.T1)))
 
 	return PacketInfo.T1, nil
 }
 
-func TestSign(h checking.Checking, Data []byte, Hash []byte, Key []byte) error {
-	err := h.CheckSignKey(Data, Hash, Key)
+func CheckSingTest(h Checking.Validating, Databyte, Hash, Key []byte) error {
+
+	err := h.CheckSignKey()
 	if err != nil {
 		return err
 	}
 	return nil
 }
-
-func Ee2(sa *Decription.DecryptionData, key, data []byte) error {
+func DecryptAesKeyTest(sa *Decription.DecryptionData, key, data []byte) error {
 
 	_, err := sa.DecryptAesKey(key, data)
 	if err != nil {

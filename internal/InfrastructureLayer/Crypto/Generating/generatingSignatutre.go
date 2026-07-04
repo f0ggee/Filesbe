@@ -10,7 +10,7 @@ import (
 )
 
 func (g Generating) GenerateSignature(message []byte, key []byte) ([]byte, error) {
-	slog.Info("Starting generating the signature")
+	slog.Info("Func GenerateSignature: Starting generating the signature")
 	KeyPrivate, err := x509.ParsePKCS1PrivateKey(key)
 	if err != nil {
 		slog.Error("Error while converting key to private key", "err", err)

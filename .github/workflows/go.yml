@@ -1,0 +1,35 @@
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking a hash
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24.4'
+      - name: Print a path
+        shell: bash
+        run:
+          echo $PATH
+
+      - name: Download depends
+        run: |
+          go mod download 
+          go mod tidy
+      - name: Build
+        run: | 
+          ls
+          go build -o ./app
+      - name: Test
+        run: | 
+          
+        
+          go test -v -race ./...

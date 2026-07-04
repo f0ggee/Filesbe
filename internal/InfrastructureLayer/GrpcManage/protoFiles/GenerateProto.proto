@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package test1;
+
+option go_package = "github.com/f0ggee/Filesbe";
+
+
+service SendingGetting{
+  rpc GetNewKey(InputSendData) returns(OutputSendData);
+}
+
+message InputSendData{
+  bytes SendData = 1;
+}
+
+message OutputSendData{
+  bytes BytesOutput = 1;
+  bytes error = 2;
+}

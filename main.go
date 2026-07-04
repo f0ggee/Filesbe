@@ -2,28 +2,19 @@ package main
 
 import (
 	"Kaban/cmds"
-	Controller2 "Kaban/internal/Controller"
-	"Kaban/internal/Controller/Middlewares"
-	"Kaban/internal/InfrastructureLayer/DatabaseControl"
-	"Kaban/internal/InfrastructureLayer/KeysManager"
-	"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
-	"Kaban/internal/InfrastructureLayer/s3Interation"
-	"Kaban/internal/InfrastructureLayer/s3Interation/S3Downloader"
-	"Kaban/internal/InfrastructureLayer/s3Interation/S3Uploader"
-	"Kaban/internal/Service/Helpers"
-	"fmt"
-	"sync"
-
+	Controller2 "Kaban/internal/Deliver"
+	"Kaban/internal/Deliver/Middlewares"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ControllingTokens"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage/Generating"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage/Creating"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens"
-	CryptoChecking "Kaban/internal/InfrastructureLayer/Crypto/Checking"
+	"Kaban/internal/InfrastructureLayer/Crypto/Checking"
 	"Kaban/internal/InfrastructureLayer/Crypto/Decription"
 	"Kaban/internal/InfrastructureLayer/Crypto/Encryption"
-	CryptoGenerater "Kaban/internal/InfrastructureLayer/Crypto/Generating"
+	"Kaban/internal/InfrastructureLayer/Crypto/Generating"
 	"Kaban/internal/InfrastructureLayer/DataConverting"
-	"Kaban/internal/InfrastructureLayer/DatabaseControl/Checking"
+	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl/Reading"
+	"Kaban/internal/InfrastructureLayer/DatabaseControl/Validator"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl/Writinig"
 	"Kaban/internal/InfrastructureLayer/FileKeyInteration/HandleFileInfo"
 	"Kaban/internal/InfrastructureLayer/FileKeyInteration/HandlerFile"
@@ -33,19 +24,33 @@ import (
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/DeletingRedis"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/ReadingRedis"
+	"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/WritingRedis"
+	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
+	"Kaban/internal/InfrastructureLayer/s3Interation"
 	"Kaban/internal/InfrastructureLayer/s3Interation/DeleterS3"
-	"Kaban/internal/Service/Handlers"
+	"Kaban/internal/InfrastructureLayer/s3Interation/S3Downloader"
+	"Kaban/internal/InfrastructureLayer/s3Interation/S3Uploader"
+	"Kaban/internal/Service/Application"
+	"Kaban/internal/Service/Helpers"
 	"log/slog"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/awnumar/memguard"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	err := godotenv.Load()
+	if err != nil {
+		slog.Error("cannot load env file", "Error", err)
+	}
+	Application.ConfigureKeyData()
 	cmds.SettingSlog()
 
 	memguard.CatchInterrupt()
@@ -53,7 +58,7 @@ func main() {
 
 	db, err := DatabaseControl.Connect()
 	if err != nil {
-		slog.Error("Error connect to database", err)
+		slog.Error("Error connect to database", "error", err)
 		return
 	}
 	defer db.Close()
@@ -71,20 +76,20 @@ func main() {
 	}
 
 	ManagingAuthTokens := ControllingTokens.ManageTokens{}
-	GeneratingAuthTokens := Generating.CreatingTokens{}
+	GeneratingAuthTokens := Creating.CreatingTokens{}
 	CheckingAuthToken := ValidatingTokens.Checking{}
 	CryptoEncryption := Encryption.Encrypter{}
 	CryptoDecryption := Decription.DecryptionData{}
-	CryptoGenerate := CryptoGenerater.Generating{}
-	CryptoCheck := CryptoChecking.Checking{}
-	DbCheck := Checking.CheckerDb{Db: db}
+	CryptoGenerate := Generating.Generating{}
+	CryptoCheck := Checking.Validating{}
+	DbCheck := Validator.CheckerDb{Db: db}
 	DbReading := Reading.Read{Db: db}
 	DbWriting := Writinig.Writer{Db: db}
 	ConverterJson := DataConverting.ConvertingData{}
 	ProcessedFile := HandlerFile.ProcessingFile{}
 	ProcessedFileInfo := HandleFileInfo.ProcessingFileInfo{}
 	PacketValidate := PacketChecking.PacketValidating{}
-	KeysController := &KeysManager.Updater{
+	KeysController := &RepoEncrypterKeys.Updater{
 		Mu:            &sync.RWMutex{},
 		NewPrivateKey: &memguard.LockedBuffer{},
 		OldPrivateKey: &memguard.LockedBuffer{},
@@ -121,61 +126,65 @@ func main() {
 
 	S3Download := S3Downloader.S3Download{S3Info: S3Information}
 
-	HandlerPack := Handlers.HandlerPackCollect{
-		S3: Handlers.S3Controlling{
+	HandlerPack := Application.HandlerPackCollect{
+		S3: Application.S3Controlling{
 			Deleter:    &S3Deleter,
 			Uploader:   &S3Uploading,
 			S3Download: S3Download,
 		},
-		Crypto: Handlers.HandlerPackCrypto{
+		Crypto: Application.Crypto{
 			Validate: &CryptoCheck,
 			Decrypt:  &CryptoDecryption,
 			Encrypt:  &CryptoEncryption,
 			Generate: &CryptoGenerate,
 		},
-		FileInfo: Handlers.HandlerFileManagerPack{
+		FileInfo: Application.HandlerFileManagerPack{
 			FileInfo:     ProcessedFileInfo,
 			FileManaging: ProcessedFile,
 		},
-		AuthTokens: Handlers.HandlerPackAuthTokens{
+		AuthTokens: Application.AuthTokens{
 			Manage:          ManagingAuthTokens,
 			GeneratingToken: GeneratingAuthTokens,
 			Checking:        CheckingAuthToken,
 		},
-		DatabaseControlling: Handlers.DatabaseControlling{
+		DatabaseControlling: Application.DatabaseControlling{
 			Writer:  &DbWriting,
 			Reader:  &DbReading,
 			Checker: &DbCheck,
 		},
-		RedisControlling: Handlers.RedisControlling{
+		RedisControlling: Application.RedisControlling{
 			Deleter:      &DeleterRds,
 			Reader:       &ReaderRedis,
 			Writer:       &WriterRedis,
 			CheckerRedis: &CheckerRedis,
 		},
-		Grpc: Handlers.HandlerGrpc{
+		Grpc: Application.HandlerGrpc{
 			GrpcSendingRequest: &SendingGrcp,
 			ProcessingRequests: GrpcHandlingRequests,
 		},
-		Convert: Handlers.Converter{Converting: ConverterJson},
-		Keys:    Handlers.KeysControlling{ControllerKey: KeysController},
+		Convert: Application.Converter{Converting: ConverterJson},
+		Keys:    Application.KeysControlling{ControllerKey: KeysController},
 	}
-	Sa := Handlers.NewHandlerPackCollect(HandlerPack.S3, HandlerPack.Crypto, HandlerPack.FileInfo, HandlerPack.AuthTokens, HandlerPack.DatabaseControlling, HandlerPack.RedisControlling, HandlerPack.Grpc, HandlerPack.Convert, HandlerPack.Keys)
+	Sa := Application.NewHandlerPackCollect(HandlerPack.S3, HandlerPack.Crypto, HandlerPack.FileInfo, HandlerPack.AuthTokens, HandlerPack.DatabaseControlling, HandlerPack.RedisControlling, HandlerPack.Grpc, HandlerPack.Convert, HandlerPack.Keys)
 
 	router := mux.NewRouter()
-
 	router.Use(Middlewares.Logging)
 	newRouter := router.PathPrefix("/").Subrouter()
 	newRouter.Use(Middlewares.CheckBots)
+	postRequest := newRouter.PathPrefix("/").Subrouter()
+	postRequest.Use(Middlewares.CheckPostRequest)
+
+	getRequest := router.PathPrefix("/").Subrouter()
+	getRequest.Use(Middlewares.CheckerGetRequests)
 	StaticFiles := router.PathPrefix("/Fronted").Subrouter()
 
-	router.HandleFunc("/aboutProject", func(writer http.ResponseWriter, request *http.Request) {
+	getRequest.HandleFunc("/aboutProject", func(writer http.ResponseWriter, request *http.Request) {
 
 		http.ServeFile(writer, request, "internal/Service/Fronted/InfoPageAboutApp.html")
 
 	})
 
-	StaticFiles.Handle("/favicon.png", http.FileServer(http.Dir("internal/Service")))
+	StaticFiles.Handle("/favicon.png", http.FileServer(http.Dir("internal/Service/Fronted/favicon.png")))
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
@@ -186,20 +195,20 @@ func main() {
 
 	KeysController.FillOldKey()
 	TimeSwaping := Sa.SwapKeyFirst()
-
-	fmt.Println(TimeSwaping)
-
-	ticker := time.NewTicker(time.Until(time.Now().Add(TimeSwaping)))
+	slog.Info("This time", "Time", TimeSwaping)
+	ticker := time.NewTicker(TimeSwaping)
 	defer ticker.Stop()
 
 	go func() {
 		for t := range ticker.C {
-			slog.Info("Got a ticker", t)
-			Sa.SwapKeys()
+			slog.Time("Func Ticker: Got a ticker", t)
+			Time := Sa.SwapKeys()
+			slog.Duration("Func Ticker: Time", Time)
+			ticker = time.NewTicker(Time)
 		}
 	}()
 
-	router.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+	postRequest.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 
 		http.ServeFile(w, r, "internal/Service/Fronted/Login.html")
 
@@ -207,18 +216,18 @@ func main() {
 
 	router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
 
-		http.ServeFile(w, r, "./robots.txt")
+		http.ServeFile(w, r, "./pkg/robots.txt")
 
 	})
 
-	router.HandleFunc("/informationPage", func(writer http.ResponseWriter, request *http.Request) {
+	getRequest.HandleFunc("/informationPage", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "internal/Service/Fronted/InformationPage.html")
 
 	}).Name("NameFile")
-	router.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+	postRequest.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "internal/Service/Fronted/Register.html")
 	})
-	router.HandleFunc("/main", func(writer http.ResponseWriter, request *http.Request) {
+	getRequest.HandleFunc("/main", func(writer http.ResponseWriter, request *http.Request) {
 
 		http.ServeFile(writer, request, "internal/Service/Fronted/Main_Page.html")
 
@@ -228,7 +237,7 @@ func main() {
 
 	})
 
-	router.HandleFunc("/protect", func(writer http.ResponseWriter, request *http.Request) {
+	postRequest.HandleFunc("/protect", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "internal/Service/Fronted/Protecion.html")
 
 	})
@@ -238,42 +247,42 @@ func main() {
 
 	}).Name("fileName")
 
-	router.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
+	postRequest.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
 		Controller2.Login(writer, request, Sa)
 
 	}).Methods("POST")
-	router.HandleFunc("/register/api", func(writer http.ResponseWriter, request *http.Request) {
+	postRequest.HandleFunc("/register/api", func(writer http.ResponseWriter, request *http.Request) {
 		Controller2.Register(writer, request, Sa)
 
 	}).Methods("POST")
 
-	newRouter.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {
+	getRequest.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {
 
 		Controller2.DownloadWithEncrypt(writer, request, Sa)
 
-		//Handlers.Delete(ch)
+		//Application.Delete(ch)
 
 	}).Methods(http.MethodGet)
-	newRouter.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
+	getRequest.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
 
 		Controller2.DownloadWithNotEncrypt(writer, request, Sa)
 
-		//Handlers.Delete(ch)
+		//Application.Delete(ch)
 
 	}).Methods(http.MethodGet)
 
-	router.HandleFunc("/downloader/api", func(writer http.ResponseWriter, request *http.Request) {
+	postRequest.HandleFunc("/downloader/api", func(writer http.ResponseWriter, request *http.Request) {
 
 		Controller2.FileUploaderNoEncrypt(writer, request, router, Sa)
 
 	}).Methods(http.MethodPost)
-	router.HandleFunc("/downloader2/api", func(writer http.ResponseWriter, request *http.Request) {
+	postRequest.HandleFunc("/downloader2/api", func(writer http.ResponseWriter, request *http.Request) {
 
 		Controller2.FileUploaderEncrypt(writer, request, router, Sa)
 
 	}).Methods(http.MethodPost)
 	router.HandleFunc("/maine/api", func(writer http.ResponseWriter, request *http.Request) {
-		Controller2.GetFrom(writer, request, Sa)
+		Controller2.CheckUserAuth(writer, request, Sa)
 
 	}).Methods("GET")
 	router.HandleFunc("/doUrl/api", func(writer http.ResponseWriter, request *http.Request) {
@@ -281,10 +290,14 @@ func main() {
 		Controller2.BuildUrl(writer, request)
 
 	}).Methods(http.MethodGet)
-	err = cmds.ServerConfig(router).ListenAndServe()
-	if err != nil {
-		slog.Error("Server couldn't start", err)
+	serverConfig := cmds.ServerConfig(router)
+	defer serverConfig.Close()
+
+	slog.Info("The server started at ", "Configure", serverConfig.Addr)
+	if err = serverConfig.ListenAndServe(); err != nil {
+		slog.Error("Server couldn't start", "Error", err)
 		return
 
 	}
+
 }

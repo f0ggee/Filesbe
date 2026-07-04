@@ -16,7 +16,7 @@ func (d *ValidationRedis) ChekIsStartDownloadTest(s string, context context.Cont
 
 	select {
 	case <-time.After(1 * time.Second):
-		slog.Info("Checking starting download test for " + s)
+		slog.Info("Validator starting download test for " + s)
 		if ax, ds := context.Value("IsFllen").(bool); ax {
 			if ds {
 				return true
@@ -25,7 +25,7 @@ func (d *ValidationRedis) ChekIsStartDownloadTest(s string, context context.Cont
 		}
 		return false
 	case <-context.Done():
-		slog.Error("Erro context status", context.Err())
+		slog.Error("Erro context status", "Error", context.Err())
 		return true
 	}
 

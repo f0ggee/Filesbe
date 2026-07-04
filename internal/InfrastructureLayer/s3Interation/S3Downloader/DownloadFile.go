@@ -1,14 +1,16 @@
 package S3Downloader
 
 import (
+	"Kaban/internal/DomainLevel"
 	"context"
+	"errors"
 	"log/slog"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go/aws"
 )
 
-func (s S3Download) Download(TrueFileName string, ctx context.Context) (*s3.GetObjectOutput, error) {
+func (s S3Download) GetDownload(TrueFileName string, ctx context.Context) (*s3.GetObjectOutput, error) {
 
 	InputData := &s3.GetObjectInput{Bucket: aws.String(s.S3Info.Bucket), Key: aws.String(TrueFileName)}
 
@@ -18,8 +20,8 @@ func (s S3Download) Download(TrueFileName string, ctx context.Context) (*s3.GetO
 	})
 
 	if err != nil {
-		slog.Error("Error getting s3 object", "Error", err.Error())
-		return nil, err
+		slog.Error("S3 GetDownload; the error happened", "ERROR", err.Error())
+		return nil, errors.New(DomainLevel.ErrorStartDownloading)
 	}
 
 	return S, err

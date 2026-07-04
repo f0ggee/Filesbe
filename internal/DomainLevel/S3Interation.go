@@ -5,7 +5,8 @@ import (
 	"io"
 	"mime/multipart"
 
-	"github.com/aws/aws-sdk-go-v2/service/s3"
+	NewVersion "github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 type DeleterS3 interface {
@@ -20,6 +21,6 @@ type S3Uploader interface {
 }
 
 type DownloadingS3 interface {
-	Download(string, context.Context) (*s3.GetObjectOutput, error)
-	DownloadSecure(context.Context, string) (io.ReadCloser, int64, error)
+	GetDownload(string, context.Context) (*NewVersion.GetObjectOutput, error)
+	GetDownloadSecure(context.Context, string) (*s3.GetObjectOutput, error)
 }
