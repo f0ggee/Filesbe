@@ -91,7 +91,7 @@ func TestChecking_CheckJwt(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			checking := Checking{}
 			t.Logf("Description about a test : %s", tt.descr)
-			_, err := checking.CheckJwt(tt.args.JWT)
+			err := checking.CheckJwt(tt.args.JWT)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("CheckJwt() error = %v, wantErr %v", err, tt.wantErr)
 				return

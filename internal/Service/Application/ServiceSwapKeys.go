@@ -5,43 +5,47 @@ import (
 	"Kaban/internal/Dto"
 	"context"
 	"crypto/sha256"
-	"encoding/json"
-	"log/slog"
 	"time"
 )
 
-func ConvertData(Data []byte) (*Dto.RedisPacketStructFromMasterServer, error) {
-	MasterDataLooks := &Dto.RedisPacketStructFromMasterServer{
+type NewSwapKeys struct {
+	RedisControlling
+	Crypto
+	ControlKeys
+	EncrypterKeys
+	Parser
+}
+
+func GetNewNewSwapKeys(redisControlling RedisControlling, crypto Crypto, controlKeys ControlKeys, encrypterKeys EncrypterKeys, parser Parser) *NewSwapKeys {
+	return &NewSwapKeys{RedisControlling: redisControlling, Crypto: crypto, ControlKeys: controlKeys, EncrypterKeys: encrypterKeys, Parser: parser}
+}
+
+func (sa *NewSwapKeys) SetSwapKeys() time.Duration {
+	Data, err := sa.RedisControlling.Reader.GetKey(context.Background())
+	if err != nil {
+		return DomainLevel.DefaultErrorTime
+	}
+	grpcPacket := &Dto.RedisPacketStructFromMasterServer{
 		AesKey:          nil,
 		PlainText:       nil,
 		Signature:       nil,
 		TimeNextSwaping: time.Duration(0),
 	}
-	err := json.Unmarshal(Data, &MasterDataLooks)
-	if err != nil {
-		slog.Error("Func ConvertData: Error", "Unmarshal err", err)
-		return nil, err
-	}
-	return MasterDataLooks, nil
-}
 
-func (sa *HandlerPackCollect) SwapKeys() time.Duration {
-	slog.Info("Func SwapKeys:", "Start", true)
-	Data, err := sa.RedisControlling.Reader.GetKey(context.Background())
+	err = sa.Parser.Decode.JsonDecodeMarshall(&grpcPacket, Data)
 	if err != nil {
 		return DomainLevel.DefaultErrorTime
 	}
 
-	UnpackedData, err := ConvertData(Data)
+	gerOurPrivateKey, err := sa.ControlKeys.Keys.GerOurPrivateKey()
 	if err != nil {
-		return DomainLevel.DefaultErrorTime
+		return 0
 	}
-
-	AesKeyDecrypted1, err2 := sa.Crypto.Decrypt.DecryptAesKey(sa.Keys.ControllerKey.GetOurKey(), UnpackedData.AesKey)
+	AesKeyDecrypted1, err2 := sa.Crypto.Decrypt.DecryptAesKey(gerOurPrivateKey, grpcPacket.AesKey)
 	if err2 != nil {
 		return DomainLevel.DefaultErrorTime
 	}
-	NewRsaKey := sa.Crypto.Decrypt.DecryptPacket(AesKeyDecrypted1, UnpackedData.PlainText)
+	NewRsaKey := sa.Crypto.Decrypt.DecryptPacket(AesKeyDecrypted1, grpcPacket.PlainText)
 	if NewRsaKey == nil {
 		return DomainLevel.DefaultErrorTime
 	}
@@ -50,13 +54,24 @@ func (sa *HandlerPackCollect) SwapKeys() time.Duration {
 	hashSha := sha256.New()
 	hashSha.Write(NewRsaKey.Bytes())
 
-	err = sa.Crypto.Validate.CheckSignKey(UnpackedData.Signature, hashSha.Sum([]byte(nil)), sa.Keys.ControllerKey.GetMasterKey())
+	getMasterPublicKey, err := sa.ControlKeys.Keys.GetMasterPublicKey()
 	if err != nil {
 		return DomainLevel.DefaultErrorTime
 	}
 
-	sa.Keys.ControllerKey.UpdateOldKey()
-	sa.Keys.ControllerKey.UpdateKey(NewRsaKey)
-	slog.Info("Func SwapKeys:", slog.Group("Data about the exchange", slog.Duration("Time for next swaping", UnpackedData.TimeNextSwaping)))
-	return UnpackedData.TimeNextSwaping
+	err = sa.Crypto.Validate.CheckSignKey(DomainLevel.CheckSignKeyIncomingData{
+		Sign:            grpcPacket.Signature,
+		Hash:            hashSha.Sum(nil),
+		MasterPublicKey: getMasterPublicKey,
+	})
+	if err != nil {
+		return DomainLevel.DefaultErrorTime
+	}
+
+	sa.EncrypterKeys.GetKeys.UpdateOldKey()
+	err = sa.EncrypterKeys.GetKeys.UpdateNewKey(NewRsaKey)
+	if err != nil {
+		return DomainLevel.DefaultErrorTime
+	}
+	return grpcPacket.TimeNextSwaping
 }

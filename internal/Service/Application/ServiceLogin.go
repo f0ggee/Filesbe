@@ -1,9 +1,10 @@
 package Application
 
 import (
-	Dto2 "Kaban/internal/Dto"
+	"Kaban/internal/DomainLevel"
 	"context"
 	"crypto/rand"
+	"errors"
 	"log/slog"
 	"time"
 
@@ -12,24 +13,36 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func (sa *HandlerPackCollect) LoginService(s Dto2.UserLoginData, ctx context.Context) (string, string, error) {
+type NewLogin struct {
+	DatabaseControlling
+	Crypto
+	AuthTokens
+}
+type LoginApplicationOutComingData struct {
+	Jwt string
+	Rft string
+	Err error
+}
 
-	slog.Info("Func LoginService starts")
+func GetNewNewLogin(databaseControlling DatabaseControlling, crypto Crypto, authTokens AuthTokens) *NewLogin {
+	return &NewLogin{DatabaseControlling: databaseControlling, Crypto: crypto, AuthTokens: authTokens}
+}
 
-	Id, password, err := sa.DatabaseControlling.Reader.LoginData(s.Email, ctx)
-
-	if err != nil {
-		slog.Error("Func LoginService: Error in LoginData", "Error", err)
-		return "", "", err
+func (sa *NewLogin) LoginService(s Dto.UserLoginData, ctx context.Context) LoginApplicationOutComingData {
+	usersData := sa.DatabaseControlling.Reader.LoginData(s.Email, ctx)
+	if usersData.Err != nil {
+		return LoginApplicationOutComingData{
+			Err: usersData.Err,
+		}
 	}
-
-	err = sa.Crypto.Validate.PasswordVerify([]byte(password), []byte(s.Password))
+	err := sa.Crypto.Validate.PasswordVerify([]byte(usersData.HashPassword), []byte(s.Password))
 	if err != nil {
-		return "", "", err
+		return LoginApplicationOutComingData{
+			Err: err,
+		}
 	}
-
 	RefreshToken, err := sa.AuthTokens.GeneratingToken.GenerateRT(Dto.JwtCustomStruct{
-		UserID: Id,
+		UserID: (usersData.Id),
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "Kabaner",
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -38,11 +51,13 @@ func (sa *HandlerPackCollect) LoginService(s Dto2.UserLoginData, ctx context.Con
 		},
 	})
 	if err != nil {
-		slog.Error("func login 3", "err", err)
-		return "", "", err
+		slog.Error("LoginService; error to generate the Refresh Token", "ERROR", err)
+		return LoginApplicationOutComingData{
+			Err: errors.New(DomainLevel.ErrorCreateSession),
+		}
 	}
 	JwtToken, err := sa.AuthTokens.GeneratingToken.GenerateJWT(Dto.JwtCustomStruct{
-		UserID: Id,
+		UserID: usersData.Id,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "Kabaner",
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -51,11 +66,13 @@ func (sa *HandlerPackCollect) LoginService(s Dto2.UserLoginData, ctx context.Con
 		},
 	})
 	if err != nil {
-		slog.Error("func login 4", "err", err)
-		return "", "", err
+		slog.Error("LoginService; error to generate a Jwt token", "ERROR", err)
+		return LoginApplicationOutComingData{
+			Err: errors.New(DomainLevel.ErrorCreateSession),
+		}
 	}
-
-	slog.Info("Func LoginService ends")
-	return JwtToken, RefreshToken, nil
-
+	return LoginApplicationOutComingData{
+		Jwt: JwtToken,
+		Rft: RefreshToken,
+	}
 }

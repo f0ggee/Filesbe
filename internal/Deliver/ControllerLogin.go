@@ -3,64 +3,85 @@ package Deliver
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/SessionHandle"
-	"Kaban/internal/Service/Application"
-	"encoding/json"
-	"log/slog"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoLoginRealizations"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
 	"net/http"
 )
 
-func (d *NewRegister) Login(w http.ResponseWriter, r *http.Request, realization *Application.HandlerPackCollect) {
+type Network struct {
+	W http.ResponseWriter
+	R *http.Request
+}
 
-	type AnswerLogin struct {
-		StatusOfOperation string `json:"StatusOperation"`
-		UrlToRedict       string `json:"UrlRedict"`
-		ErrorMessage      string `json:"ErrorMessage"`
-	}
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method Dont' allow", http.StatusUnauthorized)
-		slog.Error("Method Dont' allow", "Method", http.StatusUnauthorized)
+type Answer struct {
+	S *RepoLoginRealizations.LoginAnswers
+}
+type Parse struct {
+	Parses *RepoParsers.Parsing
+}
+type NewLogin struct {
+	Net           Network
+	ControlAnswer Answer
+	Parser        Parse
+}
+
+func (D *NewLogin) Login() {
+	if D.Net.R.Method != http.MethodPost {
+		D.ControlAnswer.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
+			W:         D.Net.W,
+			Operation: DomainLevel.NotStart,
+			Error:     DomainLevel.MethodNotAllowed,
+		})
 		return
 	}
 
 	DataUserLogin := &Dto.UserLoginData{}
-	err := d.D.JsonParsers(DataUserLogin, r)
+	err := D.Parser.Parses.JsonDecode(DataUserLogin, D.Net.R.Body)
 	if err != nil {
-		//TODO add handling the error
-
+		D.ControlAnswer.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
+			W:         D.Net.W,
+			Operation: DomainLevel.NotStart,
+			Error:     err.Error(),
+		})
+		return
 	}
 
-	err := DataUserLogin.ValidateData()
+	err = DataUserLogin.ValidateData()
+	if err != nil {
+		D.ControlAnswer.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
+			W:         D.Net.W,
+			Operation: DomainLevel.NotStart,
+			Error:     err.Error(),
+		})
+		return
+	}
+
+	JwtToken, RefreshToken, err := realization.LoginService(*DataUserLogin, D.Net.R.Context())
 	if err != nil {
 		//TODO add handling the error
 		return
 	}
 
-	JwtToken, RefreshToken, err := realization.LoginService(*DataUserLogin, r.Context())
-	if err != nil {
-
-		//TODO add handling the error
-		return
-	}
-
-	ReturnedData := SessionHandle.SessionControl.SetNewSession(DomainLevel.IncomingSessionData{
-		Writer:  w,
-		Request: r,
+	ReturnedData := RepoSessionHandle.SessionControl.SetNewSession(RepoSessionHandle.IncomingSessionData{
+		Writer:  D.Net.W,
+		Request: D.Net.R,
 		Jwt:     JwtToken,
 		Rt:      RefreshToken,
 	})
-	if ReturnedData == nil || ReturnedData.Error != nil {
-		//TODO add handling the error
-	}
-	w.Header().Set("Content-Type", DomainLevel.Json)
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(AnswerLogin{
-		StatusOfOperation: DomainLevel.Success,
-		UrlToRedict:       "/main",
-	}); err != nil {
-		ControllerErrorLogger.ErrorContext(r.Context(), "Json in Login can't treated", "Err", err)
+	if ReturnedData.Error != nil {
+		D.ControlAnswer.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
+			W:         D.Net.W,
+			Operation: DomainLevel.Break,
+			Error:     ReturnedData.Error.Error(),
+		})
 		return
-
 	}
 
+	D.ControlAnswer.S.SetGoodAnswer(RepoLoginRealizations.AnswerDetails{
+		W:               D.Net.W,
+		Operation:       DomainLevel.Success,
+		UrlToRedistrict: "/main",
+	})
+	return
 }

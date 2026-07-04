@@ -2,38 +2,69 @@ package Deliver
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/SessionHandle"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage/AuthChecking"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderNoEncryptRepo"
 	"Kaban/internal/Service/Application"
 	"encoding/json"
-	"errors"
+
 	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
-func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Router, s *Application.HandlerPackCollect) {
+type FileUploaderNoEncryptNet struct {
+	w http.ResponseWriter
+	r *http.Request
+}
+type FileUploaderNoEncryptSessions struct {
+	S *RepoSessionHandle.SessionConnect
+}
+type repoUploaderNoEncrypt struct {
+	S *RepofileUploaderNoEncryptRepo.NewUploaderNoEncrypt
+}
+
+type AuthCheckingUploadEncrypt struct {
+	Auth AuthChecking.NewAuthChecker
+}
+type UploadNotEncryptSessions struct {
+	Session RepoSessionHandle.SessionConnect
+}
+type NewFileUploaderNoEncrypt struct {
+	Net            FileUploaderNoEncryptNet
+	EncryptSession FileUploaderNoEncryptNet
+	Repos          repoUploaderNoEncrypt
+	Auth           AuthCheckingUploadEncrypt
+	Sess           UploadNotEncryptSessions
+}
+
+func (d *NewFileUploaderNoEncrypt) FileUploaderNoEncrypt(router *mux.Router, s *Application.HandlerPackCollect) {
 	if r.Method != http.MethodPost {
+		slog.Error("FileUploaderNoEncrypt; the method isn't allowed", slog.Group("URL details", slog.String("url", r.RequestURI)))
 		http.Error(w, "err", http.StatusUnauthorized)
-		slog.Error("Err in Cottroler Uploader")
 		return
 	}
-	type Answer struct {
-		StatusOperation string `json:"StatusOperation"`
-		UrlToRedict     string `json:"UrlRedict"`
-		Error           string `json:"Error"`
-	}
-
-	returnedData := SessionHandle.SessionControl.GetSessionData(DomainLevel.IncomingSessionData{Writer: w, Request: r})
-	if returnedData == nil || returnedData.Error != nil {
+	returnedData := RepoSessionHandle.SessionControl.GetSessionData(RepoSessionHandle.IncomingSessionData{Writer: d.Net.w, Request: d.Net.r})
+	if returnedData.Error != nil {
 		//TODO add handling the error
 
 		return
 	}
-	Jwts, err := s.Auth(returnedData.Rft, returnedData.Jwt)
-	if err != nil {
-		//TODO add handling the error
+	outData := d.Auth.Auth.CheckAuthTokens(DomainLevel.AuthCheckIncomingData{
+		Jwt: returnedData.Jwt,
+		Rft: returnedData.Rft,
+	})
+	if outData.Err != nil {
+		d.Repos.S.SetBadAnswer(RepofileUploaderNoEncryptRepo.IncomingData{
+			W:               d.Net.w,
+			Error:           outData.Err.Error(),
+			StatusOperation: DomainLevel.Break,
+		})
 		return
+	}
+	if outData.IsNewJwtCreated {
+		d.Sess.Session.SetNewSession(RepoSessionHandle.IncomingSessionData{Jwt: outData.NewJwt})
 	}
 
 	filName, err := s.FileUploader(r)
@@ -41,29 +72,20 @@ func FileUploaderNoEncrypt(w http.ResponseWriter, r *http.Request, router *mux.R
 		///TODO add handling the error
 	}
 
-	url, err := router.Get("fileName").URL("name", filName, "bool", "false")
+	urlPath, err := d.Repos.S.UrlBuild(router, filName)
 	if err != nil {
-		slog.Error("Error can't treate", "Error", err)
-
-		w.Header().Set("Content-Type", DomainLevel.Json)
-		w.WriteHeader(http.StatusBadRequest)
-		if err = json.NewEncoder(w).Encode(Answer{
+		d.Repos.S.SetBadAnswer(RepofileUploaderNoEncryptRepo.IncomingData{
+			W:               d.Net.w,
+			Error:           err.Error(),
 			StatusOperation: DomainLevel.Break,
-		}); err != nil {
-			slog.Error("Err in json encode", "error", err)
-			return
-		}
+		})
 		return
 	}
 
-	w.Header().Set("Content-Type", DomainLevel.Json)
-	w.WriteHeader(http.StatusOK)
-	if err = json.NewEncoder(w).Encode(Answer{
+	d.Repos.S.SetGoodAnswer(RepofileUploaderNoEncryptRepo.IncomingData{
+		W:               d.Net.w,
 		StatusOperation: DomainLevel.Success,
-		UrlToRedict:     url.Path,
-	}); err != nil {
-		slog.Error("Err in json encode", "Error", err)
-		return
-	}
-
+		UrlToRedirect:   urlPath,
+	})
+	return
 }

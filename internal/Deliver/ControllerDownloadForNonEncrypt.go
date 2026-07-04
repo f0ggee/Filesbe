@@ -2,29 +2,56 @@ package Deliver
 
 import (
 	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt"
 	"Kaban/internal/Service/Application"
-	"fmt"
-	"log/slog"
+
 	"net/http"
-	"strings"
 )
 
-func DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackCollect) {
-	type JsonAnswer struct {
-		StatusOperation string   `json:"StatusOperation"`
-		Error           []string `json:"Error"`
-		Url             string   `json:"Url"`
-	}
-	if r.Method != http.MethodGet {
-		//TODO add handling the error
-	}
+type AnswerDownloadNoEncrypt struct {
+	Answ RepoDownloadNoEncrypt.NewRepoDownloadNoEncrypt
+}
 
-	//TODO remove the line below
-	name := getNameFromUrl(r)
+type UrlBuilderDownloadNoEncrypt struct {
+	UrlWork RepoDownloadNoEncrypt.NewRepoDownloadNoEncrypt
+}
+type NetworkDownloadNoEncrypt struct {
+	W http.ResponseWriter
+	R *http.Request
+}
+
+type NewDownloadWithNotEncrypt struct {
+	AnswerDownloadNoEncrypt
+	UrlBuilderDownloadNoEncrypt
+	NetworkDownloadNoEncrypt
+}
+
+func GetNewNewDownloadWithNotEncrypt(answerDownloadNoEncrypt AnswerDownloadNoEncrypt, urlBuilderDownloadNoEncrypt UrlBuilderDownloadNoEncrypt, networkDownloadNoEncrypt NetworkDownloadNoEncrypt) *NewDownloadWithNotEncrypt {
+	return &NewDownloadWithNotEncrypt{AnswerDownloadNoEncrypt: answerDownloadNoEncrypt, UrlBuilderDownloadNoEncrypt: urlBuilderDownloadNoEncrypt, NetworkDownloadNoEncrypt: networkDownloadNoEncrypt}
+}
+
+func (d NewDownloadWithNotEncrypt) DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackCollect) {
+
+	name := d.UrlWork.GetData(r)
+	if name == "" {
+		d.Answ.SetBadAnswer(RepoDownloadNoEncrypt.DownloadNoEncryptIncomingData{
+			W:               d.W,
+			Err:             DomainLevel.ErrorCantGetFileName,
+			StatusOperation: DomainLevel.Break,
+		})
+		return
+	}
 
 	err, _ := s.DownloadWithNonEncrypt(w, name, r.Context())
 
-	//TODO add handling the error
+	if err != nil {
+		d.Answ.SetBadAnswer(RepoDownloadNoEncrypt.DownloadNoEncryptIncomingData{
+			W:               d.W,
+			Err:             err.Error(),
+			StatusOperation: "",
+		})
+		return
+	}
 	return
 
 }

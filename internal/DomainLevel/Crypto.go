@@ -13,8 +13,13 @@ type Decryption interface {
 	SayHello(string) string
 }
 
+type CheckSignKeyIncomingData struct {
+	Sign            []byte
+	Hash            []byte
+	MasterPublicKey []byte
+}
 type CryptoValidating interface {
-	CheckSignKey([]byte, []byte, []byte) error
+	CheckSignKey(CheckSignKeyIncomingData) error
 	//CheckSignatureGrpc([]byte, []byte, []byte) error
 	PasswordVerify([]byte, []byte) error
 }

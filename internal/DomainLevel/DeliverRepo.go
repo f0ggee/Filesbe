@@ -1,8 +1,6 @@
 package DomainLevel
 
 import (
-	"io"
-	"net/http"
 	"time"
 )
 
@@ -21,6 +19,11 @@ const RequestId = "RequestId"
 const TokenName = "token6"
 const InfoPageUrl = "/informationPage"
 
+const (
+	FileUrlName = "name"
+	TypeFile    = "bool"
+)
+
 type RegisterAnswer struct {
 	StatusOfOperation string `json:"status_of_operation"`
 	UrlToRedirect     string `json:"url_to_redirect"`
@@ -30,47 +33,32 @@ type UserCheckAnswer struct {
 	UrlToRedirect string `json:"url_to_redirect"`
 	Error         string `json:"error"`
 }
-
-type RegisterErrorIncomingData struct {
-	W         http.ResponseWriter
-	Error     error
-	Operation error
+type AnswerLogin struct {
+	StatusOfOperation string `json:"status_of_operation"`
+	UrlToRedirect     string `json:"url_to_redirect"`
+	ErrorMessage      string `json:"error_message"`
 }
-type RegisterGoodIncomingData struct {
-	W         http.ResponseWriter
-	Operation string
-	Redirect  string
+type AnswerUrlBuilder struct {
+	StatusOperation string `json:"StatusOperation"`
+	Url             string `json:"Url"`
+	ErrorMessage    string `json:"ErrorMessage"`
 }
-
-type UserCheckBadIncomingData struct {
-	W        http.ResponseWriter
-	Redirect string
-	Err      error
-}
-type Session interface {
-	SetNewSession(data IncomingSessionData) ReturnedSessionKey
-	GetSessionData(data IncomingSessionData) *ReturnedSessionKey
-}
-type Parses interface {
-	JsonParsers(any, io.ReadCloser) error
-}
-type Register interface {
-	ErrorAnswer(RegisterErrorIncomingData)
-	GoodAnswer(RegisterGoodIncomingData)
+type AnswerUploaderFileNoEncrypt struct {
+	StatusOperation string `json:"StatusOperation"`
+	UrlToRedirect   string `json:"UrlRedict"`
+	Error           string `json:"Error"`
 }
 
-type UsersCheck interface {
-	BadAnswer(UserCheckBadIncomingData)
-}
-type ReturnedSessionKey struct {
-	Rft   string
-	Jwt   string
-	Error error
+type AuthCheckIncomingData struct {
+	Jwt string
+	Rft string
 }
 
-type IncomingSessionData struct {
-	Writer  http.ResponseWriter
-	Request *http.Request
-	Jwt     string
-	Rt      string
+type OutComingAuthData struct {
+	NewJwt          string
+	IsNewJwtCreated bool
+	Err             error
+}
+type Auth interface {
+	CheckAuthTokens(AuthCheckIncomingData) OutComingAuthData
 }

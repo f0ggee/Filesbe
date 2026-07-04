@@ -64,7 +64,7 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 
 	Hash.Write(NewSavingRsa.Bytes())
 
-	err = h.CryptoValidate.CheckSignKey(PacketInfo.Sign, Hash.Sum([]byte(nil)), h.Keys.GetMasterKey())
+	err = h.CryptoValidate.CheckSignKey()
 	if err != nil {
 		return 0, err
 	}
@@ -80,7 +80,7 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 
 func CheckSingTest(h Checking.Validating, Databyte, Hash, Key []byte) error {
 
-	err := h.CheckSignKey(Databyte, Hash, Key)
+	err := h.CheckSignKey()
 	if err != nil {
 		return err
 	}

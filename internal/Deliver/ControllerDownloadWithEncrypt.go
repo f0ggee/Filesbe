@@ -2,37 +2,51 @@ package Deliver
 
 import (
 	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadEncryptRepo"
 	"Kaban/internal/Service/Application"
-	"encoding/json"
-	"log/slog"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
-func getNameFromUrl(r *http.Request) string {
-	vars := mux.Vars(r)
-
-	name := vars["name"]
-	return name
-
+type AnswerDownloadEncrypt struct {
+	S RepoDownloadEncryptRepo.NewFileDownloadEncrypt
+}
+type UrlBuilderDownloadEncrypt struct {
+	UrlBuild RepoDownloadEncryptRepo.NewFileDownloadEncrypt
 }
 
-func DownloadWithEncrypt(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackCollect) {
-	type JsonAnswer struct {
-		StatusOperation string   `json:"StatusOperation"`
-		Error           []string `json:"Error"`
-		Url             string   `json:"Url"`
+type NetworkDownloadEncrypt struct {
+	W http.ResponseWriter
+	R *http.Request
+}
+type NewDownloadEncrypt struct {
+	Answer AnswerDownloadEncrypt
+	Url    UrlBuilderDownloadEncrypt
+	Net    NetworkDownloadEncrypt
+}
+
+func GetNewNewDownloadEncrypt(answer AnswerDownloadEncrypt, url UrlBuilderDownloadEncrypt, net NetworkDownloadEncrypt) *NewDownloadEncrypt {
+	return &NewDownloadEncrypt{Answer: answer, Url: url, Net: net}
+}
+
+func (d NewDownloadEncrypt) DownloadWithEncrypt(s *Application.HandlerPackCollect) {
+
+	fileName := d.Url.UrlBuild.GetDataRequest(d.Net.R)
+	if fileName == "" {
+
+		d.Answer.S.SetBadAnswers(RepoDownloadEncryptRepo.IncomingDataAnswer{
+			W:     d.Net.W,
+			Error: DomainLevel.ErrorCantGetFileName,
+		})
+		return
 	}
-	if r.Method != http.MethodGet {
-		//TODO add handling the error
+	err := s.DownloadEncrypt(d.Net.W, d.Net.R.Context(), fileName)
+	if err != nil {
+		d.Answer.S.SetBadAnswers(RepoDownloadEncryptRepo.IncomingDataAnswer{
+			W:     d.Net.W,
+			Error: err.Error(),
+		})
+		return
 	}
-	name := getNameFromUrl(r)
-
-	err := s.DownloadEncrypt(w, r.Context(), name)
-
-	//TODO add handling the error
-
 	return
 
 }

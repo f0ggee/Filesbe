@@ -1,3 +1,5 @@
 package Creating
 
-type CreatingTokens struct{}
+type CreatingTokens struct {
+	Key []byte
+}

@@ -1,6 +1,7 @@
 package Validator
 
 import (
+	"Kaban/internal/DomainLevel"
 	"context"
 	"errors"
 
@@ -8,24 +9,20 @@ import (
 )
 
 func (db *CheckerDb) CheckerUser(email string, ctx context.Context) error {
-
 	var existingPerson bool
-
 	err := db.Db.QueryRow(ctx, "SELECT EXISTS (select 1 FROM person WHERE email=$1)", email).Scan(&existingPerson)
-
 	switch {
 	case errors.Is(err, context.DeadlineExceeded):
-		slog.Error("In register,context exceeded", "err - ", err)
-		return err
+		slog.Error("CheckUser; the context is expired", "ERROR", err)
+		return errors.New(DomainLevel.ErrorTimeEnd)
 
 	case err != nil:
-		slog.Error("Something wrong in register  check", "err", err)
-		return err
+		slog.Error("CheckUser; a strange error", "ERROR", err)
+		return errors.New(DomainLevel.ErrorStrangeDatabaseError)
 
 	}
 	if existingPerson {
-		return errors.New("person already exist")
+		return errors.New(DomainLevel.ErrorUserExist)
 	}
-
 	return nil
 }

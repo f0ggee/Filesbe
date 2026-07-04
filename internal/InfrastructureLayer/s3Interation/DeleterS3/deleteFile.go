@@ -1,7 +1,9 @@
 package DeleterS3
 
 import (
+	"Kaban/internal/DomainLevel"
 	"context"
+	"errors"
 	"log/slog"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -15,8 +17,8 @@ func (d *DeleterS3) DeleteFileFromS3(key string, ctx context.Context) error {
 	}
 	_, err := d.S3Info.S3Connect.DeleteObject(ctx, s)
 	if err != nil {
-		slog.Error("Error in delete func", "ERROR", err.Error())
-		return err
+		slog.Error("DeleteFileFromS3; error to delete a file", "ERROR", err)
+		return errors.New(DomainLevel.ErrorFilNotDeleted)
 	}
 	return nil
 }

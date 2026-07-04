@@ -1,37 +1,54 @@
 package Application
 
 import (
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
 	"context"
 	"crypto/rand"
-	"errors"
 	"log/slog"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func (sa *HandlerPackCollect) RegisterService(de *Dto.UserDataRegister, ctx context.Context) (string, string, error) {
+type NewRegisterApplication struct {
+	DatabaseControlling
+	Crypto
+	AuthTokens
+}
+
+func GetNewNewRegisterApplication(databaseControlling DatabaseControlling, crypto Crypto, authTokens AuthTokens) *NewRegisterApplication {
+	return &NewRegisterApplication{DatabaseControlling: databaseControlling, Crypto: crypto, AuthTokens: authTokens}
+}
+
+type RegisterApplicationOutComingData struct {
+	Jwt string
+	Rft string
+	Err error
+}
+
+func (sa *NewRegisterApplication) RegisterService(de *Dto.UserDataRegister, ctx context.Context) RegisterApplicationOutComingData {
 
 	err := sa.DatabaseControlling.Checker.CheckerUser(de.Email, ctx)
-	switch {
-	case errors.Is(err, errors.New("person already exist")):
-		return "", "", errors.New("person already exist")
-
-	case err != nil:
-		return "", "", err
+	if err != nil {
+		return RegisterApplicationOutComingData{Err: err}
 	}
 	HashPassword, err := sa.Crypto.Generate.GenerateHash([]byte(de.Password))
 	if err != nil {
-		slog.Error("Err generate a password-scrypt", "err", err)
-		return "", "", err
+		return RegisterApplicationOutComingData{Err: err}
 	}
 
-	UnitIdUser, err := sa.DatabaseControlling.Writer.CreateUser(de.Name, de.Email, string(HashPassword), ctx)
+	UnitIdUser, err := sa.DatabaseControlling.Writer.CreateUser(DomainLevel.CreateUserIncomingData{
+		Name:         de.Name,
+		Email:        de.Email,
+		HashPassword: string(HashPassword),
+		Ctx:          ctx,
+	})
 	if err != nil {
-		return "", "", err
+		return RegisterApplicationOutComingData{
+			Err: err,
+		}
 	}
-
 	RefreshToken, err := sa.AuthTokens.GeneratingToken.GenerateRT(Dto.JwtCustomStruct{
 		UserID: UnitIdUser,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -42,8 +59,8 @@ func (sa *HandlerPackCollect) RegisterService(de *Dto.UserDataRegister, ctx cont
 		},
 	})
 	if err != nil {
-		slog.Error("func login 3", "err", err)
-		return "", "", err
+		slog.Error("RegisterFunc; a strange error happened during creating a JWT token", "ERROR", err)
+		return RegisterApplicationOutComingData{Err: err}
 	}
 	JwtToken, err := sa.AuthTokens.GeneratingToken.GenerateJWT(Dto.JwtCustomStruct{
 		UserID: UnitIdUser,
@@ -55,9 +72,9 @@ func (sa *HandlerPackCollect) RegisterService(de *Dto.UserDataRegister, ctx cont
 		},
 	})
 	if err != nil {
-		slog.Error("func login 4", "err", err)
-		return "", "", err
+		slog.Error("RegisterFunc; a strange error happened during creating a RFT token", "ERROR", err)
+		return RegisterApplicationOutComingData{Err: err}
 	}
 
-	return JwtToken, RefreshToken, nil
+	return RegisterApplicationOutComingData{Rft: RefreshToken, Jwt: JwtToken}
 }

@@ -2,35 +2,63 @@ package Deliver
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/SessionHandle"
-	"Kaban/internal/Service/Application"
-	"encoding/json"
-	"log/slog"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage/AuthChecking"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderEncryptRepo"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
-func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Router, s *Application.HandlerPackCollect) {
+type FileUploaderEncryptNetwork struct {
+	W http.ResponseWriter
+	R *http.Request
+}
 
-	type Answer struct {
-		StatusOperation string `json:"StatusOperation"`
-		Error           string `json:"Error"`
-		UrlToRedict     string `json:"UrlRedict"`
+type FileUploaderEncryptRouting struct {
+	Rout *mux.Router
+}
+type Session struct {
+	ReadSession RepoSessionHandle.SessionConnect
+	AuthCheck   AuthChecking.NewAuthChecker
+}
+type AnswerUploadEncrypt struct {
+	S RepofileUploaderEncryptRepo.SetNewUploadingRepo
+}
+type NewFileUploaderEncrypt struct {
+	Net    FileUploaderNoEncryptNet
+	Router FileUploaderEncryptRouting
+	Sess   Session
+	Answe  AnswerUploadEncrypt
+}
+
+func (S *NewFileUploaderEncrypt) FileUploaderEncrypt() {
+
+	returnedSession := S.Sess.ReadSession.GetSessionData(RepoSessionHandle.IncomingSessionData{
+		Writer:  S.Net.w,
+		Request: S.Net.r,
+	})
+	if returnedSession.Error != nil {
+		S.Answe.S.SetBadAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
+			W:               S.Net.w,
+			Error:           returnedSession.Error.Error(),
+			StatusOperation: DomainLevel.Break,
+		})
+		return
 	}
-	if r.Method != http.MethodPost {
-		//TODO add handling the error
-
+	Data := S.Sess.AuthCheck.CheckAuthTokens(DomainLevel.AuthCheckIncomingData{
+		Jwt: returnedSession.Jwt,
+		Rft: returnedSession.Rft,
+	})
+	if Data.Err != nil {
+		S.Answe.S.SetGoodAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
+			W:               S.Net.w,
+			Error:           Data.Err.Error(),
+			StatusOperation: DomainLevel.Break,
+		})
 		return
 	}
 
-	returnedSessionKey := SessionHandle.SessionControl.GetSessionData(DomainLevel.IncomingSessionData{
-		Writer:  w,
-		Request: r,
-	})
-	if returnedSessionKey == nil || returnedSessionKey.Error != nil {
-		//TODO add handing the error
-	}
 	filName, err := s.UploadEncrypt(r)
 	if err != nil {
 		//TODO add handling the error
@@ -38,21 +66,20 @@ func FileUploaderEncrypt(w http.ResponseWriter, r *http.Request, router *mux.Rou
 		return
 	}
 
-	//TODO need to remove lines which are below
-	url, err := router.Get("fileName").URL("name", filName, "bool", "true")
+	urlPath, err := S.Answe.S.UrlBuilder(S.Router.Rout, filName)
 	if err != nil {
-		slog.Error("Error can't treat", "error", err)
+		S.Answe.S.SetBadAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
+			W:               S.Net.w,
+			Error:           err,
+			StatusOperation: DomainLevel.NotStart,
+		})
 		return
 	}
 
-	w.Header().Set(DomainLevel.ContentType, DomainLevel.Json)
-	w.WriteHeader(200)
-	if err := json.NewEncoder(w).Encode(Answer{StatusOperation: DomainLevel.Success,
-		Error: "",
-
-		UrlToRedict: url.Path}); err != nil {
-		ControllerErrorLogger.ErrorContext(r.Context(), "Error in FileUploadingControlling", "Error", err)
-		return
-	}
-
+	S.Answe.S.SetGoodAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
+		W:               S.Net.w,
+		UrlToRedirect:   urlPath,
+		StatusOperation: DomainLevel.Success,
+	})
+	return
 }

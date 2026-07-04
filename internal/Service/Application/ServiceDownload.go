@@ -1,58 +1,74 @@
 package Application
 
 import (
+	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt"
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
-	"strconv"
 )
 
-func (sa *HandlerPackCollect) DownloadWithNonEncrypt(w http.ResponseWriter, name string, IncomeContext context.Context) (error, string) {
+type DownloadNotEncryptNetwork struct {
+	W http.ResponseWriter
+}
 
-	slog.Info("Func DownloadWithNonEncrypt starts")
+type NewDownloadNotEncrypt struct {
+	RedisControlling
+	S3Controlling
+	HandlerFileManagerPack
+	FileDownload
+	DownloadNotEncryptNetwork
+}
 
+func GetNewNewDownloadNotEncrypt(redisControlling RedisControlling, s3Controlling S3Controlling, handlerFileManagerPack HandlerFileManagerPack, fileDownload FileDownload) *NewDownloadNotEncrypt {
+	return &NewDownloadNotEncrypt{RedisControlling: redisControlling, S3Controlling: s3Controlling, HandlerFileManagerPack: handlerFileManagerPack, FileDownload: fileDownload}
+}
+
+func (sa *NewDownloadNotEncrypt) DownloadWithNonEncrypt(name string, IncomeContext context.Context) error {
 	fileNameInBytes, err := sa.RedisControlling.Reader.GetFileInfo(name, IncomeContext)
 	if err != nil {
-		return err, ""
+		return err
 	}
 
 	trueFileName := ""
 	err = json.Unmarshal(fileNameInBytes, &trueFileName)
 	if err != nil {
 		slog.Error("Unmarshal err", "Error", err.Error())
-		return err, ""
+		return errors.New(DomainLevel.ErrorParseInfo)
 	}
 
-	FileBody, err := sa.S3.S3Download.Download(trueFileName, IncomeContext)
+	FileBody, err := sa.S3Download.GetDownload(trueFileName, IncomeContext)
 	if err != nil {
-		return err, ""
-	}
-	defer func() {
-		slog.Info("Downloading was completed")
-		FileBody.Body.Close()
-
-	}()
-
-	w.Header().Set("Content-Type", sa.FileInfo.FileManaging.FindFormatOfFile(trueFileName))
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", trueFileName))
-	w.Header().Set("Content-Length", strconv.FormatUint(uint64(*FileBody.ContentLength), 10))
-
-	if _, err = io.Copy(w, FileBody.Body); err != nil {
-		slog.Error("Err In file Service Downloader", "err", err)
-		return errors.New("connect close"), ""
-
+		return err
 	}
 
-	slog.Info("Start deleting function")
-	err = sa.S3.Deleter.DeleteFileFromS3(trueFileName, IncomeContext)
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			slog.Error("DownloadWithNonEncrypt; error wasn't")
+			return
+		}
+	}(FileBody.Body)
+
+	err = sa.Download.DownloadFile(RepoDownloadNoEncrypt.DownloadNoEncryptData{
+		W: sa.W,
+		FileDetails: RepoDownloadNoEncrypt.FileDetails{
+			FileFormat:   sa.FileManaging.FindFormatOfFile(trueFileName),
+			TrueFileName: trueFileName,
+			FileLength:   *FileBody.ContentLength,
+		},
+		FileBody: FileBody.Body,
+	})
 	if err != nil {
-		return err, ""
+		return err
 	}
-	slog.Info("Finish deleting function")
 
-	return nil, ""
+	err = sa.S3Controlling.Deleter.DeleteFileFromS3(trueFileName, IncomeContext)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -1,9 +1,10 @@
 package ReadingRedis
 
 import (
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
 	"context"
-	"fmt"
+	"errors"
 	"log/slog"
 )
 
@@ -15,15 +16,10 @@ func (d *RedisReader) GetFileInfo(fileInfoName string, ctx context.Context) ([]b
 
 	err := d.Re.HGetAll(ctx, fileInfoName).Scan(&StructOfFileInfo)
 	if err != nil {
-		slog.Error("Error in  read data", "Error", err)
-		return nil, err
+		slog.Error("Redis GetFileInfo; error happened during getting info about a file", "ERROR", err)
+		return nil, errors.New(DomainLevel.ErrorFindFileInfo)
 	}
 
 	return StructOfFileInfo.InfoAboutFile, nil
 
-}
-
-func Test() {
-
-	fmt.Println("Test")
 }

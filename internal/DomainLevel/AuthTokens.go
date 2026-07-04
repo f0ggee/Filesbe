@@ -4,6 +4,10 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type UserAuthCheck struct {
+	Jwt string
+	Rft string
+}
 type ManageTokens interface {
 	DeleteRefreshToken(string)
 	SaveToken(string)
@@ -15,7 +19,11 @@ type Generator interface {
 }
 
 type CheckingAuthTokens interface {
-	CheckJwt(string) (*jwt.Token, error)
-	CheckRt(string) (*jwt.Token, error)
+	CheckJwt(string) error
+	CheckRt(string) (jwt.Claims, error)
 	CheckingDenyList(string) bool
+}
+
+type AuthCheck interface {
+	CheckUserAuth(UserAuthCheck) (string, error)
 }

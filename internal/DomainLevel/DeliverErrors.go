@@ -26,5 +26,14 @@ const (
 	NotStart = "not_start"
 )
 const (
-	ErrorUSerNotAuthed = "the user isn't authed"
+	ErrorUserNotAuthed = "user's auth is expired"
+	ErrorUserToken     = "user's auth isn't valid"
+)
+
+const (
+	MethodNotAllowed = "the method isn't allowed"
+)
+const (
+	ErrorFileNameEmpty   = "the file's filed is empty"
+	ErrorCantGetFileName = "the file's name isn't set"
 )

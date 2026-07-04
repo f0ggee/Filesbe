@@ -2,6 +2,10 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadEncryptRepo"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers"
+	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 )
 
 type S3Controlling struct {
@@ -9,8 +13,17 @@ type S3Controlling struct {
 	Uploader   DomainLevel.S3Uploader
 	S3Download DomainLevel.DownloadingS3
 }
+type FileDownload struct {
+	Download RepoDownloadNoEncrypt.NewDownloadFile
+}
+type FileDownloadEncrypt struct {
+	EncryptDownload RepoDownloadEncryptRepo.NewEncryptDownloadFile
+}
 
-type HandlerPackCrypto struct {
+type EncrypterKeys struct {
+	GetKeys RepoEncrypterKeys.Keys
+}
+type Crypto struct {
 	Validate DomainLevel.CryptoValidating
 	Encrypt  DomainLevel.Encryption
 	Decrypt  DomainLevel.Decryption
@@ -23,7 +36,10 @@ type HandlerFileManagerPack struct {
 	FileManaging DomainLevel.HandleFile
 }
 
-type HandlerPackAuthTokens struct {
+type ControlKeys struct {
+	Keys DomainLevel.NewSetKeys
+}
+type AuthTokens struct {
 	Manage          DomainLevel.ManageTokens
 	GeneratingToken DomainLevel.Generator
 	Checking        DomainLevel.CheckingAuthTokens
@@ -46,23 +62,13 @@ type RedisControlling struct {
 }
 
 type KeysControlling struct {
-	ControllerKey DomainLevel.KeysManager
+	ControllerKey DomainLevel.NewSetKeys
 }
 type Converter struct {
 	Converting DomainLevel.DataConvert
 }
-type HandlerPackCollect struct {
-	S3                  S3Controlling
-	Crypto              HandlerPackCrypto
-	FileInfo            HandlerFileManagerPack
-	AuthTokens          HandlerPackAuthTokens
-	DatabaseControlling DatabaseControlling
-	RedisControlling    RedisControlling
-	Grpc                HandlerGrpc
-	Convert             Converter
-	Keys                KeysControlling
-}
 
-func NewHandlerPackCollect(s3 S3Controlling, crypto HandlerPackCrypto, fileInfo HandlerFileManagerPack, authTokens HandlerPackAuthTokens, databaseControlling DatabaseControlling, redisControlling RedisControlling, grpc HandlerGrpc, convert Converter, keys KeysControlling) *HandlerPackCollect {
-	return &HandlerPackCollect{S3: s3, Crypto: crypto, FileInfo: fileInfo, AuthTokens: authTokens, DatabaseControlling: databaseControlling, RedisControlling: redisControlling, Grpc: grpc, Convert: convert, Keys: keys}
+type Parser struct {
+	Decode RepoParsers.Decode
+	Encode RepoParsers.Encode
 }

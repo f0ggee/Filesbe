@@ -6,11 +6,6 @@ import (
 	"os"
 )
 
-type ControlPrivateKeyStruct struct {
-	MasterServerPublicKeyBytes []byte
-	OurPrivateKeyIntoBytes     []byte
-}
-
 var Bucket string
 
 func ConfigureKeyData() {

@@ -14,11 +14,21 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
+type NewSwapKeyFirst struct {
+	Crypto
+	ControlKeys
+	Parser
+}
+
+func (sa *NewSwapKeyFirst) SwapKeyFirst() time.Duration {
 
 	slog.Info("Func SwapKeyFirst:", "start", true)
 	serverName := []byte(os.Getenv("serverName"))
-	SignedServerName, err := sa.Crypto.Generate.GenerateSignature(serverName, sa.Keys.ControllerKey.GetOurKey())
+	key, err := sa.ControlKeys.Keys.GerOurPrivateKey()
+	if err != nil {
+		return DomainLevel.DefaultErrorTime
+	}
+	SignedServerName, err := sa.Crypto.Generate.GenerateSignature(serverName, key)
 	if err != nil {
 		return 0
 	}
@@ -33,7 +43,8 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 		slog.Error("Error while generating AesKey", "err", err)
 	}
 	defer AesKey.Destroy()
-	ConvertedData, err := sa.Convert.Converting.JsonConverter(GrpcStruct)
+
+	ConvertedData, err := sa.Encode.JsonEncodeMarshall(GrpcStruct)
 	if err != nil {
 		slog.Error("Error while converting", "err", err)
 		return DomainLevel.DefaultErrorTime
@@ -65,9 +76,13 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
-			Key, err1 := x509.ParsePKCS1PublicKey(sa.Keys.ControllerKey.GetMasterKey())
+			masterPublicKey, err := sa.ControlKeys.Keys.GetMasterPublicKey()
+			if err != nil {
+				return err
+			}
+			Key, err1 := x509.ParsePKCS1PublicKey(masterPublicKey)
 			if err1 != nil {
-				slog.Error("Error while parsing Master Server's public key", "err", err)
+				slog.Error("Error while parsing Master Server's public masterPublicKey", "err", err)
 				return err1
 			}
 
@@ -93,7 +108,7 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 		return DomainLevel.DefaultErrorTime
 	}
 
-	convertedDataGrpcDataLooks, err := sa.Convert.Converting.JsonConverter(Dto.GrpcOutComingPacketForSending{
+	convertedDataGrpcDataLooks, err := sa.Parser.Encode.JsonEncodeMarshall(Dto.GrpcOutComingPacketForSending{
 		AesKeyData: EncryptedDataAesKey,
 		CipherData: EncryptedData,
 	})
@@ -104,7 +119,7 @@ func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 	return MakerRequests(sa, convertedDataGrpcDataLooks)
 }
 
-func MakerRequests(sa *HandlerPackCollect, convertedDataGrpcDataLooks []byte) time.Duration {
+func (sa *NewSwapKeyFirst) MakerRequests(convertedDataGrpcDataLooks []byte) time.Duration {
 	attempts, sec := 1, 1
 	for {
 		if attempts > 12 {

@@ -21,12 +21,12 @@ import (
 	"Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests"
 	"Kaban/internal/InfrastructureLayer/GrpcManage/PacketChecking"
 	"Kaban/internal/InfrastructureLayer/GrpcManage/Sender"
-	"Kaban/internal/InfrastructureLayer/KeysManager"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/DeletingRedis"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/ReadingRedis"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
 	"Kaban/internal/InfrastructureLayer/RedisInteration/WritingRedis"
+	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/InfrastructureLayer/s3Interation"
 	"Kaban/internal/InfrastructureLayer/s3Interation/DeleterS3"
 	"Kaban/internal/InfrastructureLayer/s3Interation/S3Downloader"
@@ -56,7 +56,6 @@ func main() {
 	memguard.CatchInterrupt()
 	defer memguard.Purge()
 
-	slog.Info("HERE IS TEST", "Test", os.Getenv("TEST_VALUE"))
 	db, err := DatabaseControl.Connect()
 	if err != nil {
 		slog.Error("Error connect to database", "error", err)
@@ -90,7 +89,7 @@ func main() {
 	ProcessedFile := HandlerFile.ProcessingFile{}
 	ProcessedFileInfo := HandleFileInfo.ProcessingFileInfo{}
 	PacketValidate := PacketChecking.PacketValidating{}
-	KeysController := &KeysManager.Updater{
+	KeysController := &RepoEncrypterKeys.Updater{
 		Mu:            &sync.RWMutex{},
 		NewPrivateKey: &memguard.LockedBuffer{},
 		OldPrivateKey: &memguard.LockedBuffer{},
@@ -133,7 +132,7 @@ func main() {
 			Uploader:   &S3Uploading,
 			S3Download: S3Download,
 		},
-		Crypto: Application.HandlerPackCrypto{
+		Crypto: Application.Crypto{
 			Validate: &CryptoCheck,
 			Decrypt:  &CryptoDecryption,
 			Encrypt:  &CryptoEncryption,
@@ -143,7 +142,7 @@ func main() {
 			FileInfo:     ProcessedFileInfo,
 			FileManaging: ProcessedFile,
 		},
-		AuthTokens: Application.HandlerPackAuthTokens{
+		AuthTokens: Application.AuthTokens{
 			Manage:          ManagingAuthTokens,
 			GeneratingToken: GeneratingAuthTokens,
 			Checking:        CheckingAuthToken,
@@ -172,11 +171,14 @@ func main() {
 	router.Use(Middlewares.Logging)
 	newRouter := router.PathPrefix("/").Subrouter()
 	newRouter.Use(Middlewares.CheckBots)
-	checkingPost := newRouter.PathPrefix("/").Subrouter()
-	checkingPost.Use(Middlewares.CheckPostRequest)
+	postRequest := newRouter.PathPrefix("/").Subrouter()
+	postRequest.Use(Middlewares.CheckPostRequest)
+
+	getRequest := router.PathPrefix("/").Subrouter()
+	getRequest.Use(Middlewares.CheckerGetRequests)
 	StaticFiles := router.PathPrefix("/Fronted").Subrouter()
 
-	router.HandleFunc("/aboutProject", func(writer http.ResponseWriter, request *http.Request) {
+	getRequest.HandleFunc("/aboutProject", func(writer http.ResponseWriter, request *http.Request) {
 
 		http.ServeFile(writer, request, "internal/Service/Fronted/InfoPageAboutApp.html")
 
@@ -206,7 +208,7 @@ func main() {
 		}
 	}()
 
-	router.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+	postRequest.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 
 		http.ServeFile(w, r, "internal/Service/Fronted/Login.html")
 
@@ -218,14 +220,14 @@ func main() {
 
 	})
 
-	router.HandleFunc("/informationPage", func(writer http.ResponseWriter, request *http.Request) {
+	getRequest.HandleFunc("/informationPage", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "internal/Service/Fronted/InformationPage.html")
 
 	}).Name("NameFile")
-	checkingPost.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+	postRequest.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "internal/Service/Fronted/Register.html")
 	})
-	router.HandleFunc("/main", func(writer http.ResponseWriter, request *http.Request) {
+	getRequest.HandleFunc("/main", func(writer http.ResponseWriter, request *http.Request) {
 
 		http.ServeFile(writer, request, "internal/Service/Fronted/Main_Page.html")
 
@@ -235,7 +237,7 @@ func main() {
 
 	})
 
-	checkingPost.HandleFunc("/protect", func(writer http.ResponseWriter, request *http.Request) {
+	postRequest.HandleFunc("/protect", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "internal/Service/Fronted/Protecion.html")
 
 	})
@@ -245,23 +247,23 @@ func main() {
 
 	}).Name("fileName")
 
-	checkingPost.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
+	postRequest.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
 		Controller2.Login(writer, request, Sa)
 
 	}).Methods("POST")
-	checkingPost.HandleFunc("/register/api", func(writer http.ResponseWriter, request *http.Request) {
+	postRequest.HandleFunc("/register/api", func(writer http.ResponseWriter, request *http.Request) {
 		Controller2.Register(writer, request, Sa)
 
 	}).Methods("POST")
 
-	newRouter.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {
+	getRequest.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {
 
 		Controller2.DownloadWithEncrypt(writer, request, Sa)
 
 		//Application.Delete(ch)
 
 	}).Methods(http.MethodGet)
-	newRouter.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
+	getRequest.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
 
 		Controller2.DownloadWithNotEncrypt(writer, request, Sa)
 
@@ -269,18 +271,18 @@ func main() {
 
 	}).Methods(http.MethodGet)
 
-	router.HandleFunc("/downloader/api", func(writer http.ResponseWriter, request *http.Request) {
+	postRequest.HandleFunc("/downloader/api", func(writer http.ResponseWriter, request *http.Request) {
 
 		Controller2.FileUploaderNoEncrypt(writer, request, router, Sa)
 
 	}).Methods(http.MethodPost)
-	router.HandleFunc("/downloader2/api", func(writer http.ResponseWriter, request *http.Request) {
+	postRequest.HandleFunc("/downloader2/api", func(writer http.ResponseWriter, request *http.Request) {
 
 		Controller2.FileUploaderEncrypt(writer, request, router, Sa)
 
 	}).Methods(http.MethodPost)
 	router.HandleFunc("/maine/api", func(writer http.ResponseWriter, request *http.Request) {
-		Controller2.GetFrom(writer, request, Sa)
+		Controller2.CheckUserAuth(writer, request, Sa)
 
 	}).Methods("GET")
 	router.HandleFunc("/doUrl/api", func(writer http.ResponseWriter, request *http.Request) {
