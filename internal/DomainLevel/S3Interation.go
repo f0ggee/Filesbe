@@ -3,7 +3,6 @@ package DomainLevel
 import (
 	"context"
 	"io"
-	"mime/multipart"
 
 	NewVersion "github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -14,10 +13,27 @@ type DeleterS3 interface {
 	DeleterS3Test(string, context.Context) error
 }
 
-type S3Uploader interface {
-	UploadFile(parts int, goroutines int, ctx context.Context, fileFormat string, fileName string, file multipart.File) error
+type TypeUploading struct {
+	Pipe   *io.PipeReader
+	Normal io.ReadCloser
+}
 
-	UploadFileEncrypt(BesParts int, goroutine int, ctx context.Context, shortFileName string, ContentType string, reader *io.PipeReader) error
+type FileDetails struct {
+	FileFormat string
+	FileName   string
+	FileBody   TypeUploading
+}
+type UploadFileIncomingData struct {
+	Parts      int
+	Goroutines int
+	Ctx        context.Context
+	FileDetails
+}
+
+type S3Uploader interface {
+	UploadFile(UploadFileIncomingData) error
+
+	UploadFileEncrypt(UploadFileIncomingData) error
 }
 
 type DownloadingS3 interface {

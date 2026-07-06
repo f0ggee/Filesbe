@@ -123,7 +123,7 @@ func (sa *HandlerPackCollect) FileUploaderEncrypt(r *http.Request) (string, erro
 			return ctx.Err()
 		default:
 		}
-		errS3 := sa.S3.Uploader.UploadFileEncrypt(BesParts, goroutine, r.Context(), shortNameFile, FileExtension, reader)
+		errS3 := sa.S3.Uploader.UploadFileEncrypt()
 		if errS3 != nil {
 			//return "", err3
 			return errS3

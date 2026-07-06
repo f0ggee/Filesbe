@@ -1,22 +1,23 @@
 package WritingRedis
 
 import (
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
 	"context"
+	"errors"
 	"log/slog"
 )
 
 func (s *Writing) WriteData(shortName string, InfoAboutFile []byte, ctx context.Context) error {
 
-	err := s.Re.HSet(context.Background(), shortName, Dto.FileInfoLabels{
+	err := s.Re.HSet(ctx, shortName, Dto.FileInfoLabels{
 		InfoAboutFile:   InfoAboutFile,
 		IsStartDownload: false,
 	}).Err()
 	if err != nil {
-		slog.Error("redis set err", "Error", err.Error())
-		return err
+		slog.Error("Redis WriteData; error to write data", "ERROR", err)
+		return errors.New(DomainLevel.ErrorWrite)
 	}
-
 	return nil
 
 }

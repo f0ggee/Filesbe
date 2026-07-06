@@ -13,12 +13,12 @@ import (
 
 type NewRegisterApplication struct {
 	DatabaseControlling
-	Crypto
+	GetCrypto
 	AuthTokens
 }
 
-func GetNewNewRegisterApplication(databaseControlling DatabaseControlling, crypto Crypto, authTokens AuthTokens) *NewRegisterApplication {
-	return &NewRegisterApplication{DatabaseControlling: databaseControlling, Crypto: crypto, AuthTokens: authTokens}
+func GetNewNewRegisterApplication(databaseControlling DatabaseControlling, crypto GetCrypto, authTokens AuthTokens) *NewRegisterApplication {
+	return &NewRegisterApplication{DatabaseControlling: databaseControlling, GetCrypto: crypto, AuthTokens: authTokens}
 }
 
 type RegisterApplicationOutComingData struct {
@@ -33,7 +33,7 @@ func (sa *NewRegisterApplication) RegisterService(de *Dto.UserDataRegister, ctx 
 	if err != nil {
 		return RegisterApplicationOutComingData{Err: err}
 	}
-	HashPassword, err := sa.Crypto.Generate.GenerateHash([]byte(de.Password))
+	HashPassword, err := sa.GetCrypto.Generate.GenerateHash([]byte(de.Password))
 	if err != nil {
 		return RegisterApplicationOutComingData{Err: err}
 	}

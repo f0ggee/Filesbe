@@ -20,7 +20,6 @@ type CheckSignKeyIncomingData struct {
 }
 type CryptoValidating interface {
 	CheckSignKey(CheckSignKeyIncomingData) error
-	//CheckSignatureGrpc([]byte, []byte, []byte) error
 	PasswordVerify([]byte, []byte) error
 }
 

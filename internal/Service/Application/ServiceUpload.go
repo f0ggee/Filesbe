@@ -5,71 +5,73 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
-	"time"
 
 	"golang.org/x/sync/errgroup"
 )
 
-func (sa *HandlerPackCollect) FileUploader(r *http.Request) (string, error) {
-	slog.Info("Func FileUploader starts")
+type NewFileUploader struct {
+	GetCrypto
+	GetFileManager
+	S3Controlling
+	Parser
+	RedisControlling
+}
+
+func GetNewNewFileUploader(getCrypto GetCrypto, getFileManager GetFileManager, s3Controlling S3Controlling, parser Parser, redisControlling RedisControlling) *NewFileUploader {
+	return &NewFileUploader{GetCrypto: getCrypto, GetFileManager: getFileManager, S3Controlling: s3Controlling, Parser: parser, RedisControlling: redisControlling}
+}
+
+func (sa *NewFileUploader) FileUploader(r *http.Request) (string, error) {
 	g, ctx := errgroup.WithContext(r.Context())
-
-	file, sizeAndName, err := r.FormFile("file")
+	file, fileDetails, err := r.FormFile("file")
 	if err != nil {
-		slog.Error("Err from FileUploader 1 ", "Error", err.Error())
-		return "", err
+		slog.Error("FileUploader; error to get a file", "ERROR", err)
+		return "", errors.New(DomainLevel.ErrorStrangeUploadFile)
 	}
-	if sizeAndName.Size >= DomainLevel.FileMaxSize {
-		slog.Info("File too big")
-
-		return "", errors.New("file too big")
+	if fileDetails.Size >= DomainLevel.FileMaxSize {
+		return "", errors.New(DomainLevel.ErrorFileSizeBig)
 	}
-
 	defer func() {
 		err = file.Close()
 		if err != nil {
-			slog.Error("Err, cant' close a file", "err", err)
+			slog.Error("FileUploader; error to close a body", "ERROR", err)
 			return
 		}
 	}()
 
-	shortNameFile := sa.Crypto.Generate.GenerateShortName()
+	shortNameFile := sa.Generate.GenerateShortName()
 
-	Parts, goroutines := sa.FileInfo.FileManaging.FindBestOptions(sizeAndName.Size)
+	Parts, goroutines := sa.FileManaging.FindBestOptions(fileDetails.Size)
 
-	timeS := time.Now()
-
-	defer func() {
-		sa := time.Since(timeS)
-		slog.Info("Time of downloading", "Time", sa)
-	}()
-
-	fileFormat := sa.FileInfo.FileManaging.FindFormatOfFile(sizeAndName.Filename)
+	fileFormat := sa.FileManaging.FindFormatOfFile(fileDetails.Filename)
 	g.Go(func() error {
-
-		err2 := sa.S3.Uploader.UploadFile(Parts, goroutines, ctx, fileFormat, sizeAndName.Filename, file)
+		err2 := sa.Uploader.UploadFile(DomainLevel.UploadFileIncomingData{
+			Parts:      Parts,
+			Goroutines: goroutines,
+			Ctx:        ctx,
+			FileDetails: DomainLevel.FileDetails{
+				FileFormat: fileFormat,
+				FileName:   fileDetails.Filename,
+				FileBody:   DomainLevel.TypeUploading{Normal: file},
+			},
+		})
 		if err2 != nil {
 			return err2
 		}
 		return nil
 	})
+
+	fileIntoBytes, err := sa.Parser.Encode.JsonEncodeMarshall(fileDetails.Filename)
+	if err != nil {
+		return "", err
+	}
 	if err := g.Wait(); err != nil {
 		return "", err
 	}
-
-	fileIntoBytes, err := sa.Convert.Converting.JsonConverter(sizeAndName.Filename)
-	if err != nil {
-		slog.Error("Err in FileUploader no encrypt", "Error", err)
-		return "", err
-	}
-
 	err = sa.RedisControlling.Writer.WriteData(shortNameFile, fileIntoBytes, r.Context())
 	if err != nil {
 		return "", err
 	}
-
-	slog.Info("File was generated")
-
 	return shortNameFile, nil
 
 }

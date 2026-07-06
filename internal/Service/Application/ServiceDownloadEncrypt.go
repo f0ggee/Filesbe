@@ -17,15 +17,15 @@ import (
 
 type NewDownloadEncrypt struct {
 	RedisControlling
-	Crypto
+	GetCrypto
 	S3Controlling
-	HandlerFileManagerPack
+	GetFileManager
 	FileDownloadEncrypt
 	EncrypterKeys
 }
 
-func GetNewNewDownloadEncrypt(redisControlling RedisControlling, handlerPackCrypto Crypto, s3Controlling S3Controlling, handlerFileManagerPack HandlerFileManagerPack, fileDownloadEncrypt FileDownloadEncrypt, encrypterKeys EncrypterKeys) *NewDownloadEncrypt {
-	return &NewDownloadEncrypt{RedisControlling: redisControlling, Crypto: handlerPackCrypto, S3Controlling: s3Controlling, HandlerFileManagerPack: handlerFileManagerPack, FileDownloadEncrypt: fileDownloadEncrypt, EncrypterKeys: encrypterKeys}
+func GetNewNewDownloadEncrypt(redisControlling RedisControlling, handlerPackCrypto GetCrypto, s3Controlling S3Controlling, handlerFileManagerPack GetFileManager, fileDownloadEncrypt FileDownloadEncrypt, encrypterKeys EncrypterKeys) *NewDownloadEncrypt {
+	return &NewDownloadEncrypt{RedisControlling: redisControlling, GetCrypto: handlerPackCrypto, S3Controlling: s3Controlling, GetFileManager: handlerFileManagerPack, FileDownloadEncrypt: fileDownloadEncrypt, EncrypterKeys: encrypterKeys}
 }
 
 type NewDownloadEncryptNetwork struct {

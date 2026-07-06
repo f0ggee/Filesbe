@@ -15,20 +15,24 @@ import (
 )
 
 type NewSwapKeyFirst struct {
-	Crypto
-	ControlKeys
+	GetCrypto
+	GetControlKeys
 	Parser
 }
 
-func (sa *NewSwapKeyFirst) SwapKeyFirst() time.Duration {
+func GetNewNewSwapKeyFirst(crypto GetCrypto, controlKeys GetControlKeys, parser Parser) *NewSwapKeyFirst {
+	return &NewSwapKeyFirst{GetCrypto: crypto, GetControlKeys: controlKeys, Parser: parser}
+}
 
-	slog.Info("Func SwapKeyFirst:", "start", true)
+func (sa *NewSwapKeyFirst) GetSwapKeyFirst() time.Duration {
+
+	slog.Info("Func GetSwapKeyFirst:", "start", true)
 	serverName := []byte(os.Getenv("serverName"))
-	key, err := sa.ControlKeys.Keys.GerOurPrivateKey()
+	key, err := sa.GetControlKeys.Keys.GerOurPrivateKey()
 	if err != nil {
 		return DomainLevel.DefaultErrorTime
 	}
-	SignedServerName, err := sa.Crypto.Generate.GenerateSignature(serverName, key)
+	SignedServerName, err := sa.GetCrypto.Generate.GenerateSignature(serverName, key)
 	if err != nil {
 		return 0
 	}
@@ -59,7 +63,7 @@ func (sa *NewSwapKeyFirst) SwapKeyFirst() time.Duration {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
-			EncryptedData1, err1 := sa.Crypto.Encrypt.EncryptAes(AesKey.Data(), ConvertedData)
+			EncryptedData1, err1 := sa.GetCrypto.Encrypt.EncryptAes(AesKey.Data(), ConvertedData)
 			if err1 != nil {
 				slog.Error("Error while encrypt", "err", err1)
 
@@ -76,7 +80,7 @@ func (sa *NewSwapKeyFirst) SwapKeyFirst() time.Duration {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
-			masterPublicKey, err := sa.ControlKeys.Keys.GetMasterPublicKey()
+			masterPublicKey, err := sa.GetControlKeys.Keys.GetMasterPublicKey()
 			if err != nil {
 				return err
 			}
@@ -86,7 +90,7 @@ func (sa *NewSwapKeyFirst) SwapKeyFirst() time.Duration {
 				return err1
 			}
 
-			EncryptedDataAesKey1, err2 := sa.Crypto.Encrypt.EncryptFileInfo(AesKey.Data(), Key)
+			EncryptedDataAesKey1, err2 := sa.GetCrypto.Encrypt.EncryptFileInfo(AesKey.Data(), Key)
 			if err2 != nil {
 				slog.Error("Error while encrypting Info", "err", err1)
 				return err1

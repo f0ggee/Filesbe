@@ -46,7 +46,7 @@ func (sa *HandlerPackCollect) FileUploader(r *http.Request) (string, error) {
 	fileFormat := sa.FileInfo.FileManaging.FindFormatOfFile(sizeAndName.Filename)
 	g.Go(func() error {
 
-		err2 := sa.S3.Uploader.UploadFile(Parts, goroutines, ctx, fileFormat, sizeAndName.Filename, file)
+		err2 := sa.S3.Uploader.UploadFile()
 		if err2 != nil {
 			return err2
 		}

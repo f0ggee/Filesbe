@@ -15,7 +15,7 @@ import (
 
 func (sa *HandlerPackCollect) SwapKeyFirst() time.Duration {
 
-	slog.Info("SwapKeyFirst", "start", true)
+	slog.Info("GetSwapKeyFirst", "start", true)
 	serverName := []byte(os.Getenv("serverName"))
 	SignedServerName, err := sa.Crypto.Generate.GenerateSignature(serverName, sa.Keys.ControllerKey.GetOurKey())
 	if err != nil {

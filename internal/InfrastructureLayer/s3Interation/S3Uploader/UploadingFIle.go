@@ -1,46 +1,42 @@
 package S3Uploader
 
 import (
+	"Kaban/internal/DomainLevel"
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
-	"mime/multipart"
 
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go/aws"
 )
 
-func (sa *Uploading) UploadFile(parts int, goroutines int, ctx context.Context, fileFormat string, fileName string, file multipart.File) error {
+func (sa *Uploading) UploadFile(data DomainLevel.UploadFileIncomingData) error {
+	logger := slog.With("UploadFile")
 	uploader := manager.NewUploader(sa.S3Info.S3Connect, func(uploader *manager.Uploader) {
 		uploader.MaxUploadParts = 1000
-		uploader.PartSize = int64(parts * 1024 * 1024)
-		uploader.Concurrency = goroutines
+		uploader.PartSize = int64(data.Parts * 1024 * 1024)
+		uploader.Concurrency = data.Goroutines
 	})
 
-	slog.Group("File uploading details",
-		slog.String("FileExtension", fileFormat),
-		slog.String("Parts", fmt.Sprint(parts)),
-		slog.String("Goroutines", fmt.Sprint(goroutines)),
-		slog.String("Size", fmt.Sprint()),
-	)
-	_, err := uploader.Upload(ctx, &s3.PutObjectInput{
+	logger.Info("File uploading details", slog.Group("Info", slog.String("File extension", data.FileFormat),
+		slog.Int("Parts", data.Parts), slog.Int("Goroutines", data.Goroutines)))
+	_, err := uploader.Upload(data.Ctx, &s3.PutObjectInput{
 		Bucket:      aws.String(sa.S3Info.Bucket),
-		Key:         aws.String(fileName),
-		ContentType: aws.String(fileFormat),
-		Body:        file,
+		Key:         aws.String(data.FileName),
+		ContentType: aws.String(data.FileFormat),
+		Body:        data.FileBody.Normal,
 	})
 
 	switch {
 	case errors.Is(err, context.Canceled):
-		slog.Info("a user has been cancelled download", "Error", err)
-		return errors.New("a user has been cancelled download")
+		logger.Error("The user stopped uploading", "ERROR", err)
+		return errors.New(DomainLevel.ErrorUploadFile)
 
 	}
 	if err != nil {
-		slog.Error("Error in uploader", "Error", err)
-		return err
+		logger.Error("an unexpected error", "ERROR", err)
+		return errors.New(DomainLevel.ErrorStrangeUploadFile)
 	}
 	return nil
 }

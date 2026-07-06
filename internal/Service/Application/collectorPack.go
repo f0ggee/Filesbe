@@ -23,7 +23,7 @@ type FileDownloadEncrypt struct {
 type EncrypterKeys struct {
 	GetKeys RepoEncrypterKeys.Keys
 }
-type Crypto struct {
+type GetCrypto struct {
 	Validate DomainLevel.CryptoValidating
 	Encrypt  DomainLevel.Encryption
 	Decrypt  DomainLevel.Decryption
@@ -31,12 +31,12 @@ type Crypto struct {
 	Keys     DomainLevel.CryptoKey
 }
 
-type HandlerFileManagerPack struct {
+type GetFileManager struct {
 	FileInfo     DomainLevel.HandleFileInfo
 	FileManaging DomainLevel.HandleFile
 }
 
-type ControlKeys struct {
+type GetControlKeys struct {
 	Keys DomainLevel.NewSetKeys
 }
 type AuthTokens struct {

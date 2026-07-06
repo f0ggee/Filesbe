@@ -18,13 +18,13 @@ type DownloadNotEncryptNetwork struct {
 type NewDownloadNotEncrypt struct {
 	RedisControlling
 	S3Controlling
-	HandlerFileManagerPack
+	GetFileManager
 	FileDownload
 	DownloadNotEncryptNetwork
 }
 
-func GetNewNewDownloadNotEncrypt(redisControlling RedisControlling, s3Controlling S3Controlling, handlerFileManagerPack HandlerFileManagerPack, fileDownload FileDownload) *NewDownloadNotEncrypt {
-	return &NewDownloadNotEncrypt{RedisControlling: redisControlling, S3Controlling: s3Controlling, HandlerFileManagerPack: handlerFileManagerPack, FileDownload: fileDownload}
+func GetNewNewDownloadNotEncrypt(redisControlling RedisControlling, s3Controlling S3Controlling, handlerFileManagerPack GetFileManager, fileDownload FileDownload) *NewDownloadNotEncrypt {
+	return &NewDownloadNotEncrypt{RedisControlling: redisControlling, S3Controlling: s3Controlling, GetFileManager: handlerFileManagerPack, FileDownload: fileDownload}
 }
 
 func (sa *NewDownloadNotEncrypt) DownloadWithNonEncrypt(name string, IncomeContext context.Context) error {

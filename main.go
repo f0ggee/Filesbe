@@ -132,13 +132,13 @@ func main() {
 			Uploader:   &S3Uploading,
 			S3Download: S3Download,
 		},
-		Crypto: Application.Crypto{
+		Crypto: Application.GetCrypto{
 			Validate: &CryptoCheck,
 			Decrypt:  &CryptoDecryption,
 			Encrypt:  &CryptoEncryption,
 			Generate: &CryptoGenerate,
 		},
-		FileInfo: Application.HandlerFileManagerPack{
+		FileInfo: Application.GetFileManager{
 			FileInfo:     ProcessedFileInfo,
 			FileManaging: ProcessedFile,
 		},

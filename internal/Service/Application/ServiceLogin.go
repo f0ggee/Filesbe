@@ -15,7 +15,7 @@ import (
 
 type NewLogin struct {
 	DatabaseControlling
-	Crypto
+	GetCrypto
 	AuthTokens
 }
 type LoginApplicationOutComingData struct {
@@ -24,8 +24,8 @@ type LoginApplicationOutComingData struct {
 	Err error
 }
 
-func GetNewNewLogin(databaseControlling DatabaseControlling, crypto Crypto, authTokens AuthTokens) *NewLogin {
-	return &NewLogin{DatabaseControlling: databaseControlling, Crypto: crypto, AuthTokens: authTokens}
+func GetNewNewLogin(databaseControlling DatabaseControlling, crypto GetCrypto, authTokens AuthTokens) *NewLogin {
+	return &NewLogin{DatabaseControlling: databaseControlling, GetCrypto: crypto, AuthTokens: authTokens}
 }
 
 func (sa *NewLogin) LoginService(s Dto.UserLoginData, ctx context.Context) LoginApplicationOutComingData {
@@ -35,7 +35,7 @@ func (sa *NewLogin) LoginService(s Dto.UserLoginData, ctx context.Context) Login
 			Err: usersData.Err,
 		}
 	}
-	err := sa.Crypto.Validate.PasswordVerify([]byte(usersData.HashPassword), []byte(s.Password))
+	err := sa.GetCrypto.Validate.PasswordVerify([]byte(usersData.HashPassword), []byte(s.Password))
 	if err != nil {
 		return LoginApplicationOutComingData{
 			Err: err,

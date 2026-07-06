@@ -1,6 +1,7 @@
 package S3Uploader
 
 import (
+	"Kaban/internal/DomainLevel"
 	"context"
 	"errors"
 	"fmt"
@@ -13,7 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 )
 
-func (sa *Uploading) UploadFileEncrypt(BesParts int, goroutine int, ctx context.Context, shortFileName string, ContentType string, reader *io.PipeReader) error {
+func (sa *Uploading) UploadFileEncrypt(data DomainLevel.UploadFileIncomingData) error {
 	slog.Group("File uploading details",
 		slog.String("FileExtension", ContentType),
 		slog.String("Parts", fmt.Sprint(BesParts)),
