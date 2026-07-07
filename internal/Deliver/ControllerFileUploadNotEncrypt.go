@@ -1,14 +1,12 @@
 package Deliver
 
+import "C"
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage/AuthChecking"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderNoEncryptRepo"
 	"Kaban/internal/Service/Application"
-	"encoding/json"
-
-	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -18,6 +16,9 @@ type FileUploaderNoEncryptNet struct {
 	w http.ResponseWriter
 	r *http.Request
 }
+type NewFileUploaderApplication struct {
+	Application.NewFileUploader
+}
 type FileUploaderNoEncryptSessions struct {
 	S *RepoSessionHandle.SessionConnect
 }
@@ -26,7 +27,7 @@ type repoUploaderNoEncrypt struct {
 }
 
 type AuthCheckingUploadEncrypt struct {
-	Auth AuthChecking.NewAuthChecker
+	Auth AuthTokensManage.NewAuthChecker
 }
 type UploadNotEncryptSessions struct {
 	Session RepoSessionHandle.SessionConnect
@@ -37,21 +38,22 @@ type NewFileUploaderNoEncrypt struct {
 	Repos          repoUploaderNoEncrypt
 	Auth           AuthCheckingUploadEncrypt
 	Sess           UploadNotEncryptSessions
+	App            NewFileUploaderApplication
 }
 
-func (d *NewFileUploaderNoEncrypt) FileUploaderNoEncrypt(router *mux.Router, s *Application.HandlerPackCollect) {
-	if r.Method != http.MethodPost {
-		slog.Error("FileUploaderNoEncrypt; the method isn't allowed", slog.Group("URL details", slog.String("url", r.RequestURI)))
-		http.Error(w, "err", http.StatusUnauthorized)
-		return
-	}
+func GetNewFileUploaderNoEncrypt(net FileUploaderNoEncryptNet, encryptSession FileUploaderNoEncryptNet, repos repoUploaderNoEncrypt, auth AuthCheckingUploadEncrypt, sess UploadNotEncryptSessions, app NewFileUploaderApplication) *NewFileUploaderNoEncrypt {
+	return &NewFileUploaderNoEncrypt{Net: net, EncryptSession: encryptSession, Repos: repos, Auth: auth, Sess: sess, App: app}
+}
+
+func (d *NewFileUploaderNoEncrypt) FileUploaderNoEncrypt(router *mux.Router) {
+	//TODO here is the http Post
 	returnedData := RepoSessionHandle.SessionControl.GetSessionData(RepoSessionHandle.IncomingSessionData{Writer: d.Net.w, Request: d.Net.r})
 	if returnedData.Error != nil {
 		//TODO add handling the error
 
 		return
 	}
-	outData := d.Auth.Auth.CheckAuthTokens(DomainLevel.AuthCheckIncomingData{
+	outData := d.Auth.Auth.CheckUserAuth(AuthTokensManage.UserAuthCheckIncomingData{
 		Jwt: returnedData.Jwt,
 		Rft: returnedData.Rft,
 	})
@@ -67,12 +69,17 @@ func (d *NewFileUploaderNoEncrypt) FileUploaderNoEncrypt(router *mux.Router, s *
 		d.Sess.Session.SetNewSession(RepoSessionHandle.IncomingSessionData{Jwt: outData.NewJwt})
 	}
 
-	filName, err := s.FileUploader(r)
+	fileName, err := d.App.FileUploader(d.Net.r)
 	if err != nil {
-		///TODO add handling the error
+		d.Repos.S.SetBadAnswer(RepofileUploaderNoEncryptRepo.IncomingData{
+			W:               d.Net.w,
+			Error:           err.Error(),
+			StatusOperation: DomainLevel.Break,
+		})
+		return
 	}
 
-	urlPath, err := d.Repos.S.UrlBuild(router, filName)
+	urlPath, err := d.Repos.S.UrlBuild(router, fileName)
 	if err != nil {
 		d.Repos.S.SetBadAnswer(RepofileUploaderNoEncryptRepo.IncomingData{
 			W:               d.Net.w,

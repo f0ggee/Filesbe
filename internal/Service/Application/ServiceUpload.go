@@ -2,6 +2,7 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/s3Repo"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -10,15 +11,15 @@ import (
 )
 
 type NewFileUploader struct {
-	GetCrypto
-	GetFileManager
-	S3Controlling
-	Parser
-	RedisControlling
+	getCrypto
+	getFileManager
+	s3Controlling
+	parser
+	redisControlling
 }
 
-func GetNewNewFileUploader(getCrypto GetCrypto, getFileManager GetFileManager, s3Controlling S3Controlling, parser Parser, redisControlling RedisControlling) *NewFileUploader {
-	return &NewFileUploader{GetCrypto: getCrypto, GetFileManager: getFileManager, S3Controlling: s3Controlling, Parser: parser, RedisControlling: redisControlling}
+func GetNewNewFileUploader(getCrypto getCrypto, getFileManager getFileManager, s3Controlling s3Controlling, parser parser, redisControlling redisControlling) *NewFileUploader {
+	return &NewFileUploader{getCrypto: getCrypto, getFileManager: getFileManager, s3Controlling: s3Controlling, parser: parser, redisControlling: redisControlling}
 }
 
 func (sa *NewFileUploader) FileUploader(r *http.Request) (string, error) {
@@ -45,14 +46,14 @@ func (sa *NewFileUploader) FileUploader(r *http.Request) (string, error) {
 
 	fileFormat := sa.FileManaging.FindFormatOfFile(fileDetails.Filename)
 	g.Go(func() error {
-		err2 := sa.Uploader.UploadFile(DomainLevel.UploadFileIncomingData{
+		err2 := sa.Uploader.UploadFile(s3Repo.UploadFileIncomingData{
 			Parts:      Parts,
 			Goroutines: goroutines,
 			Ctx:        ctx,
-			FileDetails: DomainLevel.FileDetails{
+			FileDetails: s3Repo.FileDetails{
 				FileFormat: fileFormat,
 				FileName:   fileDetails.Filename,
-				FileBody:   DomainLevel.TypeUploading{Normal: file},
+				FileBody:   s3Repo.TypeUploading{Normal: file},
 			},
 		})
 		if err2 != nil {
@@ -61,14 +62,14 @@ func (sa *NewFileUploader) FileUploader(r *http.Request) (string, error) {
 		return nil
 	})
 
-	fileIntoBytes, err := sa.Parser.Encode.JsonEncodeMarshall(fileDetails.Filename)
+	fileIntoBytes, err := sa.parser.Encode.JsonEncodeMarshall(fileDetails.Filename)
 	if err != nil {
 		return "", err
 	}
 	if err := g.Wait(); err != nil {
 		return "", err
 	}
-	err = sa.RedisControlling.Writer.WriteData(shortNameFile, fileIntoBytes, r.Context())
+	err = sa.redisControlling.Writer.WriteData(shortNameFile, fileIntoBytes, r.Context())
 	if err != nil {
 		return "", err
 	}

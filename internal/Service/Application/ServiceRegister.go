@@ -12,13 +12,13 @@ import (
 )
 
 type NewRegisterApplication struct {
-	DatabaseControlling
-	GetCrypto
-	AuthTokens
+	databaseControlling
+	getCrypto
+	authTokens
 }
 
-func GetNewNewRegisterApplication(databaseControlling DatabaseControlling, crypto GetCrypto, authTokens AuthTokens) *NewRegisterApplication {
-	return &NewRegisterApplication{DatabaseControlling: databaseControlling, GetCrypto: crypto, AuthTokens: authTokens}
+func GetNewNewRegisterApplication(databaseControlling databaseControlling, crypto getCrypto, authTokens authTokens) *NewRegisterApplication {
+	return &NewRegisterApplication{databaseControlling: databaseControlling, getCrypto: crypto, authTokens: authTokens}
 }
 
 type RegisterApplicationOutComingData struct {
@@ -29,16 +29,16 @@ type RegisterApplicationOutComingData struct {
 
 func (sa *NewRegisterApplication) RegisterService(de *Dto.UserDataRegister, ctx context.Context) RegisterApplicationOutComingData {
 
-	err := sa.DatabaseControlling.Checker.CheckerUser(de.Email, ctx)
+	err := sa.databaseControlling.Checker.CheckerUser(de.Email, ctx)
 	if err != nil {
 		return RegisterApplicationOutComingData{Err: err}
 	}
-	HashPassword, err := sa.GetCrypto.Generate.GenerateHash([]byte(de.Password))
+	HashPassword, err := sa.getCrypto.Generate.GenerateHash([]byte(de.Password))
 	if err != nil {
 		return RegisterApplicationOutComingData{Err: err}
 	}
 
-	UnitIdUser, err := sa.DatabaseControlling.Writer.CreateUser(DomainLevel.CreateUserIncomingData{
+	UnitIdUser, err := sa.databaseControlling.Writer.CreateUser(DomainLevel.CreateUserIncomingData{
 		Name:         de.Name,
 		Email:        de.Email,
 		HashPassword: string(HashPassword),
@@ -49,7 +49,7 @@ func (sa *NewRegisterApplication) RegisterService(de *Dto.UserDataRegister, ctx 
 			Err: err,
 		}
 	}
-	RefreshToken, err := sa.AuthTokens.GeneratingToken.GenerateRT(Dto.JwtCustomStruct{
+	RefreshToken, err := sa.authTokens.GeneratingToken.GenerateRT(Dto.JwtCustomStruct{
 		UserID: UnitIdUser,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "Kabaner",
@@ -62,7 +62,7 @@ func (sa *NewRegisterApplication) RegisterService(de *Dto.UserDataRegister, ctx 
 		slog.Error("RegisterFunc; a strange error happened during creating a JWT token", "ERROR", err)
 		return RegisterApplicationOutComingData{Err: err}
 	}
-	JwtToken, err := sa.AuthTokens.GeneratingToken.GenerateJWT(Dto.JwtCustomStruct{
+	JwtToken, err := sa.authTokens.GeneratingToken.GenerateJWT(Dto.JwtCustomStruct{
 		UserID: UnitIdUser,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "Kabaner",

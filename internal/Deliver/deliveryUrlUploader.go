@@ -21,10 +21,7 @@ type NewBuildUrl struct {
 }
 
 func (d *NewBuildUrl) SetUrl() {
-	if d.Net.r.Method != http.MethodGet {
-		ControllerErrorLogger.ErrorContext(r.Context(), "Method don't allow", "Method", r.Method)
-		return
-	}
+	//TODO here is the get method
 
 	urlData := d.S.Url.GetUrlData(d.Net.r)
 	if urlData.NameFile == "" {

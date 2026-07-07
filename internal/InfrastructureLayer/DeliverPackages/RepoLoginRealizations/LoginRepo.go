@@ -9,6 +9,10 @@ import (
 
 type LoginAnswers struct{}
 
+func GetNewLoginAnswers() *LoginAnswers {
+	return &LoginAnswers{}
+}
+
 func (l LoginAnswers) SetGoodAnswer(data AnswerDetails) {
 	data.W.Header().Set(DomainLevel.ContentType, DomainLevel.Json)
 	data.W.WriteHeader(http.StatusOK)

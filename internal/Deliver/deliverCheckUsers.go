@@ -1,10 +1,7 @@
 package Deliver
 
 import (
-	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage/AuthChecking"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage/Creating"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoUsersCheckAuth"
 	"log/slog"
@@ -16,8 +13,7 @@ type NetWork struct {
 	R *http.Request
 }
 type TokensChecker struct {
-	TokenCreate *Creating.CreatingTokens
-	TokenCheck  *ValidatingTokens.Checking
+	Auth AuthTokensManage.NewAuthChecker
 }
 
 type CheckAuth struct {
@@ -26,15 +22,12 @@ type CheckAuth struct {
 type Sessions struct {
 	Session *RepoSessionHandle.SessionConnect
 }
-type AuthChecker struct {
-	Auth AuthChecking.NewAuthChecker
-}
+
 type NewCheckUserAuth struct {
 	Net     NetWork
 	Tokens  TokensChecker
 	Answ    CheckAuth
 	Session Sessions
-	NewAuth AuthChecker
 }
 
 func (s *NewCheckUserAuth) CheckUserAuth() {
@@ -51,7 +44,7 @@ func (s *NewCheckUserAuth) CheckUserAuth() {
 		})
 		return
 	}
-	OutData := s.NewAuth.Auth.CheckAuthTokens(DomainLevel.AuthCheckIncomingData{
+	OutData := s.Tokens.Auth.CheckUserAuth(AuthTokensManage.UserAuthCheckIncomingData{
 		Jwt: returnedData.Jwt,
 		Rft: returnedData.Rft,
 	})

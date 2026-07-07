@@ -4,26 +4,35 @@ import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoLoginRealizations"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
+	"Kaban/internal/InfrastructureLayer/RepoParsers"
+	"Kaban/internal/Service/Application"
 	"net/http"
 )
 
-type Network struct {
+type NetworkLogin struct {
 	W http.ResponseWriter
 	R *http.Request
 }
 
-type Answer struct {
+type AnswerLogin struct {
 	S *RepoLoginRealizations.LoginAnswers
 }
-type Parse struct {
+type ParseLogin struct {
 	Parses *RepoParsers.Parsing
 }
+type LoginApplication struct {
+	Application.NewLogin
+}
 type NewLogin struct {
-	Net           Network
-	ControlAnswer Answer
-	Parser        Parse
+	Net           NetworkLogin
+	ControlAnswer AnswerLogin
+	Parser        ParseLogin
+	App           LoginApplication
+}
+
+func GetNewLogin(net NetworkLogin, controlAnswer AnswerLogin, parser ParseLogin, app LoginApplication) *NewLogin {
+	return &NewLogin{Net: net, ControlAnswer: controlAnswer, Parser: parser, App: app}
 }
 
 func (D *NewLogin) Login() {
@@ -57,17 +66,20 @@ func (D *NewLogin) Login() {
 		return
 	}
 
-	JwtToken, RefreshToken, err := realization.LoginService(*DataUserLogin, D.Net.R.Context())
-	if err != nil {
-		//TODO add handling the error
+	loginDataOutput := D.App.LoginService(*DataUserLogin, D.Net.R.Context())
+	if loginDataOutput.Err != nil {
+		D.ControlAnswer.S.SetGoodAnswer(RepoLoginRealizations.AnswerDetails{
+			W:         D.Net.W,
+			Operation: DomainLevel.Break,
+			Error:     loginDataOutput.Err.Error(),
+		})
 		return
 	}
-
 	ReturnedData := RepoSessionHandle.SessionControl.SetNewSession(RepoSessionHandle.IncomingSessionData{
 		Writer:  D.Net.W,
 		Request: D.Net.R,
-		Jwt:     JwtToken,
-		Rt:      RefreshToken,
+		Jwt:     loginDataOutput.Jwt,
+		Rt:      loginDataOutput.Rft,
 	})
 	if ReturnedData.Error != nil {
 		D.ControlAnswer.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
@@ -77,7 +89,6 @@ func (D *NewLogin) Login() {
 		})
 		return
 	}
-
 	D.ControlAnswer.S.SetGoodAnswer(RepoLoginRealizations.AnswerDetails{
 		W:               D.Net.W,
 		Operation:       DomainLevel.Success,

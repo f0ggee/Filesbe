@@ -16,19 +16,19 @@ type DownloadNotEncryptNetwork struct {
 }
 
 type NewDownloadNotEncrypt struct {
-	RedisControlling
-	S3Controlling
-	GetFileManager
+	redisControlling
+	s3Controlling
+	getFileManager
 	FileDownload
 	DownloadNotEncryptNetwork
 }
 
-func GetNewNewDownloadNotEncrypt(redisControlling RedisControlling, s3Controlling S3Controlling, handlerFileManagerPack GetFileManager, fileDownload FileDownload) *NewDownloadNotEncrypt {
-	return &NewDownloadNotEncrypt{RedisControlling: redisControlling, S3Controlling: s3Controlling, GetFileManager: handlerFileManagerPack, FileDownload: fileDownload}
+func GetNewNewDownloadNotEncrypt(redisControlling redisControlling, s3Controlling s3Controlling, handlerFileManagerPack getFileManager, fileDownload FileDownload) *NewDownloadNotEncrypt {
+	return &NewDownloadNotEncrypt{redisControlling: redisControlling, s3Controlling: s3Controlling, getFileManager: handlerFileManagerPack, FileDownload: fileDownload}
 }
 
 func (sa *NewDownloadNotEncrypt) DownloadWithNonEncrypt(name string, IncomeContext context.Context) error {
-	fileNameInBytes, err := sa.RedisControlling.Reader.GetFileInfo(name, IncomeContext)
+	fileNameInBytes, err := sa.redisControlling.Reader.GetFileInfo(name, IncomeContext)
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func (sa *NewDownloadNotEncrypt) DownloadWithNonEncrypt(name string, IncomeConte
 		return err
 	}
 
-	err = sa.S3Controlling.Deleter.DeleteFileFromS3(trueFileName, IncomeContext)
+	err = sa.s3Controlling.Deleter.DeleteFileFromS3(trueFileName, IncomeContext)
 	if err != nil {
 		return err
 	}

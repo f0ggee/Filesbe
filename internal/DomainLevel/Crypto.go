@@ -13,6 +13,11 @@ type Decryption interface {
 	SayHello(string) string
 }
 
+type FileLabelsBytes struct {
+	FileName string
+	AesKey   string
+}
+
 type CheckSignKeyIncomingData struct {
 	Sign            []byte
 	Hash            []byte
@@ -23,10 +28,6 @@ type CryptoValidating interface {
 	PasswordVerify([]byte, []byte) error
 }
 
-type CryptoKey interface {
-	GetMasterKey() []byte
-	GetOurKey() []byte
-}
 type CryptoGenerating interface {
 	GenerateShortName() string
 	GenerateSignature(message []byte, key []byte) ([]byte, error)

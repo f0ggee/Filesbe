@@ -14,9 +14,9 @@ import (
 )
 
 type NewLogin struct {
-	DatabaseControlling
-	GetCrypto
-	AuthTokens
+	databaseControlling
+	getCrypto
+	authTokens
 }
 type LoginApplicationOutComingData struct {
 	Jwt string
@@ -24,24 +24,24 @@ type LoginApplicationOutComingData struct {
 	Err error
 }
 
-func GetNewNewLogin(databaseControlling DatabaseControlling, crypto GetCrypto, authTokens AuthTokens) *NewLogin {
-	return &NewLogin{DatabaseControlling: databaseControlling, GetCrypto: crypto, AuthTokens: authTokens}
+func GetNewNewLogin(databaseControlling databaseControlling, crypto getCrypto, authTokens authTokens) *NewLogin {
+	return &NewLogin{databaseControlling: databaseControlling, getCrypto: crypto, authTokens: authTokens}
 }
 
 func (sa *NewLogin) LoginService(s Dto.UserLoginData, ctx context.Context) LoginApplicationOutComingData {
-	usersData := sa.DatabaseControlling.Reader.LoginData(s.Email, ctx)
+	usersData := sa.databaseControlling.Reader.LoginData(s.Email, ctx)
 	if usersData.Err != nil {
 		return LoginApplicationOutComingData{
 			Err: usersData.Err,
 		}
 	}
-	err := sa.GetCrypto.Validate.PasswordVerify([]byte(usersData.HashPassword), []byte(s.Password))
+	err := sa.getCrypto.Validate.PasswordVerify([]byte(usersData.HashPassword), []byte(s.Password))
 	if err != nil {
 		return LoginApplicationOutComingData{
 			Err: err,
 		}
 	}
-	RefreshToken, err := sa.AuthTokens.GeneratingToken.GenerateRT(Dto.JwtCustomStruct{
+	RefreshToken, err := sa.authTokens.GeneratingToken.GenerateRT(Dto.JwtCustomStruct{
 		UserID: (usersData.Id),
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "Kabaner",
@@ -56,7 +56,7 @@ func (sa *NewLogin) LoginService(s Dto.UserLoginData, ctx context.Context) Login
 			Err: errors.New(DomainLevel.ErrorCreateSession),
 		}
 	}
-	JwtToken, err := sa.AuthTokens.GeneratingToken.GenerateJWT(Dto.JwtCustomStruct{
+	JwtToken, err := sa.authTokens.GeneratingToken.GenerateJWT(Dto.JwtCustomStruct{
 		UserID: usersData.Id,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "Kabaner",

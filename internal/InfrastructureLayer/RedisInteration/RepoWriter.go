@@ -1,0 +1,40 @@
+package RedisInteration
+
+import (
+	"Kaban/internal/DomainLevel"
+	"Kaban/internal/Dto"
+	"context"
+	"errors"
+	"log/slog"
+
+	"github.com/redis/go-redis/v9"
+)
+
+type Writing struct {
+	Re *redis.Client
+}
+
+func (d *Writing) EnableDownloadingParameter(nameOfFileInfo string, ctx context.Context) error {
+
+	err := d.Re.HSet(ctx, nameOfFileInfo, "IsStartDownload", true).Err()
+	if err != nil {
+		slog.Error("EnableDownloadingParameter;Error set up the labels isStartDownload on true", "ERROR", err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func (s *Writing) WriteData(shortName string, InfoAboutFile []byte, ctx context.Context) error {
+
+	err := s.Re.HSet(ctx, shortName, Dto.FileInfoLabels{
+		InfoAboutFile:   InfoAboutFile,
+		IsStartDownload: false,
+	}).Err()
+	if err != nil {
+		slog.Error("WriteData;Redis WriteData; error to write data", "ERROR", err)
+		return errors.New(DomainLevel.ErrorWrite)
+	}
+	return nil
+
+}

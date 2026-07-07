@@ -48,17 +48,3 @@ type AnswerUploaderFileNoEncrypt struct {
 	UrlToRedirect   string `json:"UrlRedict"`
 	Error           string `json:"Error"`
 }
-
-type AuthCheckIncomingData struct {
-	Jwt string
-	Rft string
-}
-
-type OutComingAuthData struct {
-	NewJwt          string
-	IsNewJwtCreated bool
-	Err             error
-}
-type Auth interface {
-	CheckAuthTokens(AuthCheckIncomingData) OutComingAuthData
-}

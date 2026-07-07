@@ -2,9 +2,10 @@ package Deliver
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage/AuthChecking"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderEncryptRepo"
+	"Kaban/internal/Service/Application"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -14,22 +15,26 @@ type FileUploaderEncryptNetwork struct {
 	W http.ResponseWriter
 	R *http.Request
 }
+type NewFileUploaderEncryptApplication struct {
+	Application.NewUploadEncrypt
+}
 
 type FileUploaderEncryptRouting struct {
 	Rout *mux.Router
 }
 type Session struct {
 	ReadSession RepoSessionHandle.SessionConnect
-	AuthCheck   AuthChecking.NewAuthChecker
+	AuthCheck   AuthTokensManage.AuthCheck
 }
 type AnswerUploadEncrypt struct {
 	S RepofileUploaderEncryptRepo.SetNewUploadingRepo
 }
 type NewFileUploaderEncrypt struct {
-	Net    FileUploaderNoEncryptNet
-	Router FileUploaderEncryptRouting
-	Sess   Session
-	Answe  AnswerUploadEncrypt
+	Net         FileUploaderNoEncryptNet
+	Router      FileUploaderEncryptRouting
+	Sess        Session
+	Answe       AnswerUploadEncrypt
+	Application NewFileUploaderEncryptApplication
 }
 
 func (S *NewFileUploaderEncrypt) FileUploaderEncrypt() {
@@ -46,7 +51,7 @@ func (S *NewFileUploaderEncrypt) FileUploaderEncrypt() {
 		})
 		return
 	}
-	Data := S.Sess.AuthCheck.CheckAuthTokens(DomainLevel.AuthCheckIncomingData{
+	Data := S.Sess.AuthCheck.CheckUserAuth(AuthTokensManage.UserAuthCheckIncomingData{
 		Jwt: returnedSession.Jwt,
 		Rft: returnedSession.Rft,
 	})
@@ -59,18 +64,18 @@ func (S *NewFileUploaderEncrypt) FileUploaderEncrypt() {
 		return
 	}
 
-	filName, err := s.UploadEncrypt(r)
+	fileName, err := S.Application.NewUploadEncrypt.UploadEncrypt(S.Net.r)
 	if err != nil {
 		//TODO add handling the error
 
 		return
 	}
 
-	urlPath, err := S.Answe.S.UrlBuilder(S.Router.Rout, filName)
+	urlPath, err := S.Answe.S.UrlBuilder(S.Router.Rout, fileName)
 	if err != nil {
 		S.Answe.S.SetBadAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
 			W:               S.Net.w,
-			Error:           err,
+			Error:           err.Error(),
 			StatusOperation: DomainLevel.NotStart,
 		})
 		return

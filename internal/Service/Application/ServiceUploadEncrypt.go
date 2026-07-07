@@ -2,7 +2,7 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/Dto"
+	"Kaban/internal/InfrastructureLayer/s3Repo"
 	"context"
 	"crypto/aes"
 	"crypto/cipher"
@@ -22,12 +22,16 @@ import (
 )
 
 type NewUploadEncrypt struct {
-	GetFileManager
-	GetCrypto
-	Parser
-	GetControlKeys
-	S3Controlling
-	RedisControlling
+	getFileManager
+	getCrypto
+	parser
+	getControlKeys
+	s3Controlling
+	redisControlling
+}
+
+func GetNewNewUploadEncrypt(getFileManager getFileManager, getCrypto getCrypto, parser parser, getControlKeys getControlKeys, s3Controlling s3Controlling, redisControlling redisControlling) *NewUploadEncrypt {
+	return &NewUploadEncrypt{getFileManager: getFileManager, getCrypto: getCrypto, parser: parser, getControlKeys: getControlKeys, s3Controlling: s3Controlling, redisControlling: redisControlling}
 }
 
 func (sa *NewUploadEncrypt) UploadEncrypt(r *http.Request) (string, error) {
@@ -63,11 +67,7 @@ func (sa *NewUploadEncrypt) UploadEncrypt(r *http.Request) (string, error) {
 	shortNameFile := sa.Generate.GenerateShortName()
 	FileExtension := sa.FileManaging.FindFormatOfFile(sizeAndName.Filename)
 
-	OurKey, err := sa.GetControlKeys.Keys.GerOurPrivateKey()
-	if err != nil {
-		slog.Error("UploadEncrypt; error to get a private key", "ERROR", err)
-		return "", errors.New(DomainLevel.ErrorStrangeUploadFile)
-	}
+	OurKey := sa.getControlKeys.Keys.GerOurPrivateKey()
 	Public, err := x509.ParsePKCS1PrivateKey(OurKey)
 	if err != nil {
 		slog.Error("UploadEncrypt; error to decode a key", "ERROR", err)
@@ -84,7 +84,7 @@ func (sa *NewUploadEncrypt) UploadEncrypt(r *http.Request) (string, error) {
 		return "", errors.New(DomainLevel.ErrorStrangeUploadFile)
 	}
 
-	FileInfoInBytes, err := sa.Parser.Encode.JsonEncodeMarshall(Dto.FileLabelsBytes{
+	FileInfoInBytes, err := sa.parser.Encode.JsonEncodeMarshall(DomainLevel.FileLabelsBytes{
 		FileName: sizeAndName.Filename,
 		AesKey:   hex.EncodeToString(GottenAesKey.Bytes()),
 	})
@@ -100,14 +100,14 @@ func (sa *NewUploadEncrypt) UploadEncrypt(r *http.Request) (string, error) {
 			return ctx.Err()
 		default:
 		}
-		errS3 := sa.S3Controlling.Uploader.UploadFileEncrypt(DomainLevel.UploadFileIncomingData{
+		errS3 := sa.s3Controlling.Uploader.UploadFileEncrypt(s3Repo.UploadFileIncomingData{
 			Parts:      BesParts,
 			Goroutines: goroutine,
 			Ctx:        ctx,
-			FileDetails: DomainLevel.FileDetails{
+			FileDetails: s3Repo.FileDetails{
 				FileFormat: FileExtension,
 				FileName:   shortNameFile,
-				FileBody: DomainLevel.TypeUploading{
+				FileBody: s3Repo.TypeUploading{
 					Pipe: reader,
 				},
 			},
@@ -137,20 +137,20 @@ func (sa *NewUploadEncrypt) UploadEncrypt(r *http.Request) (string, error) {
 		g2, Ctx := errgroup.WithContext(context.Background())
 		Ctx, cancel := context.WithTimeout(Ctx, 25*time.Second)
 		defer cancel()
-		DownloadingHaveStarted := sa.RedisControlling.CheckerRedis.ChekIsStartDownload(shortNameFile, Ctx)
+		DownloadingHaveStarted := sa.redisControlling.CheckerRedis.ChekIsStartDownload(shortNameFile, Ctx)
 		if DownloadingHaveStarted {
 			return
 		}
 		g2.Go(func() error {
 
-			err := sa.RedisControlling.Deleter.DeleteFileInfo(shortNameFile, Ctx)
+			err := sa.redisControlling.Deleter.DeleteFileInfo(shortNameFile, Ctx)
 			if err != nil {
 				return err
 			}
 			return nil
 		})
 		g2.Go(func() error {
-			err := sa.S3Controlling.Deleter.DeleteFileFromS3(shortNameFile, Ctx)
+			err := sa.s3Controlling.Deleter.DeleteFileFromS3(shortNameFile, Ctx)
 			if err != nil {
 				return err
 			}

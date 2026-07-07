@@ -18,17 +18,21 @@ type NetworkDownloadEncrypt struct {
 	W http.ResponseWriter
 	R *http.Request
 }
+type NewDownloadWithEncryptApplication struct {
+	Application.NewDownloadEncrypt
+}
 type NewDownloadEncrypt struct {
 	Answer AnswerDownloadEncrypt
 	Url    UrlBuilderDownloadEncrypt
 	Net    NetworkDownloadEncrypt
+	NewDownloadWithEncryptApplication
 }
 
-func GetNewNewDownloadEncrypt(answer AnswerDownloadEncrypt, url UrlBuilderDownloadEncrypt, net NetworkDownloadEncrypt) *NewDownloadEncrypt {
-	return &NewDownloadEncrypt{Answer: answer, Url: url, Net: net}
+func GetNewDownloadEncrypt(answer AnswerDownloadEncrypt, url UrlBuilderDownloadEncrypt, net NetworkDownloadEncrypt, newDownloadWithEncryptApplication NewDownloadWithEncryptApplication) *NewDownloadEncrypt {
+	return &NewDownloadEncrypt{Answer: answer, Url: url, Net: net, NewDownloadWithEncryptApplication: newDownloadWithEncryptApplication}
 }
 
-func (d NewDownloadEncrypt) DownloadWithEncrypt(s *Application.HandlerPackCollect) {
+func (d NewDownloadEncrypt) DownloadWithEncrypt() {
 
 	fileName := d.Url.UrlBuild.GetDataRequest(d.Net.R)
 	if fileName == "" {
@@ -39,7 +43,13 @@ func (d NewDownloadEncrypt) DownloadWithEncrypt(s *Application.HandlerPackCollec
 		})
 		return
 	}
-	err := s.DownloadEncrypt(d.Net.W, d.Net.R.Context(), fileName)
+	err := d.DownloadEncrypt(Application.NewDownloadEncryptIncomingData{
+		NewDownloadEncryptNetwork: Application.NewDownloadEncryptNetwork{
+			d.Net.W,
+		},
+		Ctx:          d.Net.R.Context(),
+		EncryptedURl: fileName,
+	})
 	if err != nil {
 		d.Answer.S.SetBadAnswers(RepoDownloadEncryptRepo.IncomingDataAnswer{
 			W:     d.Net.W,

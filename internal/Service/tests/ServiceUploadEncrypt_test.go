@@ -1,9 +1,8 @@
 package Handlers
 
 import (
-	"Kaban/internal/InfrastructureLayer/RedisInteration/DeletingRedis"
-	"Kaban/internal/InfrastructureLayer/RedisInteration/RedisChecking"
-	"Kaban/internal/InfrastructureLayer/s3Interation/DeleterS3"
+	"Kaban/internal/InfrastructureLayer/RedisInteration"
+	"Kaban/internal/InfrastructureLayer/s3Repo"
 	Handlers2 "Kaban/internal/Service/Handlers"
 	"context"
 	"io"
@@ -34,11 +33,11 @@ func TestTester(t *testing.T) {
 	}
 
 	s3 := Handlers2.S3Controlling{
-		Deleter: &DeleterS3.DeleterS3{Conf: nil},
+		Deleter: &s3Repo.NewDeleterS3{Conf: nil},
 	}
 	Redis := Handlers2.RedisControlling{
-		CheckerRedis: &RedisChecking.ValidationRedis{Re: nil},
-		Deleter:      &DeletingRedis.DeleterRedis{Re: nil},
+		CheckerRedis: &RedisInteration.ValidationRedis{Re: nil},
+		Deleter:      &RedisInteration.DeleterRedis{Re: nil},
 	}
 
 	tests := []struct {

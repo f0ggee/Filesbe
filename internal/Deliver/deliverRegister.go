@@ -3,7 +3,8 @@ package Deliver
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers"
+	"Kaban/internal/InfrastructureLayer/RepoParsers"
+	"Kaban/internal/Service/Application"
 	"errors"
 	"net/http"
 
@@ -11,18 +12,35 @@ import (
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
 )
 
-type NewRegister struct {
-	D *RepoParsers.Parsing
+type RegisterSession struct {
+	Session RepoSessionHandle.Session
+}
+type RegisterParser struct {
+	D RepoParsers.Parsing
+}
+type RegisterAnswers struct {
+	Answ RepoRegisterRepository.RegisterController
+}
+type NewRegisterApp struct {
+	App Application.NewRegisterApplication
+}
+type RegisterNet struct {
 	W http.ResponseWriter
 	R *http.Request
-	S *RepoSessionHandle.Session
+}
+type NewRegister struct {
+	RegisterParser
+	RegisterNet
+	RegisterSession
+	RegisterAnswers
+	NewRegisterApp
 }
 
 func (D NewRegister) Register() {
 	userDataRegister := &Dto.UserDataRegister{}
 	err := D.D.JsonDecode(userDataRegister, D.R.Body)
 	if err != nil {
-		RepoRegisterRepository.ErrorController.ErrorAnswer(RepoRegisterRepository.RegisterErrorIncomingData{
+		D.Answ.ErrorAnswer(RepoRegisterRepository.RegisterErrorIncomingData{
 			W:         D.W,
 			Error:     err,
 			Operation: errors.New(DomainLevel.NotStart),
@@ -32,7 +50,7 @@ func (D NewRegister) Register() {
 
 	err = userDataRegister.ValidateDate()
 	if err != nil {
-		RepoRegisterRepository.ErrorController.ErrorAnswer(RepoRegisterRepository.RegisterErrorIncomingData{
+		D.Answ.ErrorAnswer(RepoRegisterRepository.RegisterErrorIncomingData{
 			W:         D.W,
 			Error:     err,
 			Operation: errors.New(DomainLevel.NotStart),
@@ -40,16 +58,20 @@ func (D NewRegister) Register() {
 		return
 	}
 
-	jwt, rt, err := D.S.RegisterService(userDataRegister, D.R.Context())
-	if err != nil {
-		//TODO add handling the error
+	RegisterOutput := D.App.RegisterService(userDataRegister, D.R.Context())
+	if RegisterOutput.Err != nil {
+		D.RegisterAnswers.Answ.ErrorAnswer(RepoRegisterRepository.RegisterErrorIncomingData{
+			W:         D.W,
+			Error:     RegisterOutput.Err,
+			Operation: errors.New(DomainLevel.Break),
+		})
+		return
 	}
-
-	returnedData := RepoSessionHandle.SessionControl.SetNewSession(RepoSessionHandle.IncomingSessionData{
+	returnedData := D.Session.SetNewSession(RepoSessionHandle.IncomingSessionData{
 		Writer:  D.W,
 		Request: D.R,
-		Jwt:     jwt,
-		Rt:      rt})
+		Jwt:     RegisterOutput.Jwt,
+		Rt:      RegisterOutput.Rft})
 	if returnedData.Error != nil {
 		RepoRegisterRepository.ErrorController.ErrorAnswer(RepoRegisterRepository.RegisterErrorIncomingData{
 			W:         D.W,

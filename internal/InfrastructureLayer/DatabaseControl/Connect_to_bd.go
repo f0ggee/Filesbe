@@ -21,8 +21,8 @@ func config() *pgxpool.Config {
 	dbDbname := os.Getenv("POSTGRESQL_DBNAME")
 	const MaxCons = int32(5)
 	const MinCons = int32(2)
-	const Lifetime = time.Hour
-	const IdleTime = time.Minute * 20
+	const Lifetime = 30 * time.Minute
+	const IdleTime = 30 * time.Second
 	const Health = time.Minute
 
 	connstr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", dbIp, dbPort, dbUser, dbPassword, dbDbname)
@@ -52,7 +52,6 @@ func config() *pgxpool.Config {
 
 	dbconfige.BeforeClose = func(conn *pgx.Conn) {
 		slog.Info("Connection are close ")
-
 	}
 
 	return dbconfige

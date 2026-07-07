@@ -15,12 +15,12 @@ type HandlerPackCrypto struct {
 	Encrypt  DomainLevel.Encryption
 	Decrypt  DomainLevel.Decryption
 	Generate DomainLevel.CryptoGenerating
-	//Keys  DomainLevel.CryptoKey
+	//NewKeys  DomainLevel.CryptoKey
 }
 
 type HandlerFileManagerPack struct {
 	FileInfo     DomainLevel.HandleFileInfo
-	FileManaging DomainLevel.HandleFile
+	FileManaging DomainLevel.SetFileSettings
 }
 
 type HandlerPackAuthTokens struct {

@@ -20,17 +20,22 @@ type NetworkDownloadNoEncrypt struct {
 	R *http.Request
 }
 
+type NewDownloadWithNotEncryptApplication struct {
+	Application.NewDownloadNotEncrypt
+}
+
 type NewDownloadWithNotEncrypt struct {
 	AnswerDownloadNoEncrypt
 	UrlBuilderDownloadNoEncrypt
 	NetworkDownloadNoEncrypt
+	NewDownloadWithNotEncryptApplication
 }
 
-func GetNewNewDownloadWithNotEncrypt(answerDownloadNoEncrypt AnswerDownloadNoEncrypt, urlBuilderDownloadNoEncrypt UrlBuilderDownloadNoEncrypt, networkDownloadNoEncrypt NetworkDownloadNoEncrypt) *NewDownloadWithNotEncrypt {
-	return &NewDownloadWithNotEncrypt{AnswerDownloadNoEncrypt: answerDownloadNoEncrypt, UrlBuilderDownloadNoEncrypt: urlBuilderDownloadNoEncrypt, NetworkDownloadNoEncrypt: networkDownloadNoEncrypt}
+func GetNewDownloadWithNotEncrypt(answerDownloadNoEncrypt AnswerDownloadNoEncrypt, urlBuilderDownloadNoEncrypt UrlBuilderDownloadNoEncrypt, networkDownloadNoEncrypt NetworkDownloadNoEncrypt, newDownloadWithNotEncryptApplication NewDownloadWithNotEncryptApplication) *NewDownloadWithNotEncrypt {
+	return &NewDownloadWithNotEncrypt{AnswerDownloadNoEncrypt: answerDownloadNoEncrypt, UrlBuilderDownloadNoEncrypt: urlBuilderDownloadNoEncrypt, NetworkDownloadNoEncrypt: networkDownloadNoEncrypt, NewDownloadWithNotEncryptApplication: newDownloadWithNotEncryptApplication}
 }
 
-func (d NewDownloadWithNotEncrypt) DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request, s *Application.HandlerPackCollect) {
+func (d NewDownloadWithNotEncrypt) DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request) {
 
 	name := d.UrlWork.GetData(r)
 	if name == "" {
@@ -42,8 +47,7 @@ func (d NewDownloadWithNotEncrypt) DownloadWithNotEncrypt(w http.ResponseWriter,
 		return
 	}
 
-	err, _ := s.DownloadWithNonEncrypt(w, name, r.Context())
-
+	err := d.DownloadWithNonEncrypt(name, d.R.Context())
 	if err != nil {
 		d.Answ.SetBadAnswer(RepoDownloadNoEncrypt.DownloadNoEncryptIncomingData{
 			W:               d.W,
