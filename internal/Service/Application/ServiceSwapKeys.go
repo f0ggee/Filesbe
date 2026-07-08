@@ -9,19 +9,19 @@ import (
 )
 
 type NewSwapKeys struct {
-	redisControlling
-	getCrypto
-	getControlKeys
-	encrypterKeys
-	parser
+	RedisControlling
+	GetCrypto
+	GetControlKeys
+	EncrypterKeys
+	Parser
 }
 
-func GetNewNewSwapKeys(redisControlling redisControlling, crypto getCrypto, controlKeys getControlKeys, encrypterKeys encrypterKeys, parser parser) *NewSwapKeys {
-	return &NewSwapKeys{redisControlling: redisControlling, getCrypto: crypto, getControlKeys: controlKeys, encrypterKeys: encrypterKeys, parser: parser}
+func GetNewNewSwapKeys(redisControlling RedisControlling, crypto GetCrypto, controlKeys GetControlKeys, encrypterKeys EncrypterKeys, parser Parser) *NewSwapKeys {
+	return &NewSwapKeys{RedisControlling: redisControlling, GetCrypto: crypto, GetControlKeys: controlKeys, EncrypterKeys: encrypterKeys, Parser: parser}
 }
 
 func (sa *NewSwapKeys) SetSwapKeys() time.Duration {
-	Data, err := sa.redisControlling.Reader.GetKey(context.Background())
+	Data, err := sa.RedisControlling.Reader.GetKey(context.Background())
 	if err != nil {
 		return DomainLevel.DefaultErrorTime
 	}
@@ -32,16 +32,16 @@ func (sa *NewSwapKeys) SetSwapKeys() time.Duration {
 		TimeNextSwaping: time.Duration(0),
 	}
 
-	err = sa.parser.Decode.JsonDecodeMarshall(&grpcPacket, Data)
+	err = sa.Parser.Decode.JsonDecodeMarshall(&grpcPacket, Data)
 	if err != nil {
 		return DomainLevel.DefaultErrorTime
 	}
 
-	AesKeyDecrypted1, err2 := sa.getCrypto.Decrypt.DecryptAesKey(sa.getControlKeys.Keys.GerOurPrivateKey(), grpcPacket.AesKey)
+	AesKeyDecrypted1, err2 := sa.GetCrypto.Decrypt.DecryptAesKey(sa.GetControlKeys.Keys.GerOurPrivateKey(), grpcPacket.AesKey)
 	if err2 != nil {
 		return DomainLevel.DefaultErrorTime
 	}
-	NewRsaKey := sa.getCrypto.Decrypt.DecryptPacket(AesKeyDecrypted1, grpcPacket.PlainText)
+	NewRsaKey := sa.GetCrypto.Decrypt.DecryptPacket(AesKeyDecrypted1, grpcPacket.PlainText)
 	if NewRsaKey == nil {
 		return DomainLevel.DefaultErrorTime
 	}
@@ -50,9 +50,9 @@ func (sa *NewSwapKeys) SetSwapKeys() time.Duration {
 	hashSha := sha256.New()
 	hashSha.Write(NewRsaKey.Bytes())
 
-	getMasterPublicKey := sa.getControlKeys.Keys.GetMasterPublicKey()
+	getMasterPublicKey := sa.GetControlKeys.Keys.GetMasterPublicKey()
 
-	err = sa.getCrypto.Validate.CheckSignKey(DomainLevel.CheckSignKeyIncomingData{
+	err = sa.GetCrypto.Validate.CheckSignKey(DomainLevel.CheckSignKeyIncomingData{
 		Sign:            grpcPacket.Signature,
 		Hash:            hashSha.Sum(nil),
 		MasterPublicKey: getMasterPublicKey,
@@ -61,8 +61,8 @@ func (sa *NewSwapKeys) SetSwapKeys() time.Duration {
 		return DomainLevel.DefaultErrorTime
 	}
 
-	sa.encrypterKeys.GetKeys.UpdateOldKey()
-	err = sa.encrypterKeys.GetKeys.UpdateNewKey(NewRsaKey)
+	sa.EncrypterKeys.GetKeys.UpdateOldKey()
+	err = sa.EncrypterKeys.GetKeys.UpdateNewKey(NewRsaKey)
 	if err != nil {
 		return DomainLevel.DefaultErrorTime
 	}

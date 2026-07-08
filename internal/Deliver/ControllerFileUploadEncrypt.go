@@ -23,7 +23,7 @@ type FileUploaderEncryptRouting struct {
 	Rout *mux.Router
 }
 type Session struct {
-	ReadSession RepoSessionHandle.SessionConnect
+	ReadSession RepoSessionHandle.NewSessionConnect
 	AuthCheck   AuthTokensManage.AuthCheck
 }
 type AnswerUploadEncrypt struct {

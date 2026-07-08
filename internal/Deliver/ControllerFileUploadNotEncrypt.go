@@ -20,7 +20,7 @@ type NewFileUploaderApplication struct {
 	Application.NewFileUploader
 }
 type FileUploaderNoEncryptSessions struct {
-	S *RepoSessionHandle.SessionConnect
+	S *RepoSessionHandle.NewSessionConnect
 }
 type repoUploaderNoEncrypt struct {
 	S *RepofileUploaderNoEncryptRepo.NewUploaderNoEncrypt
@@ -30,7 +30,7 @@ type AuthCheckingUploadEncrypt struct {
 	Auth AuthTokensManage.NewAuthChecker
 }
 type UploadNotEncryptSessions struct {
-	Session RepoSessionHandle.SessionConnect
+	Session RepoSessionHandle.NewSessionConnect
 }
 type NewFileUploaderNoEncrypt struct {
 	Net            FileUploaderNoEncryptNet

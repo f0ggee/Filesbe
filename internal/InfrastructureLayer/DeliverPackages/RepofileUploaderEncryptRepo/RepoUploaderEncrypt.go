@@ -10,6 +10,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type SetNewUploadingRepo struct{}
+
+func GetNewSetNewUploadingRepo() *SetNewUploadingRepo {
+	return &SetNewUploadingRepo{}
+}
+
 type IncomingDataAnswer struct {
 	W               http.ResponseWriter
 	UrlToRedirect   string
@@ -30,7 +36,6 @@ type answersUploadEncrypt interface {
 type urlUploadEncrypt interface {
 	UrlBuilder(r *mux.Router, fileName string) (string, error)
 }
-type SetNewUploadingRepo struct{}
 
 func (s SetNewUploadingRepo) UrlBuilder(r *mux.Router, fileName string) (string, error) {
 	url, err := r.Get("fileName").URL("name", fileName, "bool", "true")

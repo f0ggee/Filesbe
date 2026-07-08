@@ -13,7 +13,7 @@ import (
 
 type Checking struct{}
 
-func GetNewChecking() *Checking {
+func GetNeValidating() *Checking {
 	return &Checking{}
 }
 

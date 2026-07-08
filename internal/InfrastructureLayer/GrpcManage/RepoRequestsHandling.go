@@ -1,9 +1,10 @@
 package GrpcManage
 
+import "C"
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
-	"Kaban/internal/InfrastructureLayer/KeysManager"
+	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"crypto/rand"
 	"crypto/sha256"
 	"errors"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
+
 	"github.com/awnumar/memguard"
 )
 
@@ -27,7 +29,7 @@ func GetNewHandlerGrpcRequest(newValidating NewValidating, newKeys NewKeys, newD
 }
 
 type NewKeys struct {
-	Keys       KeysManager.Keys
+	Keys       RepoEncrypterKeys.Keys
 	ServerKeys DomainLevel.NewSetKeys
 }
 type NewValidating struct {
@@ -103,7 +105,7 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 	}
 
 	h.Keys.UpdateOldKey()
-	h.Keys.UpdateKey(NewSavingRsa)
+	h.Keys.UpdateNewKey(NewSavingRsa)
 
 	slog.Info("Finish accepting the new key", slog.Group("Data",
 		slog.String("Id", Id),

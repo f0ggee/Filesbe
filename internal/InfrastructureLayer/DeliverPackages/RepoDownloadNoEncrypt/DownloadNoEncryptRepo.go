@@ -3,40 +3,50 @@ package RepoDownloadNoEncrypt
 import (
 	"Kaban/internal/DomainLevel"
 	"encoding/json"
-	"errors"
-	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 )
+
+type FileDetails struct {
+	FileFormat   string
+	TrueFileName string
+	FileLength   int64
+}
+type DownloadNoEncryptData struct {
+	W http.ResponseWriter
+	FileDetails
+	FileBody io.ReadCloser
+}
 
 type jsonAnswerDownloadNoEncrypt struct {
 	StatusOperation string `json:"status_operation"`
 	Error           string `json:"error"`
 	Url             string `json:"url"`
 }
-
-type NewRepoDownloadNoEncrypt struct{}
-
-func GetNewNewRepoDownloadNoEncrypt() *NewRepoDownloadNoEncrypt {
-	return &NewRepoDownloadNoEncrypt{}
-}
-
 type DownloadNoEncryptIncomingData struct {
 	W               http.ResponseWriter
 	Err             string
 	StatusOperation string
 }
 
+type NewRepoDownloadNoEncrypt struct{}
+
 type Answer interface {
 	SetBadAnswer(data DownloadNoEncryptIncomingData)
+}
+type SetDownloadFile interface {
+	DownloadFile(DownloadNoEncryptData) error
 }
 
 type UrlWork interface {
 	GetData(*http.Request) string
+}
+
+func GetNewNewRepoDownloadNoEncrypt() *NewRepoDownloadNoEncrypt {
+	return &NewRepoDownloadNoEncrypt{}
 }
 
 func (n NewRepoDownloadNoEncrypt) GetData(request *http.Request) string {
@@ -57,31 +67,4 @@ func (n NewRepoDownloadNoEncrypt) SetBadAnswer(answer DownloadNoEncryptIncomingD
 		return
 	}
 	return
-}
-
-type SetDownloadFile interface {
-	DownloadFile(DownloadNoEncryptData) error
-}
-
-type FileDetails struct {
-	FileFormat   string
-	TrueFileName string
-	FileLength   int64
-}
-type DownloadNoEncryptData struct {
-	W http.ResponseWriter
-	FileDetails
-	FileBody io.ReadCloser
-}
-type NewDownloadFile struct{}
-
-func (n NewDownloadFile) DownloadFile(details DownloadNoEncryptData) error {
-	details.W.Header().Set("Content-Type", details.FileFormat)
-	details.W.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", details.TrueFileName))
-	details.W.Header().Set("Content-Length", strconv.FormatUint(uint64(details.FileLength), 10))
-	if _, err := io.Copy(details.W, details.FileBody); err != nil {
-		slog.Error("EncryptDownloadFile; error to download a file", "ERROR", err)
-		return errors.New(DomainLevel.ErrorDownloadFile)
-	}
-	return nil
 }

@@ -3,12 +3,8 @@ package RepoDownloadEncryptRepo
 import (
 	"Kaban/internal/DomainLevel"
 	"encoding/json"
-	"errors"
-	"fmt"
-	"io"
 	"log/slog"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -19,6 +15,10 @@ type answerFileDownloadEncrypt struct {
 }
 
 type NewFileDownloadEncrypt struct{}
+
+func GetNewFileDownloadEncrypt() *NewFileDownloadEncrypt {
+	return &NewFileDownloadEncrypt{}
+}
 
 type IncomingDataAnswer struct {
 	W             http.ResponseWriter
@@ -49,30 +49,4 @@ func (n NewFileDownloadEncrypt) SetBadAnswers(answer IncomingDataAnswer) {
 		return
 	}
 	return
-}
-
-type NewEncryptDownloadFile struct{}
-type FileDetails struct {
-	FileFormat   string
-	TrueFileName string
-	FileLength   int64
-}
-type DownloadEncryptIncomingData struct {
-	W http.ResponseWriter
-	FileDetails
-	FileBody io.ReadCloser
-}
-type SetDownloadFile interface {
-	EncryptDownloadFile(DownloadEncryptIncomingData) error
-}
-
-func (n NewEncryptDownloadFile) EncryptDownloadFile(details DownloadEncryptIncomingData) error {
-	details.W.Header().Set("Content-Type", details.FileFormat)
-	details.W.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", details.TrueFileName))
-	details.W.Header().Set("Content-Length", strconv.FormatUint(uint64(details.FileLength), 10))
-	if _, err := io.Copy(details.W, details.FileBody); err != nil {
-		slog.Error("EncryptDownloadFile; error to download a file", "ERROR", err)
-		return errors.New(DomainLevel.ErrorDownloadFile)
-	}
-	return nil
 }

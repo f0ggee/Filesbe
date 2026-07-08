@@ -2,17 +2,23 @@ package main
 
 import (
 	"Kaban/cmds"
+	"Kaban/internal/Deliver"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoLoginRealizations"
+	"Kaban/internal/InfrastructureLayer/FileControls"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
+	"Kaban/internal/InfrastructureLayer/s3Repo"
 	"Kaban/internal/Service/Application"
 	"Kaban/internal/Service/Helpers"
 	"log/slog"
+	"os"
 	"time"
-	"Kaban/internal/Deliver"
 
 	"github.com/awnumar/memguard"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
@@ -23,6 +29,8 @@ func main() {
 	if err != nil {
 		slog.Error("cannot load env file", "Error", err)
 	}
+	Key1 := &memguard.LockedBuffer{}
+	Key2 := &memguard.LockedBuffer{}
 	cmds.SettingSlog()
 	memguard.CatchInterrupt()
 	defer memguard.Purge()
@@ -46,17 +54,9 @@ func main() {
 		return
 	}
 
+	S3Conrolling := cmds.GetS3RealizationsCollector(cfg, OldS3Connect)
+	Transfers := cmds.FileControl(*FileControls.GetNewTransfer())
 
-	LoginAnswers := RepoLoginRealizations.GetNewLoginAnswers()
-	Parsers := RepoParsers.GetParser()
-	Database :=
-	LoginApplication := Application.GetNewNewLogin()
-
-	DilivireLogin := Deliver.GetNewLogin(Deliver.NetworkLogin{},Deliver.AnswerLogin{
-		S: LoginAnswers,
-	},Deliver.ParseLogin{
-		Parses: Parsers,
-	},)
 	router, getRequest, postRequest, StaticFiles := Routers()
 	cmds.GetAboutProjectUrl(getRequest)
 	cmds.GetDefaultRouter(router)

@@ -16,6 +16,10 @@ type RedisReader struct {
 	Re *redis.Client
 }
 
+func GetNewRedisReader(re *redis.Client) *RedisReader {
+	return &RedisReader{Re: re}
+}
+
 func (d *RedisReader) GetFileInfo(fileInfoName string, ctx context.Context) ([]byte, error) {
 
 	StructOfFileInfo := Dto.FileInfoLabels{

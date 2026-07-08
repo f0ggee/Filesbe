@@ -2,7 +2,7 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt"
+	"Kaban/internal/InfrastructureLayer/FileControls"
 	"context"
 	"encoding/json"
 	"errors"
@@ -16,19 +16,19 @@ type DownloadNotEncryptNetwork struct {
 }
 
 type NewDownloadNotEncrypt struct {
-	redisControlling
-	s3Controlling
-	getFileManager
-	FileDownload
+	RedisControlling
+	S3Controlling
+	GetFileManager
+	Transfers
 	DownloadNotEncryptNetwork
 }
 
-func GetNewNewDownloadNotEncrypt(redisControlling redisControlling, s3Controlling s3Controlling, handlerFileManagerPack getFileManager, fileDownload FileDownload) *NewDownloadNotEncrypt {
-	return &NewDownloadNotEncrypt{redisControlling: redisControlling, s3Controlling: s3Controlling, getFileManager: handlerFileManagerPack, FileDownload: fileDownload}
+func GetNewDownloadNotEncrypt(redisControlling RedisControlling, s3Controlling S3Controlling, handlerFileManagerPack GetFileManager, fileDownload FileDownload) *NewDownloadNotEncrypt {
+	return &NewDownloadNotEncrypt{RedisControlling: redisControlling, S3Controlling: s3Controlling, GetFileManager: handlerFileManagerPack, FileDownload: fileDownload}
 }
 
 func (sa *NewDownloadNotEncrypt) DownloadWithNonEncrypt(name string, IncomeContext context.Context) error {
-	fileNameInBytes, err := sa.redisControlling.Reader.GetFileInfo(name, IncomeContext)
+	fileNameInBytes, err := sa.RedisControlling.Reader.GetFileInfo(name, IncomeContext)
 	if err != nil {
 		return err
 	}
@@ -53,9 +53,9 @@ func (sa *NewDownloadNotEncrypt) DownloadWithNonEncrypt(name string, IncomeConte
 		}
 	}(FileBody.Body)
 
-	err = sa.Download.DownloadFile(RepoDownloadNoEncrypt.DownloadNoEncryptData{
+	err = sa.Transfer.TransferToClient(FileControls.TransferIncomingData{
 		W: sa.W,
-		FileDetails: RepoDownloadNoEncrypt.FileDetails{
+		FileDetails: FileControls.FileDetails{
 			FileFormat:   sa.FileManaging.FindFormatOfFile(trueFileName),
 			TrueFileName: trueFileName,
 			FileLength:   *FileBody.ContentLength,
@@ -66,7 +66,7 @@ func (sa *NewDownloadNotEncrypt) DownloadWithNonEncrypt(name string, IncomeConte
 		return err
 	}
 
-	err = sa.s3Controlling.Deleter.DeleteFileFromS3(trueFileName, IncomeContext)
+	err = sa.S3Controlling.Deleter.DeleteFileFromS3(trueFileName, IncomeContext)
 	if err != nil {
 		return err
 	}

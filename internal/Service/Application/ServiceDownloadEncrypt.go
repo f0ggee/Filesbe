@@ -2,7 +2,7 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadEncryptRepo"
+	"Kaban/internal/InfrastructureLayer/FileControls"
 	"bufio"
 	"context"
 	"crypto/aes"
@@ -16,16 +16,16 @@ import (
 )
 
 type NewDownloadEncrypt struct {
-	redisControlling
-	getCrypto
-	s3Controlling
-	getFileManager
-	fileDownloadEncrypt
-	encrypterKeys
+	RedisControlling
+	GetCrypto
+	S3Controlling
+	GetFileManager
+	Transfers
+	EncrypterKeys
 }
 
-func GetNewNewDownloadEncrypt(redisControlling redisControlling, handlerPackCrypto getCrypto, s3Controlling s3Controlling, handlerFileManagerPack getFileManager, fileDownloadEncrypt fileDownloadEncrypt, encrypterKeys encrypterKeys) *NewDownloadEncrypt {
-	return &NewDownloadEncrypt{redisControlling: redisControlling, getCrypto: handlerPackCrypto, s3Controlling: s3Controlling, getFileManager: handlerFileManagerPack, fileDownloadEncrypt: fileDownloadEncrypt, encrypterKeys: encrypterKeys}
+func GetNewNewDownloadEncrypt(redisControlling RedisControlling, getCrypto GetCrypto, s3Controlling S3Controlling, getFileManager GetFileManager, transfers Transfers, encrypterKeys EncrypterKeys) *NewDownloadEncrypt {
+	return &NewDownloadEncrypt{RedisControlling: redisControlling, GetCrypto: getCrypto, S3Controlling: s3Controlling, GetFileManager: getFileManager, Transfers: transfers, EncrypterKeys: encrypterKeys}
 }
 
 type NewDownloadEncryptNetwork struct {
@@ -39,7 +39,7 @@ type NewDownloadEncryptIncomingData struct {
 
 func (sa *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData) error {
 
-	fileInfoInBytes, err := sa.redisControlling.Reader.GetFileInfo(data.EncryptedURl, data.Ctx)
+	fileInfoInBytes, err := sa.RedisControlling.Reader.GetFileInfo(data.EncryptedURl, data.Ctx)
 	if err != nil {
 		return err
 	}
@@ -80,9 +80,9 @@ func (sa *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingDat
 		case <-ctx.Done():
 			return data.Ctx.Err()
 		default:
-			err = sa.fileDownloadEncrypt.EncryptDownload.EncryptDownloadFile(RepoDownloadEncryptRepo.DownloadEncryptIncomingData{
+			err = sa.Transfers.TransferEncryptToClient(FileControls.TransferIncomingData{
 				W: data.W,
-				FileDetails: RepoDownloadEncryptRepo.FileDetails{
+				FileDetails: FileControls.FileDetails{
 					FileFormat:   sa.FileManaging.FindFormatOfFile(realFileName),
 					TrueFileName: realFileName,
 					FileLength:   *Body.ContentLength - aes.BlockSize,
@@ -98,11 +98,11 @@ func (sa *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingDat
 	if err := g.Wait(); err != nil {
 		return err
 	}
-	err = sa.redisControlling.Deleter.DeleteFileInfo(data.EncryptedURl, data.Ctx)
+	err = sa.RedisControlling.Deleter.DeleteFileInfo(data.EncryptedURl, data.Ctx)
 	if err != nil {
 		return err
 	}
-	err = sa.s3Controlling.Deleter.DeleteFileFromS3(data.EncryptedURl, data.Ctx)
+	err = sa.S3Controlling.Deleter.DeleteFileFromS3(data.EncryptedURl, data.Ctx)
 	if err != nil {
 		return err
 	}

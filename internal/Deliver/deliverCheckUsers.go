@@ -20,7 +20,7 @@ type CheckAuth struct {
 	Answers *RepoUsersCheckAuth.SetUsersChecker
 }
 type Sessions struct {
-	Session *RepoSessionHandle.SessionConnect
+	Session *RepoSessionHandle.NewSessionConnect
 }
 
 type NewCheckUserAuth struct {

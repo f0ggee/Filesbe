@@ -16,6 +16,10 @@ type Writer struct {
 	Db *pgxpool.Pool
 }
 
+func GetNewWriter(db *pgxpool.Pool) *Writer {
+	return &Writer{Db: db}
+}
+
 func (d *Writer) CreateUser(data DomainLevel.CreateUserIncomingData) (int32, error) {
 
 	var UnitId int32

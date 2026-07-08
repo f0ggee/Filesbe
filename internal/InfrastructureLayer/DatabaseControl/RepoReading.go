@@ -14,6 +14,10 @@ type Read struct {
 	Db *pgxpool.Pool
 }
 
+func GetNewRead(db *pgxpool.Pool) *Read {
+	return &Read{Db: db}
+}
+
 func (D Read) LoginData(s string, ctx context.Context) DomainLevel.OutComingLoginData {
 	var (
 		id       int32

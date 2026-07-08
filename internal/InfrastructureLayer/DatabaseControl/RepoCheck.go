@@ -13,6 +13,10 @@ type CheckerDb struct {
 	Db *pgxpool.Pool
 }
 
+func GetNewCheckerDb(db *pgxpool.Pool) *CheckerDb {
+	return &CheckerDb{Db: db}
+}
+
 func (db *CheckerDb) CheckerUser(email string, ctx context.Context) error {
 	logger := slog.With("CheckUser")
 

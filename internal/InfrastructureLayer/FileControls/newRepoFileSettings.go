@@ -1,4 +1,4 @@
-package FileSettings
+package FileControls
 
 import (
 	"mime"

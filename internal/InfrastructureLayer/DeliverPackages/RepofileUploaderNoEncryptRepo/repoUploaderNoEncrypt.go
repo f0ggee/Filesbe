@@ -12,6 +12,10 @@ import (
 
 type NewUploaderNoEncrypt struct{}
 
+func GetNewUploaderNoEncrypt() *NewUploaderNoEncrypt {
+	return &NewUploaderNoEncrypt{}
+}
+
 func (n NewUploaderNoEncrypt) UrlBuild(router *mux.Router, fileName string) (string, error) {
 	url, err := router.Get("fileName").URL("name", fileName, "bool", "false")
 	if err != nil {
@@ -19,10 +23,6 @@ func (n NewUploaderNoEncrypt) UrlBuild(router *mux.Router, fileName string) (str
 		return "", errors.New(DomainLevel.ErrorCantGetFileName)
 	}
 	return url.Path, nil
-}
-
-func GetNewNewUploaderNoEncrypt() *NewUploaderNoEncrypt {
-	return &NewUploaderNoEncrypt{}
 }
 
 type IncomingData struct {

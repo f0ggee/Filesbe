@@ -15,24 +15,24 @@ import (
 )
 
 type NewSwapKeyFirst struct {
-	getCrypto
-	getControlKeys
-	parser
+	GetCrypto
+	GetControlKeys
+	Parser
 }
 
-func GetNewNewSwapKeyFirst(crypto getCrypto, controlKeys getControlKeys, parser parser) *NewSwapKeyFirst {
-	return &NewSwapKeyFirst{getCrypto: crypto, getControlKeys: controlKeys, parser: parser}
+func GetNewNewSwapKeyFirst(crypto GetCrypto, controlKeys GetControlKeys, parser Parser) *NewSwapKeyFirst {
+	return &NewSwapKeyFirst{GetCrypto: crypto, GetControlKeys: controlKeys, Parser: parser}
 }
 
 func (sa *NewSwapKeyFirst) GetSwapKeyFirst() time.Duration {
 
 	slog.Info("Func GetSwapKeyFirst:", "start", true)
 	serverName := []byte(os.Getenv("serverName"))
-	key, err := sa.getControlKeys.Keys.GerOurPrivateKey()
+	key, err := sa.GetControlKeys.Keys.GerOurPrivateKey()
 	if err != nil {
 		return DomainLevel.DefaultErrorTime
 	}
-	SignedServerName, err := sa.getCrypto.Generate.GenerateSignature(serverName, key)
+	SignedServerName, err := sa.GetCrypto.Generate.GenerateSignature(serverName, key)
 	if err != nil {
 		return 0
 	}
@@ -63,7 +63,7 @@ func (sa *NewSwapKeyFirst) GetSwapKeyFirst() time.Duration {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
-			EncryptedData1, err1 := sa.getCrypto.Encrypt.EncryptAes(AesKey.Data(), ConvertedData)
+			EncryptedData1, err1 := sa.GetCrypto.Encrypt.EncryptAes(AesKey.Data(), ConvertedData)
 			if err1 != nil {
 				slog.Error("Error while encrypt", "err", err1)
 
@@ -80,7 +80,7 @@ func (sa *NewSwapKeyFirst) GetSwapKeyFirst() time.Duration {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
-			masterPublicKey, err := sa.getControlKeys.Keys.GetMasterPublicKey()
+			masterPublicKey, err := sa.GetControlKeys.Keys.GetMasterPublicKey()
 			if err != nil {
 				return err
 			}
@@ -90,7 +90,7 @@ func (sa *NewSwapKeyFirst) GetSwapKeyFirst() time.Duration {
 				return err1
 			}
 
-			EncryptedDataAesKey1, err2 := sa.getCrypto.Encrypt.EncryptFileInfo(AesKey.Data(), Key)
+			EncryptedDataAesKey1, err2 := sa.GetCrypto.Encrypt.EncryptFileInfo(AesKey.Data(), Key)
 			if err2 != nil {
 				slog.Error("Error while encrypting Info", "err", err1)
 				return err1
@@ -112,7 +112,7 @@ func (sa *NewSwapKeyFirst) GetSwapKeyFirst() time.Duration {
 		return DomainLevel.DefaultErrorTime
 	}
 
-	convertedDataGrpcDataLooks, err := sa.parser.Encode.JsonEncodeMarshall(Dto.GrpcOutComingPacketForSending{
+	convertedDataGrpcDataLooks, err := sa.Parser.Encode.JsonEncodeMarshall(Dto.GrpcOutComingPacketForSending{
 		AesKeyData: EncryptedDataAesKey,
 		CipherData: EncryptedData,
 	})

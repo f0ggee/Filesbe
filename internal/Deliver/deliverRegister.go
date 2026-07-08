@@ -19,7 +19,7 @@ type RegisterParser struct {
 	D RepoParsers.Parsing
 }
 type RegisterAnswers struct {
-	Answ RepoRegisterRepository.RegisterController
+	Answ RepoRegisterRepository.NewRegister
 }
 type NewRegisterApp struct {
 	App Application.NewRegisterApplication

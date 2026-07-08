@@ -31,7 +31,7 @@ type NewAuthChecker struct {
 	Key          []byte
 }
 
-func GetNewNewAuthChecker(createTokens CreatingTokens, key []byte) *NewAuthChecker {
+func GetNNewAuthChecker(createTokens CreatingTokens, key []byte) *NewAuthChecker {
 	return &NewAuthChecker{CreateTokens: createTokens, Key: key}
 }
 
