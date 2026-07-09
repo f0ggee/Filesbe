@@ -12,14 +12,14 @@ import (
 
 type NewFileUploader struct {
 	GetCrypto
-	GetFileManager
+	NewFileManager
 	S3Controlling
 	Parser
 	RedisControlling
 }
 
-func GetNewNewFileUploader(getCrypto GetCrypto, getFileManager GetFileManager, s3Controlling S3Controlling, parser Parser, redisControlling RedisControlling) *NewFileUploader {
-	return &NewFileUploader{GetCrypto: getCrypto, GetFileManager: getFileManager, S3Controlling: s3Controlling, Parser: parser, RedisControlling: redisControlling}
+func GetNewFileUploader(getCrypto GetCrypto, getFileManager NewFileManager, s3Controlling S3Controlling, parser Parser, redisControlling RedisControlling) *NewFileUploader {
+	return &NewFileUploader{GetCrypto: getCrypto, NewFileManager: getFileManager, S3Controlling: s3Controlling, Parser: parser, RedisControlling: redisControlling}
 }
 
 func (sa *NewFileUploader) FileUploader(r *http.Request) (string, error) {

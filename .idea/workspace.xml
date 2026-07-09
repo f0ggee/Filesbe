@@ -4,8 +4,15 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 09.07.26&#10;The Collector has been finished&#10;Builder is being developed">
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="First commit">
+      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/ProtocolSwper.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmds/Builder.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Builder.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUpload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/collectorPack.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/collectorPack.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,86 +69,86 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Docker.Dockerfile.executor": "Run",
-    "Go Build.go build Kaban.executor": "Debug",
-    "Go Build.go build scratch.go (1).executor": "Run",
-    "Go Build.go build scratch.go (2).executor": "Run",
-    "Go Build.go build scratch.go (3).executor": "Run",
-    "Go Build.go build scratch.go (4).executor": "Debug",
-    "Go Build.go build scratch.go (5).executor": "Run",
-    "Go Build.go build scratch.go.executor": "Run",
-    "Go Build.go build scratch_1.go.executor": "Run",
-    "Go Test.TestChecking_CheckJwt in Kaban/internal/InfrastructureLayer/AuthTokensManage.executor": "Run",
-    "Go Test.TestChecking_CheckJwt/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckJwt/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckJwt/Test_3 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestEe2 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestEe2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor": "Run",
-    "Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestKeys_UpdateNewKey in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Run",
-    "Go Test.TestKeys_UpdateNewKey/test1 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Run",
-    "Go Test.TestKeys_UpdateNewKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Run",
-    "Go Test.TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers.executor": "Run",
-    "Go Test.TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/RepoParsers.executor": "Run",
-    "Go Test.TestParsing_JsonParseNotThread/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers.executor": "Run",
-    "Go Test.TestParsing_JsonParsers in Kaban/internal/InfrastructureLayer/DeliverHandlers/Parsers.executor": "Run",
-    "Go Test.TestParsing_JsonParsers/test1 in Kaban/internal/InfrastructureLayer/DeliverHandlers/Parsers.executor": "Run",
-    "Go Test.TestParsing_JsonParsers/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/Parsers.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test1 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test10 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test2 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test3 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test4 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test5 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test6 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test7 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test8 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test9 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test9#01 in Kaban/internal/Dto.executor": "Debug",
-    "Go Test.TestUserDataRegister_getEmailError/test1 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getEmailError/test2 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getEmailError/test3 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getEmailError/test4 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getNameError in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getPasswordError in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getPasswordError/test3 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getPasswordError/test4 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserLoginData_ValidateData in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserLoginData_getPasswordError in Kaban/internal/Dto.executor": "Run",
-    "Go Test.Test_funcName in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.gobench Kaban/internal/Dto.executor": "Profiler#1",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.GoLinterPluginOnboarding": "true",
-    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "git-widget-placeholder": "RefactoringFilesbes",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/pasabaranov/GolandProjects/Kaban",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "preferences.keymap"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Docker.Dockerfile.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build Kaban.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Build.go build scratch.go (1).executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build scratch.go (2).executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build scratch.go (3).executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build scratch.go (4).executor&quot;: &quot;Debug&quot;,
+    &quot;Go Build.go build scratch.go (5).executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build scratch.go.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build scratch_1.go.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt in Kaban/internal/InfrastructureLayer/AuthTokensManage.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt/Test_3 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestEe2 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestEe2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestKeys_UpdateNewKey in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestKeys_UpdateNewKey/test1 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestKeys_UpdateNewKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/RepoParsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonParseNotThread/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonParsers in Kaban/internal/InfrastructureLayer/DeliverHandlers/Parsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonParsers/test1 in Kaban/internal/InfrastructureLayer/DeliverHandlers/Parsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonParsers/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/Parsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test1 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test10 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test2 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test3 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test4 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test5 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test6 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test7 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test8 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test9 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test9#01 in Kaban/internal/Dto.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestUserDataRegister_getEmailError/test1 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getEmailError/test2 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getEmailError/test3 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getEmailError/test4 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getNameError in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getPasswordError in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getPasswordError/test3 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getPasswordError/test4 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserLoginData_ValidateData in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserLoginData_getPasswordError in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.Test_funcName in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.gobench Kaban/internal/Dto.executor&quot;: &quot;Profiler#1&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;RefactoringFilesbes&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/pasabaranov/GolandProjects/Kaban&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
-      "go"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;go&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="QodanaHighlightedReportService">
     <option name="localRunNotPublishedPersistedInfo">
       <LocalReportPersistedInfo>

@@ -22,7 +22,7 @@ import (
 )
 
 type NewUploadEncrypt struct {
-	GetFileManager
+	NewFileManager
 	GetCrypto
 	Parser
 	GetControlKeys
@@ -30,8 +30,8 @@ type NewUploadEncrypt struct {
 	RedisControlling
 }
 
-func GetNewNewUploadEncrypt(getFileManager GetFileManager, getCrypto GetCrypto, parser Parser, getControlKeys GetControlKeys, s3Controlling S3Controlling, redisControlling RedisControlling) *NewUploadEncrypt {
-	return &NewUploadEncrypt{GetFileManager: getFileManager, GetCrypto: getCrypto, Parser: parser, GetControlKeys: getControlKeys, S3Controlling: s3Controlling, RedisControlling: redisControlling}
+func GetNewUploadEncrypt(getFileManager NewFileManager, getCrypto GetCrypto, parser Parser, getControlKeys GetControlKeys, s3Controlling S3Controlling, redisControlling RedisControlling) *NewUploadEncrypt {
+	return &NewUploadEncrypt{NewFileManager: getFileManager, GetCrypto: getCrypto, Parser: parser, GetControlKeys: getControlKeys, S3Controlling: s3Controlling, RedisControlling: redisControlling}
 }
 
 func (sa *NewUploadEncrypt) UploadEncrypt(r *http.Request) (string, error) {

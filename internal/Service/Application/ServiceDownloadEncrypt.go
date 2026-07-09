@@ -19,13 +19,13 @@ type NewDownloadEncrypt struct {
 	RedisControlling
 	GetCrypto
 	S3Controlling
-	GetFileManager
+	NewFileManager
 	Transfers
 	EncrypterKeys
 }
 
-func GetNewNewDownloadEncrypt(redisControlling RedisControlling, getCrypto GetCrypto, s3Controlling S3Controlling, getFileManager GetFileManager, transfers Transfers, encrypterKeys EncrypterKeys) *NewDownloadEncrypt {
-	return &NewDownloadEncrypt{RedisControlling: redisControlling, GetCrypto: getCrypto, S3Controlling: s3Controlling, GetFileManager: getFileManager, Transfers: transfers, EncrypterKeys: encrypterKeys}
+func GetNewNewDownloadEncrypt(redisControlling RedisControlling, getCrypto GetCrypto, s3Controlling S3Controlling, getFileManager NewFileManager, transfers Transfers, encrypterKeys EncrypterKeys) *NewDownloadEncrypt {
+	return &NewDownloadEncrypt{RedisControlling: redisControlling, GetCrypto: getCrypto, S3Controlling: s3Controlling, NewFileManager: getFileManager, Transfers: transfers, EncrypterKeys: encrypterKeys}
 }
 
 type NewDownloadEncryptNetwork struct {

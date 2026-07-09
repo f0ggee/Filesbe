@@ -20,7 +20,7 @@ func GetNewS3Controlling(deleter s3Repo.DeleterS3, uploader s3Repo.S3Uploader, s
 }
 
 type Transfers struct {
-	FileControls.Transfer
+	Transfer FileControls.Transfer
 }
 
 func GetNewTransfers(transfer FileControls.Transfer) *Transfers {
@@ -47,12 +47,12 @@ func GetNewCrypto(validate DomainLevel.CryptoValidating, encrypt DomainLevel.Enc
 	return &GetCrypto{Validate: validate, Encrypt: encrypt, Decrypt: decrypt, Generate: generate, Keys: keys}
 }
 
-type GetFileManager struct {
+type NewFileManager struct {
 	FileManaging DomainLevel.SetFileSettings
 }
 
-func GetNewFileManager(fileManaging DomainLevel.SetFileSettings) *GetFileManager {
-	return &GetFileManager{FileManaging: fileManaging}
+func GetNewFileManager(fileManaging DomainLevel.SetFileSettings) *NewFileManager {
+	return &NewFileManager{FileManaging: fileManaging}
 }
 
 type GetControlKeys struct {
@@ -100,14 +100,6 @@ type RedisControlling struct {
 
 func GetRedisControlling(writer DomainLevel.WritingRedis, reader DomainLevel.ReadingRedis, deleter DomainLevel.DeleterRedis, checkerRedis DomainLevel.RedisChecker) *RedisControlling {
 	return &RedisControlling{Writer: writer, Reader: reader, Deleter: deleter, CheckerRedis: checkerRedis}
-}
-
-type KeysControlling struct {
-	ControllerKey DomainLevel.NewSetKeys
-}
-
-func GetNewKeysControlling(controllerKey DomainLevel.NewSetKeys) *KeysControlling {
-	return &KeysControlling{ControllerKey: controllerKey}
 }
 
 type Parser struct {
