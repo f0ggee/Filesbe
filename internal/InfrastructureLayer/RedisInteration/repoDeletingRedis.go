@@ -13,6 +13,10 @@ type DeleterRedis struct {
 	Re *redis.Client
 }
 
+func GetNewDeleterRedis(re *redis.Client) *DeleterRedis {
+	return &DeleterRedis{Re: re}
+}
+
 func (d *DeleterRedis) DeleterFileInfoTest(s string, context context.Context) error {
 
 	if ax, dsa := context.Value("isFallRedis").(bool); ax != false {

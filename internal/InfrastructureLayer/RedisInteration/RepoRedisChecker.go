@@ -13,6 +13,10 @@ type ValidationRedis struct {
 	Re *redis.Client
 }
 
+func GetNewValidationRedis(re *redis.Client) *ValidationRedis {
+	return &ValidationRedis{Re: re}
+}
+
 func (d *ValidationRedis) ChekIsStartDownloadTest(s string, context context.Context) bool {
 
 	select {

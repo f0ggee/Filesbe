@@ -6,6 +6,7 @@ import (
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoLoginRealizations"
+	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
 	"Kaban/internal/InfrastructureLayer/FileControls"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
@@ -53,9 +54,22 @@ func main() {
 		slog.Error("Error connect to s3 old ", "Error", err)
 		return
 	}
-
-	S3Conrolling := cmds.GetS3RealizationsCollector(cfg, OldS3Connect)
-	Transfers := cmds.FileControl(*FileControls.GetNewTransfer())
+	S3Collector := cmds.GetS3Collector(cfg, OldS3Connect)
+	ParserCollector := cmds.GetRepoParsersCollector()
+	FileCollector := cmds.GetFileControlCollector()
+	EncrypterCollector := cmds.GetEncrypterKeysCollector(Key1, Key2)
+	CryptoCollector := cmds.GetNewCryptoCollector(cmds.NewCryptoCollectorInput{
+		OurPrivateKey:   []byte(os.Getenv("Our_Private_Key")),
+		MasterPublicKet: []byte(os.Getenv("Publick_Key_Master_Server")),
+		Decode:          ParserCollector.Decode,
+	})
+	AuthCollector := cmds.GetAuthTokensCollector([]byte(os.Getenv("KEY1")))
+	DatabaseCollector := cmds.GetDatabaseManageCollector(db)
+	DeliverPackagesCollector := cmds.GetDeliverPackagesCollector(RepoSessionHandle.GetCookieStore())
+	GrcpCollector := cmds.GetGrpcCollector(CryptoCollector.Encrypt, CryptoCollector.Decrypt, ParserCollector.Decode, CryptoCollector.Validate, EncrypterCollector.Keys, CryptoCollector.Keys)
+	FileControlsCollector := cmds.GetFileControlsCollector()
+	RedisCollector := cmds.GetRedisCollector(redisConn)
+	ControllerDonwloadBuilder := cmds.GetControllerDownloadBuilder(DeliverPackagesCollector)
 
 	router, getRequest, postRequest, StaticFiles := Routers()
 	cmds.GetAboutProjectUrl(getRequest)

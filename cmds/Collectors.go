@@ -16,10 +16,10 @@ import (
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepourlBuilder"
 	"Kaban/internal/InfrastructureLayer/FileControls"
 	"Kaban/internal/InfrastructureLayer/GrpcManage"
+	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
 	"Kaban/internal/InfrastructureLayer/s3Repo"
-	"Kaban/internal/Service/Application"
 	"os"
 	"sync"
 
@@ -28,6 +28,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gorilla/sessions"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/redis/go-redis/v9"
 )
 
 type S3Collector struct {
@@ -36,7 +37,7 @@ type S3Collector struct {
 	S3Download s3Repo.DownloadingS3
 }
 
-func GetS3RealizationsCollector(cfg *s3.Client, OldS3Connect *session.Session) *S3Collector {
+func GetS3Collector(cfg *s3.Client, OldS3Connect *session.Session) *S3Collector {
 	s3Info := s3Repo.GetNewVariables(os.Getenv("Bucket"), cfg, OldS3Connect)
 	S3Upload := s3Repo.GetNewUploading(*s3Info)
 	S3Download := s3Repo.GetNewS3Download(*s3Info)
@@ -58,11 +59,6 @@ func GetFileControlCollector() *FileControlCollector {
 		Transfer:     *FileControls.GetNewTransfer(),
 		FileSettings: *FileControls.GetNewFileSettings(),
 	}
-}
-
-func GetNewEncrypterKeysCollector(oldKey *memguard.LockedBuffer, newKey *memguard.LockedBuffer) *Application.EncrypterKeys {
-	K := RepoEncrypterKeys.GetNewKeys(oldKey, newKey)
-	return Application.GetEncrypterKeys(*K)
 }
 
 type CollectorCrypto struct {
@@ -154,7 +150,7 @@ type UrlBuilderCollector struct {
 type UserCheckCollector struct {
 	Answ RepoUsersCheckAuth.SetUsersChecker
 }
-type DeliverPackagesCollector struct {
+type deliverPackagesCollector struct {
 	DownloadEncryptCollector
 	DownloadCollector
 	UploaderEncrypterCollector
@@ -166,9 +162,9 @@ type DeliverPackagesCollector struct {
 	UserCheckCollector
 }
 
-func GetDeliverPackagesCollector(Store *sessions.CookieStore) *DeliverPackagesCollector {
+func GetDeliverPackagesCollector(Store *sessions.CookieStore) *deliverPackagesCollector {
 
-	return &DeliverPackagesCollector{
+	return &deliverPackagesCollector{
 		DownloadEncryptCollector: DownloadEncryptCollector{
 			Answ: *RepoDownloadEncryptRepo.GetNewFileDownloadEncrypt(),
 		},
@@ -216,6 +212,58 @@ type GrpcCollector struct {
 	Checking GrpcManage.HandlerGrpcRequest
 }
 
-func GetGrpcCollector() *GrpcCollector {
+func GetGrpcCollector(CryptoEncrypt DomainLevel.Encryption, CryptoDecrypt DomainLevel.Decryption, Parse RepoParsers.Decode, CryptoValidate DomainLevel.CryptoValidating, Keys RepoEncrypterKeys.Keys, ServerKeys DomainLevel.NewSetKeys) *GrpcCollector {
 
+	return &GrpcCollector{
+		Sender: *GrpcManage.GetNewSenderRequests(),
+		Checking: *GrpcManage.GetNewHandlerGrpcRequest(GrpcManage.NewValidating{
+			CryptoValidate: CryptoValidate,
+		}, GrpcManage.NewKeys{
+			Keys:       Keys,
+			ServerKeys: ServerKeys,
+		}, GrpcManage.NewDecrypt{
+			CryptoDecrypt: CryptoDecrypt,
+		}, GrpcManage.NewEncrypt{
+			CryptoEncrypt: CryptoEncrypt,
+		}, GrpcManage.NewParser{
+			Parse: Parse,
+		}),
+	}
+}
+
+type RedisCollector struct {
+	Delete RedisInteration.DeleterRedis
+	Write  RedisInteration.Writing
+	Read   RedisInteration.RedisReader
+	Check  RedisInteration.ValidationRedis
+}
+
+func GetRedisCollector(Re *redis.Client) *RedisCollector {
+	return &RedisCollector{
+		Delete: *RedisInteration.GetNewDeleterRedis(Re),
+		Write:  *RedisInteration.GetNewWriting(Re),
+		Read:   *RedisInteration.GetNewRedisReader(Re),
+		Check:  *RedisInteration.GetNewValidationRedis(Re),
+	}
+}
+
+type EncrypterKeysCollector struct {
+	Keys RepoEncrypterKeys.Keys
+}
+
+func GetEncrypterKeysCollector(Key1 *memguard.LockedBuffer, Key2 *memguard.LockedBuffer) *EncrypterKeysCollector {
+
+	return &EncrypterKeysCollector{Keys: *RepoEncrypterKeys.GetNewKeys(Key1, Key2)}
+}
+
+type RepoParsersCollector struct {
+	Decode RepoParsers.Decode
+	Encode RepoParsers.Encode
+}
+
+func GetRepoParsersCollector() *RepoParsersCollector {
+	return &RepoParsersCollector{
+		Decode: RepoParsers.GetNewParsing(),
+		Encode: RepoParsers.GetNewParsing(),
+	}
 }

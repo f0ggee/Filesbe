@@ -67,9 +67,3 @@ func (p Parsing) JsonDecodeMarshall(a any, bytes []byte) error {
 	}
 	return nil
 }
-
-func GetParser() *Parsing {
-	return &Parsing{}
-}
-
-var Parsers = &Parsing{}

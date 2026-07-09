@@ -7,10 +7,17 @@ import (
 )
 
 func SettingSlog() {
-	handler := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	child := handler.With(
-		"Time", time.Now().Format("2006-01-02 15:04:05"),
-	)
+	handler := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		AddSource: false,
+		Level:     nil,
+		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
 
-	slog.SetDefault(child)
+			if a.Key == "Time" || a.Key == "time" {
+				a.Value = slog.StringValue(time.Now().Format("2006-01-02 15:04"))
+			}
+			return a
+		},
+	}))
+
+	slog.SetDefault(handler)
 }

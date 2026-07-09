@@ -14,6 +14,10 @@ type Writing struct {
 	Re *redis.Client
 }
 
+func GetNewWriting(re *redis.Client) *Writing {
+	return &Writing{Re: re}
+}
+
 func (d *Writing) EnableDownloadingParameter(nameOfFileInfo string, ctx context.Context) error {
 
 	err := d.Re.HSet(ctx, nameOfFileInfo, "IsStartDownload", true).Err()

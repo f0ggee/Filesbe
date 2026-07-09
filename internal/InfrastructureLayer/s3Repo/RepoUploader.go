@@ -45,7 +45,7 @@ type S3Uploader interface {
 	UploadFileEncrypt(UploadFileIncomingData) error
 }
 
-func (sa *NewUploading) UploadFileEncrypt(data DomainLevel.UploadFileIncomingData) error {
+func (sa *NewUploading) UploadFileEncrypt(data UploadFileIncomingData) error {
 	slog.Group("File uploading details",
 		slog.String("FileExtension", data.FileFormat),
 		slog.String("Parts", fmt.Sprint(data.Parts)),
@@ -90,7 +90,7 @@ func (sa *NewUploading) UploadFileEncrypt(data DomainLevel.UploadFileIncomingDat
 	}
 	return errors.New(DomainLevel.ErrorStrangeUploadFile)
 }
-func (sa *NewUploading) UploadFile(data DomainLevel.UploadFileIncomingData) error {
+func (sa *NewUploading) UploadFile(data UploadFileIncomingData) error {
 	logger := slog.With("UploadFile")
 	uploader := manager.NewUploader(sa.S3Info.S3Connect, func(uploader *manager.Uploader) {
 		uploader.MaxUploadParts = 1000
