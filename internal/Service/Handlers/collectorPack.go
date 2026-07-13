@@ -29,7 +29,7 @@ type HandlerPackAuthTokens struct {
 	Checking        DomainLevel.CheckingAuthTokens
 }
 type HandlerGrpc struct {
-	GrpcSendingRequest DomainLevel.SendRequestGrpc
+	GrpcSendingRequest DomainLevel.Requests
 	ProcessingRequests DomainLevel.HandlingRequests
 	GrpcTest           DomainLevel.GrpcTest
 }

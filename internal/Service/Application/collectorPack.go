@@ -73,11 +73,11 @@ func GetNewAuthTokens(generatingToken AuthTokensManage.Generator, checking AuthT
 }
 
 type HandlerGrpc struct {
-	GrpcSendingRequest DomainLevel.SendRequestGrpc
+	GrpcSendingRequest DomainLevel.Requests
 	ProcessingRequests DomainLevel.HandlingRequests
 }
 
-func GetNewHandlerGrpc(grpcSendingRequest DomainLevel.SendRequestGrpc, processingRequests DomainLevel.HandlingRequests) *HandlerGrpc {
+func GetNewHandlerGrpc(grpcSendingRequest DomainLevel.Requests, processingRequests DomainLevel.HandlingRequests) *HandlerGrpc {
 	return &HandlerGrpc{GrpcSendingRequest: grpcSendingRequest, ProcessingRequests: processingRequests}
 }
 

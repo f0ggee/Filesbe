@@ -4,15 +4,26 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="First commit">
-      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/ProtocolSwper.go" afterDir="false" />
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 09.07.26 &#10;Builder has been finished&#10;Collector has  been finished&#10;GrpcSwapingRequests is being developed">
+      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/GrpcErrors.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/ProtcolErrors.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/getGrpcConnect.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/PacketManagerRepo/ExchangeInitializerRepo.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/PacketManagerRepo/ExchangeRepo.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Builder.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Builder.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUpload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/ProtocolSwper.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/RepoGrpc.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/RepoGrpc.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/GrpcDataType.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/GrpcDataType.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/GrpcIncomingPacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/GrpcIncomingPacket.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/GrpcOutPacketLook.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/GrpcOutPacketLook.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoDecryption.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoDecryption.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/repoSending.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/repoSending.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoParsers/RealizationParsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoParsers/RealizationParsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceSwapKeysFirst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceSwapKeysFirst.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Service/Application/collectorPack.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/collectorPack.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceSwapKeysFirst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Handlers/ServiceSwapKeysFirst.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/collectorPack.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Handlers/collectorPack.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +68,7 @@
   &quot;isMigrated&quot;: true
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -74,6 +85,7 @@
     &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
     &quot;Docker.Dockerfile.executor&quot;: &quot;Run&quot;,
     &quot;Go Build.go build Kaban.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Build.go build sa.go.executor&quot;: &quot;Run&quot;,
     &quot;Go Build.go build scratch.go (1).executor&quot;: &quot;Run&quot;,
     &quot;Go Build.go build scratch.go (2).executor&quot;: &quot;Run&quot;,
     &quot;Go Build.go build scratch.go (3).executor&quot;: &quot;Run&quot;,
@@ -184,26 +196,34 @@
         <option value="GoApplicationRunConfiguration" />
       </set>
     </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="GoApplicationRunConfiguration">
+          <value>
+            <map>
+              <entry key="go build sa.go" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
-  <component name="RunManager" selected="Go Test.TestKeys_UpdateNewKey in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys">
+  <component name="RunManager" selected="Go Build.go build sa.go">
+    <configuration name="go build sa.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="Kaban" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/sa.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="TestEe2 in Kaban/internal/InfrastructureLayer/Crypto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
       <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
       <package value="Kaban/internal/InfrastructureLayer/Crypto" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestEe2\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestEe2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
@@ -254,11 +274,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build sa.go" />
         <item itemvalue="Go Test.TestKeys_UpdateNewKey in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
         <item itemvalue="Go Test.TestKeys_UpdateNewKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
         <item itemvalue="Go Test.TestKeys_UpdateNewKey/test1 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
         <item itemvalue="Go Test.TestEe2 in Kaban/internal/InfrastructureLayer/Crypto" />
-        <item itemvalue="Go Test.TestEe2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests" />
       </list>
     </recent_temporary>
   </component>
@@ -291,7 +311,8 @@
     <MESSAGE value="WP 07.07.26" />
     <MESSAGE value="WP 07.07.26&#10;I started doing collector" />
     <MESSAGE value="WP 09.07.26&#10;The Collector has been finished&#10;Builder is being developed" />
-    <option name="LAST_COMMIT_MESSAGE" value="WP 09.07.26&#10;The Collector has been finished&#10;Builder is being developed" />
+    <MESSAGE value="WP 09.07.26 &#10;Builder has been finished&#10;Collector has  been finished&#10;GrpcSwapingRequests is being developed" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 09.07.26 &#10;Builder has been finished&#10;Collector has  been finished&#10;GrpcSwapingRequests is being developed" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="VgoProject">

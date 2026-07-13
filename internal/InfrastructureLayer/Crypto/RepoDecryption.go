@@ -47,8 +47,9 @@ func (d Decryption) DecryptPacket(aesKey []byte, plainText []byte) *memguard.Loc
 		slog.Error("Func DecryptPacket: Error decrypt packet", "Error", err.Error())
 		return nil
 	}
+	lockedBuffer := memguard.NewBufferFromBytes(packetData)
 	defer memguard.WipeBytes(packetData)
-	return memguard.NewBufferFromBytes(packetData)
+	return lockedBuffer
 }
 
 func (d Decryption) DecryptAesKey(RsaKey []byte, aesKey []byte) ([]byte, error) {

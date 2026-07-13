@@ -109,7 +109,7 @@ func MakerRequests(sa *HandlerPackCollect, convertedDataGrpcDataLooks []byte) ti
 		if attempts > 12 {
 			return 12 * time.Hour
 		}
-		OutputData, err := sa.Grpc.GrpcSendingRequest.RequestingGettingNewKey(convertedDataGrpcDataLooks)
+		OutputData, err := sa.Grpc.GrpcSendingRequest.SetEncrypterKeyRequest(convertedDataGrpcDataLooks)
 		if err != nil {
 			slog.Error("Error while SendRequestGrpc", "err", err)
 			attempts++
