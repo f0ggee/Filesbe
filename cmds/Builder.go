@@ -66,9 +66,9 @@ func GetUploadBuilder(Crypto *Application.GetCrypto, file *Application.NewFileMa
 	return Application.GetNewFileUploader(*Crypto, *file, *s3, *Parse, *redis)
 }
 func GetUploadEncryptBuilder(file *Application.NewFileManager, Crypto *Application.GetCrypto, Parse *Application.Parser, keys *Application.GetControlKeys, s3 *Application.S3Controlling, redis *Application.RedisControlling) *Application.NewUploadEncrypt {
-
 	return Application.GetNewUploadEncrypt(*file, *Crypto, *Parse, *keys, *s3, *redis)
 }
+
 func GetControllerDownloadBuilder(DeliverPackagesCollector *deliverPackagesCollector) *Deliver.NewDownloadWithNotEncrypt {
 	return Deliver.GetNewDownloadWithNotEncrypt(Deliver.AnswerDownloadNoEncrypt{Answ: DeliverPackagesCollector.DownloadCollector.Answ}, Deliver.UrlBuilderDownloadNoEncrypt{UrlWork: RepoDownloadNoEncrypt.NewRepoDownloadNoEncrypt(DeliverPackagesCollector.UrlBuilderCollector.Answ)}, Deliver.NetworkDownloadNoEncrypt{}, Deliver.NewDownloadWithNotEncryptApplication{})
 }

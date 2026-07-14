@@ -35,8 +35,8 @@ type NewExchanger struct {
 	NewExchangerKeys
 }
 
-func (n NewExchanger) getTimeOutContext() (context.Context, context.CancelFunc) {
-	return context.WithTimeout(context.Background(), 6*time.Second)
+func GetNewExchanger(newExchangerDeliver NewExchangerDeliver, newExchangerParsers NewExchangerParsers, newExchangerCrypto NewExchangerCrypto, newExchangerKeys NewExchangerKeys) *NewExchanger {
+	return &NewExchanger{NewExchangerDeliver: newExchangerDeliver, NewExchangerParsers: newExchangerParsers, NewExchangerCrypto: newExchangerCrypto, NewExchangerKeys: newExchangerKeys}
 }
 
 type Exchanger interface {
@@ -93,7 +93,9 @@ func (n NewExchanger) setCheckedData(bytes []byte) *NewExchangerPacketDetailsOut
 	}
 
 }
-
+func (n NewExchanger) getTimeOutContext() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), 6*time.Second)
+}
 func (n NewExchanger) GetPlanningExchanger() time.Duration {
 	ctx, cancel := n.getTimeOutContext()
 	defer cancel()

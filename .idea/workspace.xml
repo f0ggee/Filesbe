@@ -4,27 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 09.07.26 &#10;Builder has been finished&#10;Collector has  been finished&#10;GrpcSwapingRequests is being developed">
-      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/GrpcErrors.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/DomainLevel/ProtcolErrors.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/getGrpcConnect.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/PacketManagerRepo/ExchangeInitializerRepo.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/PacketManagerRepo/ExchangeRepo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/ProtocolSwper.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/RepoGrpc.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/RepoGrpc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/GrpcDataType.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/GrpcDataType.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/GrpcIncomingPacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/GrpcIncomingPacket.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/GrpcOutPacketLook.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/GrpcOutPacketLook.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoDecryption.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoDecryption.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/repoSending.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/repoSending.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoParsers/RealizationParsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoParsers/RealizationParsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceSwapKeysFirst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceSwapKeysFirst.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/collectorPack.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/collectorPack.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceSwapKeysFirst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Handlers/ServiceSwapKeysFirst.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/collectorPack.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Handlers/collectorPack.go" afterDir="false" />
-    </list>
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 13.07.26 &#10;SwappingKeys is already being completed" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -312,7 +292,8 @@
     <MESSAGE value="WP 07.07.26&#10;I started doing collector" />
     <MESSAGE value="WP 09.07.26&#10;The Collector has been finished&#10;Builder is being developed" />
     <MESSAGE value="WP 09.07.26 &#10;Builder has been finished&#10;Collector has  been finished&#10;GrpcSwapingRequests is being developed" />
-    <option name="LAST_COMMIT_MESSAGE" value="WP 09.07.26 &#10;Builder has been finished&#10;Collector has  been finished&#10;GrpcSwapingRequests is being developed" />
+    <MESSAGE value="WP 13.07.26 &#10;SwappingKeys is already being completed" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 13.07.26 &#10;SwappingKeys is already being completed" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="VgoProject">
