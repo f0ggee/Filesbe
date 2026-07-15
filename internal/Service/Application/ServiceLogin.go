@@ -2,6 +2,7 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"context"
 	"crypto/rand"
 	"errors"
@@ -13,35 +14,45 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type NewLogin struct {
-	DatabaseControlling
-	GetCrypto
-	AuthTokens
+type NewLoginCrypto struct {
+	Validate DomainLevel.CryptoValidating
 }
+type NewLoginData struct {
+	ReaderDatabase DomainLevel.ReadDb
+}
+type NewLoginAuth struct {
+	GeneratingTokens AuthTokensManage.Generator
+}
+type NewLogin struct {
+	NewLoginData
+	NewLoginCrypto
+	NewLoginAuth
+}
+
+func GetNewLogin(newLoginData NewLoginData, newLoginCrypto NewLoginCrypto, newLoginAuth NewLoginAuth) *NewLogin {
+	return &NewLogin{NewLoginData: newLoginData, NewLoginCrypto: newLoginCrypto, NewLoginAuth: newLoginAuth}
+}
+
 type LoginApplicationOutComingData struct {
 	Jwt string
 	Rft string
 	Err error
 }
 
-func GetNewNewLogin(databaseControlling DatabaseControlling, crypto GetCrypto, authTokens AuthTokens) *NewLogin {
-	return &NewLogin{DatabaseControlling: databaseControlling, GetCrypto: crypto, AuthTokens: authTokens}
-}
-
 func (sa *NewLogin) LoginService(s Dto.UserLoginData, ctx context.Context) LoginApplicationOutComingData {
-	usersData := sa.DatabaseControlling.Reader.LoginData(s.Email, ctx)
+	usersData := sa.ReaderDatabase.LoginData(s.Email, ctx)
 	if usersData.Err != nil {
 		return LoginApplicationOutComingData{
 			Err: usersData.Err,
 		}
 	}
-	err := sa.GetCrypto.Validate.PasswordVerify([]byte(usersData.HashPassword), []byte(s.Password))
+	err := sa.Validate.PasswordVerify([]byte(usersData.HashPassword), []byte(s.Password))
 	if err != nil {
 		return LoginApplicationOutComingData{
 			Err: err,
 		}
 	}
-	RefreshToken, err := sa.AuthTokens.GeneratingToken.GenerateRT(Dto.JwtCustomStruct{
+	RefreshToken, err := sa.GeneratingTokens.GenerateRT(Dto.JwtCustomStruct{
 		UserID: (usersData.Id),
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "Kabaner",
@@ -56,7 +67,7 @@ func (sa *NewLogin) LoginService(s Dto.UserLoginData, ctx context.Context) Login
 			Err: errors.New(DomainLevel.ErrorCreateSession),
 		}
 	}
-	JwtToken, err := sa.AuthTokens.GeneratingToken.GenerateJWT(Dto.JwtCustomStruct{
+	JwtToken, err := sa.GeneratingTokens.GenerateJWT(Dto.JwtCustomStruct{
 		UserID: usersData.Id,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "Kabaner",

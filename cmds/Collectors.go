@@ -66,7 +66,6 @@ type CollectorCrypto struct {
 	Encrypt  DomainLevel.Encryption
 	Decrypt  DomainLevel.Decryption
 	Generate DomainLevel.CryptoGenerating
-	Keys     DomainLevel.NewSetKeys
 }
 
 type NewCryptoCollectorInput struct {
@@ -81,13 +80,11 @@ func GetNewCryptoCollector(d NewCryptoCollectorInput) *CollectorCrypto {
 	Encrypter := Crypto.GetNewEncrypter()
 	Decrypter := Crypto.GetNewDecryption(d.Decode)
 	Generate := Crypto.GetNewGenerating()
-	Keys := DomainLevel.GetNewSetKeys(d.OurPrivateKey, d.MasterPublicKet)
 	return &CollectorCrypto{
 		Validate: Validation,
 		Encrypt:  Encrypter,
 		Decrypt:  Decrypter,
 		Generate: Generate,
-		Keys:     *Keys,
 	}
 }
 
@@ -150,7 +147,7 @@ type UrlBuilderCollector struct {
 type UserCheckCollector struct {
 	Answ RepoUsersCheckAuth.SetUsersChecker
 }
-type deliverPackagesCollector struct {
+type DeliverPackagesCollector struct {
 	DownloadEncryptCollector
 	DownloadCollector
 	UploaderEncrypterCollector
@@ -162,9 +159,9 @@ type deliverPackagesCollector struct {
 	UserCheckCollector
 }
 
-func GetDeliverPackagesCollector(Store *sessions.CookieStore) *deliverPackagesCollector {
+func GetDeliverPackagesCollector(Store *sessions.CookieStore) *DeliverPackagesCollector {
 
-	return &deliverPackagesCollector{
+	return &DeliverPackagesCollector{
 		DownloadEncryptCollector: DownloadEncryptCollector{
 			Answ: *RepoDownloadEncryptRepo.GetNewFileDownloadEncrypt(),
 		},
@@ -212,7 +209,7 @@ type GrpcCollector struct {
 	Checking GrpcManage.HandlerGrpcRequest
 }
 
-func GetGrpcCollector(CryptoEncrypt DomainLevel.Encryption, CryptoDecrypt DomainLevel.Decryption, Parse RepoParsers.Decode, CryptoValidate DomainLevel.CryptoValidating, Keys RepoEncrypterKeys.Keys, ServerKeys DomainLevel.NewSetKeys) *GrpcCollector {
+func GetGrpcCollector(CryptoEncrypt DomainLevel.Encryption, CryptoDecrypt DomainLevel.Decryption, Parse RepoParsers.Decode, CryptoValidate DomainLevel.CryptoValidating, Keys RepoEncrypterKeys.Keys, ServerKeys DomainLevel.NewServerKeys) *GrpcCollector {
 
 	return &GrpcCollector{
 		Sender: *GrpcManage.GetNewSenderRequests(),
@@ -247,13 +244,14 @@ func GetRedisCollector(Re *redis.Client) *RedisCollector {
 	}
 }
 
-type EncrypterKeysCollector struct {
-	Keys RepoEncrypterKeys.Keys
+type KeysCollector struct {
+	Keys       RepoEncrypterKeys.Keys
+	ServerKeys DomainLevel.NewServerKeys
 }
 
-func GetEncrypterKeysCollector(Key1 *memguard.LockedBuffer, Key2 *memguard.LockedBuffer) *EncrypterKeysCollector {
+func GetEncrypterKeysCollector(Key1 *memguard.LockedBuffer, Key2 *memguard.LockedBuffer, serverKeys *DomainLevel.NewServerKeys) *KeysCollector {
 
-	return &EncrypterKeysCollector{Keys: *RepoEncrypterKeys.GetNewKeys(Key1, Key2)}
+	return &KeysCollector{Keys: *RepoEncrypterKeys.GetNewKeys(Key1, Key2), ServerKeys: *serverKeys}
 }
 
 type RepoParsersCollector struct {

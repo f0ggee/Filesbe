@@ -29,10 +29,10 @@ func (d *Writing) EnableDownloadingParameter(nameOfFileInfo string, ctx context.
 	return nil
 }
 
-func (s *Writing) WriteData(shortName string, InfoAboutFile []byte, ctx context.Context) error {
+func (s *Writing) WriteData(data DomainLevel.WriteDataIncomeData) error {
 
-	err := s.Re.HSet(ctx, shortName, Dto.FileInfoLabels{
-		InfoAboutFile:   InfoAboutFile,
+	err := s.Re.HSet(data.Ctx, data.FileName, Dto.FileInfoLabels{
+		InfoAboutFile:   data.Info,
 		IsStartDownload: false,
 	}).Err()
 	if err != nil {

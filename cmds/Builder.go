@@ -2,73 +2,122 @@ package cmds
 
 import (
 	"Kaban/internal/Deliver"
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt"
 	"Kaban/internal/Service/Application"
 )
 
 // application builders
-func GetS3Builder(s *S3Collector) *Application.S3Controlling {
-	return Application.GetNewS3Controlling(s.Deleter, s.Uploader, s.S3Download)
+func GetDownloadApplicationBuilder(s *S3Collector, a *RedisCollector, f *FileControlCollector) *Application.NewDownload {
+	delivery := Application.DownloadDelivery{
+		Reader:     &a.Read,
+		DeleterS3:  s.Deleter,
+		S3Download: s.S3Download,
+	}
+	fileControl := Application.DownloadFileControl{
+		Transfer:     f.Transfer,
+		FileManaging: f.FileSettings,
+	}
+	return Application.GetNewDownload(delivery, fileControl, Application.DownloadNetwork{})
 }
 
-func GetTransfersBuilder(s *FileControlCollector) *Application.Transfers {
-	return Application.GetNewTransfers(s.Transfer)
+func GetDownloadEncryptApplicationBuilder(a *RedisCollector, s *S3Collector, z *KeysCollector, c *CollectorCrypto, f *FileControlCollector) *Application.NewDownloadEncrypt {
+
+	delivery := Application.NewDownloadEncryptDelivery{
+		ReaderRedis:  &a.Read,
+		DownloadS3:   s.S3Download,
+		DeleterRedis: &a.Delete,
+		DeleterS3:    s.Deleter,
+	}
+
+	crypto := Application.NewDownloadEncryptCrypto{
+		Decrypt:       c.Decrypt,
+		EncrypterKeys: z.Keys,
+	}
+	file := Application.NewDownloadEncryptFileControl{
+		Transfer:     f.Transfer,
+		FileManaging: f.FileSettings,
+	}
+	return Application.GetNewDownloadEncrypt(delivery, crypto, file)
 }
 
-func GetEncrypterKeysBuilder(s *EncrypterKeysCollector) *Application.EncrypterKeys {
-	return Application.GetEncrypterKeys(s.Keys)
-}
-func GetCryptoBuilder(s *CollectorCrypto) *Application.GetCrypto {
-	return Application.GetNewCrypto(s.Validate, s.Encrypt, s.Decrypt, s.Generate, s.Keys)
+func GetLoginApplicationBuilder(c *CollectorCrypto, d *CollectorDatabaseManage, x *CollectorAuthTokensManage) *Application.NewLogin {
+
+	data := Application.NewLoginData{
+		ReaderDatabase: d.Reader,
+	}
+	crypto := Application.NewLoginCrypto{
+		Validate: c.Validate,
+	}
+
+	auth := Application.NewLoginAuth{
+		GeneratingTokens: x.Creating,
+	}
+
+	return Application.GetNewLogin(data, crypto, auth)
 }
 
-func GetFileManagerBuilder(s *FileControlCollector) *Application.NewFileManager {
-	return Application.GetNewFileManager(s.FileSettings)
+func GetRegisterApplicationBuilder(d *CollectorDatabaseManage, x *CollectorAuthTokensManage, c *CollectorCrypto) *Application.NewRegisterApplication {
+	data := Application.NewRegisterDataMange{
+		CheckingDb:      &d.Checker,
+		WriterDb:        &d.Writer,
+		GeneratorTokens: x.Creating,
+	}
+	crypto := Application.NewRegisterCrypto{
+		Generator: c.Generate,
+	}
+	return Application.GetNewRegisterApplication(data, crypto)
+}
+func GetUploadApplication(c *CollectorCrypto, f *FileControlCollector, z *RepoParsersCollector, s3 *S3Collector, r *RedisCollector) *Application.NewFileUploader {
+
+	crypto := Application.NewFileUploaderCrypto{
+		Generator: c.Generate,
+	}
+
+	data := Application.NewFileUploaderDataMange{
+		FileSettings: f.FileSettings,
+		Encode:       z.Encode,
+	}
+	delivery := Application.NewFileUploaderDelivery{
+		UploadS3:   s3.Uploader,
+		WriteRedis: &r.Write,
+	}
+	return Application.GetNewFileUploader(crypto, data, delivery)
 }
 
-func GetNewControlKeysBuilder(s *CollectorCrypto) *Application.GetControlKeys {
-	return Application.GetNewControlKeys(s.Keys)
-}
-func GetAuthTokensBuilder(s *CollectorAuthTokensManage) *Application.AuthTokens {
-	return Application.GetNewAuthTokens(s.Creating, s.Validate)
-}
-func GetHandlerGrpcBuilder(s *GrpcCollector) *Application.HandlerGrpc {
-	return Application.GetNewHandlerGrpc(s.Sender, s.Checking)
-}
-
-func GetDatabaseBuilder(s *CollectorDatabaseManage) *Application.DatabaseControlling {
-	return Application.GetDatabaseControlling(&s.Writer, s.Reader, &s.Checker)
-}
-func GetGetRedisBuilder(s *RedisCollector) *Application.RedisControlling {
-	return Application.GetRedisControlling(&s.Write, &s.Read, &s.Delete, &s.Check)
-}
-func GetParserBuilder(s *RepoParsersCollector) *Application.Parser {
-	return Application.GetParser(s.Decode, s.Encode)
+type UploadEncryptBuilderIncomeData struct {
+	f          *FileControlCollector
+	s3         *S3Collector
+	z          *RepoParsersCollector
+	c          *CollectorCrypto
+	serverKeys *DomainLevel.NewServerKeys
+	r          *RedisCollector
 }
 
-func GetDownloadApplicationBuilder(redis *Application.RedisControlling, s3 *Application.S3Controlling, file *Application.NewFileManager, transfers *Application.Transfers) *Application.NewDownloadNotEncrypt {
+func GetUploadEncryptApplicationBuilder(d UploadEncryptBuilderIncomeData) *Application.NewUploadEncrypt {
 
-	return Application.GetNewDownloadNotEncrypt(*redis, *s3, *file, *transfers, Application.DownloadNotEncryptNetwork{})
+	data := Application.NewUploadEncryptDataManage{
+		FileManger: d.f.FileSettings,
+		Encode:     d.z.Encode,
+	}
+
+	crypto := Application.NewUploadEncryptCrypto{
+		Generate:   d.c.Generate,
+		ServerKeys: *d.serverKeys,
+		Encrypt:    d.c.Encrypt,
+	}
+
+	delivery := Application.NewUploadEncryptDelivery{
+		UploaderS3:   d.s3.Uploader,
+		RedisWriter:  &d.r.Write,
+		RedisChecker: &d.r.Check,
+		RedisDeleter: &d.r.Delete,
+		DeleterS3:    d.s3.Deleter,
+	}
+	return Application.GetNewUploadEncrypt(data, crypto, delivery)
 }
 
-func GetNewDownloadEncryptBuilder(redis *Application.RedisControlling, crypto *Application.GetCrypto, s3 *Application.S3Controlling, file *Application.NewFileManager, transfers *Application.Transfers, keys *Application.EncrypterKeys) *Application.NewDownloadEncrypt {
-	return Application.GetNewNewDownloadEncrypt(*redis, *crypto, *s3, *file, *transfers, *keys)
-}
-func GetLoginBuilder(Crypto *Application.GetCrypto, database *Application.DatabaseControlling, auth *Application.AuthTokens) *Application.NewLogin {
-	return Application.GetNewNewLogin(*database, *Crypto, *auth)
-}
-
-func GetRegisterBuilder(database *Application.DatabaseControlling, Crypto *Application.GetCrypto, auth *Application.AuthTokens) *Application.NewRegisterApplication {
-	return Application.GetNewNewRegisterApplication(*database, *Crypto, *auth)
-}
-
-func GetUploadBuilder(Crypto *Application.GetCrypto, file *Application.NewFileManager, s3 *Application.S3Controlling, Parse *Application.Parser, redis *Application.RedisControlling) *Application.NewFileUploader {
-	return Application.GetNewFileUploader(*Crypto, *file, *s3, *Parse, *redis)
-}
-func GetUploadEncryptBuilder(file *Application.NewFileManager, Crypto *Application.GetCrypto, Parse *Application.Parser, keys *Application.GetControlKeys, s3 *Application.S3Controlling, redis *Application.RedisControlling) *Application.NewUploadEncrypt {
-	return Application.GetNewUploadEncrypt(*file, *Crypto, *Parse, *keys, *s3, *redis)
-}
-
-func GetControllerDownloadBuilder(DeliverPackagesCollector *deliverPackagesCollector) *Deliver.NewDownloadWithNotEncrypt {
+// Delivery builders
+func GetControllerDownloadBuilder(DeliverPackagesCollector *DeliverPackagesCollector) *Deliver.NewDownloadWithNotEncrypt {
 	return Deliver.GetNewDownloadWithNotEncrypt(Deliver.AnswerDownloadNoEncrypt{Answ: DeliverPackagesCollector.DownloadCollector.Answ}, Deliver.UrlBuilderDownloadNoEncrypt{UrlWork: RepoDownloadNoEncrypt.NewRepoDownloadNoEncrypt(DeliverPackagesCollector.UrlBuilderCollector.Answ)}, Deliver.NetworkDownloadNoEncrypt{}, Deliver.NewDownloadWithNotEncryptApplication{})
 }

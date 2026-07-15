@@ -13,8 +13,14 @@ type DeleterRedis interface {
 	DeleterFileInfoTest(string, context.Context) error
 }
 
+type WriteDataIncomeData struct {
+	FileName string
+	Info     []byte
+	Ctx      context.Context
+}
+
 type WritingRedis interface {
-	WriteData(string, []byte, context.Context) error
+	WriteData(WriteDataIncomeData) error
 	EnableDownloadingParameter(string, context.Context) error
 }
 

@@ -1,4 +1,4 @@
-package PacketManagerRepo
+package ProtocolManage
 
 import (
 	"Kaban/internal/DomainLevel"
@@ -25,7 +25,7 @@ type NewExchangerCrypto struct {
 	Validation DomainLevel.CryptoValidating
 }
 type NewExchangerKeys struct {
-	ServerKeys    DomainLevel.NewSetKeys
+	ServerKeys    DomainLevel.NewServerKeys
 	EncrypterKeys RepoEncrypterKeys.Keys
 }
 type NewExchanger struct {

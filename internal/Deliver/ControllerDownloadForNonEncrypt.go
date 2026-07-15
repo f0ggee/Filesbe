@@ -21,7 +21,7 @@ type NetworkDownloadNoEncrypt struct {
 }
 
 type NewDownloadWithNotEncryptApplication struct {
-	Application.NewDownloadNotEncrypt
+	Application.NewDownload
 }
 
 type NewDownloadWithNotEncrypt struct {
@@ -47,7 +47,7 @@ func (d NewDownloadWithNotEncrypt) DownloadWithNotEncrypt(w http.ResponseWriter,
 		return
 	}
 
-	err := d.DownloadWithNonEncrypt(name, d.R.Context())
+	err := d.Download(name, d.R.Context())
 	if err != nil {
 		d.Answ.SetBadAnswer(RepoDownloadNoEncrypt.DownloadNoEncryptIncomingData{
 			W:               d.W,

@@ -30,7 +30,7 @@ func GetNewHandlerGrpcRequest(newValidating NewValidating, newKeys NewKeys, newD
 
 type NewKeys struct {
 	Keys       RepoEncrypterKeys.Keys
-	ServerKeys DomainLevel.NewSetKeys
+	ServerKeys DomainLevel.NewServerKeys
 }
 type NewValidating struct {
 	CryptoValidate DomainLevel.CryptoValidating

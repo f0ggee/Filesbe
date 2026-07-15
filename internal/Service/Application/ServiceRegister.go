@@ -3,6 +3,7 @@ package Application
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"context"
 	"crypto/rand"
 	"log/slog"
@@ -11,14 +12,21 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type NewRegisterCrypto struct {
+	Generator DomainLevel.CryptoGenerating
+}
+type NewRegisterDataMange struct {
+	CheckingDb      DomainLevel.CheckingDb
+	WriterDb        DomainLevel.WriteDb
+	GeneratorTokens AuthTokensManage.Generator
+}
 type NewRegisterApplication struct {
-	DatabaseControlling
-	GetCrypto
-	AuthTokens
+	NewRegisterDataMange
+	NewRegisterCrypto
 }
 
-func GetNewNewRegisterApplication(databaseControlling DatabaseControlling, crypto GetCrypto, authTokens AuthTokens) *NewRegisterApplication {
-	return &NewRegisterApplication{DatabaseControlling: databaseControlling, GetCrypto: crypto, AuthTokens: authTokens}
+func GetNewRegisterApplication(newRegisterDataMange NewRegisterDataMange, newRegisterCrypto NewRegisterCrypto) *NewRegisterApplication {
+	return &NewRegisterApplication{NewRegisterDataMange: newRegisterDataMange, NewRegisterCrypto: newRegisterCrypto}
 }
 
 type RegisterApplicationOutComingData struct {
@@ -29,16 +37,16 @@ type RegisterApplicationOutComingData struct {
 
 func (sa *NewRegisterApplication) RegisterService(de *Dto.UserDataRegister, ctx context.Context) RegisterApplicationOutComingData {
 
-	err := sa.DatabaseControlling.Checker.CheckerUser(de.Email, ctx)
+	err := sa.CheckingDb.CheckerUser(de.Email, ctx)
 	if err != nil {
 		return RegisterApplicationOutComingData{Err: err}
 	}
-	HashPassword, err := sa.GetCrypto.Generate.GenerateHash([]byte(de.Password))
+	HashPassword, err := sa.Generator.GenerateHash([]byte(de.Password))
 	if err != nil {
 		return RegisterApplicationOutComingData{Err: err}
 	}
 
-	UnitIdUser, err := sa.DatabaseControlling.Writer.CreateUser(DomainLevel.CreateUserIncomingData{
+	UnitIdUser, err := sa.WriterDb.CreateUser(DomainLevel.CreateUserIncomingData{
 		Name:         de.Name,
 		Email:        de.Email,
 		HashPassword: string(HashPassword),
@@ -49,7 +57,7 @@ func (sa *NewRegisterApplication) RegisterService(de *Dto.UserDataRegister, ctx 
 			Err: err,
 		}
 	}
-	RefreshToken, err := sa.AuthTokens.GeneratingToken.GenerateRT(Dto.JwtCustomStruct{
+	RefreshToken, err := sa.GeneratorTokens.GenerateRT(Dto.JwtCustomStruct{
 		UserID: UnitIdUser,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "Kabaner",
@@ -62,7 +70,7 @@ func (sa *NewRegisterApplication) RegisterService(de *Dto.UserDataRegister, ctx 
 		slog.Error("RegisterFunc; a strange error happened during creating a JWT token", "ERROR", err)
 		return RegisterApplicationOutComingData{Err: err}
 	}
-	JwtToken, err := sa.AuthTokens.GeneratingToken.GenerateJWT(Dto.JwtCustomStruct{
+	JwtToken, err := sa.GeneratorTokens.GenerateJWT(Dto.JwtCustomStruct{
 		UserID: UnitIdUser,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "Kabaner",

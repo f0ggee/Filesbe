@@ -3,6 +3,8 @@ package Application
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/FileControls"
+	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
+	"Kaban/internal/InfrastructureLayer/s3Repo"
 	"bufio"
 	"context"
 	"crypto/aes"
@@ -15,17 +17,29 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-type NewDownloadEncrypt struct {
-	RedisControlling
-	GetCrypto
-	S3Controlling
-	NewFileManager
-	Transfers
-	EncrypterKeys
+type NewDownloadEncryptFileControl struct {
+	Transfer     FileControls.Transferring
+	FileManaging FileControls.FileSettings
+}
+type NewDownloadEncryptDelivery struct {
+	ReaderRedis  DomainLevel.ReadingRedis
+	DownloadS3   s3Repo.DownloadingS3
+	DeleterRedis DomainLevel.DeleterRedis
+	DeleterS3    s3Repo.DeleterS3
 }
 
-func GetNewNewDownloadEncrypt(redisControlling RedisControlling, getCrypto GetCrypto, s3Controlling S3Controlling, getFileManager NewFileManager, transfers Transfers, encrypterKeys EncrypterKeys) *NewDownloadEncrypt {
-	return &NewDownloadEncrypt{RedisControlling: redisControlling, GetCrypto: getCrypto, S3Controlling: s3Controlling, NewFileManager: getFileManager, Transfers: transfers, EncrypterKeys: encrypterKeys}
+type NewDownloadEncryptCrypto struct {
+	Decrypt       DomainLevel.Decryption
+	EncrypterKeys RepoEncrypterKeys.Keys
+}
+type NewDownloadEncrypt struct {
+	NewDownloadEncryptDelivery
+	NewDownloadEncryptCrypto
+	NewDownloadEncryptFileControl
+}
+
+func GetNewDownloadEncrypt(newDownloadEncryptDelivery NewDownloadEncryptDelivery, newDownloadEncryptCrypto NewDownloadEncryptCrypto, newDownloadEncryptFileControl NewDownloadEncryptFileControl) *NewDownloadEncrypt {
+	return &NewDownloadEncrypt{NewDownloadEncryptDelivery: newDownloadEncryptDelivery, NewDownloadEncryptCrypto: newDownloadEncryptCrypto, NewDownloadEncryptFileControl: newDownloadEncryptFileControl}
 }
 
 type NewDownloadEncryptNetwork struct {
@@ -39,12 +53,12 @@ type NewDownloadEncryptIncomingData struct {
 
 func (sa *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData) error {
 
-	fileInfoInBytes, err := sa.RedisControlling.Reader.GetFileInfo(data.EncryptedURl, data.Ctx)
+	fileInfoInBytes, err := sa.ReaderRedis.GetFileInfo(data.EncryptedURl, data.Ctx)
 	if err != nil {
 		return err
 	}
 
-	aesKey, realFileName, err := sa.Decrypt.DecryptFileInfo(fileInfoInBytes, sa.GetKeys.GetKey(), sa.GetKeys.GetOldKey())
+	aesKey, realFileName, err := sa.Decrypt.DecryptFileInfo(fileInfoInBytes, sa.EncrypterKeys.GetKey(), sa.EncrypterKeys.GetOldKey())
 	if err != nil {
 		return err
 	}
@@ -58,7 +72,7 @@ func (sa *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingDat
 		}
 	}(writer)
 	g, ctx := errgroup.WithContext(data.Ctx)
-	Body, err := sa.S3Download.GetDownloadSecure(data.Ctx, data.EncryptedURl)
+	Body, err := sa.DownloadS3.GetDownloadSecure(data.Ctx, data.EncryptedURl)
 	if err != nil {
 		return err
 	}
@@ -80,7 +94,7 @@ func (sa *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingDat
 		case <-ctx.Done():
 			return data.Ctx.Err()
 		default:
-			err = sa.Transfers.TransferEncryptToClient(FileControls.TransferIncomingData{
+			err = sa.Transfer.TransferEncryptToClient(FileControls.TransferIncomingData{
 				W: data.W,
 				FileDetails: FileControls.FileDetails{
 					FileFormat:   sa.FileManaging.FindFormatOfFile(realFileName),
@@ -98,11 +112,11 @@ func (sa *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingDat
 	if err := g.Wait(); err != nil {
 		return err
 	}
-	err = sa.RedisControlling.Deleter.DeleteFileInfo(data.EncryptedURl, data.Ctx)
+	err = sa.DeleterRedis.DeleteFileInfo(data.EncryptedURl, data.Ctx)
 	if err != nil {
 		return err
 	}
-	err = sa.S3Controlling.Deleter.DeleteFileFromS3(data.EncryptedURl, data.Ctx)
+	err = sa.DeleterS3.DeleteFileFromS3(data.EncryptedURl, data.Ctx)
 	if err != nil {
 		return err
 	}

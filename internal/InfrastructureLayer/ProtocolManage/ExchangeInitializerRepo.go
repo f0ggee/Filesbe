@@ -1,4 +1,4 @@
-package PacketManagerRepo
+package ProtocolManage
 
 import (
 	"Kaban/internal/DomainLevel"
@@ -24,17 +24,37 @@ type NewExchangeInitializerCrypto struct {
 	CryptoDecrypt    DomainLevel.Decryption
 	CryptoValidate   DomainLevel.CryptoValidating
 }
+
+func GetNewExchangeInitializerCrypto(cryptoGenerating DomainLevel.CryptoGenerating, cryptoEncrypt DomainLevel.Encryption, cryptoDecrypt DomainLevel.Decryption, cryptoValidate DomainLevel.CryptoValidating) *NewExchangeInitializerCrypto {
+	return &NewExchangeInitializerCrypto{CryptoGenerating: cryptoGenerating, CryptoEncrypt: cryptoEncrypt, CryptoDecrypt: cryptoDecrypt, CryptoValidate: cryptoValidate}
+}
+
 type NewExchangeInitializerParsers struct {
 	Encode RepoParsers.Encode
 	Decode RepoParsers.Decode
 }
+
+func GetNewExchangeInitializerParsers(encode RepoParsers.Encode, decode RepoParsers.Decode) *NewExchangeInitializerParsers {
+	return &NewExchangeInitializerParsers{Encode: encode, Decode: decode}
+}
+
 type NewExchangeInitializerDeliver struct {
 	Grcp DomainLevel.Requests
 }
+
+func GetNewExchangeInitializerDeliver(grcp DomainLevel.Requests) *NewExchangeInitializerDeliver {
+	return &NewExchangeInitializerDeliver{Grcp: grcp}
+}
+
 type NewExchangeInitializerKey struct {
 	Keys       RepoEncrypterKeys.Keys
-	ServerKeys DomainLevel.NewSetKeys
+	ServerKeys DomainLevel.NewServerKeys
 }
+
+func GetNewExchangeInitializerKey(keys RepoEncrypterKeys.Keys, serverKeys DomainLevel.NewServerKeys) *NewExchangeInitializerKey {
+	return &NewExchangeInitializerKey{Keys: keys, ServerKeys: serverKeys}
+}
+
 type NewExchangeInitializer struct {
 	NewExchangeInitializerKey
 	NewExchangeInitializerCrypto

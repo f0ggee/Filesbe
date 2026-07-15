@@ -2,6 +2,8 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/FileControls"
+	"Kaban/internal/InfrastructureLayer/RepoParsers"
 	"Kaban/internal/InfrastructureLayer/s3Repo"
 	"errors"
 	"log/slog"
@@ -10,16 +12,26 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-type NewFileUploader struct {
-	GetCrypto
-	NewFileManager
-	S3Controlling
-	Parser
-	RedisControlling
+type NewFileUploaderDataMange struct {
+	FileSettings FileControls.FileSettings
+	Encode       RepoParsers.Encode
+}
+type NewFileUploaderCrypto struct {
+	Generator DomainLevel.CryptoGenerating
 }
 
-func GetNewFileUploader(getCrypto GetCrypto, getFileManager NewFileManager, s3Controlling S3Controlling, parser Parser, redisControlling RedisControlling) *NewFileUploader {
-	return &NewFileUploader{GetCrypto: getCrypto, NewFileManager: getFileManager, S3Controlling: s3Controlling, Parser: parser, RedisControlling: redisControlling}
+type NewFileUploaderDelivery struct {
+	UploadS3   s3Repo.S3Uploader
+	WriteRedis DomainLevel.WritingRedis
+}
+type NewFileUploader struct {
+	NewFileUploaderCrypto
+	NewFileUploaderDataMange
+	NewFileUploaderDelivery
+}
+
+func GetNewFileUploader(newFileUploaderCrypto NewFileUploaderCrypto, newFileUploaderDataMange NewFileUploaderDataMange, newFileUploaderDelivery NewFileUploaderDelivery) *NewFileUploader {
+	return &NewFileUploader{NewFileUploaderCrypto: newFileUploaderCrypto, NewFileUploaderDataMange: newFileUploaderDataMange, NewFileUploaderDelivery: newFileUploaderDelivery}
 }
 
 func (sa *NewFileUploader) FileUploader(r *http.Request) (string, error) {
@@ -40,13 +52,13 @@ func (sa *NewFileUploader) FileUploader(r *http.Request) (string, error) {
 		}
 	}()
 
-	shortNameFile := sa.Generate.GenerateShortName()
+	shortNameFile := sa.Generator.GenerateShortName()
 
-	Parts, goroutines := sa.FileManaging.FindBestOptions(fileDetails.Size)
+	Parts, goroutines := sa.FileSettings.FindBestOptions(fileDetails.Size)
 
-	fileFormat := sa.FileManaging.FindFormatOfFile(fileDetails.Filename)
+	fileFormat := sa.FileSettings.FindFormatOfFile(fileDetails.Filename)
 	g.Go(func() error {
-		err2 := sa.Uploader.UploadFile(s3Repo.UploadFileIncomingData{
+		err2 := sa.UploadS3.UploadFile(s3Repo.UploadFileIncomingData{
 			Parts:      Parts,
 			Goroutines: goroutines,
 			Ctx:        ctx,
@@ -62,14 +74,18 @@ func (sa *NewFileUploader) FileUploader(r *http.Request) (string, error) {
 		return nil
 	})
 
-	fileIntoBytes, err := sa.Parser.Encode.JsonEncodeMarshall(fileDetails.Filename)
+	fileIntoBytes, err := sa.Encode.JsonEncodeMarshall(fileDetails.Filename)
 	if err != nil {
 		return "", err
 	}
 	if err := g.Wait(); err != nil {
 		return "", err
 	}
-	err = sa.RedisControlling.Writer.WriteData(shortNameFile, fileIntoBytes, r.Context())
+	err = sa.WriteRedis.WriteData(DomainLevel.WriteDataIncomeData{
+		FileName: shortNameFile,
+		Info:     fileIntoBytes,
+		Ctx:      r.Context(),
+	})
 	if err != nil {
 		return "", err
 	}
