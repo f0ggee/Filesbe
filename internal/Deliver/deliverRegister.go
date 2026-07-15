@@ -12,14 +12,10 @@ import (
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
 )
 
-type RegisterSession struct {
+type NewRegisterDetails struct {
+	Answ    RepoRegisterRepository.RegisterAnswers
 	Session RepoSessionHandle.Session
-}
-type RegisterParser struct {
-	D RepoParsers.Parsing
-}
-type RegisterAnswers struct {
-	Answ RepoRegisterRepository.NewRegister
+	D       RepoParsers.Decode
 }
 type NewRegisterApp struct {
 	App Application.NewRegisterApplication
@@ -29,11 +25,13 @@ type RegisterNet struct {
 	R *http.Request
 }
 type NewRegister struct {
-	RegisterParser
 	RegisterNet
-	RegisterSession
-	RegisterAnswers
+	NewRegisterDetails
 	NewRegisterApp
+}
+
+func GetNewRegister(registerNet RegisterNet, newRegisterDetails NewRegisterDetails, newRegisterApp NewRegisterApp) *NewRegister {
+	return &NewRegister{RegisterNet: registerNet, NewRegisterDetails: newRegisterDetails, NewRegisterApp: newRegisterApp}
 }
 
 func (D NewRegister) Register() {
@@ -60,7 +58,7 @@ func (D NewRegister) Register() {
 
 	RegisterOutput := D.App.RegisterService(userDataRegister, D.R.Context())
 	if RegisterOutput.Err != nil {
-		D.RegisterAnswers.Answ.ErrorAnswer(RepoRegisterRepository.RegisterErrorIncomingData{
+		D.NewRegisterDetails.Answ.ErrorAnswer(RepoRegisterRepository.RegisterErrorIncomingData{
 			W:         D.W,
 			Error:     RegisterOutput.Err,
 			Operation: errors.New(DomainLevel.Break),

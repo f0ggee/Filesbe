@@ -4,40 +4,21 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 14.07.26 &#10;SwappingKeys has been renamed to Exchanger&#10;Exchanger has been completed">
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 15.07.26&#10;Application builder has beed finished">
+      <change afterPath="$PROJECT_DIR$/internal/Deliver/ControllerFileUpload.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmds/Builder.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Builder.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Collectors.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Collectors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadForNonEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadForNonEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/CryptoErrors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/CryptoErrors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/PrivatesKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/PrivatesKeys.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/RedisInteration.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/RedisInteration.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/RepoRequestsHandling.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/RepoRequestsHandling.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/PacketManagerRepo/ExchangeInitializerRepo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/ProtocolManage/ExchangeInitializerRepo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/PacketManagerRepo/ExchangeRepo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/ProtocolManage/ExchangeRepo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoWriter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoWriter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceLogin.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceRegister.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceSwapKeys.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceSwapKeysFirst.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUpload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/collectorPack.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/AuthServer.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/AuthServer_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/Consts.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceDownload.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceDownloadEncrypt.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceInitFunction.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceLogin.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceRegister.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceSwapKeys.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceSwapKeysFirst.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceUpload.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/ServiceUploadEncrypt.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Handlers/collectorPack.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadForNonEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerDownload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadWithEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadNotEncrypt.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerLogin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/deliverCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/deliverCheckUsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/deliverRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/deliverRegister.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/deliveryUrlUploader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/deliveryUrlUploader.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoRegisterRepository/registerRepo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoRegisterRepository/registerRepo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderEncryptRepo/RepoUploaderEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderEncryptRepo/RepoUploaderEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepourlBuilder/repoUrlBuilder.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepourlBuilder/repoUrlBuilder.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -328,7 +309,8 @@
     <MESSAGE value="WP 09.07.26 &#10;Builder has been finished&#10;Collector has  been finished&#10;GrpcSwapingRequests is being developed" />
     <MESSAGE value="WP 13.07.26 &#10;SwappingKeys is already being completed" />
     <MESSAGE value="WP 14.07.26 &#10;SwappingKeys has been renamed to Exchanger&#10;Exchanger has been completed" />
-    <option name="LAST_COMMIT_MESSAGE" value="WP 14.07.26 &#10;SwappingKeys has been renamed to Exchanger&#10;Exchanger has been completed" />
+    <MESSAGE value="WP 15.07.26&#10;Application builder has beed finished" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 15.07.26&#10;Application builder has beed finished" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="VgoProject">

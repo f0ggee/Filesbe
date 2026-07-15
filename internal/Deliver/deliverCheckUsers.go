@@ -8,61 +8,75 @@ import (
 	"net/http"
 )
 
-type NetWork struct {
+type NewCheckUserAuthNetWork struct {
 	W http.ResponseWriter
 	R *http.Request
 }
-type TokensChecker struct {
-	Auth AuthTokensManage.NewAuthChecker
+
+func GetNewCheckUserAuthNetWork(w http.ResponseWriter, r *http.Request) *NewCheckUserAuthNetWork {
+	return &NewCheckUserAuthNetWork{W: w, R: r}
 }
 
-type CheckAuth struct {
+type NewCheckUserAuthWorkDetails struct {
 	Answers *RepoUsersCheckAuth.SetUsersChecker
 }
-type Sessions struct {
-	Session *RepoSessionHandle.NewSessionConnect
+
+func GetNewCheckUserAuthWorkDetails(answers *RepoUsersCheckAuth.SetUsersChecker) *NewCheckUserAuthWorkDetails {
+	return &NewCheckUserAuthWorkDetails{Answers: answers}
+}
+
+type NewCheckUserAuthSessions struct {
+	Session RepoSessionHandle.Session
+	Auth    AuthTokensManage.NewAuthChecker
+}
+
+func GetNewCheckUserAuthSessions(auth AuthTokensManage.NewAuthChecker, session RepoSessionHandle.Session) *NewCheckUserAuthSessions {
+	return &NewCheckUserAuthSessions{Auth: auth, Session: session}
 }
 
 type NewCheckUserAuth struct {
-	Net     NetWork
-	Tokens  TokensChecker
-	Answ    CheckAuth
-	Session Sessions
+	NewCheckUserAuthNetWork
+	NewCheckUserAuthWorkDetails
+	NewCheckUserAuthSessions
 }
 
+func GetNewCheckUserAuth(netWork NewCheckUserAuthNetWork, checkUserAuthDetails NewCheckUserAuthWorkDetails, sessions NewCheckUserAuthSessions) *NewCheckUserAuth {
+	return &NewCheckUserAuth{NewCheckUserAuthNetWork: netWork, NewCheckUserAuthWorkDetails: checkUserAuthDetails, NewCheckUserAuthSessions: sessions}
+}
 func (s *NewCheckUserAuth) CheckUserAuth() {
-	if s.Net.R.Method != http.MethodGet {
-		slog.Error("CheckUserAuth; Method isn't allowed", slog.Group("Details", slog.String("Method", s.Net.R.Method), slog.String("The url", s.Net.R.RequestURI)))
+	//The post method is here
+	if s.R.Method != http.MethodGet {
+		slog.Error("CheckUserAuth; Method isn't allowed", slog.Group("Details", slog.String("Method", s.R.Method), slog.String("The url", s.R.RequestURI)))
 		return
 	}
 
-	returnedData := RepoSessionHandle.SessionControl.GetSessionData(RepoSessionHandle.IncomingSessionData{Writer: s.Net.W, Request: s.Net.R})
+	returnedData := s.Session.GetSessionData(RepoSessionHandle.IncomingSessionData{Writer: s.W, Request: s.R})
 	if returnedData.Error != nil {
-		s.Answ.Answers.BadAnswer(RepoUsersCheckAuth.UserCheckIncomingData{
-			W:   s.Net.W,
+		s.Answers.BadAnswer(RepoUsersCheckAuth.UserCheckIncomingData{
+			W:   s.W,
 			Err: returnedData.Error,
 		})
 		return
 	}
-	OutData := s.Tokens.Auth.CheckUserAuth(AuthTokensManage.UserAuthCheckIncomingData{
+	OutData := s.Auth.CheckUserAuth(AuthTokensManage.UserAuthCheckIncomingData{
 		Jwt: returnedData.Jwt,
 		Rft: returnedData.Rft,
 	})
 	if OutData.Err != nil {
 		RepoUsersCheckAuth.UsersChecker.BadAnswer(RepoUsersCheckAuth.UserCheckIncomingData{
-			W:        s.Net.W,
+			W:        s.W,
 			Redirect: "/login",
 			Err:      returnedData.Error,
 		})
 		return
 	}
 	if OutData.IsNewJwtCreated {
-		s.Session.Session.SetNewSession(RepoSessionHandle.IncomingSessionData{
-			Writer:  s.Net.W,
-			Request: s.Net.R,
+		s.Session.SetNewSession(RepoSessionHandle.IncomingSessionData{
+			Writer:  s.W,
+			Request: s.R,
 			Jwt:     OutData.NewJwt,
 		})
 	}
-	s.Answ.Answers.SetGoodAnswer(RepoUsersCheckAuth.UserCheckIncomingData{W: s.Net.W, Redirect: "/main"})
+	s.Answers.SetGoodAnswer(RepoUsersCheckAuth.UserCheckIncomingData{W: s.W, Redirect: "/main"})
 	return
 }

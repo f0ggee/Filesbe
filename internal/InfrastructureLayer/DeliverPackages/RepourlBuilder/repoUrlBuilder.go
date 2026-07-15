@@ -18,7 +18,7 @@ type OutComingData struct {
 	NameFile string
 	FileType string
 }
-type urlBuilderAnswer interface {
+type UrlBuilderAnswer interface {
 	SetGoodAnswer(IncomingUrlData)
 	SetBadAnswer(IncomingUrlData)
 	GetUrlData(r *http.Request) OutComingData

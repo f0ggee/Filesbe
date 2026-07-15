@@ -29,11 +29,11 @@ type answerUploadEncrypt struct {
 	UrlToRedirect   string `json:"url_to_redirect"`
 }
 
-type answersUploadEncrypt interface {
+type AnswersUploadEncrypt interface {
 	SetGoodAnswers(IncomingDataAnswer)
 	SetBadAnswers(IncomingDataAnswer)
 }
-type urlUploadEncrypt interface {
+type UrlUploadEncrypt interface {
 	UrlBuilder(r *mux.Router, fileName string) (string, error)
 }
 

@@ -10,35 +10,36 @@ import (
 	"net/http"
 )
 
-type NetworkLogin struct {
+type LoginNet struct {
 	W http.ResponseWriter
 	R *http.Request
 }
 
-type AnswerLogin struct {
-	S *RepoLoginRealizations.LoginAnswers
+type LoginDepends struct {
+	S    *RepoLoginRealizations.LoginAnswers
+	Sess RepoSessionHandle.Session
 }
 type ParseLogin struct {
-	Parses *RepoParsers.Parsing
+	Parses RepoParsers.Decode
 }
 type LoginApplication struct {
 	Application.NewLogin
 }
 type NewLogin struct {
-	Net           NetworkLogin
-	ControlAnswer AnswerLogin
-	Parser        ParseLogin
-	App           LoginApplication
+	LoginNet
+	LoginDepends
+	ParseLogin
+	LoginApplication
 }
 
-func GetNewLogin(net NetworkLogin, controlAnswer AnswerLogin, parser ParseLogin, app LoginApplication) *NewLogin {
-	return &NewLogin{Net: net, ControlAnswer: controlAnswer, Parser: parser, App: app}
+func GetNewLogin(networkLogin LoginNet, loginDepends LoginDepends, parseLogin ParseLogin, loginApplication LoginApplication) *NewLogin {
+	return &NewLogin{LoginNet: networkLogin, LoginDepends: loginDepends, ParseLogin: parseLogin, LoginApplication: loginApplication}
 }
 
 func (D *NewLogin) Login() {
-	if D.Net.R.Method != http.MethodPost {
-		D.ControlAnswer.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
-			W:         D.Net.W,
+	if D.R.Method != http.MethodPost {
+		D.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
+			W:         D.W,
 			Operation: DomainLevel.NotStart,
 			Error:     DomainLevel.MethodNotAllowed,
 		})
@@ -46,10 +47,10 @@ func (D *NewLogin) Login() {
 	}
 
 	DataUserLogin := &Dto.UserLoginData{}
-	err := D.Parser.Parses.JsonDecode(DataUserLogin, D.Net.R.Body)
+	err := D.Parses.JsonDecode(DataUserLogin, D.R.Body)
 	if err != nil {
-		D.ControlAnswer.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
-			W:         D.Net.W,
+		D.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
+			W:         D.W,
 			Operation: DomainLevel.NotStart,
 			Error:     err.Error(),
 		})
@@ -58,39 +59,39 @@ func (D *NewLogin) Login() {
 
 	err = DataUserLogin.ValidateData()
 	if err != nil {
-		D.ControlAnswer.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
-			W:         D.Net.W,
+		D.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
+			W:         D.W,
 			Operation: DomainLevel.NotStart,
 			Error:     err.Error(),
 		})
 		return
 	}
 
-	loginDataOutput := D.App.LoginService(*DataUserLogin, D.Net.R.Context())
+	loginDataOutput := D.LoginService(*DataUserLogin, D.R.Context())
 	if loginDataOutput.Err != nil {
-		D.ControlAnswer.S.SetGoodAnswer(RepoLoginRealizations.AnswerDetails{
-			W:         D.Net.W,
+		D.S.SetGoodAnswer(RepoLoginRealizations.AnswerDetails{
+			W:         D.W,
 			Operation: DomainLevel.Break,
 			Error:     loginDataOutput.Err.Error(),
 		})
 		return
 	}
-	ReturnedData := RepoSessionHandle.SessionControl.SetNewSession(RepoSessionHandle.IncomingSessionData{
-		Writer:  D.Net.W,
-		Request: D.Net.R,
+	ReturnedData := D.Sess.SetNewSession(RepoSessionHandle.IncomingSessionData{
+		Writer:  D.W,
+		Request: D.R,
 		Jwt:     loginDataOutput.Jwt,
 		Rt:      loginDataOutput.Rft,
 	})
 	if ReturnedData.Error != nil {
-		D.ControlAnswer.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
-			W:         D.Net.W,
+		D.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
+			W:         D.W,
 			Operation: DomainLevel.Break,
 			Error:     ReturnedData.Error.Error(),
 		})
 		return
 	}
-	D.ControlAnswer.S.SetGoodAnswer(RepoLoginRealizations.AnswerDetails{
-		W:               D.Net.W,
+	D.S.SetGoodAnswer(RepoLoginRealizations.AnswerDetails{
+		W:               D.W,
 		Operation:       DomainLevel.Success,
 		UrlToRedistrict: "/main",
 	})

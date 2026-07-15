@@ -8,7 +8,7 @@ import (
 )
 
 type UrlSettings struct {
-	Url RepourlBuilder.NewUrlBuilder
+	Url RepourlBuilder.UrlBuilderAnswer
 }
 
 type UrlNetwork struct {
@@ -18,6 +18,10 @@ type UrlNetwork struct {
 type NewBuildUrl struct {
 	S   UrlSettings
 	Net UrlNetwork
+}
+
+func GetNewBuildUrl(s UrlSettings, net UrlNetwork) *NewBuildUrl {
+	return &NewBuildUrl{S: s, Net: net}
 }
 
 func (d *NewBuildUrl) SetUrl() {

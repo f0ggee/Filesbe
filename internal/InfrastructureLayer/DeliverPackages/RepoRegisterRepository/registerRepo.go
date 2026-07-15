@@ -11,7 +11,7 @@ type NewRegister struct{}
 
 var ErrorController = &NewRegister{}
 
-type Register interface {
+type RegisterAnswers interface {
 	ErrorAnswer(RegisterErrorIncomingData)
 	GoodAnswer(RegisterGoodIncomingData)
 }

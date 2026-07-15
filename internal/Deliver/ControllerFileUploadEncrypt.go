@@ -18,71 +18,72 @@ type FileUploaderEncryptNetwork struct {
 type NewFileUploaderEncryptApplication struct {
 	Application.NewUploadEncrypt
 }
-
-type FileUploaderEncryptRouting struct {
-	Rout *mux.Router
-}
-type Session struct {
-	ReadSession RepoSessionHandle.NewSessionConnect
+type NewFileUploaderEncryptSession struct {
+	ReadSession RepoSessionHandle.Session
 	AuthCheck   AuthTokensManage.AuthCheck
 }
-type AnswerUploadEncrypt struct {
-	S RepofileUploaderEncryptRepo.SetNewUploadingRepo
+type NewFileUploaderEncryptDetails struct {
+	Answers RepofileUploaderEncryptRepo.AnswersUploadEncrypt
+	Build   RepofileUploaderEncryptRepo.UrlUploadEncrypt
+	Rout    *mux.Router
 }
 type NewFileUploaderEncrypt struct {
-	Net         FileUploaderNoEncryptNet
-	Router      FileUploaderEncryptRouting
-	Sess        Session
-	Answe       AnswerUploadEncrypt
-	Application NewFileUploaderEncryptApplication
+	FileUploaderEncryptNetwork
+	NewFileUploaderEncryptSession
+	NewFileUploaderEncryptDetails
+	NewFileUploaderEncryptApplication
+}
+
+func GetNewFileUploaderEncrypt(fileUploaderEncryptNetwork FileUploaderEncryptNetwork, newFileUploaderEncryptSession NewFileUploaderEncryptSession, newFileUploaderEncryptDetails NewFileUploaderEncryptDetails, newFileUploaderEncryptApplication NewFileUploaderEncryptApplication) *NewFileUploaderEncrypt {
+	return &NewFileUploaderEncrypt{FileUploaderEncryptNetwork: fileUploaderEncryptNetwork, NewFileUploaderEncryptSession: newFileUploaderEncryptSession, NewFileUploaderEncryptDetails: newFileUploaderEncryptDetails, NewFileUploaderEncryptApplication: newFileUploaderEncryptApplication}
 }
 
 func (S *NewFileUploaderEncrypt) FileUploaderEncrypt() {
 
-	returnedSession := S.Sess.ReadSession.GetSessionData(RepoSessionHandle.IncomingSessionData{
-		Writer:  S.Net.w,
-		Request: S.Net.r,
+	returnedSession := S.ReadSession.GetSessionData(RepoSessionHandle.IncomingSessionData{
+		Writer:  S.W,
+		Request: S.R,
 	})
 	if returnedSession.Error != nil {
-		S.Answe.S.SetBadAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
-			W:               S.Net.w,
+		S.Answers.SetBadAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
+			W:               S.W,
 			Error:           returnedSession.Error.Error(),
 			StatusOperation: DomainLevel.Break,
 		})
 		return
 	}
-	Data := S.Sess.AuthCheck.CheckUserAuth(AuthTokensManage.UserAuthCheckIncomingData{
+	Data := S.AuthCheck.CheckUserAuth(AuthTokensManage.UserAuthCheckIncomingData{
 		Jwt: returnedSession.Jwt,
 		Rft: returnedSession.Rft,
 	})
 	if Data.Err != nil {
-		S.Answe.S.SetGoodAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
-			W:               S.Net.w,
+		S.Answers.SetGoodAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
+			W:               S.W,
 			Error:           Data.Err.Error(),
 			StatusOperation: DomainLevel.Break,
 		})
 		return
 	}
 
-	fileName, err := S.Application.NewUploadEncrypt.UploadEncrypt(S.Net.r)
+	fileName, err := S.NewUploadEncrypt.UploadEncrypt(S.R)
 	if err != nil {
 		//TODO add handling the error
 
 		return
 	}
 
-	urlPath, err := S.Answe.S.UrlBuilder(S.Router.Rout, fileName)
+	urlPath, err := S.Build.UrlBuilder(S.Rout, fileName)
 	if err != nil {
-		S.Answe.S.SetBadAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
-			W:               S.Net.w,
+		S.Answers.SetBadAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
+			W:               S.W,
 			Error:           err.Error(),
 			StatusOperation: DomainLevel.NotStart,
 		})
 		return
 	}
 
-	S.Answe.S.SetGoodAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
-		W:               S.Net.w,
+	S.Answers.SetGoodAnswers(RepofileUploaderEncryptRepo.IncomingDataAnswer{
+		W:               S.W,
 		UrlToRedirect:   urlPath,
 		StatusOperation: DomainLevel.Success,
 	})

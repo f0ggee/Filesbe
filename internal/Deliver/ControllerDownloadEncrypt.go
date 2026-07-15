@@ -8,10 +8,10 @@ import (
 )
 
 type AnswerDownloadEncrypt struct {
-	S RepoDownloadEncryptRepo.NewFileDownloadEncrypt
+	S RepoDownloadEncryptRepo.AnswersDownloadEncrypt
 }
 type UrlBuilderDownloadEncrypt struct {
-	UrlBuild RepoDownloadEncryptRepo.NewFileDownloadEncrypt
+	UrlBuild RepoDownloadEncryptRepo.UrlWork
 }
 
 type NetworkDownloadEncrypt struct {

@@ -9,11 +9,11 @@ import (
 )
 
 type AnswerDownloadNoEncrypt struct {
-	Answ RepoDownloadNoEncrypt.NewRepoDownloadNoEncrypt
+	Answ RepoDownloadNoEncrypt.Answer
 }
 
-type UrlBuilderDownloadNoEncrypt struct {
-	UrlWork RepoDownloadNoEncrypt.NewRepoDownloadNoEncrypt
+type NewDownloadWithNotEncryptUrlBuilder struct {
+	UrlWork RepoDownloadNoEncrypt.UrlWork
 }
 type NetworkDownloadNoEncrypt struct {
 	W http.ResponseWriter
@@ -26,18 +26,18 @@ type NewDownloadWithNotEncryptApplication struct {
 
 type NewDownloadWithNotEncrypt struct {
 	AnswerDownloadNoEncrypt
-	UrlBuilderDownloadNoEncrypt
+	NewDownloadWithNotEncryptUrlBuilder
 	NetworkDownloadNoEncrypt
 	NewDownloadWithNotEncryptApplication
 }
 
-func GetNewDownloadWithNotEncrypt(answerDownloadNoEncrypt AnswerDownloadNoEncrypt, urlBuilderDownloadNoEncrypt UrlBuilderDownloadNoEncrypt, networkDownloadNoEncrypt NetworkDownloadNoEncrypt, newDownloadWithNotEncryptApplication NewDownloadWithNotEncryptApplication) *NewDownloadWithNotEncrypt {
-	return &NewDownloadWithNotEncrypt{AnswerDownloadNoEncrypt: answerDownloadNoEncrypt, UrlBuilderDownloadNoEncrypt: urlBuilderDownloadNoEncrypt, NetworkDownloadNoEncrypt: networkDownloadNoEncrypt, NewDownloadWithNotEncryptApplication: newDownloadWithNotEncryptApplication}
+func GetNewDownloadWithNotEncrypt(answerDownloadNoEncrypt AnswerDownloadNoEncrypt, urlBuilderDownloadNoEncrypt NewDownloadWithNotEncryptUrlBuilder, networkDownloadNoEncrypt NetworkDownloadNoEncrypt, newDownloadWithNotEncryptApplication NewDownloadWithNotEncryptApplication) *NewDownloadWithNotEncrypt {
+	return &NewDownloadWithNotEncrypt{AnswerDownloadNoEncrypt: answerDownloadNoEncrypt, NewDownloadWithNotEncryptUrlBuilder: urlBuilderDownloadNoEncrypt, NetworkDownloadNoEncrypt: networkDownloadNoEncrypt, NewDownloadWithNotEncryptApplication: newDownloadWithNotEncryptApplication}
 }
 
-func (d NewDownloadWithNotEncrypt) DownloadWithNotEncrypt(w http.ResponseWriter, r *http.Request) {
+func (d NewDownloadWithNotEncrypt) DownloadWithNotEncrypt() {
 
-	name := d.UrlWork.GetData(r)
+	name := d.UrlWork.GetData(d.R)
 	if name == "" {
 		d.Answ.SetBadAnswer(RepoDownloadNoEncrypt.DownloadNoEncryptIncomingData{
 			W:               d.W,
