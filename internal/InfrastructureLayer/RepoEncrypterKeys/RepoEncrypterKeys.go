@@ -19,6 +19,7 @@ type Keys struct {
 func GetNewKeys(oldKey *memguard.LockedBuffer, newKey *memguard.LockedBuffer) *Keys {
 
 	oldKey = memguard.NewBufferRandom(32)
+	newKey = memguard.NewBufferRandom(32)
 	return &Keys{OldKey: oldKey, NewKey: newKey}
 }
 func (s *Keys) GetKey() []byte    { return s.NewKey.Data() }

@@ -2,8 +2,8 @@ package Deliver
 
 import (
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoUsersCheckAuth"
+	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
 	"log/slog"
 	"net/http"
 )
@@ -27,10 +27,10 @@ func GetNewCheckUserAuthWorkDetails(answers *RepoUsersCheckAuth.SetUsersChecker)
 
 type NewCheckUserAuthSessions struct {
 	Session RepoSessionHandle.Session
-	Auth    AuthTokensManage.NewAuthChecker
+	Auth    AuthTokensManage.AuthCheck
 }
 
-func GetNewCheckUserAuthSessions(auth AuthTokensManage.NewAuthChecker, session RepoSessionHandle.Session) *NewCheckUserAuthSessions {
+func GetNewCheckUserAuthSessions(auth AuthTokensManage.AuthCheck, session RepoSessionHandle.Session) *NewCheckUserAuthSessions {
 	return &NewCheckUserAuthSessions{Auth: auth, Session: session}
 }
 

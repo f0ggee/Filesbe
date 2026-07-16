@@ -8,12 +8,14 @@ import (
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoLoginRealizations"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoRegisterRepository"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoUsersCheckAuth"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderEncryptRepo"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderNoEncryptRepo"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepourlBuilder"
+	"Kaban/internal/InfrastructureLayer/ProtocolManage"
+	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
+	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
 	"Kaban/internal/Service/Application"
 
 	"github.com/gorilla/mux"
@@ -33,7 +35,7 @@ func GetDownloadApplicationBuilder(s *S3Collector, a *RedisCollector, f *FileCon
 	return Application.GetNewDownload(delivery, fileControl, Application.DownloadNetwork{})
 }
 
-func GetDownloadEncryptApplicationBuilder(a *RedisCollector, s *S3Collector, z *KeysCollector, c *CollectorCrypto, f *FileControlCollector) *Application.NewDownloadEncrypt {
+func GetDownloadEncryptApplicationBuilder(a *RedisCollector, s *S3Collector, z *RepoEncrypterKeys.Keys, c *CollectorCrypto, f *FileControlCollector) *Application.NewDownloadEncrypt {
 
 	delivery := Application.NewDownloadEncryptDelivery{
 		ReaderRedis:  &a.Read,
@@ -44,7 +46,7 @@ func GetDownloadEncryptApplicationBuilder(a *RedisCollector, s *S3Collector, z *
 
 	crypto := Application.NewDownloadEncryptCrypto{
 		Decrypt:       c.Decrypt,
-		EncrypterKeys: z.Keys,
+		EncrypterKeys: *z,
 	}
 	file := Application.NewDownloadEncryptFileControl{
 		Transfer:     f.Transfer,
@@ -80,7 +82,7 @@ func GetRegisterApplicationBuilder(d *CollectorDatabaseManage, x *CollectorAuthT
 	}
 	return Application.GetNewRegisterApplication(data, crypto)
 }
-func GetUploadApplication(c *CollectorCrypto, f *FileControlCollector, z *RepoParsersCollector, s3 *S3Collector, r *RedisCollector) *Application.NewFileUploader {
+func GetUploadApplicationBuilder(c *CollectorCrypto, f *FileControlCollector, z *RepoParsersCollector, s3 *S3Collector, r *RedisCollector) *Application.NewUpload {
 
 	crypto := Application.NewFileUploaderCrypto{
 		Generator: c.Generate,
@@ -98,46 +100,46 @@ func GetUploadApplication(c *CollectorCrypto, f *FileControlCollector, z *RepoPa
 }
 
 type UploadEncryptBuilderIncomeData struct {
-	f          *FileControlCollector
-	s3         *S3Collector
-	z          *RepoParsersCollector
-	c          *CollectorCrypto
-	serverKeys *DomainLevel.NewServerKeys
-	r          *RedisCollector
+	F          *FileControlCollector
+	S3         *S3Collector
+	Z          *RepoParsersCollector
+	C          *CollectorCrypto
+	ServerKeys *DomainLevel.NewServerKeys
+	R          *RedisCollector
 }
 
 func GetUploadEncryptApplicationBuilder(d UploadEncryptBuilderIncomeData) *Application.NewUploadEncrypt {
 
 	data := Application.NewUploadEncryptDataManage{
-		FileManger: d.f.FileSettings,
-		Encode:     d.z.Encode,
+		FileManger: d.F.FileSettings,
+		Encode:     d.Z.Encode,
 	}
 
 	crypto := Application.NewUploadEncryptCrypto{
-		Generate:   d.c.Generate,
-		ServerKeys: *d.serverKeys,
-		Encrypt:    d.c.Encrypt,
+		Generate:   d.C.Generate,
+		ServerKeys: *d.ServerKeys,
+		Encrypt:    d.C.Encrypt,
 	}
 
 	delivery := Application.NewUploadEncryptDelivery{
-		UploaderS3:   d.s3.Uploader,
-		RedisWriter:  &d.r.Write,
-		RedisChecker: &d.r.Check,
-		RedisDeleter: &d.r.Delete,
-		DeleterS3:    d.s3.Deleter,
+		UploaderS3:   d.S3.Uploader,
+		RedisWriter:  &d.R.Write,
+		RedisChecker: &d.R.Check,
+		RedisDeleter: &d.R.Delete,
+		DeleterS3:    d.S3.Deleter,
 	}
 	return Application.GetNewUploadEncrypt(data, crypto, delivery)
 }
 
 // Delivery builders
 
-type RegisterControllerBuilder struct {
+type RegisterControllerBuilderIncomeData struct {
 	Answ    RepoDownloadNoEncrypt.Answer
 	UrlWork RepoDownloadNoEncrypt.UrlWork
-	s       *Application.NewDownload
+	App     *Application.NewDownload
 }
 
-func GetControllerDownloadBuilder(d *RegisterControllerBuilder) *Deliver.NewDownloadWithNotEncrypt {
+func GetControllerDownloadBuilder(d *RegisterControllerBuilderIncomeData) *Deliver.NewDownloadWithNotEncrypt {
 
 	answ := Deliver.AnswerDownloadNoEncrypt{
 		Answ: d.Answ,
@@ -149,7 +151,7 @@ func GetControllerDownloadBuilder(d *RegisterControllerBuilder) *Deliver.NewDown
 
 	NetWork := Deliver.NetworkDownloadNoEncrypt{}
 	App := Deliver.NewDownloadWithNotEncryptApplication{
-		NewDownload: *d.s,
+		NewDownload: *d.App,
 	}
 
 	return Deliver.GetNewDownloadWithNotEncrypt(answ, url, NetWork, App)
@@ -158,7 +160,7 @@ func GetControllerDownloadBuilder(d *RegisterControllerBuilder) *Deliver.NewDown
 type EncryptDownloadControllerIncomeData struct {
 	Answ     RepoDownloadEncryptRepo.AnswersDownloadEncrypt
 	UrlBuild RepoDownloadEncryptRepo.UrlWork
-	d        *Application.NewDownloadEncrypt
+	App      *Application.NewDownloadEncrypt
 }
 
 func GetEncryptDownloadControllerBuilder(d EncryptDownloadControllerIncomeData) *Deliver.NewDownloadEncrypt {
@@ -170,7 +172,7 @@ func GetEncryptDownloadControllerBuilder(d EncryptDownloadControllerIncomeData) 
 	}
 	net := Deliver.NetworkDownloadEncrypt{}
 	App := Deliver.NewDownloadWithEncryptApplication{
-		NewDownloadEncrypt: *d.d,
+		NewDownloadEncrypt: *d.App,
 	}
 	return Deliver.GetNewDownloadEncrypt(answ, url, net, App)
 }
@@ -207,21 +209,22 @@ type UploaderEncryptBuilderIncomeData struct {
 	Builder RepofileUploaderNoEncryptRepo.NewUploaderNoEncrypt
 	Session RepoSessionHandle.Session
 	Auth    AuthTokensManage.AuthCheck
+	App     Application.NewUpload
 }
 
-func GetFileUploaderControllerBuilder(data UploaderEncryptBuilderIncomeData) *Deliver.NewFileUploader {
+func GetUploaderControllerBuilder(data UploaderEncryptBuilderIncomeData) *Deliver.NewFileUploader {
 	net := Deliver.NewFileUploaderNet{}
 	details := Deliver.NewFileUploaderWorkDetails{
-		S:       nil,
-		Builder: RepofileUploaderNoEncryptRepo.NewUploaderNoEncrypt{},
+		S:       data.S,
+		Builder: data.Builder,
 	}
 	session := Deliver.NewFileUploaderSessions{
-		Session: nil,
-		Auth:    nil,
+		Session: data.Session,
+		Auth:    data.Auth,
 	}
 
 	app := Deliver.NewFileUploaderApp{
-		NewFileUploader: Application.NewFileUploader{},
+		NewUpload: data.App,
 	}
 	return Deliver.GetNewFileUploader(net, details, session, app)
 }
@@ -229,11 +232,11 @@ func GetFileUploaderControllerBuilder(data UploaderEncryptBuilderIncomeData) *De
 type NewLoginIncomeData struct {
 	S      *RepoLoginRealizations.LoginAnswers
 	Sess   RepoSessionHandle.Session
-	Parses *RepoParsers.Parsing
+	Parses RepoParsers.Decode
 	app    *Application.NewLogin
 }
 
-func GetNewLoginBuilder(data NewLoginIncomeData) *Deliver.NewLogin {
+func GetControllerLoginBuilder(data NewLoginIncomeData) *Deliver.NewLogin {
 	net := Deliver.LoginNet{}
 	depends := Deliver.LoginDepends{
 		S:    data.S,
@@ -251,10 +254,10 @@ func GetNewLoginBuilder(data NewLoginIncomeData) *Deliver.NewLogin {
 type CheckUserBuilderIncomeData struct {
 	answers *RepoUsersCheckAuth.SetUsersChecker
 	Session RepoSessionHandle.Session
-	Auth    AuthTokensManage.NewAuthChecker
+	Auth    AuthTokensManage.AuthCheck
 }
 
-func GetCheckUserBuilder(data CheckUserBuilderIncomeData) *Deliver.NewCheckUserAuth {
+func GetControllerCheckAuthBuilder(data CheckUserBuilderIncomeData) *Deliver.NewCheckUserAuth {
 	net := Deliver.GetNewCheckUserAuthNetWork(nil, nil)
 	auth := Deliver.GetNewCheckUserAuthWorkDetails(data.answers)
 	session := Deliver.GetNewCheckUserAuthSessions(data.Auth, data.Session)
@@ -268,7 +271,7 @@ type RegisterBuilderIncomeData struct {
 	App     Application.NewRegisterApplication
 }
 
-func GetRegisterBuilder(data RegisterBuilderIncomeData) *Deliver.NewRegister {
+func GetControllerRegisterBuilder(data RegisterBuilderIncomeData) *Deliver.NewRegister {
 
 	Details := Deliver.NewRegisterDetails{
 		Answ:    data.Answ,
@@ -284,10 +287,64 @@ func GetRegisterBuilder(data RegisterBuilderIncomeData) *Deliver.NewRegister {
 	return Deliver.GetNewRegister(net, Details, app)
 }
 
-func GetUrlUploaderBuilder(Url RepourlBuilder.UrlBuilderAnswer) *Deliver.NewBuildUrl {
+func GetControllerUrlUploaderBuilder(Url RepourlBuilder.UrlBuilderAnswer) *Deliver.NewBuildUrl {
 	url := Deliver.UrlSettings{
 		Url: Url,
 	}
 	net := Deliver.UrlNetwork{}
 	return Deliver.GetNewBuildUrl(url, net)
+}
+
+type ProtocolManageBuilder struct {
+	EncrypterKeys RepoEncrypterKeys.Keys
+	ServerKeys    DomainLevel.NewServerKeys
+	C             *CollectorCrypto
+	Parser        *RepoParsersCollector
+	GrpcConn      GrpcCollector
+	Red           RedisCollector
+}
+
+type ProtocolExchanges struct {
+	Start      ProtocolManage.NewExchangeInitializer
+	Processing ProtocolManage.Exchanger
+}
+
+func GetProtocolManageBuilder(data ProtocolManageBuilder) *ProtocolExchanges {
+	key := ProtocolManage.NewExchangeInitializerKey{
+		Keys:       data.EncrypterKeys,
+		ServerKeys: data.ServerKeys,
+	}
+
+	crypto := ProtocolManage.NewExchangeInitializerCrypto{
+		CryptoGenerating: data.C.Generate,
+		CryptoEncrypt:    data.C.Encrypt,
+		CryptoDecrypt:    data.C.Decrypt,
+		CryptoValidate:   data.C.Validate,
+	}
+	Parser := ProtocolManage.NewExchangeInitializerParsers{
+		Encode: data.Parser.Encode,
+		Decode: data.Parser.Decode,
+	}
+
+	Del := ProtocolManage.NewExchangeInitializerDeliver{
+		Grcp: data.GrpcConn.Sender,
+	}
+	delProcess := ProtocolManage.NewExchangerDeliver{
+		Redis: &data.Red.Read,
+	}
+	cryptoProcess := ProtocolManage.NewExchangerCrypto{
+		Decrypter:  data.C.Decrypt,
+		Validation: data.C.Validate,
+	}
+	keyProcess := ProtocolManage.NewExchangerKeys{
+		ServerKeys:    data.ServerKeys,
+		EncrypterKeys: data.EncrypterKeys,
+	}
+	parser := ProtocolManage.NewExchangerParsers{
+		Decoder: data.Parser.Decode,
+	}
+	return &ProtocolExchanges{
+		Start:      *ProtocolManage.GetNewExchangeInitializer(key, crypto, Parser, Del),
+		Processing: ProtocolManage.GetNewExchanger(delProcess, parser, cryptoProcess, keyProcess),
+	}
 }

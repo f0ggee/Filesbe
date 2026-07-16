@@ -24,17 +24,17 @@ type NewFileUploaderDelivery struct {
 	UploadS3   s3Repo.S3Uploader
 	WriteRedis DomainLevel.WritingRedis
 }
-type NewFileUploader struct {
+type NewUpload struct {
 	NewFileUploaderCrypto
 	NewFileUploaderDataMange
 	NewFileUploaderDelivery
 }
 
-func GetNewFileUploader(newFileUploaderCrypto NewFileUploaderCrypto, newFileUploaderDataMange NewFileUploaderDataMange, newFileUploaderDelivery NewFileUploaderDelivery) *NewFileUploader {
-	return &NewFileUploader{NewFileUploaderCrypto: newFileUploaderCrypto, NewFileUploaderDataMange: newFileUploaderDataMange, NewFileUploaderDelivery: newFileUploaderDelivery}
+func GetNewFileUploader(newFileUploaderCrypto NewFileUploaderCrypto, newFileUploaderDataMange NewFileUploaderDataMange, newFileUploaderDelivery NewFileUploaderDelivery) *NewUpload {
+	return &NewUpload{NewFileUploaderCrypto: newFileUploaderCrypto, NewFileUploaderDataMange: newFileUploaderDataMange, NewFileUploaderDelivery: newFileUploaderDelivery}
 }
 
-func (sa *NewFileUploader) FileUploader(r *http.Request) (string, error) {
+func (sa *NewUpload) FileUploader(r *http.Request) (string, error) {
 	g, ctx := errgroup.WithContext(r.Context())
 	file, fileDetails, err := r.FormFile("file")
 	if err != nil {

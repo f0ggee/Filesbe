@@ -9,7 +9,6 @@ import (
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoLoginRealizations"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoRegisterRepository"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoUsersCheckAuth"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderEncryptRepo"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderNoEncryptRepo"
@@ -19,13 +18,14 @@ import (
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
+	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
 	"Kaban/internal/InfrastructureLayer/s3Repo"
 	"os"
 	"sync"
 
 	"github.com/awnumar/memguard"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go/aws/session"
+	ses "github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gorilla/sessions"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
@@ -37,7 +37,7 @@ type S3Collector struct {
 	S3Download s3Repo.DownloadingS3
 }
 
-func GetS3Collector(cfg *s3.Client, OldS3Connect *session.Session) *S3Collector {
+func GetS3Collector(cfg *s3.Client, OldS3Connect *ses.Session) *S3Collector {
 	s3Info := s3Repo.GetNewVariables(os.Getenv("Bucket"), cfg, OldS3Connect)
 	S3Upload := s3Repo.GetNewUploading(*s3Info)
 	S3Download := s3Repo.GetNewS3Download(*s3Info)
@@ -69,9 +69,7 @@ type CollectorCrypto struct {
 }
 
 type NewCryptoCollectorInput struct {
-	OurPrivateKey   []byte
-	MasterPublicKet []byte
-	Decode          RepoParsers.Decode
+	Decode RepoParsers.Decode
 }
 
 func GetNewCryptoCollector(d NewCryptoCollectorInput) *CollectorCrypto {
@@ -138,9 +136,7 @@ type LoginCollector struct {
 type RegisterCollector struct {
 	Answ RepoRegisterRepository.NewRegister
 }
-type SessionCollector struct {
-	Sess RepoSessionHandle.NewSessionConnect
-}
+
 type UrlBuilderCollector struct {
 	Answ RepourlBuilder.NewUrlBuilder
 }
@@ -154,7 +150,6 @@ type DeliverPackagesCollector struct {
 	UploaderCollector
 	LoginCollector
 	RegisterCollector
-	SessionCollector
 	UrlBuilderCollector
 	UserCheckCollector
 }
@@ -180,9 +175,6 @@ func GetDeliverPackagesCollector(Store *sessions.CookieStore) *DeliverPackagesCo
 		RegisterCollector: RegisterCollector{
 			Answ: *RepoRegisterRepository.GetNewRegisterController(),
 		},
-		SessionCollector: SessionCollector{
-			Sess: *RepoSessionHandle.GetNewSessionConnect(Store, &sync.RWMutex{}),
-		},
 		UrlBuilderCollector: UrlBuilderCollector{
 			Answ: *RepourlBuilder.GetNewUrlBuilder(),
 		},
@@ -192,16 +184,12 @@ func GetDeliverPackagesCollector(Store *sessions.CookieStore) *DeliverPackagesCo
 	}
 }
 
-type FileControlsCollector struct {
-	Settings    FileControls.FileSettings
-	Transfering FileControls.Transfer
+type SessionCollector struct {
+	Session RepoSessionHandle.NewSessionConnect
 }
 
-func GetFileControlsCollector() *FileControlsCollector {
-	return &FileControlsCollector{
-		Settings:    *FileControls.GetNewFileSettings(),
-		Transfering: *FileControls.GetNewTransfer(),
-	}
+func GetSessionCollector(activity *sessions.CookieStore) *SessionCollector {
+	return &SessionCollector{Session: *RepoSessionHandle.GetNewSessionConnect(activity, nil)}
 }
 
 type GrpcCollector struct {
@@ -244,14 +232,12 @@ func GetRedisCollector(Re *redis.Client) *RedisCollector {
 	}
 }
 
-type KeysCollector struct {
-	Keys       RepoEncrypterKeys.Keys
-	ServerKeys DomainLevel.NewServerKeys
+func GetNewServerKeysCollector(key1 []byte, key2 []byte) *DomainLevel.NewServerKeys {
+	return DomainLevel.GetNewSetKeys(key1, key2)
 }
 
-func GetEncrypterKeysCollector(Key1 *memguard.LockedBuffer, Key2 *memguard.LockedBuffer, serverKeys *DomainLevel.NewServerKeys) *KeysCollector {
-
-	return &KeysCollector{Keys: *RepoEncrypterKeys.GetNewKeys(Key1, Key2), ServerKeys: *serverKeys}
+func GetEncrypterKeysCollector(Key1 *memguard.LockedBuffer, Key2 *memguard.LockedBuffer) *RepoEncrypterKeys.Keys {
+	return RepoEncrypterKeys.GetNewKeys(Key1, Key2)
 }
 
 type RepoParsersCollector struct {

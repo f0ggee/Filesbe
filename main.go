@@ -2,15 +2,12 @@ package main
 
 import (
 	"Kaban/cmds"
-	"Kaban/internal/Deliver"
+	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoLoginRealizations"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
-	"Kaban/internal/InfrastructureLayer/FileControls"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
-	"Kaban/internal/InfrastructureLayer/RepoParsers"
-	"Kaban/internal/InfrastructureLayer/s3Repo"
+	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
+	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
 	"Kaban/internal/Service/Application"
 	"Kaban/internal/Service/Helpers"
 	"log/slog"
@@ -18,8 +15,6 @@ import (
 	"time"
 
 	"github.com/awnumar/memguard"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
@@ -54,24 +49,89 @@ func main() {
 		slog.Error("Error connect to s3 old ", "Error", err)
 		return
 	}
+	router, getRequest, postRequest, StaticFiles := Routers()
+
+	///Collectors
 	S3Collector := cmds.GetS3Collector(cfg, OldS3Connect)
 	ParserCollector := cmds.GetRepoParsersCollector()
 	FileCollector := cmds.GetFileControlCollector()
-	EncrypterCollector := cmds.GetEncrypterKeysCollector(Key1, Key2)
-	CryptoCollector := cmds.GetNewCryptoCollector(cmds.NewCryptoCollectorInput{
-		OurPrivateKey:   []byte(os.Getenv("Our_Private_Key")),
-		MasterPublicKet: []byte(os.Getenv("Publick_Key_Master_Server")),
-		Decode:          ParserCollector.Decode,
-	})
+	EncrypterKeysCollector := cmds.GetEncrypterKeysCollector(Key1, Key2)
+	CryptoCollector := cmds.GetNewCryptoCollector(cmds.NewCryptoCollectorInput{Decode: ParserCollector.Decode})
+	PrivateKey := []byte(os.Getenv("Our_Private_Key"))
+	MasterKey := []byte(os.Getenv("Public_Key_Master_Server"))
+	ServerKeysCollector := cmds.GetNewServerKeysCollector(PrivateKey, MasterKey)
 	AuthCollector := cmds.GetAuthTokensCollector([]byte(os.Getenv("KEY1")))
 	DatabaseCollector := cmds.GetDatabaseManageCollector(db)
 	DeliverPackagesCollector := cmds.GetDeliverPackagesCollector(RepoSessionHandle.GetCookieStore())
-	GrcpCollector := cmds.GetGrpcCollector(CryptoCollector.Encrypt, CryptoCollector.Decrypt, ParserCollector.Decode, CryptoCollector.Validate, EncrypterCollector.Keys, CryptoCollector.Keys)
-	FileControlsCollector := cmds.GetFileControlsCollector()
+	SessionCollector := cmds.GetSessionCollector(RepoSessionHandle.GetCookieStore())
+	GrpcCollector := cmds.GetGrpcCollector(CryptoCollector.Encrypt, CryptoCollector.Decrypt, ParserCollector.Decode, CryptoCollector.Validate, *EncrypterKeysCollector, *ServerKeysCollector)
 	RedisCollector := cmds.GetRedisCollector(redisConn)
-	ControllerDonwloadBuilder := cmds.GetControllerDownloadBuilder(DeliverPackagesCollector)
 
-	router, getRequest, postRequest, StaticFiles := Routers()
+	//Application builders
+	DownloadApplicationBuilder := cmds.GetDownloadApplicationBuilder(S3Collector, RedisCollector, FileCollector)
+	DownloadEncryptApplicationBuilder := cmds.GetDownloadEncryptApplicationBuilder(RedisCollector, S3Collector, EncrypterKeysCollector, CryptoCollector, FileCollector)
+	LoginApplicationBuilder := cmds.GetLoginApplicationBuilder(CryptoCollector, &DatabaseCollector, AuthCollector)
+	RegisterApplicationBuilder := cmds.GetRegisterApplicationBuilder(&DatabaseCollector, AuthCollector, CryptoCollector)
+	UploaderApplicationBuilder := cmds.GetUploadApplicationBuilder(CryptoCollector, FileCollector, ParserCollector, S3Collector, RedisCollector)
+	UploaderEncryptApplicationBuilder := cmds.GetUploadEncryptApplicationBuilder(cmds.UploadEncryptBuilderIncomeData{
+		F:          FileCollector,
+		S3:         S3Collector,
+		Z:          ParserCollector,
+		C:          CryptoCollector,
+		ServerKeys: ServerKeysCollector,
+		R:          RedisCollector,
+	})
+	//Controllers builders
+	ControllerDownloadBuilder := cmds.GetControllerDownloadBuilder(&cmds.RegisterControllerBuilderIncomeData{
+		Answ:    DeliverPackagesCollector.DownloadCollector.Answ,
+		UrlWork: DeliverPackagesCollector.DownloadCollector.Answ,
+		App:     DownloadApplicationBuilder,
+	})
+	ControllerDownloadEncryptBuilder := cmds.GetEncryptDownloadControllerBuilder(cmds.EncryptDownloadControllerIncomeData{
+		Answ:     DeliverPackagesCollector.DownloadEncryptCollector.Answ,
+		UrlBuild: DeliverPackagesCollector.DownloadEncryptCollector.Answ,
+		App:      DownloadEncryptApplicationBuilder,
+	})
+
+	ControllerUploadEncryptBuilder := cmds.GetUploaderEncrypterControllerBuilder(&cmds.UploaderBuilderIncomeData{
+		R:           router,
+		ReadSession: &SessionCollector.Session,
+		AuthCheck:   AuthCollector.Validate,
+		Answers:     DeliverPackagesCollector.UploaderEncrypterCollector.Answ,
+		Build:       DeliverPackagesCollector.UploaderEncrypterCollector.Answ,
+		A:           *UploaderEncryptApplicationBuilder,
+	})
+	ControllerUploadBuilder := cmds.GetUploaderControllerBuilder(cmds.UploaderEncryptBuilderIncomeData{
+		S:       DeliverPackagesCollector.UploaderCollector.Answ,
+		Builder: DeliverPackagesCollector.UploaderCollector.Answ,
+		Session: &SessionCollector.Session,
+		Auth:    AuthCollector.Validate,
+		App:     *UploaderApplicationBuilder,
+	})
+	ControllerLoginBuilder := cmds.GetControllerLoginBuilder(cmds.NewLoginIncomeData{
+		S:      &DeliverPackagesCollector.LoginCollector.Answ,
+		Sess:   &SessionCollector.Session,
+		Parses: ParserCollector.Decode,
+	})
+	ControllerRegisterBuilder := cmds.GetControllerRegisterBuilder(cmds.RegisterBuilderIncomeData{
+		Answ:    DeliverPackagesCollector.RegisterCollector.Answ,
+		Session: &SessionCollector.Session,
+		D:       ParserCollector.Decode,
+		App:     *RegisterApplicationBuilder,
+	})
+	ControllerUrlUploader := cmds.GetControllerUrlUploaderBuilder(DeliverPackagesCollector.UrlBuilderCollector.Answ)
+	ControllerCheckAuth := cmds.GetControllerCheckAuthBuilder(cmds.CheckUserBuilderIncomeData{
+		Session: &SessionCollector.Session,
+		Auth:    AuthCollector.Validate,
+	})
+	ControllerProtocolManageBuilder := cmds.GetProtocolManageBuilder(cmds.ProtocolManageBuilder{
+		EncrypterKeys: *EncrypterKeysCollector,
+		ServerKeys:    *ServerKeysCollector,
+		C:             CryptoCollector,
+		Parser:        ParserCollector,
+		GrpcConn:      *GrpcCollector,
+	})
+
 	cmds.GetAboutProjectUrl(getRequest)
 	cmds.GetDefaultRouter(router)
 	cmds.GetPhotoRequest(StaticFiles)
@@ -92,8 +152,7 @@ func main() {
 	cmds.GetMainApi(router)
 	cmds.GetDoUrlApi(router)
 
-	KeysController.FillOldKey()
-	TimeSwaping := Sa.SwapKeyFirst()
+	TimeSwaping := ControllerProtocolManageBuilder.Start.GetExchangerInitializer()
 	slog.Info("This time", "Time", TimeSwaping)
 	ticker := time.NewTicker(TimeSwaping)
 	defer ticker.Stop()
@@ -101,7 +160,7 @@ func main() {
 	go func() {
 		for t := range ticker.C {
 			slog.Time("Func Ticker: Got a ticker", t)
-			Time := Sa.SwapKeys()
+			Time := ControllerProtocolManageBuilder.Processing.GetPlanningExchanger()
 			slog.Duration("Func Ticker: Time", Time)
 			ticker = time.NewTicker(Time)
 		}

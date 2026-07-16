@@ -3,8 +3,8 @@ package Deliver
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderNoEncryptRepo"
+	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
 	"Kaban/internal/Service/Application"
 	"net/http"
 
@@ -16,7 +16,7 @@ type NewFileUploaderNet struct {
 	r *http.Request
 }
 type NewFileUploaderApp struct {
-	Application.NewFileUploader
+	Application.NewUpload
 }
 type NewFileUploaderWorkDetails struct {
 	S       RepofileUploaderNoEncryptRepo.Answers

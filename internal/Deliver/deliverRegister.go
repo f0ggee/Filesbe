@@ -4,12 +4,12 @@ import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
+	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
 	"Kaban/internal/Service/Application"
 	"errors"
 	"net/http"
 
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoRegisterRepository"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle"
 )
 
 type NewRegisterDetails struct {
