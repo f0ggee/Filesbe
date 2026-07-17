@@ -4,20 +4,14 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 15.07.26&#10;Controller builder has beed finished. It contains all realizations now">
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 16.07.26&#10;Main has been completed">
+      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/s3Complete.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Builder.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Builder.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Collectors.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Collectors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerFileUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerFileUpload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/ControllerLogin.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckGetRequests.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckGetRequests.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckPostRequsts.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckPostRequsts.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/deliverCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/deliverCheckUsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/deliverRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/deliverRegister.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoSessionHandle/repoUserSessions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoSessionHandle/repoUserSessions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUpload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/ConnectionToS3ServerV1.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/ConnectionToS3ServerV1.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/ConnectionToS3ServerV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/ConnectionToS3ServerV2.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/Context.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/findBestOptions.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/validator/checkFileSize.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -178,11 +172,11 @@
       <recent name="$PROJECT_DIR$/internal/Service/Application" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo" />
       <recent name="$PROJECT_DIR$/internal/InfrastructureLayer" />
       <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/ProtcolManage" />
       <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/s3Interation" />
       <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration" />
-      <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -311,7 +305,9 @@
     <MESSAGE value="WP 14.07.26 &#10;SwappingKeys has been renamed to Exchanger&#10;Exchanger has been completed" />
     <MESSAGE value="WP 15.07.26&#10;Application builder has beed finished" />
     <MESSAGE value="WP 15.07.26&#10;Controller builder has beed finished. It contains all realizations now" />
-    <option name="LAST_COMMIT_MESSAGE" value="WP 15.07.26&#10;Controller builder has beed finished. It contains all realizations now" />
+    <MESSAGE value="WP 16.07.26&#10;Main is being edited by builders function" />
+    <MESSAGE value="WP 16.07.26&#10;Main has been completed" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 16.07.26&#10;Main has been completed" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="VgoProject">

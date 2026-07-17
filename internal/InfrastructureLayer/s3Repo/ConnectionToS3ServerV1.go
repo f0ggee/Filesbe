@@ -1,4 +1,4 @@
-package Helpers
+package s3Repo
 
 import (
 	"log/slog"
@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
-func Inzelire() (*session.Session, error) {
+func InitializationS3V1() (*session.Session, error) {
 
 	sess, err := session.NewSession(&aws.Config{
 		Region:           aws.String("ru-1"),

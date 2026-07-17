@@ -1,4 +1,4 @@
-package Helpers
+package s3Repo
 
 import (
 	"context"
@@ -18,14 +18,6 @@ var secretKey = os.Getenv("Secret_key")
 var EndPoint = os.Getenv("end")
 
 func S3Helper() (*s3.Client, error) {
-
-	//accessKey := os.Getenv("Access_Key")
-	//secretKey := os.Getenv("Secret_key")
-	//EndPoint := os.Getenv("end")
-
-	accessKey = os.Getenv("Access_Key")
-	secretKey = os.Getenv("Secret_key")
-	EndPoint = os.Getenv("end")
 	tr := &http.Transport{
 		MaxConnsPerHost:     300,
 		MaxIdleConns:        512,

@@ -5,9 +5,10 @@ import (
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
-	"Kaban/internal/Service/Helpers"
+	"Kaban/internal/InfrastructureLayer/s3Repo"
 	"log/slog"
 	"os"
+	"runtime"
 	"time"
 
 	"github.com/awnumar/memguard"
@@ -33,16 +34,15 @@ func main() {
 		return
 	}
 	defer db.Close()
-	cfg, err := Helpers.S3Helper()
+	cfg, err := s3Repo.S3Helper()
 	if err != nil {
 		return
 	}
 	redisConn := RedisInteration.ConnectToRedis()
 	defer redisConn.Close()
 
-	OldS3Connect, err := Helpers.Inzelire()
+	OldS3Connect, err := s3Repo.InitializationS3V1()
 	if err != nil {
-		slog.Error("Error connect to s3 old ", "Error", err)
 		return
 	}
 	router, getRequest, postRequest, StaticFiles := Routers()
@@ -164,6 +164,7 @@ func main() {
 		}
 	}()
 
+	runtime.GC()
 	slog.Info("The server started at", "Configure", serverConfig.Addr)
 	if err = serverConfig.ListenAndServe(); err != nil {
 		slog.Error("Server couldn't start", "Error", err)
