@@ -2,13 +2,9 @@ package main
 
 import (
 	"Kaban/cmds"
-	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
-	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
-	"Kaban/internal/Service/Application"
 	"Kaban/internal/Service/Helpers"
 	"log/slog"
 	"os"
@@ -50,6 +46,8 @@ func main() {
 		return
 	}
 	router, getRequest, postRequest, StaticFiles := Routers()
+	serverConfig := cmds.ServerConfig(router)
+	defer serverConfig.Close()
 
 	///Collectors
 	S3Collector := cmds.GetS3Collector(cfg, OldS3Connect)
@@ -92,7 +90,6 @@ func main() {
 		UrlBuild: DeliverPackagesCollector.DownloadEncryptCollector.Answ,
 		App:      DownloadEncryptApplicationBuilder,
 	})
-
 	ControllerUploadEncryptBuilder := cmds.GetUploaderEncrypterControllerBuilder(&cmds.UploaderBuilderIncomeData{
 		R:           router,
 		ReadSession: &SessionCollector.Session,
@@ -112,6 +109,7 @@ func main() {
 		S:      &DeliverPackagesCollector.LoginCollector.Answ,
 		Sess:   &SessionCollector.Session,
 		Parses: ParserCollector.Decode,
+		App:    LoginApplicationBuilder,
 	})
 	ControllerRegisterBuilder := cmds.GetControllerRegisterBuilder(cmds.RegisterBuilderIncomeData{
 		Answ:    DeliverPackagesCollector.RegisterCollector.Answ,
@@ -132,25 +130,25 @@ func main() {
 		GrpcConn:      *GrpcCollector,
 	})
 
-	cmds.GetAboutProjectUrl(getRequest)
+	cmds.GetAboutProjectUrlRouter(getRequest)
 	cmds.GetDefaultRouter(router)
 	cmds.GetPhotoRequest(StaticFiles)
-	cmds.GetLoginRequest(postRequest)
-	cmds.SetRobotsRequest(router)
-	cmds.GetInformationPage(getRequest)
-	cmds.GetRegisterUrl(postRequest)
-	cmds.GetMainUrl(getRequest)
-	cmds.GetSitemap(router)
-	cmds.GetProtectRequest(postRequest)
-	cmds.GetUrlRequest(router)
-	cmds.GetDownloadRequest(getRequest)
-	cmds.GetEncryptDownload(getRequest)
-	cmds.GetLoginApi(postRequest)
-	cmds.GetRegisterApi(postRequest)
-	cmds.GetDownloadApi(postRequest, router)
-	cmds.GetEncryptDownloadApi(postRequest, router)
-	cmds.GetMainApi(router)
-	cmds.GetDoUrlApi(router)
+	cmds.GetLoginPageRouter(postRequest)
+	cmds.SetRobotsRouter(router)
+	cmds.GetInformationPageRouter(getRequest)
+	cmds.GetRegisterPageRouter(postRequest)
+	cmds.GetMainPageRouter(getRequest)
+	cmds.GetSitemapRouter(router)
+	cmds.GetProtectPageRouter(postRequest)
+	cmds.GetUrlPageRouter(router)
+	cmds.GetDownloadApi(getRequest, ControllerDownloadBuilder)
+	cmds.GetEncryptDownloadApi(getRequest, ControllerDownloadEncryptBuilder)
+	cmds.GetLoginApi(postRequest, ControllerLoginBuilder)
+	cmds.GetRegisterApiRouter(postRequest, ControllerRegisterBuilder)
+	cmds.GetUploaderApiRouter(postRequest, ControllerUploadBuilder)
+	cmds.GetEncryptUploaderApiRouter(postRequest, ControllerUploadEncryptBuilder)
+	cmds.GetMainApiRouter(getRequest, ControllerCheckAuth)
+	cmds.GetDoUrlApiRouter(getRequest, ControllerUrlUploader)
 
 	TimeSwaping := ControllerProtocolManageBuilder.Start.GetExchangerInitializer()
 	slog.Info("This time", "Time", TimeSwaping)
@@ -166,10 +164,7 @@ func main() {
 		}
 	}()
 
-	serverConfig := cmds.ServerConfig(router)
-	defer serverConfig.Close()
-
-	slog.Info("The server started at ", "Configure", serverConfig.Addr)
+	slog.Info("The server started at", "Configure", serverConfig.Addr)
 	if err = serverConfig.ListenAndServe(); err != nil {
 		slog.Error("Server couldn't start", "Error", err)
 		return

@@ -4,7 +4,6 @@ import (
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoUsersCheckAuth"
 	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
-	"log/slog"
 	"net/http"
 )
 
@@ -44,12 +43,6 @@ func GetNewCheckUserAuth(netWork NewCheckUserAuthNetWork, checkUserAuthDetails N
 	return &NewCheckUserAuth{NewCheckUserAuthNetWork: netWork, NewCheckUserAuthWorkDetails: checkUserAuthDetails, NewCheckUserAuthSessions: sessions}
 }
 func (s *NewCheckUserAuth) CheckUserAuth() {
-	//The post method is here
-	if s.R.Method != http.MethodGet {
-		slog.Error("CheckUserAuth; Method isn't allowed", slog.Group("Details", slog.String("Method", s.R.Method), slog.String("The url", s.R.RequestURI)))
-		return
-	}
-
 	returnedData := s.Session.GetSessionData(RepoSessionHandle.IncomingSessionData{Writer: s.W, Request: s.R})
 	if returnedData.Error != nil {
 		s.Answers.BadAnswer(RepoUsersCheckAuth.UserCheckIncomingData{

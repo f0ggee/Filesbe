@@ -12,8 +12,8 @@ import (
 )
 
 type NewFileUploaderNet struct {
-	w http.ResponseWriter
-	r *http.Request
+	W http.ResponseWriter
+	R *http.Request
 }
 type NewFileUploaderApp struct {
 	Application.NewUpload
@@ -26,23 +26,23 @@ type NewFileUploaderSessions struct {
 	Session RepoSessionHandle.Session
 	Auth    AuthTokensManage.AuthCheck
 }
-type NewFileUploader struct {
+type NewUploader struct {
 	NewFileUploaderNet
 	NewFileUploaderWorkDetails
 	NewFileUploaderSessions
 	NewFileUploaderApp
 }
 
-func GetNewFileUploader(fileUploaderNoEncryptNet NewFileUploaderNet, repoUploaderNoEncrypt NewFileUploaderWorkDetails, uploadNotEncryptSessions NewFileUploaderSessions, newFileUploaderApplication NewFileUploaderApp) *NewFileUploader {
-	return &NewFileUploader{NewFileUploaderNet: fileUploaderNoEncryptNet, NewFileUploaderWorkDetails: repoUploaderNoEncrypt, NewFileUploaderSessions: uploadNotEncryptSessions, NewFileUploaderApp: newFileUploaderApplication}
+func GetNewFileUploader(fileUploaderNoEncryptNet NewFileUploaderNet, repoUploaderNoEncrypt NewFileUploaderWorkDetails, uploadNotEncryptSessions NewFileUploaderSessions, newFileUploaderApplication NewFileUploaderApp) *NewUploader {
+	return &NewUploader{NewFileUploaderNet: fileUploaderNoEncryptNet, NewFileUploaderWorkDetails: repoUploaderNoEncrypt, NewFileUploaderSessions: uploadNotEncryptSessions, NewFileUploaderApp: newFileUploaderApplication}
 }
 
-func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
-	returnedData := d.Session.GetSessionData(RepoSessionHandle.IncomingSessionData{Writer: d.w, Request: d.r})
+func (d *NewUploader) FileUploaderNoEncrypt(router *mux.Router) {
+	returnedData := d.Session.GetSessionData(RepoSessionHandle.IncomingSessionData{Writer: d.W, Request: d.R})
 	if returnedData.Error != nil {
 		d.S.SetBadAnswer(
 			RepofileUploaderNoEncryptRepo.IncomingData{
-				W:               d.w,
+				W:               d.W,
 				Error:           returnedData.Error.Error(),
 				StatusOperation: DomainLevel.Break,
 			})
@@ -54,7 +54,7 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 	})
 	if outData.Err != nil {
 		d.S.SetBadAnswer(RepofileUploaderNoEncryptRepo.IncomingData{
-			W:               d.w,
+			W:               d.W,
 			Error:           outData.Err.Error(),
 			StatusOperation: DomainLevel.Break,
 		})
@@ -64,10 +64,10 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 		d.Session.SetNewSession(RepoSessionHandle.IncomingSessionData{Jwt: outData.NewJwt})
 	}
 
-	fileName, err := d.FileUploader(d.r)
+	fileName, err := d.FileUploader(d.R)
 	if err != nil {
 		d.S.SetBadAnswer(RepofileUploaderNoEncryptRepo.IncomingData{
-			W:               d.w,
+			W:               d.W,
 			Error:           err.Error(),
 			StatusOperation: DomainLevel.Break,
 		})
@@ -77,7 +77,7 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 	urlPath, err := d.Builder.UrlBuild(router, fileName)
 	if err != nil {
 		d.S.SetBadAnswer(RepofileUploaderNoEncryptRepo.IncomingData{
-			W:               d.w,
+			W:               d.W,
 			Error:           err.Error(),
 			StatusOperation: DomainLevel.Break,
 		})
@@ -85,7 +85,7 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 	}
 
 	d.S.SetGoodAnswer(RepofileUploaderNoEncryptRepo.IncomingData{
-		W:               d.w,
+		W:               d.W,
 		StatusOperation: DomainLevel.Success,
 		UrlToRedirect:   urlPath,
 	})

@@ -25,8 +25,6 @@ func GetNewBuildUrl(s UrlSettings, net UrlNetwork) *NewBuildUrl {
 }
 
 func (d *NewBuildUrl) SetUrl() {
-	//TODO here is the get method
-
 	urlData := d.S.Url.GetUrlData(d.Net.r)
 	if urlData.NameFile == "" {
 		slog.Error("UrlUploader name file empty", slog.Group("Request details", slog.String("URL", d.Net.r.RequestURI)))

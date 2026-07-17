@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type FileUploaderEncryptNetwork struct {
+type NewFileUploaderEncryptNetwork struct {
 	W http.ResponseWriter
 	R *http.Request
 }
@@ -27,18 +27,18 @@ type NewFileUploaderEncryptDetails struct {
 	Build   RepofileUploaderEncryptRepo.UrlUploadEncrypt
 	Rout    *mux.Router
 }
-type NewFileUploaderEncrypt struct {
-	FileUploaderEncryptNetwork
+type NewUploaderEncrypt struct {
+	NewFileUploaderEncryptNetwork
 	NewFileUploaderEncryptSession
 	NewFileUploaderEncryptDetails
 	NewFileUploaderEncryptApplication
 }
 
-func GetNewFileUploaderEncrypt(fileUploaderEncryptNetwork FileUploaderEncryptNetwork, newFileUploaderEncryptSession NewFileUploaderEncryptSession, newFileUploaderEncryptDetails NewFileUploaderEncryptDetails, newFileUploaderEncryptApplication NewFileUploaderEncryptApplication) *NewFileUploaderEncrypt {
-	return &NewFileUploaderEncrypt{FileUploaderEncryptNetwork: fileUploaderEncryptNetwork, NewFileUploaderEncryptSession: newFileUploaderEncryptSession, NewFileUploaderEncryptDetails: newFileUploaderEncryptDetails, NewFileUploaderEncryptApplication: newFileUploaderEncryptApplication}
+func GetNewFileUploaderEncrypt(fileUploaderEncryptNetwork NewFileUploaderEncryptNetwork, newFileUploaderEncryptSession NewFileUploaderEncryptSession, newFileUploaderEncryptDetails NewFileUploaderEncryptDetails, newFileUploaderEncryptApplication NewFileUploaderEncryptApplication) *NewUploaderEncrypt {
+	return &NewUploaderEncrypt{NewFileUploaderEncryptNetwork: fileUploaderEncryptNetwork, NewFileUploaderEncryptSession: newFileUploaderEncryptSession, NewFileUploaderEncryptDetails: newFileUploaderEncryptDetails, NewFileUploaderEncryptApplication: newFileUploaderEncryptApplication}
 }
 
-func (S *NewFileUploaderEncrypt) FileUploaderEncrypt() {
+func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 
 	returnedSession := S.ReadSession.GetSessionData(RepoSessionHandle.IncomingSessionData{
 		Writer:  S.W,

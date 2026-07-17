@@ -186,8 +186,8 @@ type UploaderBuilderIncomeData struct {
 	A           Application.NewUploadEncrypt
 }
 
-func GetUploaderEncrypterControllerBuilder(d *UploaderBuilderIncomeData) *Deliver.NewFileUploaderEncrypt {
-	net := Deliver.FileUploaderEncryptNetwork{}
+func GetUploaderEncrypterControllerBuilder(d *UploaderBuilderIncomeData) *Deliver.NewUploaderEncrypt {
+	net := Deliver.NewFileUploaderEncryptNetwork{}
 	sess := Deliver.NewFileUploaderEncryptSession{
 		ReadSession: d.ReadSession,
 		AuthCheck:   d.AuthCheck,
@@ -212,7 +212,7 @@ type UploaderEncryptBuilderIncomeData struct {
 	App     Application.NewUpload
 }
 
-func GetUploaderControllerBuilder(data UploaderEncryptBuilderIncomeData) *Deliver.NewFileUploader {
+func GetUploaderControllerBuilder(data UploaderEncryptBuilderIncomeData) *Deliver.NewUploader {
 	net := Deliver.NewFileUploaderNet{}
 	details := Deliver.NewFileUploaderWorkDetails{
 		S:       data.S,
@@ -233,10 +233,10 @@ type NewLoginIncomeData struct {
 	S      *RepoLoginRealizations.LoginAnswers
 	Sess   RepoSessionHandle.Session
 	Parses RepoParsers.Decode
-	app    *Application.NewLogin
+	App    *Application.NewLogin
 }
 
-func GetControllerLoginBuilder(data NewLoginIncomeData) *Deliver.NewLogin {
+func GetControllerLoginBuilder(data NewLoginIncomeData) *Deliver.NewLoginController {
 	net := Deliver.LoginNet{}
 	depends := Deliver.LoginDepends{
 		S:    data.S,
@@ -246,7 +246,7 @@ func GetControllerLoginBuilder(data NewLoginIncomeData) *Deliver.NewLogin {
 		Parses: data.Parses,
 	}
 	app := Deliver.LoginApplication{
-		NewLogin: *data.app,
+		NewLogin: *data.App,
 	}
 	return Deliver.GetNewLogin(net, depends, parse, app)
 }

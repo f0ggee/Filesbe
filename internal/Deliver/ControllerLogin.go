@@ -25,18 +25,18 @@ type ParseLogin struct {
 type LoginApplication struct {
 	Application.NewLogin
 }
-type NewLogin struct {
+type NewLoginController struct {
 	LoginNet
 	LoginDepends
 	ParseLogin
 	LoginApplication
 }
 
-func GetNewLogin(networkLogin LoginNet, loginDepends LoginDepends, parseLogin ParseLogin, loginApplication LoginApplication) *NewLogin {
-	return &NewLogin{LoginNet: networkLogin, LoginDepends: loginDepends, ParseLogin: parseLogin, LoginApplication: loginApplication}
+func GetNewLogin(networkLogin LoginNet, loginDepends LoginDepends, parseLogin ParseLogin, loginApplication LoginApplication) *NewLoginController {
+	return &NewLoginController{LoginNet: networkLogin, LoginDepends: loginDepends, ParseLogin: parseLogin, LoginApplication: loginApplication}
 }
 
-func (D *NewLogin) Login() {
+func (D *NewLoginController) Login() {
 	if D.R.Method != http.MethodPost {
 		D.S.SetBadAnswer(RepoLoginRealizations.AnswerDetails{
 			W:         D.W,

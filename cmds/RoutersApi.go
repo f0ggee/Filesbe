@@ -1,70 +1,74 @@
 package cmds
 
 import (
+	"Kaban/internal/Deliver"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
-func GetLoginApi(postRequest *mux.Router) *mux.Route {
+func GetLoginApi(postRequest *mux.Router, app *Deliver.NewLoginController) *mux.Route {
 	return postRequest.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
-		Controller2.Login(writer, request, Sa)
-
-	}).Methods("POST")
+		app.LoginNet.W = writer
+		app.LoginNet.R = request
+		app.Login()
+	}).Methods(http.MethodPost)
 }
-func GetRegisterApi(postRequest *mux.Router) *mux.Route {
+func GetRegisterApiRouter(postRequest *mux.Router, app *Deliver.NewRegister) *mux.Route {
 	return postRequest.HandleFunc("/register/api", func(writer http.ResponseWriter, request *http.Request) {
-		Controller2.Register(writer, request, Sa)
-
-	}).Methods("POST")
-}
-
-func GetDownloadApi(postRequest *mux.Router, router *mux.Router) *mux.Route {
-	return postRequest.HandleFunc("/downloader/api", func(writer http.ResponseWriter, request *http.Request) {
-
-		Controller2.FileUploaderNoEncrypt(writer, request, router, Sa)
-
+		app.RegisterNet = Deliver.RegisterNet{
+			W: writer,
+			R: request,
+		}
+		app.Register()
 	}).Methods(http.MethodPost)
 }
 
-func GetMainApi(router *mux.Router) *mux.Route {
+func GetUploaderApiRouter(postRequest *mux.Router, app *Deliver.NewUploader) *mux.Route {
+	return postRequest.HandleFunc("/downloader/api", func(writer http.ResponseWriter, request *http.Request) {
+		app.NewFileUploaderNet = Deliver.NewFileUploaderNet{
+			W: writer,
+			R: request,
+		}
+		app.FileUploaderNoEncrypt(postRequest)
+	}).Methods(http.MethodPost)
+}
+
+func GetMainApiRouter(router *mux.Router, app *Deliver.NewCheckUserAuth) *mux.Route {
 	return router.HandleFunc("/maine/api", func(writer http.ResponseWriter, request *http.Request) {
-		Controller2.CheckUserAuth(writer, request, Sa)
+		app.W = writer
+		app.R = request
+		app.CheckUserAuth()
 
 	}).Methods("GET")
 }
-func GetDoUrlApi(router *mux.Router) *mux.Route {
+func GetDoUrlApiRouter(router *mux.Router, app *Deliver.NewBuildUrl) *mux.Route {
 	return router.HandleFunc("/doUrl/api", func(writer http.ResponseWriter, request *http.Request) {
-
-		Controller2.BuildUrl(writer, request)
-
+		app.Net.W = writer
+		app.SetUrl()
 	}).Methods(http.MethodGet)
 }
 
-func GetEncryptDownloadApi(postRequest *mux.Router, router *mux.Router) *mux.Route {
+func GetEncryptUploaderApiRouter(postRequest *mux.Router, app *Deliver.NewUploaderEncrypt) *mux.Route {
 	return postRequest.HandleFunc("/downloader2/api", func(writer http.ResponseWriter, request *http.Request) {
-
-		Controller2.FileUploaderEncrypt(writer, request, router, Sa)
+		app.NewFileUploaderEncryptNetwork.W = writer
+		app.NewFileUploaderEncryptNetwork.R = request
+		app.FileUploaderEncrypt()
 
 	}).Methods(http.MethodPost)
 }
 
-func GetDownloadRequest(getRequest *mux.Router) *mux.Route {
+func GetDownloadApi(getRequest *mux.Router, app *Deliver.NewDownloadWithNotEncrypt) *mux.Route {
 	return getRequest.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
-
-		Controller2.DownloadWithNotEncrypt(writer, request, Sa)
-
-		//Application.Delete(ch)
-
+		app.NetworkDownloadNoEncrypt.W = writer
+		app.NetworkDownloadNoEncrypt.R = request
+		app.DownloadWithNotEncrypt()
 	}).Methods(http.MethodGet)
 }
-
-func GetEncryptDownload(getRequest *mux.Router) *mux.Route {
+func GetEncryptDownloadApi(getRequest *mux.Router, app *Deliver.NewDownloadEncrypt) *mux.Route {
 	return getRequest.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {
-
-		Controller2.DownloadWithEncrypt(writer, request, Sa)
-
-		//Application.Delete(ch)
-
+		app.Net.W = writer
+		app.Net.R = request
+		app.DownloadWithEncrypt()
 	}).Methods(http.MethodGet)
 }
