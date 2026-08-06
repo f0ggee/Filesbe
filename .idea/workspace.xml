@@ -4,15 +4,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 16.07.26&#10;Main has been completed">
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/s3Complete.go" afterDir="false" />
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 16.07.26&#10;S3 concoctions has been moved to another folder">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/ConnectionToS3ServerV1.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/ConnectionToS3ServerV1.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/ConnectionToS3ServerV2.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/ConnectionToS3ServerV2.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/Context.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/findBestOptions.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Helpers/validator/checkFileSize.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,18 +143,6 @@
     ]
   }
 }</component>
-  <component name="QodanaHighlightedReportService">
-    <option name="localRunNotPublishedPersistedInfo">
-      <LocalReportPersistedInfo>
-        <option name="path" value="/private/var/folders/zl/zh1n0jhd2yqgdnnxs5ft3pmh0000gn/T/qodana_output/qodana.sarif.json" />
-        <option name="reportGuid" value="5597559a-b01e-422f-b241-949dd181c588" />
-        <option name="reportName" value="Kaban/qodana/2026-07-08" />
-      </LocalReportPersistedInfo>
-    </option>
-  </component>
-  <component name="QodanaIsSelectedPersistenceService">
-    <option name="selectedOrLoading" value="true" />
-  </component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="/private/var/folders/zl/zh1n0jhd2yqgdnnxs5ft3pmh0000gn/T/qodana_output/qodana.sarif.json" reportGuid="5597559a-b01e-422f-b241-949dd181c588" reportId="Kaban/qodana/2026-07-08" />
@@ -307,7 +288,8 @@
     <MESSAGE value="WP 15.07.26&#10;Controller builder has beed finished. It contains all realizations now" />
     <MESSAGE value="WP 16.07.26&#10;Main is being edited by builders function" />
     <MESSAGE value="WP 16.07.26&#10;Main has been completed" />
-    <option name="LAST_COMMIT_MESSAGE" value="WP 16.07.26&#10;Main has been completed" />
+    <MESSAGE value="WP 16.07.26&#10;S3 concoctions has been moved to another folder" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 16.07.26&#10;S3 concoctions has been moved to another folder" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="VgoProject">
