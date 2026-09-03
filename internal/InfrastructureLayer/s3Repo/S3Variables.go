@@ -2,15 +2,13 @@ package s3Repo
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 type Variables struct {
-	Bucket     string
-	S3Connect  *s3.Client
-	OldConnect *session.Session
+	Bucket    string
+	S3Connect *s3.Client
 }
 
-func GetNewVariables(bucket string, s3Connect *s3.Client, oldConnect *session.Session) *Variables {
-	return &Variables{Bucket: bucket, S3Connect: s3Connect, OldConnect: oldConnect}
+func GetNewVariables(bucket string, s3Connect *s3.Client) *Variables {
+	return &Variables{Bucket: bucket, S3Connect: s3Connect}
 }

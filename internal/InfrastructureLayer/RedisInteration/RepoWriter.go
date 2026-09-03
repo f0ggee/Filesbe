@@ -37,7 +37,7 @@ func (s *Writing) WriteData(data DomainLevel.WriteDataIncomeData) error {
 	}).Err()
 	if err != nil {
 		slog.Error("WriteData;Redis WriteData; error to write data", "ERROR", err)
-		return errors.New(DomainLevel.ErrorWrite)
+		return errors.New(ErrorWrite)
 	}
 	return nil
 

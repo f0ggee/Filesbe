@@ -82,7 +82,6 @@ func (d Decryption) DecryptFileInfo(FileInfo []byte, NewRsaKey []byte, OldRsaKey
 		}
 
 	}
-
 	sa := &DomainLevel.FileLabelsBytes{
 		FileName: "",
 		AesKey:   "",

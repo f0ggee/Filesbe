@@ -1,7 +1,6 @@
 package s3Repo
 
 import (
-	"Kaban/internal/DomainLevel"
 	"context"
 	"errors"
 	"fmt"
@@ -77,18 +76,18 @@ func (sa *NewUploading) UploadFileEncrypt(data UploadFileIncomingData) error {
 	case errors.As(err, &ns):
 
 		slog.Error("file was used", "Error", err.Error())
-		return errors.New(DomainLevel.ErrorCantFindFile)
+		return errors.New(ErrorCantFindFile)
 
 	case errors.Is(err, context.Canceled):
 		slog.Error("file downloading was cancelled")
-		return errors.New(DomainLevel.ErrorUploadFile)
+		return errors.New(ErrorUploadFile)
 
 	}
 	if err != nil {
 		slog.Error("UploadSecure; an unexpected error happened during uploading", "ERROR", err)
-		return errors.New(DomainLevel.ErrorStrangeUploadFile)
+		return errors.New(ErrorStrangeUploadFile)
 	}
-	return errors.New(DomainLevel.ErrorStrangeUploadFile)
+	return errors.New(ErrorStrangeUploadFile)
 }
 func (sa *NewUploading) UploadFile(data UploadFileIncomingData) error {
 	logger := slog.With("UploadFile")
@@ -110,12 +109,12 @@ func (sa *NewUploading) UploadFile(data UploadFileIncomingData) error {
 	switch {
 	case errors.Is(err, context.Canceled):
 		logger.Error("The user stopped uploading", "ERROR", err)
-		return errors.New(DomainLevel.ErrorUploadFile)
+		return errors.New(ErrorUploadFile)
 
 	}
 	if err != nil {
 		logger.Error("an unexpected error", "ERROR", err)
-		return errors.New(DomainLevel.ErrorStrangeUploadFile)
+		return errors.New(ErrorStrangeUploadFile)
 	}
 	return nil
 }

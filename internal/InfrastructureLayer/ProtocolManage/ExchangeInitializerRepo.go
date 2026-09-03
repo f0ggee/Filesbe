@@ -80,15 +80,15 @@ type ExchangeInitializer interface {
 func (n *NewExchangeInitializer) GetExchangerInitializer() time.Duration {
 	Data, err := n.getPreparingData()
 	if err != nil {
-		return DomainLevel.DefaultErrorTime
+		return DefaultErrorTime
 	}
 	outData, err := n.Grcp.SetEncrypterKeyRequest(Data)
 	if err != nil {
-		return DomainLevel.DefaultErrorTime
+		return DefaultErrorTime
 	}
 	PacketDetails := n.getPacketDetails(outData)
 	if PacketDetails.Error != nil {
-		return DomainLevel.DefaultErrorTime
+		return DefaultErrorTime
 	}
 	n.Keys.UpdateOldKey()
 	n.Keys.UpdateNewKey(PacketDetails.NewKey)
@@ -229,7 +229,7 @@ func (n NewExchangeInitializer) getPacketDetails(bytes []byte) *PacketDetailsOut
 
 func (n *NewExchangeInitializer) setCheckTime(TimePacket time.Time) error {
 	if time.Now().Before(TimePacket) {
-		return errors.New(DomainLevel.ErrorTimePacket)
+		return errors.New(ErrorTimePacket)
 	}
 	return nil
 }

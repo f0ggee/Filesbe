@@ -1,7 +1,6 @@
 package AuthTokensManage
 
 import (
-	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
 	"errors"
 	"fmt"
@@ -31,8 +30,8 @@ type NewAuthChecker struct {
 	Key          []byte
 }
 
-func GetNNewAuthChecker(createTokens CreatingTokens, key []byte) *NewAuthChecker {
-	return &NewAuthChecker{CreateTokens: createTokens, Key: key}
+func GetNNewAuthChecker(createTokens CreatingTokens, key []byte) NewAuthChecker {
+	return NewAuthChecker{CreateTokens: createTokens, Key: key}
 }
 
 func (c NewAuthChecker) CheckRt(Rt string) (jwt.Claims, error) {
@@ -44,10 +43,10 @@ func (c NewAuthChecker) CheckRt(Rt string) (jwt.Claims, error) {
 	})
 	if err != nil {
 		slog.Error("Error in parse refresh token", "error", err.Error())
-		return nil, errors.New(DomainLevel.ErrorUserToken)
+		return nil, errors.New(ErrorUserToken)
 	}
 	if !Key.Valid {
-		return nil, errors.New(DomainLevel.ErrorUserNotAuthed)
+		return nil, errors.New(ErrorUserNotAuthed)
 	}
 	return Key.Claims, nil
 }
@@ -61,10 +60,10 @@ func (c NewAuthChecker) CheckJwt(JWT string) error {
 	})
 	if err != nil {
 		slog.Error("CheckJwt; error to parse a token", "ERROR", err.Error())
-		return errors.New(DomainLevel.ErrorUserToken)
+		return errors.New(ErrorUserToken)
 	}
 	if !JwtToken.Valid {
-		return errors.New(DomainLevel.ErrorUserToken)
+		return errors.New(ErrorUserToken)
 	}
 	return nil
 }

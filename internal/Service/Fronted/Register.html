@@ -1,296 +1,346 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <link rel="icon" type="image/png" href="/Fronted/favicon.png">
+    <link rel="icon" type="image/png" href="/Fronted/favicon.png">
 
-  <title>Filesb — Sign up</title>
+    <title>Filesb — Sign up</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    :root{
-      --bg:#0a0a0a; --panel:#000000; --text:#e5fff4; --muted:#89f0c2; --border:#0f3a2e;
-      --primary:#10b981; --primary-press:#059669; --danger:#dc2626; --danger-bg:#3b0b0b; --focus:#22c55e;
-    }
-    *,*::before,*::after{ box-sizing:border-box; }
-    html,body{
-      height:100%; margin:0; background:var(--bg); color:var(--text);
-      font-family:"Inter",system-ui, sans-serif;
-    }
+    <style>
+        :root{
+            --bg:#0a0a0a; --panel:#000000; --text:#e5fff4; --muted:#89f0c2; --border:#0f3a2e;
+            --primary:#10b981; --primary-press:#059669; --danger:#dc2626; --danger-bg:#3b0b0b; --focus:#22c55e;
+        }
+        *,*::before,*::after{ box-sizing:border-box; }
+        html,body{
+            height:100%; margin:0; background:var(--bg); color:var(--text);
+            font-family:"Inter",system-ui, sans-serif;
+        }
 
-    .container{
-      max-width:440px;
-      margin:0 auto;
-      padding: clamp(32px, 8vh, 64px) 16px;
-    }
+        .container{
+            max-width:440px;
+            margin:0 auto;
+            padding: clamp(32px, 8vh, 64px) 16px;
+        }
 
-    .brand{
-      text-align:center; margin-bottom:20px; font-weight:700; color:var(--primary);
-      font-size: clamp(20px, 5vw, 24px);
-    }
-    .brand small{
-      display:block; color:var(--muted); margin-top:6px;
-      font-size: clamp(12px, 3vw, 14px); font-weight: 400;
-    }
+        .brand{
+            text-align:center; margin-bottom:20px; font-weight:700; color:var(--primary);
+            font-size: clamp(20px, 5vw, 24px);
+        }
+        .brand small{
+            display:block; color:var(--muted); margin-top:6px;
+            font-size: clamp(12px, 3vw, 14px); font-weight: 400;
+        }
 
-    .card{
-      background:var(--panel); border:1px solid var(--border);
-      border-radius:16px;
-      padding: clamp(20px, 5vw, 28px);
-      box-shadow:0 0 28px rgba(16,185,129,.12);
-    }
+        .card{
+            background:var(--panel); border:1px solid var(--border);
+            border-radius:16px;
+            padding: clamp(20px, 5vw, 28px);
+            box-shadow:0 0 28px rgba(16,185,129,.12);
+        }
 
-    h1{
-      text-align:center; margin:0 0 8px; color:var(--primary);
-      font-size: clamp(24px, 6vw, 28px);
-    }
-    .sub{
-      text-align:center; color:var(--muted); margin-bottom:20px;
-      font-size: clamp(13px, 3.5vw, 15px);
-    }
+        h1{
+            text-align:center; margin:0 0 8px; color:var(--primary);
+            font-size: clamp(24px, 6vw, 28px);
+        }
+        .sub{
+            text-align:center; color:var(--muted); margin-bottom:20px;
+            font-size: clamp(13px, 3.5vw, 15px);
+        }
 
-    .field{ margin-bottom:16px; }
-    label{ display:block; margin-bottom:8px; color:var(--muted); font-weight: 600; font-size: 14px; }
+        .field{ margin-bottom:16px; }
+        label{ display:block; margin-bottom:8px; color:var(--muted); font-weight: 600; font-size: 14px; }
 
-    .input-wrap{ position:relative; }
+        .input-wrap{ position:relative; }
 
-    .input{
-      width:100%;
-      padding: clamp(12px, 3vw, 14px);
-      padding-right: 70px; background:#07110e;
-      border:1px solid var(--border); border-radius:10px; color:var(--text);
-      font-size: 16px;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .input:focus{ outline:none; border-color:var(--focus); box-shadow:0 0 0 3px rgba(34,197,94,.15); }
+        .input{
+            width:100%;
+            padding: clamp(12px, 3vw, 14px);
+            padding-right: 70px; background:#07110e;
+            border:1px solid var(--border); border-radius:10px; color:var(--text);
+            font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input:focus{ outline:none; border-color:var(--focus); box-shadow:0 0 0 3px rgba(34,197,94,.15); }
 
-    /* --- НОВЫЙ СТИЛЬ ДЛЯ ОШИБКИ --- */
-    .input.error {
-      border-color: var(--danger);
-      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15); /* Красное свечение */
-    }
-    .input.error:focus {
-      border-color: var(--danger); /* Удерживаем красный при фокусе */
-    }
-    /* ----------------------------- */
+        .input.error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+        }
+        .input.error:focus {
+            border-color: var(--danger);
+        }
 
-    .toggle{
-      position:absolute; right:8px; top:50%; transform:translateY(-50%);
-      background:none; border:0; color:var(--muted); cursor:pointer; font-weight: 600; font-size: 12px;
-      padding: 8px;
-    }
+        .toggle{
+            position:absolute; right:8px; top:50%; transform:translateY(-50%);
+            background:none; border:0; color:var(--muted); cursor:pointer; font-weight: 600; font-size: 12px;
+            padding: 8px;
+        }
 
-    .btn-primary{
-      width:100%;
-      padding: clamp(12px, 3.5vw, 14px);
-      font-weight:600; border-radius:10px;
-      background:var(--primary); border:none; cursor:pointer;
-      font-size: clamp(16px, 4vw, 17px); color: #000;
-      transition: background 0.2s, transform 0.1s;
-    }
-    .btn-primary:hover{ background: var(--primary-press); }
-    .btn-primary:active{ transform: scale(0.98); }
-    .btn-primary:disabled{ opacity:.7; cursor:not-allowed; }
+        .btn-primary{
+            width:100%;
+            padding: clamp(12px, 3.5vw, 14px);
+            font-weight:600; border-radius:10px;
+            background:var(--primary); border:none; cursor:pointer;
+            font-size: clamp(16px, 4vw, 17px); color: #000;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover{ background: var(--primary-press); }
+        .btn-primary:active{ transform: scale(0.98); }
+        .btn-primary:disabled{ opacity:.7; cursor:not-allowed; }
 
-    .actions{ display:flex; justify-content:center; margin-bottom:15px; margin-top: 10px; }
-    .link{ color:var(--muted); text-decoration:none; font-size: 14px; }
-    .link:hover { text-decoration: underline; color: var(--primary); }
+        .actions{ display:flex; justify-content:center; margin-bottom:15px; margin-top: 10px; }
+        .link{ color:var(--muted); text-decoration:none; font-size: 14px; }
+        .link:hover { text-decoration: underline; color: var(--primary); }
 
-    .message{ margin-top:16px; padding:12px; border-radius:10px; display:none; text-align:center; font-weight:600; font-size: 14px; }
-    .message.error{ display:block; background:var(--danger-bg); color:#ffb4b4; border:1px solid #6b1111; }
+        .message{ margin-top:16px; padding:12px; border-radius:10px; display:none; text-align:center; font-weight:600; font-size: 14px; }
+        .message.error{ display:block; background:var(--danger-bg); color:#ffb4b4; border:1px solid #6b1111; }
 
-    .footer{ text-align:center; margin-top:24px; color:var(--muted); font-size:12px; opacity: 0.7; }
+        .footer{ text-align:center; margin-top:24px; color:var(--muted); font-size:12px; opacity: 0.7; }
 
-    @media (max-width: 360px) {
-      .card { padding: 16px; }
-    }
-  </style>
+        @media (max-width: 360px) {
+            .card { padding: 16px; }
+        }
+    </style>
 </head>
 
 <body>
 <div class="container">
-  <div class="brand">
-    Filesb
-    <small data-i18n="brandSub">Fast file sharing without extra steps</small>
-  </div>
+    <div class="brand">
+        Filesb
+        <small data-i18n="brandSub">Fast file sharing without extra steps</small>
+    </div>
 
-  <div class="card">
-    <h1 data-i18n="h1">Sign up</h1>
-    <p class="sub" data-i18n="sub">Create an account to access your personal files</p>
+    <div class="card">
+        <h1 data-i18n="h1">Sign up</h1>
+        <p class="sub" data-i18n="sub">Create an account to access your personal files</p>
 
-    <form id="registerForm" action="/register/api" method="post" novalidate>
-      <div class="field">
-        <label for="name" data-i18n="labelName">Name</label>
-        <input id="name" class="input" type="text" required minlength="2">
-      </div>
+        <form id="registerForm" action="/register/api" method="post" novalidate>
+            <div class="field">
+                <label for="name" data-i18n="labelName">Name</label>
+                <input id="name" class="input" type="text" required minlength="2" maxlength="20">
+            </div>
 
-      <div class="field">
-        <label for="email" data-i18n="labelEmail">Email</label>
-        <input id="email" class="input" type="email" required>
-      </div>
+            <div class="field">
+                <label for="email" data-i18n="labelEmail">Email</label>
+                <input id="email" class="input" type="email" required minlength="1" maxlength="40">
+            </div>
 
-      <div class="field">
-        <label for="password" data-i18n="labelPwd">Password</label>
-        <div class="input-wrap">
-          <input id="password" class="input" type="password" required minlength="6">
-          <button type="button" class="toggle" id="togglePwd" data-i18n="show">Show</button>
-        </div>
-      </div>
+            <div class="field">
+                <label for="password" data-i18n="labelPwd">Password</label>
+                <div class="input-wrap">
+                    <input id="password" class="input" type="password" required minlength="6" maxlength="25">
+                    <button type="button" class="toggle" id="togglePwd" data-i18n="show">Show</button>
+                </div>
+            </div>
 
-      <div class="actions">
-        <a class="link" href="/login" data-i18n="hasAccount">I already have an account</a>
-      </div>
+            <div class="actions">
+                <a class="link" href="/login" data-i18n="hasAccount">I already have an account</a>
+            </div>
 
-      <button id="submitBtn" class="btn-primary" data-i18n="btnCreate">Create account</button>
-      <div id="responseMessage" class="message"></div>
-    </form>
+            <button id="submitBtn" class="btn-primary" data-i18n="btnCreate">Create account</button>
+            <div id="responseMessage" class="message"></div>
+        </form>
 
-    <div class="footer">© 2026 Filesb</div>
-  </div>
+        <div class="footer">© 2026 Filesb</div>
+    </div>
 </div>
 
 <script>
-  const translations = {
-    en: {
-      brandSub: "Fast file sharing without extra steps",
-      h1: "Sign up",
-      sub: "Create an account to access your personal files",
-      labelName: "Name",
-      labelEmail: "Email",
-      labelPwd: "Password",
-      show: "Show",
-      hide: "Hide",
-      hasAccount: "I already have an account",
-      btnCreate: "Create account",
-      submitting: "Submitting...",
-      errorRedict: "UrlToRedict not found in server response",
-      errorConn: "Connection error"
-    },
-    ru: {
-      brandSub: "Быстрый обмен файлами без лишних шагов",
-      h1: "Регистрация",
-      sub: "Создайте аккаунт для доступа к личным файлам",
-      labelName: "Имя",
-      labelEmail: "Электронная почта",
-      labelPwd: "Пароль",
-      show: "Показать",
-      hide: "Скрыть",
-      hasAccount: "У меня уже есть аккаунт",
-      btnCreate: "Создать аккаунт",
-      submitting: "Отправка...",
-      errorRedict: "URL для перенаправления не получен от сервера",
-      errorConn: "Ошибка соединения"
+    const translations = {
+        en: {
+            brandSub: "Fast file sharing without extra steps",
+            h1: "Sign up",
+            sub: "Create an account to access your personal files",
+            labelName: "Name",
+            labelEmail: "Email",
+            labelPwd: "Password",
+            show: "Show",
+            hide: "Hide",
+            hasAccount: "I already have an account",
+            btnCreate: "Create account",
+            submitting: "Submitting...",
+            errorRedict: "Server response did not contain a redirect URL",
+            errorConn: "Connection error"
+        },
+        ru: {
+            brandSub: "Быстрый обмен файлами без лишних шагов",
+            h1: "Регистрация",
+            sub: "Создайте аккаунт для доступа к личным файлам",
+            labelName: "Имя",
+            labelEmail: "Электронная почта",
+            labelPwd: "Пароль",
+            show: "Показать",
+            hide: "Скрыть",
+            hasAccount: "У меня уже есть аккаунт",
+            btnCreate: "Создать аккаунт",
+            submitting: "Отправка...",
+            errorRedict: "Сервер не вернул адрес для перенаправления",
+            errorConn: "Ошибка соединения"
+        }
+    };
+
+    // Человекочитаемые названия полей для сообщений об ошибках
+    const fieldNames = {
+        en: { Name: "Name", Email: "Email", Password: "Password" },
+        ru: { Name: "Имя", Email: "Email", Password: "Пароль" }
+    };
+
+    // Лимиты, продублированные из Go-структуры (validate:"...")
+    const fieldLimits = {
+        Name:     { min: 2, max: 20 },
+        Email:    { min: 1, max: 40 },
+        Password: { min: 6, max: 25 }
+    };
+
+    // Шаблоны сообщений по типу validator-тега
+    const validationMessages = {
+        en: {
+            required: (field) => `${field} is required`,
+            min:      (field, n) => `${field} must be at least ${n} characters`,
+            max:      (field, n) => `${field} must be at most ${n} characters`,
+            email:    (field) => `${field} must be a valid email address`
+        },
+        ru: {
+            required: (field) => `Поле «${field}» обязательно для заполнения`,
+            min:      (field, n) => `«${field}»: минимум ${n} символов`,
+            max:      (field, n) => `«${field}»: максимум ${n} символов`,
+            email:    (field) => `«${field}»: введите корректный email`
+        }
+    };
+
+    const currentLang = localStorage.getItem('userLanguage') || 'en';
+
+    function applyLanguage() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[currentLang][key]) {
+                el.textContent = translations[currentLang][key];
+            }
+        });
+        document.documentElement.lang = currentLang;
     }
-  };
 
-  const currentLang = localStorage.getItem('userLanguage') || 'en';
+    const form = document.getElementById('registerForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const responseDiv = document.getElementById('responseMessage');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const pwdInput = document.getElementById('password');
+    const togglePwd = document.getElementById('togglePwd');
 
-  function applyLanguage() {
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const key = el.getAttribute('data-i18n');
-      if (translations[currentLang][key]) {
-        el.textContent = translations[currentLang][key];
-      }
-    });
-    document.documentElement.lang = currentLang;
-  }
+    togglePwd.onclick = () => {
+        const isPwd = pwdInput.type === 'password';
+        pwdInput.type = isPwd ? 'text' : 'password';
+        togglePwd.textContent = isPwd ? translations[currentLang].hide : translations[currentLang].show;
+    };
 
-  const form = document.getElementById('registerForm');
-  const submitBtn = document.getElementById('submitBtn');
-  const responseDiv = document.getElementById('responseMessage');
-  const nameInput = document.getElementById('name');
-  const emailInput = document.getElementById('email');
-  const pwdInput = document.getElementById('password');
-  const togglePwd = document.getElementById('togglePwd');
+    // Пытается разобрать стандартный текст ошибки go-playground/validator вида:
+    // "Key: 'RegisterRequest.Email' Error:Field validation for 'Email' failed on the 'email' tag"
+    // и вернуть локализованное сообщение + ключ поля для подсветки.
+    // Если формат не распознан — возвращает исходный текст как есть.
+    function localizeError(raw) {
+        if (!raw) return null;
 
-  togglePwd.onclick = () => {
-    const isPwd = pwdInput.type === 'password';
-    pwdInput.type = isPwd ? 'text' : 'password';
-    togglePwd.textContent = isPwd ? translations[currentLang].hide : translations[currentLang].show;
-  };
+        const match = raw.match(/Field validation for '(\w+)' failed on the '(\w+)' tag/i);
+        if (match) {
+            const [, fieldKey, tag] = match;
+            const fieldLabel = fieldNames[currentLang][fieldKey] || fieldKey;
+            const limits = fieldLimits[fieldKey] || {};
+            const msgFn = validationMessages[currentLang][tag];
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    // Сброс UI перед новой попыткой
-    responseDiv.className = 'message';
-    responseDiv.style.display = 'none';
-
-    // Убираем красную подсветку со всех полей
-    [nameInput, emailInput, pwdInput].forEach(input => input.classList.remove('error'));
-
-    if (!form.reportValidity()) return;
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = translations[currentLang].submitting;
-
-    try {
-      const res = await fetch(form.action, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: nameInput.value.trim(),
-          email: emailInput.value.trim(),
-          password: pwdInput.value
-        }),
-        credentials: 'same-origin'
-      });
-
-      const data = await res.json().catch(() => null);
-
-      // 1. Успех
-      if (res.status === 200 && data?.UrlToRedict) {
-        window.location.href = data.UrlToRedict;
-        return;
-      }
-
-      // 2. Ошибка валидации с бэкенда (400 Bad Request)
-      if (res.status === 400) {
-        const errorText = data?.Error || "Validation Error";
-
-        // Показываем текст ошибки
-        responseDiv.classList.add('error');
-        responseDiv.textContent = errorText;
-        responseDiv.style.display = 'block';
-
-        // Ищем ключевые слова в тексте ошибки, чтобы подсветить поле
-        const lowerError = errorText.toLowerCase();
-
-        if (lowerError.includes('email') || lowerError.includes('почт')) {
-          emailInput.classList.add('error');
-          emailInput.focus();
-        } else if (lowerError.includes('pass') || lowerError.includes('парол') || lowerError.includes('pwd')) {
-          pwdInput.classList.add('error');
-          pwdInput.focus();
-        } else if (lowerError.includes('name') || lowerError.includes('имя')) {
-          nameInput.classList.add('error');
-          nameInput.focus();
+            if (msgFn) {
+                const param = tag === 'min' ? limits.min : tag === 'max' ? limits.max : undefined;
+                return { text: msgFn(fieldLabel, param), fieldKey: fieldKey.toLowerCase() };
+            }
         }
 
-        return; // Останавливаемся здесь, дальше throw не нужен
-      }
+        // Формат не распознан — просто показываем то, что прислал сервер,
+        // и пытаемся угадать поле по ключевым словам (запасной вариант).
+        const lower = raw.toLowerCase();
+        let fieldKey = null;
+        if (lower.includes('email') || lower.includes('почт')) fieldKey = 'email';
+        else if (lower.includes('pass') || lower.includes('парол') || lower.includes('pwd')) fieldKey = 'password';
+        else if (lower.includes('name') || lower.includes('имя')) fieldKey = 'name';
 
-      // 3. Другие ошибки (не 200 и не 400)
-      if (res.status !== 200) {
-        throw new Error(data?.Error || translations[currentLang].errorRedict);
-      }
-
-    } catch (err) {
-      responseDiv.classList.add('error');
-      responseDiv.textContent = err.message || translations[currentLang].errorConn;
-      responseDiv.style.display = 'block';
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = translations[currentLang].btnCreate;
+        return { text: raw, fieldKey };
     }
-  });
 
-  document.addEventListener('DOMContentLoaded', applyLanguage);
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Сброс UI перед новой попыткой
+        responseDiv.className = 'message';
+        responseDiv.style.display = 'none';
+        [nameInput, emailInput, pwdInput].forEach(input => input.classList.remove('error'));
+
+        if (!form.reportValidity()) return;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = translations[currentLang].submitting;
+
+        try {
+            const res = await fetch(form.action, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: nameInput.value.trim(),
+                    email: emailInput.value.trim(),
+                    password: pwdInput.value
+                }),
+                credentials: 'same-origin'
+            });
+
+            const data = await res.json().catch(() => null);
+
+            // Успех: сервер вернул ссылку на редирект
+            if (data?.url_to_redirect) {
+                window.location.href = data.url_to_redirect;
+                return;
+            }
+
+            // Любая неудачная попытка — показываем error из ответа сервера
+            if (data?.error) {
+                const localized = localizeError(data.error);
+
+                responseDiv.classList.add('error');
+                responseDiv.textContent = localized.text;
+                responseDiv.style.display = 'block';
+
+                if (localized.fieldKey === 'email') {
+                    emailInput.classList.add('error');
+                    emailInput.focus();
+                } else if (localized.fieldKey === 'password') {
+                    pwdInput.classList.add('error');
+                    pwdInput.focus();
+                } else if (localized.fieldKey === 'name') {
+                    nameInput.classList.add('error');
+                    nameInput.focus();
+                }
+
+                return;
+            }
+
+            // Ни url_to_redirect, ни error — что-то пошло не так на бэкенде
+            throw new Error(translations[currentLang].errorRedict);
+
+        } catch (err) {
+            responseDiv.classList.add('error');
+            responseDiv.textContent = err.message || translations[currentLang].errorConn;
+            responseDiv.style.display = 'block';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = translations[currentLang].btnCreate;
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', applyLanguage);
 </script>
 </body>
 </html>

@@ -56,7 +56,7 @@ func (sa *NewUploadEncrypt) UploadEncrypt(r *http.Request) (string, error) {
 		slog.Error("UploadEncrypt; error to get a file", "ERROR", err)
 		return "", errors.New(DomainLevel.ErrorStartUploading)
 	}
-	if sizeAndName.Size >= DomainLevel.FileMaxSize {
+	if sizeAndName.Size >= FileMaxSize {
 		return "", errors.New(DomainLevel.ErrorFileSizeBig)
 	}
 	defer func() {

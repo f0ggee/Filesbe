@@ -17,8 +17,8 @@ import (
 type Encrypter struct {
 }
 
-func GetNewEncrypter() *Encrypter {
-	return &Encrypter{}
+func GetNewEncrypter() Encrypter {
+	return Encrypter{}
 }
 
 func (*Encrypter) EncryptFileInfo(FileInfoData []byte, Key *rsa.PublicKey) ([]byte, error) {
@@ -55,5 +55,4 @@ func (e *Encrypter) EncryptAes(AesKey []byte, Data []byte) ([]byte, error) {
 		return nil, err
 	}
 	return NewGcmBlock.Seal(nonce, nonce, Data, nil), nil
-
 }

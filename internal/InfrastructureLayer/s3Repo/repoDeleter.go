@@ -1,7 +1,6 @@
 package s3Repo
 
 import (
-	"Kaban/internal/DomainLevel"
 	"context"
 	"errors"
 	"log/slog"
@@ -44,7 +43,7 @@ func (d *NewDeleterS3) DeleteFileFromS3(key string, ctx context.Context) error {
 	_, err := d.S3Info.S3Connect.DeleteObject(ctx, s)
 	if err != nil {
 		slog.Error("DeleteFileFromS3; error to delete a file", "ERROR", err)
-		return errors.New(DomainLevel.ErrorFilNotDeleted)
+		return errors.New(ErrorFilNotDeleted)
 	}
 	return nil
 }

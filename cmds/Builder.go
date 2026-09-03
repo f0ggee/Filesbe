@@ -1,17 +1,17 @@
 package cmds
 
 import (
-	"Kaban/internal/Deliver"
+	"Kaban/internal/Deliver/httpController"
+	"Kaban/internal/Deliver/httpController/DeliverPackages/RepoDownloadEncryptRepo"
+	"Kaban/internal/Deliver/httpController/DeliverPackages/RepoDownloadNoEncrypt"
+	"Kaban/internal/Deliver/httpController/DeliverPackages/RepoLoginRealizations"
+	"Kaban/internal/Deliver/httpController/DeliverPackages/RepoRegisterRepository"
+	"Kaban/internal/Deliver/httpController/DeliverPackages/RepoUsersCheckAuth"
+	"Kaban/internal/Deliver/httpController/DeliverPackages/RepofileUploaderEncryptRepo"
+	"Kaban/internal/Deliver/httpController/DeliverPackages/RepofileUploaderNoEncryptRepo"
+	"Kaban/internal/Deliver/httpController/DeliverPackages/RepourlBuilder"
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadEncryptRepo"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoLoginRealizations"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoRegisterRepository"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoUsersCheckAuth"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderEncryptRepo"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderNoEncryptRepo"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepourlBuilder"
 	"Kaban/internal/InfrastructureLayer/ProtocolManage"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
@@ -139,22 +139,22 @@ type RegisterControllerBuilderIncomeData struct {
 	App     *Application.NewDownload
 }
 
-func GetControllerDownloadBuilder(d *RegisterControllerBuilderIncomeData) *Deliver.NewDownloadWithNotEncrypt {
+func GetControllerDownloadBuilder(d *RegisterControllerBuilderIncomeData) *httpController.DownloadNew {
 
-	answ := Deliver.AnswerDownloadNoEncrypt{
+	answ := httpController.AnswerDownloadNoEncrypt{
 		Answ: d.Answ,
 	}
 
-	url := Deliver.NewDownloadWithNotEncryptUrlBuilder{
+	url := httpController.NewDownloadWithNotEncryptUrlBuilder{
 		UrlWork: d.UrlWork,
 	}
 
-	NetWork := Deliver.NetworkDownloadNoEncrypt{}
-	App := Deliver.NewDownloadWithNotEncryptApplication{
+	NetWork := httpController.DownloadNetwork{}
+	App := httpController.DownloadApp{
 		NewDownload: *d.App,
 	}
 
-	return Deliver.GetNewDownloadWithNotEncrypt(answ, url, NetWork, App)
+	return httpController.GetNewDownloadWithNotEncrypt(answ, url, NetWork, App)
 }
 
 type EncryptDownloadControllerIncomeData struct {
@@ -163,18 +163,18 @@ type EncryptDownloadControllerIncomeData struct {
 	App      *Application.NewDownloadEncrypt
 }
 
-func GetEncryptDownloadControllerBuilder(d EncryptDownloadControllerIncomeData) *Deliver.NewDownloadEncrypt {
-	answ := Deliver.AnswerDownloadEncrypt{
+func GetEncryptDownloadControllerBuilder(d EncryptDownloadControllerIncomeData) *httpController.NewDownloadEncrypt {
+	answ := httpController.AnswerDownloadEncrypt{
 		S: d.Answ,
 	}
-	url := Deliver.UrlBuilderDownloadEncrypt{
+	url := httpController.UrlBuilderDownloadEncrypt{
 		UrlBuild: d.UrlBuild,
 	}
-	net := Deliver.NetworkDownloadEncrypt{}
-	App := Deliver.NewDownloadWithEncryptApplication{
+	net := httpController.NetworkDownloadEncrypt{}
+	App := httpController.NewDownloadWithEncryptApplication{
 		NewDownloadEncrypt: *d.App,
 	}
-	return Deliver.GetNewDownloadEncrypt(answ, url, net, App)
+	return httpController.GetNewDownloadEncrypt(answ, url, net, App)
 }
 
 type UploaderBuilderIncomeData struct {
@@ -186,22 +186,22 @@ type UploaderBuilderIncomeData struct {
 	A           Application.NewUploadEncrypt
 }
 
-func GetUploaderEncrypterControllerBuilder(d *UploaderBuilderIncomeData) *Deliver.NewUploaderEncrypt {
-	net := Deliver.NewFileUploaderEncryptNetwork{}
-	sess := Deliver.NewFileUploaderEncryptSession{
+func GetUploaderEncrypterControllerBuilder(d *UploaderBuilderIncomeData) *httpController.NewUploaderEncrypt {
+	net := httpController.NewFileUploaderEncryptNetwork{}
+	sess := httpController.NewFileUploaderEncryptSession{
 		ReadSession: d.ReadSession,
 		AuthCheck:   d.AuthCheck,
 	}
-	details := Deliver.NewFileUploaderEncryptDetails{
+	details := httpController.NewFileUploaderEncryptDetails{
 		Answers: d.Answers,
 		Build:   d.Build,
 		Rout:    d.R,
 	}
 
-	App := Deliver.NewFileUploaderEncryptApplication{
+	App := httpController.NewFileUploaderEncryptApplication{
 		NewUploadEncrypt: d.A,
 	}
-	return Deliver.GetNewFileUploaderEncrypt(net, sess, details, App)
+	return httpController.GetNewFileUploaderEncrypt(net, sess, details, App)
 }
 
 type UploaderEncryptBuilderIncomeData struct {
@@ -212,21 +212,21 @@ type UploaderEncryptBuilderIncomeData struct {
 	App     Application.NewUpload
 }
 
-func GetUploaderControllerBuilder(data UploaderEncryptBuilderIncomeData) *Deliver.NewUploader {
-	net := Deliver.NewFileUploaderNet{}
-	details := Deliver.NewFileUploaderWorkDetails{
+func GetUploaderControllerBuilder(data UploaderEncryptBuilderIncomeData) *httpController.NewFileUploader {
+	net := httpController.FileUploaderNet{}
+	details := httpController.NewFileUploaderWorkDetails{
 		S:       data.S,
 		Builder: data.Builder,
 	}
-	session := Deliver.NewFileUploaderSessions{
+	session := httpController.FileUploaderSessions{
 		Session: data.Session,
 		Auth:    data.Auth,
 	}
 
-	app := Deliver.NewFileUploaderApp{
+	app := httpController.NewFileUploaderApp{
 		NewUpload: data.App,
 	}
-	return Deliver.GetNewFileUploader(net, details, session, app)
+	return httpController.GetNewFileUploader(net, details, session, app)
 }
 
 type NewLoginIncomeData struct {
@@ -236,19 +236,19 @@ type NewLoginIncomeData struct {
 	App    *Application.NewLogin
 }
 
-func GetControllerLoginBuilder(data NewLoginIncomeData) *Deliver.NewLoginController {
-	net := Deliver.LoginNet{}
-	depends := Deliver.LoginDepends{
+func GetControllerLoginBuilder(data NewLoginIncomeData) *httpController.NewLoginController {
+	net := httpController.LoginNet{}
+	depends := httpController.LoginDepends{
 		S:    data.S,
 		Sess: data.Sess,
 	}
-	parse := Deliver.ParseLogin{
+	parse := httpController.ParseLogin{
 		Parses: data.Parses,
 	}
-	app := Deliver.LoginApplication{
+	app := httpController.LoginApplication{
 		NewLogin: *data.App,
 	}
-	return Deliver.GetNewLogin(net, depends, parse, app)
+	return httpController.GetNewLogin(net, depends, parse, app)
 }
 
 type CheckUserBuilderIncomeData struct {
@@ -257,11 +257,11 @@ type CheckUserBuilderIncomeData struct {
 	Auth    AuthTokensManage.AuthCheck
 }
 
-func GetControllerCheckAuthBuilder(data CheckUserBuilderIncomeData) *Deliver.NewCheckUserAuth {
-	net := Deliver.GetNewCheckUserAuthNetWork(nil, nil)
-	auth := Deliver.GetNewCheckUserAuthWorkDetails(data.answers)
-	session := Deliver.GetNewCheckUserAuthSessions(data.Auth, data.Session)
-	return Deliver.GetNewCheckUserAuth(*net, *auth, *session)
+func GetControllerCheckAuthBuilder(data CheckUserBuilderIncomeData) *httpController.CheckUserAuth {
+	net := httpController.GetNewCheckUserAuthNetWork(nil, nil)
+	auth := httpController.GetNewCheckUserAuthWorkDetails(data.answers)
+	session := httpController.GetNewCheckUserAuthSessions(data.Auth, data.Session)
+	return httpController.GetNewCheckUserAuth(*net, *auth, *session)
 }
 
 type RegisterBuilderIncomeData struct {
@@ -271,28 +271,28 @@ type RegisterBuilderIncomeData struct {
 	App     Application.NewRegisterApplication
 }
 
-func GetControllerRegisterBuilder(data RegisterBuilderIncomeData) *Deliver.NewRegister {
+func GetControllerRegisterBuilder(data RegisterBuilderIncomeData) *httpController.NewRegister {
 
-	Details := Deliver.NewRegisterDetails{
+	Details := httpController.NewRegisterDetails{
 		Answ:    data.Answ,
 		Session: data.Session,
 		D:       data.D,
 	}
 
-	app := Deliver.NewRegisterApp{
+	app := httpController.NewRegisterApp{
 		App: data.App,
 	}
 
-	net := Deliver.RegisterNet{}
-	return Deliver.GetNewRegister(net, Details, app)
+	net := httpController.RegisterNet{}
+	return httpController.GetNewRegister(net, Details, app)
 }
 
-func GetControllerUrlUploaderBuilder(Url RepourlBuilder.UrlBuilderAnswer) *Deliver.NewBuildUrl {
-	url := Deliver.UrlSettings{
+func GetControllerUrlUploaderBuilder(Url RepourlBuilder.UrlBuilderAnswer) *httpController.NewBuildUrl {
+	url := httpController.UrlSettings{
 		Url: Url,
 	}
-	net := Deliver.UrlNetwork{}
-	return Deliver.GetNewBuildUrl(url, net)
+	net := httpController.UrlNetwork{}
+	return httpController.GetNewBuildUrl(url, net)
 }
 
 type ProtocolManageBuilder struct {

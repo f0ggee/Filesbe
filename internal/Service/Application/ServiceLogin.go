@@ -33,22 +33,16 @@ func GetNewLogin(newLoginData NewLoginData, newLoginCrypto NewLoginCrypto, newLo
 	return &NewLogin{NewLoginData: newLoginData, NewLoginCrypto: newLoginCrypto, NewLoginAuth: newLoginAuth}
 }
 
-type LoginApplicationOutComingData struct {
-	Jwt string
-	Rft string
-	Err error
-}
-
-func (sa *NewLogin) LoginService(s Dto.UserLoginData, ctx context.Context) LoginApplicationOutComingData {
+func (sa *NewLogin) LoginService(ctx context.Context, s Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData {
 	usersData := sa.ReaderDatabase.LoginData(s.Email, ctx)
 	if usersData.Err != nil {
-		return LoginApplicationOutComingData{
+		return DomainLevel.LoginApplicationOutComingData{
 			Err: usersData.Err,
 		}
 	}
 	err := sa.Validate.PasswordVerify([]byte(usersData.HashPassword), []byte(s.Password))
 	if err != nil {
-		return LoginApplicationOutComingData{
+		return DomainLevel.LoginApplicationOutComingData{
 			Err: err,
 		}
 	}
@@ -63,8 +57,8 @@ func (sa *NewLogin) LoginService(s Dto.UserLoginData, ctx context.Context) Login
 	})
 	if err != nil {
 		slog.Error("LoginService; error to generate the Refresh Token", "ERROR", err)
-		return LoginApplicationOutComingData{
-			Err: errors.New(DomainLevel.ErrorCreateSession),
+		return DomainLevel.LoginApplicationOutComingData{
+			Err: errors.New(DomainLevel.SessionError),
 		}
 	}
 	JwtToken, err := sa.GeneratingTokens.GenerateJWT(Dto.JwtCustomStruct{
@@ -78,11 +72,11 @@ func (sa *NewLogin) LoginService(s Dto.UserLoginData, ctx context.Context) Login
 	})
 	if err != nil {
 		slog.Error("LoginService; error to generate a Jwt token", "ERROR", err)
-		return LoginApplicationOutComingData{
-			Err: errors.New(DomainLevel.ErrorCreateSession),
+		return DomainLevel.LoginApplicationOutComingData{
+			Err: errors.New(DomainLevel.SessionError),
 		}
 	}
-	return LoginApplicationOutComingData{
+	return DomainLevel.LoginApplicationOutComingData{
 		Jwt: JwtToken,
 		Rft: RefreshToken,
 	}

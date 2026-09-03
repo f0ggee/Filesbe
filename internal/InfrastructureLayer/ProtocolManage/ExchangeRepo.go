@@ -101,12 +101,12 @@ func (n NewExchanger) GetPlanningExchanger() time.Duration {
 	defer cancel()
 	outData, err := n.Redis.GetKey(ctx)
 	if err != nil {
-		return DomainLevel.DefaultErrorTime
+		return DefaultErrorTime
 	}
 
 	data := n.setCheckedData(outData)
 	if data.Error != nil {
-		return DomainLevel.DefaultErrorTime
+		return DefaultErrorTime
 	}
 	defer data.NewKey.Destroy()
 	n.EncrypterKeys.UpdateOldKey()

@@ -1,4 +1,4 @@
-package DomainLevel
+package RedisInteration
 
 const (
 	ErrorDeleteInfo  = "an unexpected error happened during deleting a file"

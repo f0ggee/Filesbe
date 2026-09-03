@@ -1,7 +1,6 @@
 package RedisInteration
 
 import (
-	"Kaban/internal/DomainLevel"
 	"context"
 	"errors"
 	"log/slog"
@@ -34,7 +33,7 @@ func (d *DeleterRedis) DeleteFileInfo(fileInfo string, ctx context.Context) erro
 	err := d.Re.Del(ctx, fileInfo).Err()
 	if err != nil {
 		slog.Error("File info's already been deleted", err)
-		return errors.New(DomainLevel.ErrorDeleteInfo)
+		return errors.New(ErrorDeleteInfo)
 	}
 	return nil
 }

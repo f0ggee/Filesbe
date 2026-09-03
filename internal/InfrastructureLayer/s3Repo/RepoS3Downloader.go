@@ -1,7 +1,6 @@
 package s3Repo
 
 import (
-	"Kaban/internal/DomainLevel"
 	"context"
 	"errors"
 
@@ -27,13 +26,13 @@ type DownloadingS3 interface {
 
 func (s S3Download) GetDownloadSecure(ctx context.Context, name string) (*s3.GetObjectOutput, error) {
 
-	dsa := s3.New(s.S3Info.OldConnect)
+	dsa := s3.New(nil)
 	Params := &s3.GetObjectInput{Bucket: aws.String(s.S3Info.Bucket), Key: aws.String(name)}
 
 	O, err := dsa.GetObjectWithContext(ctx, Params)
 	if err != nil {
 		slog.Error("GetDownloadSecure; the file wasn't find", "ERROR", err)
-		return nil, errors.New(DomainLevel.ErrorCantFindFile)
+		return nil, errors.New(ErrorCantFindFile)
 	}
 
 	return O, nil
@@ -50,7 +49,7 @@ func (s S3Download) GetDownload(TrueFileName string, ctx context.Context) (*NewV
 
 	if err != nil {
 		slog.Error("S3 GetDownload; the error happened", "ERROR", err.Error())
-		return nil, errors.New(DomainLevel.ErrorStartDownloading)
+		return nil, errors.New(ErrorStartDownloading)
 	}
 
 	return S, err

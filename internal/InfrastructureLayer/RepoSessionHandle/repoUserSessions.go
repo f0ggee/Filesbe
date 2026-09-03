@@ -1,25 +1,21 @@
 package RepoSessionHandle
 
 import (
-	"Kaban/internal/DomainLevel"
 	"encoding/hex"
 	"errors"
 	"log/slog"
 	"net/http"
 	"os"
-	"sync"
-	"time"
 
 	"github.com/gorilla/sessions"
 )
 
 type NewSessionConnect struct {
 	Activity *sessions.CookieStore
-	mut      *sync.RWMutex
 }
 
-func GetNewSessionConnect(activity *sessions.CookieStore, mut *sync.RWMutex) *NewSessionConnect {
-	return &NewSessionConnect{Activity: activity, mut: mut}
+func GetNewSessionConnect(activity *sessions.CookieStore) *NewSessionConnect {
+	return &NewSessionConnect{Activity: activity}
 }
 
 type IncomingSessionData struct {
@@ -31,7 +27,6 @@ type IncomingSessionData struct {
 
 type Session interface {
 	GetSessionData(data IncomingSessionData) ReturnedSessionKey
-
 	SetNewSession(data IncomingSessionData) ReturnedSessionKey
 }
 type ReturnedSessionKey struct {
@@ -41,9 +36,7 @@ type ReturnedSessionKey struct {
 }
 
 func (s *NewSessionConnect) getUserConnect(r *http.Request) (*sessions.Session, error) {
-	s.mut.RLock()
-	defer s.mut.RUnlock()
-	return s.Activity.Get(r, DomainLevel.TokenName)
+	return s.Activity.Get(r, TokenName)
 }
 
 func GetCookieStore() *sessions.CookieStore {
@@ -60,19 +53,19 @@ func (s NewSessionConnect) GetSessionData(data IncomingSessionData) ReturnedSess
 	if err != nil {
 		slog.Error("GetSessionData: error to get an active connect", "error", err)
 		return ReturnedSessionKey{
-			Error: errors.New(DomainLevel.ErrorGetCookie),
+			Error: errors.New(ErrorGetCookie),
 		}
 	}
 	if connect.Options.MaxAge == 0 {
-		return ReturnedSessionKey{Error: errors.New(DomainLevel.ErrorAuthExpired)}
+		return ReturnedSessionKey{Error: errors.New(ErrorAuthExpired)}
 	}
-	rtToken, isKeyExist := connect.Values[DomainLevel.RTCookieName].(string)
+	rtToken, isKeyExist := connect.Values[RTCookieName].(string)
 	if !isKeyExist {
-		return ReturnedSessionKey{Error: errors.New(DomainLevel.ErrorAuthExpired)}
+		return ReturnedSessionKey{Error: errors.New(ErrorAuthExpired)}
 	}
-	jwts, isKeyExist := connect.Values[DomainLevel.JwtCookieName].(string)
+	jwts, isKeyExist := connect.Values[JwtCookieName].(string)
 	if !isKeyExist {
-		return ReturnedSessionKey{Error: errors.New(DomainLevel.ErrorAuthExpired)}
+		return ReturnedSessionKey{Error: errors.New(ErrorAuthExpired)}
 	}
 	return ReturnedSessionKey{
 		Rft: rtToken,
@@ -82,35 +75,46 @@ func (s NewSessionConnect) GetSessionData(data IncomingSessionData) ReturnedSess
 func (s *NewSessionConnect) SetNewSession(data IncomingSessionData) ReturnedSessionKey {
 	connect, err := s.getUserConnect(data.Request)
 	if err != nil {
-		return ReturnedSessionKey{Error: errors.New(DomainLevel.ErrorGetCookie)}
+		return ReturnedSessionKey{Error: errors.New(ErrorGetCookie)}
 	}
 	if connect.Options.MaxAge == 0 {
-		return ReturnedSessionKey{Error: errors.New(DomainLevel.ErrorAuthExpired)}
+		return ReturnedSessionKey{Error: errors.New(ErrorAuthExpired)}
 	}
 
 	if data.Jwt != "" {
-		connect.Values[DomainLevel.JwtCookieName] = data.Jwt
+		connect.Values[JwtCookieName] = data.Jwt
 	}
 
 	if data.Rt != "" {
-		connect.Values[DomainLevel.RTCookieName] = data.Rt
+		connect.Values[RTCookieName] = data.Rt
 	}
 	connect.Options = &sessions.Options{
 		Path:     "/",
 		Secure:   true,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
-		MaxAge:   int(1000 * time.Hour),
+		MaxAge:   int(CookieTimeLive),
 	}
 
 	if err := connect.Save(data.Request, data.Writer); err != nil {
 		slog.Error("Error in save cookie", "Err", err)
-		return ReturnedSessionKey{Error: errors.New(DomainLevel.ErrorSaveCookie)}
-
+		return ReturnedSessionKey{Error: errors.New(ErrorSaveCookie)}
 	}
 	return ReturnedSessionKey{
 		Rft:   "",
 		Jwt:   "",
 		Error: nil,
 	}
+}
+
+type Mocks struct {
+}
+
+func (m Mocks) GetSessionData(data IncomingSessionData) ReturnedSessionKey {
+
+	return ReturnedSessionKey{}
+}
+
+func (m Mocks) SetNewSession(data IncomingSessionData) ReturnedSessionKey {
+	return ReturnedSessionKey{}
 }

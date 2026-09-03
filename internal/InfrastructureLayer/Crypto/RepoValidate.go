@@ -13,8 +13,8 @@ import (
 
 type Checking struct{}
 
-func GetNeValidating() *Checking {
-	return &Checking{}
+func GetNeValidating() Checking {
+	return Checking{}
 }
 
 func (c *Checking) PasswordVerify(hashOfPassword []byte, password []byte) error {

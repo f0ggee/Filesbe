@@ -1,6 +1,7 @@
 package Middlewares
 
 import (
+	http2 "Kaban/internal/Deliver/httpController"
 	"Kaban/internal/DomainLevel"
 	"encoding/json"
 	"log/slog"
@@ -20,7 +21,7 @@ func CheckBots(next http.Handler) http.Handler {
 			w.Header().Set("Content-Type", DomainLevel.Json)
 			w.WriteHeader(http.StatusBadRequest)
 			if err := json.NewEncoder(w).Encode(&Answer{
-				StatusOperation: DomainLevel.Break,
+				StatusOperation: http2.Break,
 				Error:           "Request isn't correct",
 				UrlToRedict:     "",
 			}); err != nil {

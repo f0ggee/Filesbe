@@ -1,6 +1,5 @@
 package GrpcManage
 
-import "C"
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"

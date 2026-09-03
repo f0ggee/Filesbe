@@ -5,14 +5,6 @@ import (
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/Crypto"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadEncryptRepo"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoLoginRealizations"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoRegisterRepository"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepoUsersCheckAuth"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderEncryptRepo"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderNoEncryptRepo"
-	"Kaban/internal/InfrastructureLayer/DeliverPackages/RepourlBuilder"
 	"Kaban/internal/InfrastructureLayer/FileControls"
 	"Kaban/internal/InfrastructureLayer/GrpcManage"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
@@ -21,7 +13,6 @@ import (
 	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
 	"Kaban/internal/InfrastructureLayer/s3Repo"
 	"os"
-	"sync"
 
 	"github.com/awnumar/memguard"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -35,6 +26,11 @@ type S3Collector struct {
 	Deleter    s3Repo.DeleterS3
 	Uploader   s3Repo.S3Uploader
 	S3Download s3Repo.DownloadingS3
+}
+type S3CollectorAnother interface {
+	s3Repo.DeleterS3
+	s3Repo.S3Uploader
+	s3Repo.DownloadingS3
 }
 
 func GetS3Collector(cfg *s3.Client, OldS3Connect *ses.Session) *S3Collector {
@@ -115,72 +111,6 @@ func GetDatabaseManageCollector(Db *pgxpool.Pool) CollectorDatabaseManage {
 		Checker: *Checker,
 		Reader:  *Reader,
 		Writer:  *Writer,
-	}
-}
-
-type DownloadEncryptCollector struct {
-	Answ RepoDownloadEncryptRepo.NewFileDownloadEncrypt
-}
-type DownloadCollector struct {
-	Answ RepoDownloadNoEncrypt.NewRepoDownloadNoEncrypt
-}
-type UploaderEncrypterCollector struct {
-	Answ RepofileUploaderEncryptRepo.SetNewUploadingRepo
-}
-type UploaderCollector struct {
-	Answ RepofileUploaderNoEncryptRepo.NewUploaderNoEncrypt
-}
-type LoginCollector struct {
-	Answ RepoLoginRealizations.LoginAnswers
-}
-type RegisterCollector struct {
-	Answ RepoRegisterRepository.NewRegister
-}
-
-type UrlBuilderCollector struct {
-	Answ RepourlBuilder.NewUrlBuilder
-}
-type UserCheckCollector struct {
-	Answ RepoUsersCheckAuth.SetUsersChecker
-}
-type DeliverPackagesCollector struct {
-	DownloadEncryptCollector
-	DownloadCollector
-	UploaderEncrypterCollector
-	UploaderCollector
-	LoginCollector
-	RegisterCollector
-	UrlBuilderCollector
-	UserCheckCollector
-}
-
-func GetDeliverPackagesCollector(Store *sessions.CookieStore) *DeliverPackagesCollector {
-
-	return &DeliverPackagesCollector{
-		DownloadEncryptCollector: DownloadEncryptCollector{
-			Answ: *RepoDownloadEncryptRepo.GetNewFileDownloadEncrypt(),
-		},
-		DownloadCollector: DownloadCollector{
-			Answ: *RepoDownloadNoEncrypt.GetNewNewRepoDownloadNoEncrypt(),
-		},
-		UploaderEncrypterCollector: UploaderEncrypterCollector{
-			Answ: *RepofileUploaderEncryptRepo.GetNewSetNewUploadingRepo(),
-		},
-		UploaderCollector: UploaderCollector{
-			Answ: *RepofileUploaderNoEncryptRepo.GetNewUploaderNoEncrypt(),
-		},
-		LoginCollector: LoginCollector{
-			Answ: *RepoLoginRealizations.GetNewLoginAnswers(),
-		},
-		RegisterCollector: RegisterCollector{
-			Answ: *RepoRegisterRepository.GetNewRegisterController(),
-		},
-		UrlBuilderCollector: UrlBuilderCollector{
-			Answ: *RepourlBuilder.GetNewUrlBuilder(),
-		},
-		UserCheckCollector: UserCheckCollector{
-			Answ: *RepoUsersCheckAuth.GetNewUsersChecker(),
-		},
 	}
 }
 

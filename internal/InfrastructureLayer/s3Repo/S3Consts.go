@@ -1,4 +1,4 @@
-package DomainLevel
+package s3Repo
 
 const (
 	ErrorFilNotDeleted    = "the file can't be deleted"
@@ -11,6 +11,4 @@ const (
 const (
 	ErrorUploadFile        = "the user stopped uploading"
 	ErrorStrangeUploadFile = "an unexpected error was happened during downloading"
-	ErrorFileSizeBig       = "the file's size is bigger than the default size"
-	ErrorStartUploading    = "an unexpected error happened"
 )

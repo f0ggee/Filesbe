@@ -29,21 +29,15 @@ func GetNewRegisterApplication(newRegisterDataMange NewRegisterDataMange, newReg
 	return &NewRegisterApplication{NewRegisterDataMange: newRegisterDataMange, NewRegisterCrypto: newRegisterCrypto}
 }
 
-type RegisterApplicationOutComingData struct {
-	Jwt string
-	Rft string
-	Err error
-}
-
-func (sa *NewRegisterApplication) RegisterService(de *Dto.UserDataRegister, ctx context.Context) RegisterApplicationOutComingData {
+func (sa *NewRegisterApplication) RegisterService(ctx context.Context, de *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
 
 	err := sa.CheckingDb.CheckerUser(de.Email, ctx)
 	if err != nil {
-		return RegisterApplicationOutComingData{Err: err}
+		return DomainLevel.RegisterApplicationOutComingData{Err: err}
 	}
 	HashPassword, err := sa.Generator.GenerateHash([]byte(de.Password))
 	if err != nil {
-		return RegisterApplicationOutComingData{Err: err}
+		return DomainLevel.RegisterApplicationOutComingData{Err: err}
 	}
 
 	UnitIdUser, err := sa.WriterDb.CreateUser(DomainLevel.CreateUserIncomingData{
@@ -53,7 +47,7 @@ func (sa *NewRegisterApplication) RegisterService(de *Dto.UserDataRegister, ctx 
 		Ctx:          ctx,
 	})
 	if err != nil {
-		return RegisterApplicationOutComingData{
+		return DomainLevel.RegisterApplicationOutComingData{
 			Err: err,
 		}
 	}
@@ -68,7 +62,7 @@ func (sa *NewRegisterApplication) RegisterService(de *Dto.UserDataRegister, ctx 
 	})
 	if err != nil {
 		slog.Error("RegisterFunc; a strange error happened during creating a JWT token", "ERROR", err)
-		return RegisterApplicationOutComingData{Err: err}
+		return DomainLevel.RegisterApplicationOutComingData{Err: err}
 	}
 	JwtToken, err := sa.GeneratorTokens.GenerateJWT(Dto.JwtCustomStruct{
 		UserID: UnitIdUser,
@@ -81,8 +75,8 @@ func (sa *NewRegisterApplication) RegisterService(de *Dto.UserDataRegister, ctx 
 	})
 	if err != nil {
 		slog.Error("RegisterFunc; a strange error happened during creating a RFT token", "ERROR", err)
-		return RegisterApplicationOutComingData{Err: err}
+		return DomainLevel.RegisterApplicationOutComingData{Err: err}
 	}
 
-	return RegisterApplicationOutComingData{Rft: RefreshToken, Jwt: JwtToken}
+	return DomainLevel.RegisterApplicationOutComingData{Rft: RefreshToken, Jwt: JwtToken}
 }

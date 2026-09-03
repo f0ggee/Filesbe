@@ -2,10 +2,12 @@ package main
 
 import (
 	"Kaban/cmds"
+	"Kaban/internal/Deliver/httpController"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
 	"Kaban/internal/InfrastructureLayer/s3Repo"
+	"Kaban/internal/Service/Application"
 	"log/slog"
 	"os"
 	"runtime"
@@ -105,12 +107,7 @@ func main() {
 		Auth:    AuthCollector.Validate,
 		App:     *UploaderApplicationBuilder,
 	})
-	ControllerLoginBuilder := cmds.GetControllerLoginBuilder(cmds.NewLoginIncomeData{
-		S:      &DeliverPackagesCollector.LoginCollector.Answ,
-		Sess:   &SessionCollector.Session,
-		Parses: ParserCollector.Decode,
-		App:    LoginApplicationBuilder,
-	})
+	ControllerLoginBuilder := LoginTest(DeliverPackagesCollector, SessionCollector, ParserCollector, LoginApplicationBuilder)
 	ControllerRegisterBuilder := cmds.GetControllerRegisterBuilder(cmds.RegisterBuilderIncomeData{
 		Answ:    DeliverPackagesCollector.RegisterCollector.Answ,
 		Session: &SessionCollector.Session,
@@ -133,7 +130,7 @@ func main() {
 	cmds.GetAboutProjectUrlRouter(getRequest)
 	cmds.GetDefaultRouter(router)
 	cmds.GetPhotoRequest(StaticFiles)
-	cmds.GetLoginPageRouter(postRequest)
+	cmds.GetLoginRouter(postRequest)
 	cmds.SetRobotsRouter(router)
 	cmds.GetInformationPageRouter(getRequest)
 	cmds.GetRegisterPageRouter(postRequest)
@@ -171,6 +168,16 @@ func main() {
 		return
 
 	}
+}
+
+func LoginTest(DeliverPackagesCollector *cmds.DeliverPackagesCollector, SessionCollector *cmds.SessionCollector, ParserCollector *cmds.RepoParsersCollector, LoginApplicationBuilder *Application.NewLogin) *httpController.NewLoginController {
+	ControllerLoginBuilder := cmds.GetControllerLoginBuilder(cmds.NewLoginIncomeData{
+		S:      &DeliverPackagesCollector.LoginCollector.Answ,
+		Sess:   &SessionCollector.Session,
+		Parses: ParserCollector.Decode,
+		App:    LoginApplicationBuilder,
+	})
+	return ControllerLoginBuilder
 }
 
 func Routers() (*mux.Router, *mux.Router, *mux.Router, *mux.Router) {

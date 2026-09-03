@@ -12,6 +12,12 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+const (
+	FileMaxSize         = 500000000
+	ErrorFileSizeBig    = "the file's size is bigger than the default size"
+	ErrorStartUploading = "an unexpected error happened"
+)
+
 type NewFileUploaderDataMange struct {
 	FileSettings FileControls.FileSettings
 	Encode       RepoParsers.Encode
@@ -39,10 +45,10 @@ func (sa *NewUpload) FileUploader(r *http.Request) (string, error) {
 	file, fileDetails, err := r.FormFile("file")
 	if err != nil {
 		slog.Error("FileUploader; error to get a file", "ERROR", err)
-		return "", errors.New(DomainLevel.ErrorStrangeUploadFile)
+		return "", errors.New(ErrorStartUploading)
 	}
-	if fileDetails.Size >= DomainLevel.FileMaxSize {
-		return "", errors.New(DomainLevel.ErrorFileSizeBig)
+	if fileDetails.Size >= FileMaxSize {
+		return "", errors.New(ErrorFileSizeBig)
 	}
 	defer func() {
 		err = file.Close()
@@ -78,7 +84,7 @@ func (sa *NewUpload) FileUploader(r *http.Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if err := g.Wait(); err != nil {
+	if err = g.Wait(); err != nil {
 		return "", err
 	}
 	err = sa.WriteRedis.WriteData(DomainLevel.WriteDataIncomeData{

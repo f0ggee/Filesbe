@@ -15,8 +15,8 @@ import (
 
 type Generating struct{}
 
-func GetNewGenerating() *Generating {
-	return &Generating{}
+func GetNewGenerating() Generating {
+	return Generating{}
 }
 
 func (g Generating) GenerateShortName() string {

@@ -10,7 +10,7 @@ import (
 )
 
 type Decode interface {
-	JsonDecode(any, io.ReadCloser) error
+	JsonDecode(any, io.Reader) error
 	JsonDecodeMarshall(any, []byte) error
 }
 type Encode interface {
@@ -43,14 +43,8 @@ func (p Parsing) JsonEncodeMarshall(a any) ([]byte, error) {
 	}
 	return marshal, nil
 }
-func (p Parsing) JsonDecode(a any, request io.ReadCloser) error {
-	defer func() {
-		err := request.Close()
-		if err != nil {
-			slog.Error("JsonDecode: the error happened", "ERROR", err)
-			return
-		}
-	}()
+func (p Parsing) JsonDecode(a any, request io.Reader) error {
+
 	if err := json.NewDecoder(request).Decode(&a); err != nil {
 		slog.Error("GetIncomingData: the error to parse data", "ERROR", err)
 		return errors.New(DomainLevel.ErrorParseInfo)
