@@ -11,6 +11,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const (
+	ErrorSignCheck = "the signature isn't correct"
+	ErrorPassword  = "the password isn't correct"
+)
+
 type Checking struct{}
 
 func GetNeValidating() Checking {
@@ -18,16 +23,16 @@ func GetNeValidating() Checking {
 }
 
 func (c *Checking) PasswordVerify(hashOfPassword []byte, password []byte) error {
-	err := bcrypt.CompareHashAndPassword([]byte(hashOfPassword), []byte(password))
+	err := bcrypt.CompareHashAndPassword((hashOfPassword), []byte(password))
 	if err != nil {
 		slog.Error("PasswordVerify;Error while checking the password", "Error", err.Error())
-		return errors.New(DomainLevel.ErrorPassword)
+		return errors.New(ErrorPassword)
 
 	}
 	return nil
 }
 
-func (c *Checking) CheckSignKey(data DomainLevel.CheckSignKeyIncomingData) error {
+func (c *Checking) CheckSign(data DomainLevel.CheckSignKeyIncomingData) error {
 	publicKeyMasterServer, err := x509.ParsePKCS1PublicKey(data.MasterPublicKey)
 	if err != nil {
 		slog.Error("CheckSignKey; Error marshalling public key", "ERROR", err.Error())
@@ -37,7 +42,7 @@ func (c *Checking) CheckSignKey(data DomainLevel.CheckSignKeyIncomingData) error
 	err = rsa.VerifyPKCS1v15(publicKeyMasterServer, crypto.SHA256, data.Hash, data.Sign)
 	if err != nil {
 		slog.Error("CheckSignKey; Error verifying signature", "Error", err.Error())
-		return errors.New(DomainLevel.ErrorSignCheck)
+		return errors.New(ErrorSignCheck)
 	}
 	return nil
 }

@@ -17,8 +17,7 @@ type DownloadNetwork struct {
 }
 
 type DownloadFileControl struct {
-	Transfer     FileControls.Transferring
-	FileManaging FileControls.FileSettings
+	Transfer FileControls.Transferring
 }
 type DownloadDelivery struct {
 	Reader     DomainLevel.ReadingRedis
@@ -63,7 +62,7 @@ func (sa *NewDownload) Download(name string, IncomeContext context.Context) erro
 	err = sa.Transfer.TransferToClient(FileControls.TransferIncomingData{
 		W: sa.W,
 		FileDetails: FileControls.FileDetails{
-			FileFormat:   sa.FileManaging.FindFormatOfFile(trueFileName),
+			FileFormat:   DomainLevel.GetNewFileSettings(0, trueFileName).FindFormatOfFile(),
 			TrueFileName: trueFileName,
 			FileLength:   *FileBody.ContentLength,
 		},
@@ -72,7 +71,6 @@ func (sa *NewDownload) Download(name string, IncomeContext context.Context) erro
 	if err != nil {
 		return err
 	}
-
 	err = sa.DeleterS3.DeleteFileFromS3(trueFileName, IncomeContext)
 	if err != nil {
 		return err

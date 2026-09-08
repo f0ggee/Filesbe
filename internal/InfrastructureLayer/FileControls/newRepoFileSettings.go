@@ -5,8 +5,6 @@ import (
 	"path/filepath"
 )
 
-type FileSettings struct{}
-
 func GetNewFileSettings() *FileSettings {
 	return &FileSettings{}
 }

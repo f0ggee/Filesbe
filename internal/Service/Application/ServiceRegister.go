@@ -30,7 +30,6 @@ func GetNewRegisterApplication(newRegisterDataMange NewRegisterDataMange, newReg
 }
 
 func (sa *NewRegisterApplication) RegisterService(ctx context.Context, de *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
-
 	err := sa.CheckingDb.CheckerUser(de.Email, ctx)
 	if err != nil {
 		return DomainLevel.RegisterApplicationOutComingData{Err: err}

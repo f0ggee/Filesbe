@@ -2,7 +2,7 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/FileControls"
+	"Kaban/internal/InfrastructureLayer/Crypto"
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
 	"Kaban/internal/InfrastructureLayer/s3Repo"
 	"context"
@@ -15,22 +15,21 @@ import (
 	"errors"
 	"io"
 	"log/slog"
-	"mime/multipart"
-	"net/http"
 	"time"
 
 	"github.com/awnumar/memguard"
 	"golang.org/x/sync/errgroup"
 )
 
+const ErrorUploadingEncrypt = "an unexpected error occurred while loading encryption"
+
 type NewUploadEncryptCrypto struct {
 	Generate   DomainLevel.CryptoGenerating
 	ServerKeys DomainLevel.NewServerKeys
-	Encrypt    DomainLevel.Encryption
+	Encrypt    DomainLevel.Encrypt
 }
 type NewUploadEncryptDataManage struct {
-	FileManger FileControls.FileSettings
-	Encode     RepoParsers.Encode
+	Encode RepoParsers.Encode
 }
 type NewUploadEncryptDelivery struct {
 	UploaderS3   s3Repo.S3Uploader
@@ -49,92 +48,60 @@ func GetNewUploadEncrypt(newUploadEncryptDataManage NewUploadEncryptDataManage, 
 	return &NewUploadEncrypt{NewUploadEncryptDataManage: newUploadEncryptDataManage, NewUploadEncryptCrypto: newUploadEncryptCrypto, NewUploadEncryptDelivery: newUploadEncryptDelivery}
 }
 
-func (sa *NewUploadEncrypt) UploadEncrypt(r *http.Request) (string, error) {
+type IncomeData struct {
+	File io.ReadCloser
+	Name string
+	Size int64
+	Ctx  context.Context
+}
 
-	file, sizeAndName, err := r.FormFile("file")
-	if err != nil {
-		slog.Error("UploadEncrypt; error to get a file", "ERROR", err)
-		return "", errors.New(DomainLevel.ErrorStartUploading)
+func (sa *NewUploadEncrypt) UploadEncrypt(data IncomeData) (string, error) {
+	if data.Size >= FileMaxSize {
+		return "", errors.New(ErrorFileSizeBig)
 	}
-	if sizeAndName.Size >= FileMaxSize {
-		return "", errors.New(DomainLevel.ErrorFileSizeBig)
-	}
+	reader, writer := io.Pipe()
 	defer func() {
-		err = file.Close()
-		if err != nil {
-			slog.Error("UploadEncrypt; error to close a file flow", "ERROR", err)
-			return
-		}
+		sa.closeSources(data.File, reader, writer)
 	}()
 
-	reader, writer := io.Pipe()
-	g, ctx := errgroup.WithContext(r.Context())
+	g, ctx := errgroup.WithContext(data.Ctx)
+	settings := DomainLevel.GetNewFileSettings(data.Size, data.Name)
+	BesParts, goroutine, FileExtension := sa.getFileSettings(settings)
+	shortNameFile := sa.Generate.GenerateText(4)
 
-	BesParts, goroutine := sa.FileManger.FindBestOptions(sizeAndName.Size)
+	EncryptAesKey, err := memguard.NewBufferFromReader(rand.Reader, 32)
+	if err != nil {
+		slog.Error("UploadEncrypt: error to generate random bytes", "ERROR", err)
+		return "", errors.New(ErrorUploadingEncrypt)
+	}
+	g.Go(func() error {
+		err = sa.EncryptFile(data.File, writer, EncryptAesKey.Data())
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	defer EncryptAesKey.Destroy()
 
-	chanelForAesKey := make(chan memguard.LockedBuffer)
-	sa.startEncryptFile(g, ctx, writer, file, chanelForAesKey)
-	GottenAesKey := <-chanelForAesKey
-
-	defer GottenAesKey.Destroy()
-
-	shortNameFile := sa.Generate.GenerateShortName()
-	FileExtension := sa.FileManger.FindFormatOfFile(sizeAndName.Filename)
-
-	OurKey := sa.ServerKeys.GerOurPrivateKey()
-	Public, err := x509.ParsePKCS1PrivateKey(OurKey)
+	Public, err := x509.ParsePKCS1PrivateKey(sa.ServerKeys.GerOurPrivateKey())
 	if err != nil {
 		slog.Error("UploadEncrypt; error to decode a key", "ERROR", err)
-		err := writer.CloseWithError(err)
 		if err != nil {
-			slog.Error("Error in file writing wile a key parsing ", "Error", err)
-			return "", errors.New(DomainLevel.ErrorStrangeUploadFile)
+			slog.Error("Error in File writing wile a key parsing ", "Error", err)
+			return "", errors.New(ErrorUploadingEncrypt)
 		}
-		err = reader.CloseWithError(err)
-		if err != nil {
-			slog.Error("Error in file reading wile a key parsing ", "Error", err)
-			return "", errors.New(DomainLevel.ErrorStrangeUploadFile)
-		}
-		return "", errors.New(DomainLevel.ErrorStrangeUploadFile)
+		return "", errors.New(ErrorUploadingEncrypt)
 	}
 
 	FileInfoInBytes, err := sa.Encode.JsonEncodeMarshall(DomainLevel.FileLabelsBytes{
-		FileName: sizeAndName.Filename,
-		AesKey:   hex.EncodeToString(GottenAesKey.Bytes()),
+		FileName: data.Name,
+		AesKey:   hex.EncodeToString(EncryptAesKey.Bytes()),
 	})
 	if err != nil {
 		slog.Error("UploadEncrypt; error to encode data into Json", "ERROR", err)
-		writer.CloseWithError(err)
-		return "", errors.New(DomainLevel.ErrorStrangeUploadFile)
+		return "", errors.New(ErrorUploadingEncrypt)
 	}
 
-	sa.setFileUploader(g, ctx, BesParts, goroutine, FileExtension, shortNameFile, reader)
-	if err := g.Wait(); err != nil {
-		return "", err
-	}
-
-	EncryptFileInfo, err := sa.Encrypt.EncryptFileInfo(FileInfoInBytes, Public.Public().(*rsa.PublicKey))
-	if err != nil {
-		return "", err
-	}
-
-	err = sa.RedisWriter.WriteData(DomainLevel.WriteDataIncomeData{
-		FileName: shortNameFile,
-		Info:     EncryptFileInfo,
-		Ctx:      r.Context(),
-	})
-	if err != nil {
-		err := writer.CloseWithError(err)
-		return "", err
-	}
-
-	sa.setDeleteFile(shortNameFile)
-
-	return shortNameFile, nil
-
-}
-
-func (sa *NewUploadEncrypt) setFileUploader(g *errgroup.Group, ctx context.Context, BesParts int, goroutine int, FileExtension string, shortNameFile string, reader *io.PipeReader) {
 	g.Go(func() error {
 		select {
 		case <-ctx.Done():
@@ -158,6 +125,91 @@ func (sa *NewUploadEncrypt) setFileUploader(g *errgroup.Group, ctx context.Conte
 		}
 		return nil
 	})
+	EncryptFileInfo, err := sa.Encrypt.Encrypter(DomainLevel.IncomeEncryptData{
+		Key:  x509.MarshalPKCS1PublicKey(Public.Public().(*rsa.PublicKey)),
+		Data: FileInfoInBytes,
+	})
+	if err != nil {
+		return "", err
+	}
+	err = sa.RedisWriter.WriteData(DomainLevel.WriteDataIncomeData{
+		FileName: shortNameFile,
+		Info:     EncryptFileInfo,
+		Ctx:      data.Ctx,
+	})
+	if err != nil {
+		err := writer.CloseWithError(err)
+		return "", err
+	}
+
+	sa.setDeleteFile(shortNameFile)
+
+	return shortNameFile, nil
+
+}
+
+func (sa *NewUploadEncrypt) getFileSettings(settings *DomainLevel.FileSettings) (int, int, string) {
+	BesParts, goroutine := settings.FindBestOptions()
+	FileExtension := settings.FindFormatOfFile()
+	return BesParts, goroutine, FileExtension
+}
+
+func (sa *NewUploadEncrypt) EncryptFile(file io.ReadCloser, writer io.Writer, aesKey []byte) error {
+
+	block, err := aes.NewCipher(aesKey)
+	if err != nil {
+		slog.Error("EncryptFile; error to make a new cipher block", "ERROR", err)
+		return err
+	}
+
+	nonce := make([]byte, aes.BlockSize)
+	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+		return err
+	}
+
+	stream := cipher.NewCTR(block, nonce)
+	buf := memguard.NewBuffer(32 * 1024)
+	defer buf.Destroy()
+	_, err = writer.Write(nonce)
+	if err != nil {
+		slog.Error("EncryptFile; error happened during writing", "ERROR", err)
+		return errors.New(Crypto.ErrorEncryptFile)
+	}
+	for {
+		n, err := file.Read(buf.Bytes())
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			slog.Error("EncryptFile; error to download a File", "ERROR", err.Error())
+			return errors.New(ErrorUploadingEncrypt)
+		}
+		stream.XORKeyStream(buf.Bytes()[:n], buf.Bytes()[:n])
+		_, err = writer.Write(buf.Bytes()[:n])
+		if err != nil {
+			slog.Error("EncryptFile; error to write in the stream ", "ERROR", err.Error())
+			return errors.New(DomainLevel.ErrorStrangeCrypto)
+		}
+	}
+
+	return nil
+}
+
+func (sa *NewUploadEncrypt) closeSources(data io.ReadCloser, reader *io.PipeReader, writer *io.PipeWriter) {
+	err := data.Close()
+	if err != nil {
+		slog.Error("UploadEncrypt; error to close a File flow", "ERROR", err)
+		return
+	}
+	err = reader.Close()
+	if err != nil {
+		slog.Error("UploadEncrypt: error close a reader", "ERROR", err)
+		return
+	}
+	err = writer.Close()
+	if err != nil {
+		slog.Error("UploadEncrypt: error to close a writer", "ERROR", err)
+	}
 }
 
 func (sa *NewUploadEncrypt) setDeleteFile(shortNameFile string) *time.Timer {
@@ -185,87 +237,9 @@ func (sa *NewUploadEncrypt) setDeleteFile(shortNameFile string) *time.Timer {
 			return nil
 		})
 		if err := g2.Wait(); err != nil {
-			slog.Error("DeleterS3; error to delete a file", "ERROR", err)
+			slog.Error("DeleterS3; error to delete a File", "ERROR", err)
 			return
 		}
 		return
 	})
-}
-
-func (sa *NewUploadEncrypt) startEncryptFile(g *errgroup.Group, ctx context.Context, writer *io.PipeWriter, file multipart.File, chanelForAesKey chan memguard.LockedBuffer) {
-	g.Go(func() error {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		default:
-			defer func(writer *io.PipeWriter) {
-				err := writer.Close()
-				if err != nil {
-					slog.Error("can't close a file", "err", err)
-					return
-				}
-			}(writer)
-			err := sa.EncryptFile(file, writer, chanelForAesKey)
-			if err != nil {
-				err := writer.CloseWithError(err)
-				if err != nil {
-					slog.Error("Error closing a file during encryption ", "Error", err)
-					return err
-				}
-				return err
-			}
-			return nil
-		}
-	})
-}
-
-func (sa *NewUploadEncrypt) EncryptFile(file multipart.File, writer io.Writer, channelForBytes chan memguard.LockedBuffer) error {
-	aesKey, err := memguard.NewBufferFromReader(rand.Reader, 32)
-	if err != nil {
-		slog.Error("EncryptFile; error happened during generating the aes Key", "ERROR", err)
-		return errors.New(DomainLevel.ErrorStrangeCrypto)
-	}
-	defer aesKey.Destroy()
-	go func() {
-		channelForBytes <- *aesKey
-		return
-	}()
-
-	block, err := aes.NewCipher(aesKey.Bytes())
-	if err != nil {
-		slog.Error("EncryptFile; error to make a new cipher block", "ERROR", err)
-		return err
-	}
-
-	nonce := make([]byte, aes.BlockSize)
-	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-		return err
-	}
-
-	stream := cipher.NewCTR(block, nonce)
-	buf := memguard.NewBuffer(32 * 1024)
-	defer buf.Destroy()
-	_, err = writer.Write(nonce)
-	if err != nil {
-		slog.Error("EncryptFile; error happened during writing", "ERROR", err)
-		return errors.New(DomainLevel.ErrorStartUploading)
-	}
-	for {
-		n, err := file.Read(buf.Bytes())
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			slog.Error("EncryptFile; error to download a file", "ERROR", err.Error())
-			return errors.New(DomainLevel.ErrorStrangeUploadFile)
-		}
-		stream.XORKeyStream(buf.Bytes()[:n], buf.Bytes()[:n])
-		_, err = writer.Write(buf.Bytes()[:n])
-		if err != nil {
-			slog.Error("EncryptFile; error to write in the stream ", "ERROR", err.Error())
-			return errors.New(DomainLevel.ErrorStrangeCrypto)
-		}
-	}
-
-	return nil
 }

@@ -4,84 +4,29 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 06.08.26&#10;an Initialization">
-      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownload.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownloadEncrypt.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/const.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/deliveryUrlUploader.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/response.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/AuthTokensConst.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/ProtocolManage/ProcolsConst.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RedisConst.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoSessionHandle/constSeession.go" afterDir="false" />
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 03.09.26&#10;Many changes to a project structure">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Builder.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Builder.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Collectors.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Collectors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Routers.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Routers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/RoutersApi.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/RoutersApi.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerDownload.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerDownloadEncrypt.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerFileUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUpload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckerBots.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckerBots.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/deliverCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/deliverCheckUsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/deliverRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/deliverRegister.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/deliveryUrlUploader.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/DeliverErrors.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/DeliverRepo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/DeliverRepo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/FileInfoErrors.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/GrpcErrors.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/PrivatesKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/ServerKeys.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/ProtcolErrors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/ProtcolErrors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/RedisErrors.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/S3Errors.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/SessionError.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoSessionHandle/SessionError.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUpload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/const.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/const.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/Crypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/Crypto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/CryptoErrors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/CryptoErrors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/ProtcolErrors.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/DomainLevel/newFileSettings.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/newFileSettings.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/JsonLogin_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/JsonLogin_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/JsonRegister_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Dto/JsonRegister_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/SaveName.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/StructFile.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/TokenLists.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/RepoGenerate.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/RepoGenerate.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/RepoValidate.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/RepoValidate.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/GettingNewKey_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/GettingNewKey_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoDecryption.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoDecryption.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoGenerating.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoGenerating.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoValidate.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoValidate.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoDownloadEncryptRepo/DownloadEncryptRepo.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoDownloadNoEncrypt/DownloadNoEncryptRepo.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoLoginRealizations/LoginRepo.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoRegisterRepository/registerRepo.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepoUsersCheckAuth/repoUsersCheck.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderEncryptRepo/RepoUploaderEncrypt.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepofileUploaderNoEncryptRepo/repoUploaderNoEncrypt.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DeliverPackages/RepourlBuilder/repoUrlBuilder.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileControls/newRepoFileSettings.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/FileControls/newRepoFileSettings.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/RepoRequestsHandling.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/RepoRequestsHandling.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/repoSending.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/repoSending.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/ProtocolManage/ExchangeInitializerRepo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/ProtocolManage/ExchangeInitializerRepo.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/ProtocolManage/ExchangeRepo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/ProtocolManage/ExchangeRepo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoReadingRedis.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoReadingRedis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoWriter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoWriter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/repoDeletingRedis.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/repoDeletingRedis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoParsers/RealizationParsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoParsers/RealizationParsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoParsers/RealizationParsers_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoSessionHandle/repoUserSessions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoSessionHandle/repoUserSessions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/ConnectionToS3ServerV1.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/RepoS3Downloader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/RepoS3Downloader.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/RepoUploader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/RepoUploader.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/S3Variables.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/S3Variables.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/repoDeleter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/repoDeleter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/s3Complete.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo/S3Consts.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceLogin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceRegister.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUpload.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Maine.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Maine.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Register.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/tests/ServiceSwapKeysFirst_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/tests/ServiceUploadEncrypt_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -261,8 +206,28 @@
         <option value="GoApplicationRunConfiguration" />
       </set>
     </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="GoApplicationRunConfiguration">
+          <value>
+            <map>
+              <entry key="go build scratch.go" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
-  <component name="RunManager" selected="Go Test.TestNewRegister_Register/test3 in Kaban/internal/Deliver/httpController">
+  <component name="RunManager" selected="Go Build.go build scratch.go">
+    <configuration name="go build scratch.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="Kaban" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$APPLICATION_CONFIG_DIR$/scratches/scratch.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="TestNewRegister_Register in Kaban/internal/Deliver/httpController" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
       <working_directory value="$PROJECT_DIR$/internal/Deliver/httpController" />
@@ -311,18 +276,6 @@
       <pattern value="^\QTestNewRegister_Register\E$/^\Qtest3\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestParsing_JsonDecode/test1 in Kaban/internal/InfrastructureLayer/RepoParsers" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/RepoParsers" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="Kaban/internal/InfrastructureLayer/RepoParsers" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestParsing_JsonDecode\E$/^\Qtest1\E$" />
-      <method v="2" />
-    </configuration>
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
       <deployment type="dockerfile">
         <settings />
@@ -331,11 +284,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build scratch.go" />
         <item itemvalue="Go Test.TestNewRegister_Register/test3 in Kaban/internal/Deliver/httpController" />
         <item itemvalue="Go Test.TestNewRegister_Register/test2 in Kaban/internal/Deliver/httpController" />
         <item itemvalue="Go Test.TestNewRegister_Register/test1 in Kaban/internal/Deliver/httpController" />
         <item itemvalue="Go Test.TestNewRegister_Register in Kaban/internal/Deliver/httpController" />
-        <item itemvalue="Go Test.TestParsing_JsonDecode/test1 in Kaban/internal/InfrastructureLayer/RepoParsers" />
       </list>
     </recent_temporary>
   </component>
@@ -376,7 +329,8 @@
     <MESSAGE value="WP 16.07.26&#10;Main is being edited by builders function" />
     <MESSAGE value="WP 16.07.26&#10;Main has been completed" />
     <MESSAGE value="WP 16.07.26&#10;S3 concoctions has been moved to another folder" />
-    <option name="LAST_COMMIT_MESSAGE" value="WP 16.07.26&#10;S3 concoctions has been moved to another folder" />
+    <MESSAGE value="WP 03.09.26&#10;Many changes to a project structure" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 03.09.26&#10;Many changes to a project structure" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="VgoProject">
@@ -427,7 +381,7 @@
         </line-breakpoint>
         <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/DomainLevel/Crypto.go</url>
-          <line>22</line>
+          <line>30</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
@@ -444,6 +398,11 @@
           <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin.go</url>
           <line>97</line>
           <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$APPLICATION_CONFIG_DIR$/scratches/scratch.go</url>
+          <line>7</line>
+          <option name="timeStamp" value="35" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

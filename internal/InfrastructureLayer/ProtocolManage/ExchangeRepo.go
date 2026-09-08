@@ -7,7 +7,6 @@ import (
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
 	"context"
 	"crypto/sha256"
-	"errors"
 	"time"
 
 	"github.com/awnumar/memguard"
@@ -21,7 +20,7 @@ type NewExchangerParsers struct {
 	Decoder RepoParsers.Decode
 }
 type NewExchangerCrypto struct {
-	Decrypter  DomainLevel.Decryption
+	Decrypter  DomainLevel.Decrypter
 	Validation DomainLevel.CryptoValidating
 }
 type NewExchangerKeys struct {
@@ -61,23 +60,27 @@ func (n NewExchanger) setCheckedData(bytes []byte) *NewExchangerPacketDetailsOut
 	if err != nil {
 		return &NewExchangerPacketDetailsOutData{Error: err}
 	}
-
-	AesKeyDecrypted1, err2 := n.Decrypter.DecryptAesKey(n.ServerKeys.GerOurPrivateKey(), grpcPacket.AesKey)
+	AesKeyDecrypted1, err2 := n.Decrypter.DecryptData(DomainLevel.IncomeData{
+		Key:  n.ServerKeys.GerOurPrivateKey(),
+		Data: grpcPacket.AesKey,
+	})
 	if err2 != nil {
 		return &NewExchangerPacketDetailsOutData{Error: err2}
 	}
-	NewRsaKey := n.Decrypter.DecryptPacket(AesKeyDecrypted1, grpcPacket.PlainText)
-	if NewRsaKey == nil {
-		return &NewExchangerPacketDetailsOutData{Error: errors.New(DomainLevel.ErrorDecryptKeys)}
-	}
-	defer NewRsaKey.Destroy()
+	NewRsaKeyZero, err := n.Decrypter.DecryptData(DomainLevel.IncomeData{
+		Key:  AesKeyDecrypted1,
+		Data: grpcPacket.PlainText,
+	})
+	NewRsaKey := memguard.NewBuffer(len(NewRsaKeyZero))
+	NewRsaKey.Copy(NewRsaKeyZero)
+	memguard.WipeBytes(NewRsaKeyZero)
 
 	hashSha := sha256.New()
 	hashSha.Write(NewRsaKey.Bytes())
 
 	getMasterPublicKey := n.ServerKeys.GetMasterPublicKey()
 
-	err = n.Validation.CheckSignKey(DomainLevel.CheckSignKeyIncomingData{
+	err = n.Validation.CheckSign(DomainLevel.CheckSignKeyIncomingData{
 		Sign:            grpcPacket.Signature,
 		Hash:            hashSha.Sum(nil),
 		MasterPublicKey: getMasterPublicKey,

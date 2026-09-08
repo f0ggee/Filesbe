@@ -66,6 +66,7 @@ type OutComingUrlData struct {
 const (
 	ErrorFileNameEmpty   = "the file's filed is empty"
 	ErrorCantGetFileName = "the file's name isn't set"
+	ErrorFile            = "can't get a file"
 )
 const (
 	MethodNotAllowed = "the method isn't allowed"

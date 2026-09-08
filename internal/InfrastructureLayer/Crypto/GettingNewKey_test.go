@@ -17,7 +17,7 @@ func CheckSingTest(h Checking, Databyte, Hash, Key []byte) error {
 		Hash:            Hash,
 		MasterPublicKey: Key,
 	}
-	err := h.CheckSignKey(data)
+	err := h.CheckSign(data)
 	if err != nil {
 		return err
 	}

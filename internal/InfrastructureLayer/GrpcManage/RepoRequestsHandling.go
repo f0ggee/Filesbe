@@ -35,7 +35,7 @@ type NewValidating struct {
 	CryptoValidate DomainLevel.CryptoValidating
 }
 type NewDecrypt struct {
-	CryptoDecrypt DomainLevel.Decryption
+	CryptoDecrypt DomainLevel.Decrypter
 }
 type NewEncrypt struct {
 	CryptoEncrypt DomainLevel.Encryption
@@ -58,16 +58,24 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 		slog.Error("Error while unmarshalling Packet", "Error", err.Error())
 		return 0, err
 	}
-
-	DecryptedAesKey, err := h.CryptoDecrypt.DecryptAesKey(h.ServerKeys.GerOurPrivateKey(), PacketLook.AesKeyData)
+	DecryptedAesKey, err := h.CryptoDecrypt.DecryptData(DomainLevel.IncomeData{
+		Key:  h.ServerKeys.GerOurPrivateKey(),
+		Data: PacketLook.AesKeyData,
+	})
 	if err != nil {
 		return 0, err
 	}
 
-	PacketData := h.CryptoDecrypt.DecryptPacket(DecryptedAesKey, PacketLook.CipherData)
-	if PacketData == nil {
-		return 0, errors.New("NewRsaKey error")
+	PacketDataC, err := h.CryptoDecrypt.DecryptData(DomainLevel.IncomeData{
+		Key:  DecryptedAesKey,
+		Data: PacketLook.CipherData,
+	})
+	if err != nil {
+		return 0, err
 	}
+	PacketData := memguard.NewBuffer(len(PacketDataC))
+	PacketData.Copy(PacketDataC)
+	memguard.WipeBytes(PacketDataC)
 	defer PacketData.Destroy()
 
 	PacketInfo := &Dto.GrpcIncomingPacketDetails{
@@ -94,7 +102,7 @@ func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration,
 
 	Hash := sha256.New()
 	Hash.Write(NewSavingRsa.Bytes())
-	err = h.CryptoValidate.CheckSignKey(DomainLevel.CheckSignKeyIncomingData{
+	err = h.CryptoValidate.CheckSign(DomainLevel.CheckSignKeyIncomingData{
 		Sign:            PacketInfo.Sign,
 		Hash:            Hash.Sum(nil),
 		MasterPublicKey: h.ServerKeys.GetMasterPublicKey(),

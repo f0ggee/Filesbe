@@ -3,8 +3,10 @@ package httpController
 import (
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
+	"Kaban/internal/Service/Application"
 	"errors"
 	"log/slog"
+	"mime/multipart"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -22,7 +24,7 @@ type FileUploaderSessions struct {
 type NewFileUploader struct {
 	FileUploaderNet
 	FileUploaderSessions
-	FileUploader func(r *http.Request) (string, error)
+	FileUploader func(Application.FileUploaderIncomeData) (string, error)
 	UrlData      func(r *mux.Router, fileName string) (string, error)
 }
 
@@ -61,8 +63,24 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 	if outData.IsNewJwtCreated {
 		d.Session.SetNewSession(RepoSessionHandle.IncomingSessionData{Jwt: outData.NewJwt})
 	}
-
-	fileName, err := d.FileUploader(d.R)
+	file, fileDetails, err := d.getFileData()
+	if err != nil {
+		SetAnswer(InputAnswerData{
+			W:    d.W,
+			code: http.StatusBadRequest,
+			data: AnswerUploaderFileNoEncrypt{
+				StatusOperation: Break,
+				Error:           ErrorCantGetFileName,
+			},
+		})
+		return
+	}
+	fileName, err := d.FileUploader(Application.FileUploaderIncomeData{
+		File: file,
+		Name: fileDetails.Filename,
+		Size: fileDetails.Size,
+		Ctx:  d.R.Context(),
+	})
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    d.W,
@@ -96,6 +114,15 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 		},
 	})
 	return
+}
+
+func (d *NewFileUploader) getFileData() (multipart.File, *multipart.FileHeader, error) {
+	file, fileDetails, err := d.R.FormFile("File")
+	if err != nil {
+		slog.Error("FileUploader; error to get a File", "ERROR", err)
+		return nil, nil, errors.New(ErrorCantGetFileName)
+	}
+	return file, fileDetails, nil
 }
 
 func getUploadData(r *mux.Router, fileName string) (string, error) {

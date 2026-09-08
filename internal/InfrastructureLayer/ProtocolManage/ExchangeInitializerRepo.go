@@ -20,8 +20,8 @@ import (
 
 type NewExchangeInitializerCrypto struct {
 	CryptoGenerating DomainLevel.CryptoGenerating
-	CryptoEncrypt    DomainLevel.Encryption
-	CryptoDecrypt    DomainLevel.Decryption
+	CryptoEncrypt    DomainLevel.Encrypt
+	CryptoDecrypt    DomainLevel.Decrypter
 	CryptoValidate   DomainLevel.CryptoValidating
 }
 
@@ -146,8 +146,10 @@ func (n *NewExchangeInitializer) getPreparingData() ([]byte, error) {
 				slog.Error("Error while parsing Master Server's public masterPublicKey", "err", err)
 				return err1
 			}
-
-			EncryptedDataAesKey1, err2 := n.CryptoEncrypt.EncryptFileInfo(AesKey.Data(), Key)
+			EncryptedDataAesKey1, err2 := n.CryptoEncrypt.Encrypter(DomainLevel.IncomeEncryptData{
+				Key:  key,
+				Data: AesKey.Data(),
+			})
 			if err2 != nil {
 				return err1
 			}
@@ -181,13 +183,20 @@ func (n NewExchangeInitializer) getPacketDetails(bytes []byte) *PacketDetailsOut
 	if err != nil {
 		return &PacketDetailsOutData{Error: err}
 	}
-
-	DecryptedAesKey, err := n.CryptoDecrypt.DecryptAesKey(n.ServerKeys.GerOurPrivateKey(), PacketLook.AesKeyData)
+	DecryptedAesKey, err := n.CryptoDecrypt.DecryptData(DomainLevel.IncomeData{
+		Key:  n.ServerKeys.GerOurPrivateKey(),
+		Data: PacketLook.AesKeyData,
+	})
 	if err != nil {
 		return &PacketDetailsOutData{Error: err}
 	}
-
-	PacketData := n.CryptoDecrypt.DecryptPacket(DecryptedAesKey, PacketLook.CipherData)
+	decrytedData, err := n.CryptoDecrypt.DecryptData(DomainLevel.IncomeData{
+		Key:  DecryptedAesKey,
+		Data: PacketLook.CipherData,
+	})
+	PacketData := memguard.NewBuffer(len(decrytedData))
+	PacketData.Copy(decrytedData)
+	memguard.WipeBytes(decrytedData)
 	if PacketData == nil {
 		return &PacketDetailsOutData{Error: err}
 	}

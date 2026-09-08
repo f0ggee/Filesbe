@@ -18,6 +18,11 @@ import (
 	"github.com/awnumar/memguard"
 )
 
+const (
+	ErrorDecryptFileInfo = "an error happened during decrypting info"
+	ErrorDecryptKeys     = "data can't be decrypted because of an unexpected error"
+)
+
 type Decryption struct {
 	RepoParsers.Decode
 }
@@ -42,7 +47,6 @@ func (d Decryption) DecryptPacket(aesKey []byte, plainText []byte) *memguard.Loc
 		return nil
 	}
 	packetData, err := gcm.Open(nil, plainText[:gcm.NonceSize()], plainText[gcm.NonceSize():], nil)
-
 	if err != nil {
 		slog.Error("Func DecryptPacket: Error decrypt packet", "Error", err.Error())
 		return nil
@@ -56,7 +60,7 @@ func (d Decryption) DecryptAesKey(RsaKey []byte, aesKey []byte) ([]byte, error) 
 	RsaKeyPrivate, err := x509.ParsePKCS1PrivateKey(RsaKey)
 	if err != nil {
 		slog.Error("DecryptAesKey;Error Parsing RsaKey", "Func decrypt error", err)
-		return nil, errors.New(DomainLevel.ErrorDecryptKeys)
+		return nil, errors.New(ErrorDecryptKeys)
 	}
 	return rsa.DecryptOAEP(sha256.New(), rand.Reader, RsaKeyPrivate, aesKey, nil)
 }
@@ -65,7 +69,7 @@ func (d Decryption) DecryptFileInfo(FileInfo []byte, NewRsaKey []byte, OldRsaKey
 	keyRsa, err := x509.ParsePKCS1PrivateKey(NewRsaKey)
 	if err != nil {
 		slog.Error("Func DecryptFileInfo ParsePKCS1PrivateKey fail", "ERROR", err)
-		return nil, "", errors.New(DomainLevel.ErrorDecryptFileInfo)
+		return nil, "", errors.New(ErrorDecryptFileInfo)
 	}
 	decryptFileInfo, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, keyRsa, FileInfo, nil)
 	switch {
@@ -78,7 +82,7 @@ func (d Decryption) DecryptFileInfo(FileInfo []byte, NewRsaKey []byte, OldRsaKey
 		decryptFileInfo, err = rsa.DecryptOAEP(sha256.New(), rand.Reader, keyRsaOld, FileInfo, nil)
 		if err != nil {
 			slog.Error("DecryptFileIno;error decrypt file info", "ERROR", err.Error())
-			return nil, "", errors.New(DomainLevel.ErrorDecryptFileInfo)
+			return nil, "", errors.New(ErrorDecryptFileInfo)
 		}
 
 	}
@@ -98,4 +102,31 @@ func (d Decryption) DecryptFileInfo(FileInfo []byte, NewRsaKey []byte, OldRsaKey
 	}
 
 	return aesKeyIntoByte, sa.FileName, nil
+}
+
+type AESDecrypt struct{}
+
+func (A AESDecrypt) DecryptData(data DomainLevel.IncomeData) ([]byte, error) {
+	aesBlock, err := aes.NewCipher(data.Key)
+	if err != nil {
+		slog.Error("Func DecryptPacket:Error create new aes block", "Error", err.Error())
+		return nil, errors.New(ErrorDecryptFileInfo)
+	}
+	gcm, err := cipher.NewGCM(aesBlock)
+	if err != nil {
+		slog.Error("Func DecryptPacket: Error create new gcm", "Error", err.Error())
+		return nil, errors.New(ErrorDecryptFileInfo)
+	}
+	return gcm.Open(nil, data.Data[:gcm.NonceSize()], data.Data[gcm.NonceSize():], nil)
+}
+
+type RsaDecryptOAEP struct{}
+
+func (r RsaDecryptOAEP) DecryptData(data DomainLevel.IncomeData) ([]byte, error) {
+	RsaKeyPrivate, err := x509.ParsePKCS1PrivateKey(data.Key)
+	if err != nil {
+		slog.Error("DecryptAesKey;Error Parsing RsaKey", "Func decrypt error", err)
+		return nil, errors.New(ErrorDecryptKeys)
+	}
+	return rsa.DecryptOAEP(sha256.New(), rand.Reader, RsaKeyPrivate, data.Data, nil)
 }

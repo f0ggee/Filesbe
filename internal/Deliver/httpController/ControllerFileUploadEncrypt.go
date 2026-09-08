@@ -3,8 +3,10 @@ package httpController
 import (
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
+	"Kaban/internal/Service/Application"
 	"errors"
 	"log/slog"
+	"mime/multipart"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -26,7 +28,7 @@ type NewUploaderEncrypt struct {
 	NewFileUploaderEncryptNetwork
 	NewFileUploaderEncryptSession
 	NewFileUploaderEncryptDetails
-	UploadEncrypt func(r *http.Request) (string, error)
+	UploadEncrypt func(data Application.IncomeData) (string, error)
 	UrlUploadData func(r *mux.Router, fileName string) (string, error)
 }
 
@@ -67,8 +69,21 @@ func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 		})
 		return
 	}
-
-	fileName, err := S.UploadEncrypt(S.R)
+	file, sizeAndName, err := S.getFile()
+	if err != nil {
+		SetAnswer(InputAnswerData{
+			W:    S.W,
+			code: http.StatusBadRequest,
+			data: errors.New(ErrorFile),
+		})
+		return
+	}
+	fileName, err := S.UploadEncrypt(Application.IncomeData{
+		File: file,
+		Name: sizeAndName.Filename,
+		Size: sizeAndName.Size,
+		Ctx:  S.R.Context(),
+	})
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    S.W,
@@ -93,7 +108,6 @@ func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 		})
 		return
 	}
-
 	SetAnswer(InputAnswerData{
 		W:    S.W,
 		code: http.StatusOK,
@@ -103,6 +117,15 @@ func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 		},
 	})
 	return
+}
+
+func (S *NewUploaderEncrypt) getFile() (multipart.File, *multipart.FileHeader, error) {
+	file, sizeAndName, err := S.R.FormFile("file")
+	if err != nil {
+		slog.Error("UploadEncrypt; error to get a file", "ERROR", err)
+		return nil, nil, err
+	}
+	return file, sizeAndName, nil
 }
 
 func getUploadEncryptData(r *mux.Router, fileName string) (string, error) {
