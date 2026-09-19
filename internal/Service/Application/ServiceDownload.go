@@ -3,13 +3,14 @@ package Application
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/FileControls"
-	"Kaban/internal/InfrastructureLayer/s3Repo"
+	s3Repo2 "Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
 	"context"
 	"encoding/json"
 	"errors"
-	"io"
 	"log/slog"
 	"net/http"
+
+	"golang.org/x/sync/errgroup"
 )
 
 type DownloadNetwork struct {
@@ -17,12 +18,15 @@ type DownloadNetwork struct {
 }
 
 type DownloadFileControl struct {
-	Transfer FileControls.Transferring
+	Transfer   FileControls.Transferring
+	Downloader DomainLevel.MakerDownloader
+	Uploader   DomainLevel.MakerUploader
+	Deleter    DomainLevel.MakerDeleter
 }
 type DownloadDelivery struct {
 	Reader     DomainLevel.ReadingRedis
-	DeleterS3  s3Repo.DeleterS3
-	S3Download s3Repo.DownloadingS3
+	DeleterS3  s3Repo2.DeleterS3
+	S3Download s3Repo2.DownloadingS3
 }
 type NewDownload struct {
 	DownloadDelivery
@@ -38,40 +42,43 @@ func (sa *NewDownload) Download(name string, IncomeContext context.Context) erro
 	if err != nil {
 		return err
 	}
+	g, _ := errgroup.WithContext(IncomeContext)
 
 	trueFileName := ""
 	err = json.Unmarshal(fileNameInBytes, &trueFileName)
 	if err != nil {
-		slog.Error("Unmarshal err", "Error", err.Error())
+		slog.Error("Application Downloader: error to decode data", "ERROR", err.Error())
 		return errors.New(DomainLevel.ErrorParseInfo)
 	}
 
-	FileBody, err := sa.S3Download.GetDownload(trueFileName, IncomeContext)
+	downloaderObject, err := sa.Downloader.SetName(name).Make(IncomeContext)
 	if err != nil {
 		return err
 	}
+	uploaded, err := sa.Uploader.SetName(name).SetSize(sa.Downloader.GetFileSize()).SetAddWriter(sa.W).Make(IncomeContext)
+	if err != nil {
+		return err
+	}
+	defer uploaded.CloseSource()
 
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
+	g.Go(func() error {
+		dow, err := downloaderObject.Downloader()
 		if err != nil {
-			slog.Error("Download; error wasn't")
-			return
+			return err
 		}
-	}(FileBody.Body)
-
-	err = sa.Transfer.TransferToClient(FileControls.TransferIncomingData{
-		W: sa.W,
-		FileDetails: FileControls.FileDetails{
-			FileFormat:   DomainLevel.GetNewFileSettings(0, trueFileName).FindFormatOfFile(),
-			TrueFileName: trueFileName,
-			FileLength:   *FileBody.ContentLength,
-		},
-		FileBody: FileBody.Body,
+		err = uploaded.Uploader(dow)
+		return err
 	})
+
+	if err = g.Wait(); err != nil {
+		return err
+	}
+
+	deletedObj, err := sa.Deleter.SetName(trueFileName).Make(IncomeContext)
 	if err != nil {
 		return err
 	}
-	err = sa.DeleterS3.DeleteFileFromS3(trueFileName, IncomeContext)
+	err = deletedObj.Deleter()
 	if err != nil {
 		return err
 	}

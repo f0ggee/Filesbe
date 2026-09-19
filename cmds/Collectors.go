@@ -6,38 +6,37 @@ import (
 	"Kaban/internal/InfrastructureLayer/Crypto"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	"Kaban/internal/InfrastructureLayer/FileControls"
+	s3Repo2 "Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
 	"Kaban/internal/InfrastructureLayer/GrpcManage"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
 	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
-	"Kaban/internal/InfrastructureLayer/s3Repo"
 	"os"
 
 	"github.com/awnumar/memguard"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	ses "github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gorilla/sessions"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 )
 
 type S3Collector struct {
-	Deleter    s3Repo.DeleterS3
-	Uploader   s3Repo.S3Uploader
-	S3Download s3Repo.DownloadingS3
+	Deleter    s3Repo2.DeleterS3
+	Uploader   s3Repo2.S3Uploader
+	S3Download s3Repo2.DownloadingS3
 }
 type S3CollectorAnother interface {
-	s3Repo.DeleterS3
-	s3Repo.S3Uploader
-	s3Repo.DownloadingS3
+	s3Repo2.DeleterS3
+	s3Repo2.S3Uploader
+	s3Repo2.DownloadingS3
 }
 
 func GetS3Collector(cfg *s3.Client, OldS3Connect *ses.Session) *S3Collector {
-	s3Info := s3Repo.GetNewVariables(os.Getenv("Bucket"), cfg, OldS3Connect)
-	S3Upload := s3Repo.GetNewUploading(*s3Info)
-	S3Download := s3Repo.GetNewS3Download(*s3Info)
-	S3Deleter := s3Repo.GetNewDeleterS3(*s3Info)
+	s3Info := s3Repo2.GetNewVariables(os.Getenv("Bucket"), cfg, OldS3Connect)
+	S3Upload := s3Repo2.GetNewUploading(*s3Info)
+	S3Download := s3Repo2.GetNewS3Download(*s3Info)
+	S3Deleter := s3Repo2.GetNewDeleterS3(*s3Info)
 	return &S3Collector{
 		Deleter:    S3Deleter,
 		Uploader:   S3Upload,

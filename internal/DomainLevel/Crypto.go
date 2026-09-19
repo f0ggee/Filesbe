@@ -2,7 +2,6 @@ package DomainLevel
 
 import (
 	"crypto/rsa"
-	"io"
 
 	"github.com/awnumar/memguard"
 )
@@ -50,14 +49,9 @@ type Crypto interface {
 	Encrypter([]byte) ([]byte, error)
 	Decrypt([]byte) ([]byte, error)
 }
-type StreamCrypto interface {
-	EncryptData(io.Reader) ([]byte, error)
-	DecryptData(io.Reader) error
+type CryptoMaker interface {
+	MakeCrypto([]byte) (Crypto, error)
 }
-
-type MakeCrypto interface {
-	InitializerCrypto([]byte) Crypto
-}
-type MakeStreamCrypto interface {
-	InitializerStreamCrypto([]byte) StreamCrypto
+type CryptoMakerSpec interface {
+	MakeCrypto([]byte, int) (Crypto, error)
 }

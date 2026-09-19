@@ -7,8 +7,6 @@ import (
 	"log/slog"
 
 	NewVersion "github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 type S3Download struct {

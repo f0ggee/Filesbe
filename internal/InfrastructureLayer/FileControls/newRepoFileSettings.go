@@ -5,18 +5,14 @@ import (
 	"path/filepath"
 )
 
-func GetNewFileSettings() *FileSettings {
-	return &FileSettings{}
-}
-
-func (p FileSettings) FindFormatOfFile(s string) string {
+func FindFormatOfFile(s string) string {
 	fileExtension := filepath.Ext(s)
 
 	FileExtension := mime.TypeByExtension(fileExtension)
 	return FileExtension
 }
 
-func (p FileSettings) FindBestOptions(size int64) (int, int) {
+func FindBestOptions(size int64) (int, int) {
 	switch {
 	case size >= 100*1024*1024:
 

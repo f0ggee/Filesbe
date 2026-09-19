@@ -2,8 +2,8 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
-	"Kaban/internal/InfrastructureLayer/s3Repo"
 	"context"
 	"errors"
 	"io"
@@ -27,6 +27,7 @@ type NewFileUploaderCrypto struct {
 
 type NewFileUploaderDelivery struct {
 	UploadS3   s3Repo.S3Uploader
+	Uploader   DomainLevel.MakerUploader
 	WriteRedis DomainLevel.WritingRedis
 }
 type NewUpload struct {
@@ -59,23 +60,21 @@ func (sa *NewUpload) FileUploader(r FileUploaderIncomeData) (string, error) {
 		}
 	}()
 	shortNameFile := sa.Generator.GenerateText(4)
-	settings := DomainLevel.GetNewFileSettings(r.Size, r.Name)
-	Parts, goroutines := settings.FindBestOptions()
-	fileFormat := settings.FindFormatOfFile()
 
 	g.Go(func() error {
-		err2 := sa.UploadS3.UploadFile(s3Repo.UploadFileIncomingData{
-			Parts:      Parts,
-			Goroutines: goroutines,
-			Ctx:        ctx,
-			FileDetails: s3Repo.FileDetails{
-				FileFormat: fileFormat,
-				FileName:   r.Name,
-				FileBody:   s3Repo.TypeUploading{Normal: r.File},
-			},
-		})
-		if err2 != nil {
-			return err2
+		uploader, err := sa.Uploader.SetName(r.Name).SetSize(r.Size).Make(ctx)
+		if err != nil {
+			return err
+		}
+		defer func(uploader DomainLevel.Upload) {
+			err := uploader.CloseSource()
+			if err != nil {
+				return
+			}
+		}(uploader)
+		err = uploader.Uploader(r.File)
+		if err != nil {
+			return err
 		}
 		return nil
 	})

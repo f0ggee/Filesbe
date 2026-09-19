@@ -9,94 +9,159 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"errors"
-	"fmt"
 	"io"
 	"log/slog"
-	"strings"
 )
 
-const ErrorEncryptFile = "can't encrypt a file"
+const ErrorStartEncryption = "can't start encrypting"
+const ErrorAuthFail = "the encryption key isn't correct"
+const ErrorInvalidData = "the data isn't correct "
+const ErrorInvalidMode = "the crypto mode isn't correct"
 
-type Encrypter struct {
+type RsaEncryption struct {
+	privKey           *rsa.PrivateKey
+	pubKey            *rsa.PublicKey
+	isPrivKeyProvided bool
 }
 
-func GetNewEncrypter() Encrypter {
-	return Encrypter{}
-}
-
-func (*Encrypter) EncryptFileInfo(FileInfoData []byte, Key *rsa.PublicKey) ([]byte, error) {
-	encryptAesKey, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, Key, FileInfoData, nil)
-	switch {
-	case strings.Contains(fmt.Sprint(err), "message too long for RSA key size"):
-		return nil, errors.New(DomainLevel.ErrorFileNameEncrypt)
-
-	case err != nil:
-		slog.Error("EncryptFileInfo; error to encrypt", "ERROR", err)
-		return nil, errors.New(DomainLevel.ErrorStrangeCrypto)
-
+func (r RsaEncryption) Encrypter(bytes []byte) ([]byte, error) {
+	if r.isPrivKeyProvided {
+		slog.Error("Rsa Encrypter: decrypter mode was provided", "Mode", r.isPrivKeyProvided)
+		return nil, errors.New(ErrorInvalidMode)
 	}
-	return encryptAesKey, nil
+	return rsa.EncryptOAEP(sha256.New(), rand.Reader, r.pubKey, bytes, nil)
 }
-func (e *Encrypter) EncryptAes(AesKey []byte, Data []byte) ([]byte, error) {
-	loggers := slog.With("EncryptAes")
-	AesCipher, err := aes.NewCipher(AesKey)
+func (r RsaEncryption) Decrypt(bytes []byte) ([]byte, error) {
+	if !r.isPrivKeyProvided {
+		slog.Error("Rsa Encrypter: encrypter mode was provided", "Mode", r.isPrivKeyProvided)
+		return nil, errors.New(ErrorInvalidMode)
+	}
+	return rsa.DecryptOAEP(sha256.New(), rand.Reader, r.privKey, bytes, nil)
+}
+
+func (r RsaEncryption) MakeCrypto(bytes []byte, spectra int) (DomainLevel.Crypto, error) {
+	if spectra == 1 {
+		parsedKey, err := x509.ParsePKCS1PublicKey(bytes)
+		if err != nil {
+			slog.Error("MakerCrypto: invalid data provided", "ERROR", err)
+			return nil, errors.New(ErrorInvalidData)
+		}
+		return RsaEncryption{
+			privKey:           nil,
+			pubKey:            parsedKey,
+			isPrivKeyProvided: false,
+		}, nil
+	}
+	if spectra == 0 {
+		parsedKey, err := x509.ParsePKCS1PrivateKey(bytes)
+		if err != nil {
+			slog.Error("MakerCrypto: invalid data provided", "ERROR", err)
+			return nil, errors.New(ErrorInvalidData)
+		}
+		return RsaEncryption{
+			privKey:           parsedKey,
+			pubKey:            nil,
+			isPrivKeyProvided: true,
+		}, nil
+	}
+	return nil, errors.New(ErrorInvalidData)
+}
+
+type AesEncryption struct {
+	aesBlock cipher.AEAD
+	nonce    []byte
+}
+
+func (a AesEncryption) Encrypter(bytes []byte) ([]byte, error) {
+	return a.aesBlock.Seal(a.nonce, a.nonce, bytes, nil), nil
+}
+
+func (a AesEncryption) Decrypt(bytes []byte) ([]byte, error) {
+
+	data, err := a.aesBlock.Open(nil, bytes[:a.aesBlock.NonceSize()], bytes[a.aesBlock.NonceSize():], nil)
 	if err != nil {
-		loggers.Error("Error creating new AesCipher", "ERROR", err.Error())
-		return nil, err
+		slog.Error("Error AES:decrypt data", "ERROR", err)
+		return nil, errors.New(ErrorAuthFail)
 	}
-	NewGcmBlock, err := cipher.NewGCM(AesCipher)
-	if err != nil {
-		loggers.Error("Error creating new GCM", "ERROR", err.Error())
-		return nil, err
-	}
+	return data, nil
+}
 
-	nonce := make([]byte, NewGcmBlock.NonceSize())
+func (a AesEncryption) MakeCrypto(bytes []byte) (DomainLevel.Crypto, error) {
+	block, err := aes.NewCipher(bytes)
+	if err != nil {
+		slog.Error("MakeCrypto AES: error can't made a block", "ERROR", err)
+		return nil, errors.New(ErrorStartEncryption)
+	}
+	aead, err := cipher.NewGCM(block)
+	if err != nil {
+		slog.Error("MakeCrypto AES: error can't initializer a GCM mode", "ERROR", err)
+		return nil, errors.New(ErrorStartEncryption)
+	}
+	nonce := make([]byte, aead.NonceSize())
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-		loggers.Error("Error creating new nonce", "ERROR", err.Error())
 		return nil, err
 	}
-	return NewGcmBlock.Seal(nonce, nonce, Data, nil), nil
+	return AesEncryption{
+		aesBlock: aead,
+		nonce:    nonce,
+	}, nil
 }
 
-type AesEncryption struct{}
-
-func (a AesEncryption) Encrypter(data DomainLevel.IncomeEncryptData) ([]byte, error) {
-	loggers := slog.With("EncryptAes")
-	AesCipher, err := aes.NewCipher(data.Key)
-	if err != nil {
-		loggers.Error("Error creating new AesCipher", "ERROR", err.Error())
-		return nil, err
-	}
-	NewGcmBlock, err := cipher.NewGCM(AesCipher)
-	if err != nil {
-		loggers.Error("Error creating new GCM", "ERROR", err.Error())
-		return nil, err
-	}
-
-	nonce := make([]byte, NewGcmBlock.NonceSize())
-	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-		loggers.Error("Error creating new nonce", "ERROR", err.Error())
-		return nil, err
-	}
-	return NewGcmBlock.Seal(nonce, nonce, data.Key, nil), nil
+type AesCtr struct {
+	block   cipher.Stream
+	isStart bool
+	nonce   []byte
 }
 
-type RsaEncryption struct{}
+func NewAesCtr() *AesCtr {
+	return &AesCtr{}
+}
 
-func (r RsaEncryption) Encrypter(data DomainLevel.IncomeEncryptData) ([]byte, error) {
-	keyData, err := x509.ParsePKCS1PublicKey(data.Key)
+func (a AesCtr) Encrypter(bytes []byte) ([]byte, error) {
+
+	if !a.isStart {
+
+		if len(bytes[:aes.BlockSize]) == len(a.nonce) {
+		}
+		cip := make([]byte, len(bytes)+aes.BlockSize)
+		copy(cip, a.nonce)
+		a.block.XORKeyStream(cip[aes.BlockSize:], bytes)
+		a.isStart = true
+		return cip, nil
+	}
+	a.block.XORKeyStream(bytes, bytes)
+	return bytes, nil
+}
+
+func (a AesCtr) Decrypt(bytes []byte) ([]byte, error) {
+	if !a.isStart && len(bytes) <= aes.BlockSize {
+		return nil, errors.New(ErrorInvalidData)
+	}
+	if !a.isStart {
+		cip := make([]byte, len(bytes)-aes.BlockSize)
+		a.block.XORKeyStream(cip, bytes[aes.BlockSize:])
+		a.isStart = true
+		return cip, nil
+	}
+
+	a.block.XORKeyStream(bytes, bytes)
+	return bytes, nil
+}
+
+const ErrorCryptoKey = "the key isn't correct"
+
+func (a AesCtr) MakeCrypto(bytes []byte) (DomainLevel.Crypto, error) {
+	if len(bytes) <= aes.BlockSize {
+		return nil, errors.New(ErrorCryptoKey)
+	}
+	block, err := aes.NewCipher(bytes[aes.BlockSize:])
 	if err != nil {
-		slog.Error("Encrypter: error to parse a key", "ERROR", err)
 		return nil, err
 	}
-	encryptAesKey, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, keyData, data.Data, nil)
-	switch {
-	case strings.Contains(fmt.Sprint(err), "message too long for RSA key size"):
-		return nil, errors.New(DomainLevel.ErrorFileNameEncrypt)
-
-	case err != nil:
-		slog.Error("EncryptFileInfo; error to encrypt", "ERROR", err)
-		return nil, errors.New(DomainLevel.ErrorStrangeCrypto)
-	}
-	return encryptAesKey, nil
+	ctrBlock := cipher.NewCTR(block, bytes[:aes.BlockSize])
+	return AesCtr{
+		block:   ctrBlock,
+		isStart: false,
+		nonce:   bytes,
+	}, nil
 }

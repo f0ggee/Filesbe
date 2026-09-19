@@ -1,7 +1,6 @@
 package FileControls
 
 import (
-	"Kaban/internal/DomainLevel"
 	"errors"
 	"fmt"
 	"io"
@@ -9,6 +8,8 @@ import (
 	"net/http"
 	"strconv"
 )
+
+const ErrorDownloadFile = "Error to download a file "
 
 type FileDetails struct {
 	FileFormat   string
@@ -38,7 +39,7 @@ func (n Transfer) TransferEncryptToClient(details TransferIncomingData) error {
 	details.W.Header().Set("Content-Length", strconv.FormatUint(uint64(details.FileLength), 10))
 	if _, err := io.Copy(details.W, details.FileBody); err != nil {
 		slog.Error("TransferEncryptToClient; error to download a file", "ERROR", err)
-		return errors.New(DomainLevel.ErrorDownloadFile)
+		return errors.New(ErrorDownloadFile)
 	}
 	return nil
 }
@@ -48,7 +49,7 @@ func (n Transfer) TransferToClient(details TransferIncomingData) error {
 	details.W.Header().Set("Content-Length", strconv.FormatUint(uint64(details.FileLength), 10))
 	if _, err := io.Copy(details.W, details.FileBody); err != nil {
 		slog.Error("TransferToClient; error to download a file", "ERROR", err)
-		return errors.New(DomainLevel.ErrorDownloadFile)
+		return errors.New(ErrorDownloadFile)
 	}
 	return nil
 }

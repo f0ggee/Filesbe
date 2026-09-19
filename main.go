@@ -4,6 +4,7 @@ import (
 	"Kaban/cmds"
 	"Kaban/internal/Deliver/httpController"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
+	s3Repo2 "Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
 	"Kaban/internal/InfrastructureLayer/s3Repo"
@@ -36,7 +37,7 @@ func main() {
 		return
 	}
 	defer db.Close()
-	cfg, err := s3Repo.S3Helper()
+	cfg, err := s3Repo2.EstablishS3()
 	if err != nil {
 		return
 	}
