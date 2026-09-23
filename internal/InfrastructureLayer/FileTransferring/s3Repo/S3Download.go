@@ -21,7 +21,7 @@ type S3Downloader struct {
 	body *io.Reader
 }
 
-func (s *S3Downloader) SetAddReader(reader io.Reader) DomainLevel.FileDetails {
+func (s *S3Downloader) SetAdditionalReader(reader io.Reader) DomainLevel.MakerDownloader {
 	return s
 }
 

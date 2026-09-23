@@ -3,12 +3,10 @@ package Application
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/FileControls"
-	s3Repo2 "Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
-	"Kaban/internal/InfrastructureLayer/RepoParsers"
 	"bufio"
+	"bytes"
 	"context"
-	"crypto/aes"
 	"encoding/hex"
 	"errors"
 	"io"
@@ -22,25 +20,25 @@ import (
 const ErrorDecryptFile = "error to decrypt data"
 
 type NewDownloadEncryptFileControl struct {
-	Transfer FileControls.Transferring
+	Transfer   FileControls.Transferring
+	Uploader   DomainLevel.MakerUploader
+	Downloader DomainLevel.MakerDownloader
+	Deleter    DomainLevel.MakerDeleter
 }
 type NewDownloadEncryptDelivery struct {
 	ReaderRedis  DomainLevel.ReadingRedis
-	DownloadS3   s3Repo2.DownloadingS3
 	DeleterRedis DomainLevel.DeleterRedis
-	DeleterS3    s3Repo2.DeleterS3
 }
 
 type NewDownloadEncryptCrypto struct {
-	Decrypt       DomainLevel.CryptoMaker
-	DecryptSpec   DomainLevel.CryptoMakerSpec
+	Crypto        DomainLevel.CryptoMaker
 	EncrypterKeys RepoEncrypterKeys.Keys
 }
 type NewDownloadEncrypt struct {
 	NewDownloadEncryptDelivery
 	NewDownloadEncryptCrypto
 	NewDownloadEncryptFileControl
-	d RepoParsers.Decode
+	d DomainLevel.Decoder
 }
 
 func GetNewDownloadEncrypt(newDownloadEncryptDelivery NewDownloadEncryptDelivery, newDownloadEncryptCrypto NewDownloadEncryptCrypto, newDownloadEncryptFileControl NewDownloadEncryptFileControl) *NewDownloadEncrypt {
@@ -52,20 +50,29 @@ type NewDownloadEncryptNetwork struct {
 }
 type NewDownloadEncryptIncomingData struct {
 	NewDownloadEncryptNetwork
-	Ctx          context.Context
-	EncryptedURl string
+	Ctx           context.Context
+	EncryptedName string
 }
 
 func (s *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData) error {
 	Reader, writer := io.Pipe()
-	Body, err := s.DownloadS3.GetDownloadSecure(data.Ctx, data.EncryptedURl)
+	g, ctx := errgroup.WithContext(data.Ctx)
+	downloadedObject, err := s.Downloader.SetName(data.EncryptedName).Make(data.Ctx)
+	if err != nil {
+		return err
+	}
 	defer func() {
-		err = s.closeSources(Body.Body, writer, Reader)
+		err = s.closeSources(nil, writer, Reader)
 		if err != nil {
 			return
 		}
 	}()
-	fileInfoInBytes, err := s.ReaderRedis.GetFileInfo(data.EncryptedURl, data.Ctx)
+
+	readyDownload, err := downloadedObject.Downloader()
+	if err != nil {
+		return err
+	}
+	fileInfoInBytes, err := s.ReaderRedis.GetFileInfo(data.EncryptedName, data.Ctx)
 	if err != nil {
 		return err
 	}
@@ -78,63 +85,52 @@ func (s *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData
 		return err
 	}
 	defer aesKey.Destroy()
+	uploadedObject, err := s.Uploader.SetName(fileName).SetAdditionalWriter(data.W).SetSize(s.Downloader.GetFileSize()).Make(data.Ctx)
+	if err != nil {
+		return err
+	}
 
-	g, ctx := errgroup.WithContext(data.Ctx)
-	if err != nil {
-		return err
-	}
-	s.setStartDecrypter(g, aesKey.Bytes(), Body.Body, writer, ctx)
-	s.setGoroutineDownloader(data, g, ctx, FileControls.TransferIncomingData{
-		W: data.W,
-		FileDetails: FileControls.FileDetails{
-			FileFormat:   DomainLevel.GetNewFileSettings(0, fileName).FindFormatOfFile(),
-			TrueFileName: fileName,
-			FileLength:   *Body.ContentLength - aes.BlockSize,
-		},
-		FileBody: Reader,
-	})
-	if err = g.Wait(); err != nil {
-		return err
-	}
-	err = s.DeleterRedis.DeleteFileInfo(data.EncryptedURl, data.Ctx)
-	if err != nil {
-		return err
-	}
-	err = s.DeleterS3.DeleteFileFromS3(data.EncryptedURl, data.Ctx)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *NewDownloadEncrypt) setGoroutineDownloader(data NewDownloadEncryptIncomingData, g *errgroup.Group, ctx context.Context, d FileControls.TransferIncomingData) {
 	g.Go(func() error {
-		select {
-		case <-ctx.Done():
-			return data.Ctx.Err()
-		default:
-			err := s.Transfer.TransferEncryptToClient(d)
-			if err != nil {
-				return err
-			}
-		}
-		return nil
-	})
-}
-
-func (s *NewDownloadEncrypt) setStartDecrypter(g *errgroup.Group, aesKey []byte, Body io.Reader, writer *io.PipeWriter, ctx context.Context) {
-	g.Go(func() error {
-		err := s.decryptFile(aesKey, Body, writer, ctx)
+		err = s.decryptFile(ctx, aesKey.Bytes(), readyDownload, uploadedObject)
 		if err != nil {
 			return err
 		}
 		return nil
 	})
+	//s.setStartDecrypter(g, aesKey.Bytes(), readyDownload, writer, ctx)
+	s.setGoroutineDownloader(g, ctx, uploadedObject, Reader)
+	if err = g.Wait(); err != nil {
+		return err
+	}
+	err = s.DeleterRedis.DeleteFileInfo(data.EncryptedName, data.Ctx)
+	if err != nil {
+		return err
+	}
+	deleteObject, err := s.Deleter.SetName(data.EncryptedName).Make(data.Ctx)
+	if err != nil {
+		return err
+	}
+	return deleteObject.Deleter()
+}
+
+func (s *NewDownloadEncrypt) setGoroutineDownloader(g *errgroup.Group, ctx context.Context, d DomainLevel.Upload, read io.Reader) {
+	g.Go(func() error {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			err := d.Uploader(read)
+			if err != nil {
+				return err
+			}
+			return nil
+		}
+	})
 }
 
 func (s *NewDownloadEncrypt) getFileInfoData(safeFileData []byte) (*memguard.LockedBuffer, string, error) {
 	var outputData DomainLevel.FileLabelsBytes
-	err := s.d.JsonDecodeMarshall(&s, safeFileData)
+	err := s.d.Decode(&s, safeFileData)
 	if err != nil {
 		return nil, "", err
 	}
@@ -148,15 +144,16 @@ func (s *NewDownloadEncrypt) getFileInfoData(safeFileData []byte) (*memguard.Loc
 	return key, outputData.FileName, nil
 }
 
-func (s *NewDownloadEncrypt) decryptFile(AesKey []byte, o io.Reader, writer *io.PipeWriter, ctx context.Context) error {
-	nonce := make([]byte, aes.BlockSize+len(AesKey))
-	_, err := io.ReadFull(o, nonce[:aes.BlockSize])
+func (s *NewDownloadEncrypt) decryptFile(ctx context.Context, AesKey []byte, o io.Reader, uploadedObj DomainLevel.Upload) error {
+
+	nonce := memguard.NewBuffer(s.Crypto.GetRequiredRandomSize() + len(AesKey))
+	_, err := io.ReadFull(o, nonce.Bytes()[:s.Crypto.GetRequiredRandomSize()])
 	if err != nil {
 		slog.Error("decryptFile; there is error to generate a nonce", "ERROR", err.Error())
 		return errors.New(ErrorStartUploading)
 	}
-	nonce = append(nonce, AesKey...)
-	decrBlock, err := s.Decrypt.MakeCrypto(nonce)
+	copy(nonce.Bytes()[s.Crypto.GetRequiredRandomSize():], AesKey)
+	decrBlock, err := s.Crypto.MakeCrypto(nonce.Bytes()[s.Crypto.GetRequiredRandomSize():], nonce.Bytes()[:s.Crypto.GetRequiredRandomSize()])
 	if err != nil {
 		return err
 	}
@@ -168,27 +165,32 @@ func (s *NewDownloadEncrypt) decryptFile(AesKey []byte, o io.Reader, writer *io.
 			return errors.New("context canceled")
 		}
 		n, err := file.Read(plainText.Bytes())
-		if err != nil {
-			slog.Error("decryptFile; error to read a File", "ERROR", err.Error())
-			return errors.New(ErrorDecryptFile)
-		}
-		if err == io.EOF {
-
-			break
-		}
 		if n > 0 {
 			decrData, err := decrBlock.Decrypt(plainText.Bytes()[:n])
-			_, err = writer.Write(decrData)
+			if err != nil {
+				slog.Error("decryptFile: error to write into a stream", "ERROR", err)
+				return errors.New(ErrorDecryptFile)
+			}
+			err = uploadedObj.Uploader(bytes.NewReader(decrData))
 			if err != nil {
 				slog.Error("decryptFile: error to write into a stream", "ERROR", err)
 				return errors.New(ErrorDecryptFile)
 			}
 		}
+		if err == io.EOF {
+
+			break
+		}
+		if err != nil {
+			slog.Error("decryptFile; error to read a File", "ERROR", err.Error())
+			return errors.New(ErrorDecryptFile)
+		}
+
 	}
 	return nil
 }
 func (s *NewDownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedBuffer, error) {
-	cr, err := s.DecryptSpec.MakeCrypto(s.EncrypterKeys.GetKey(), 0)
+	cr, err := s.Crypto.MakeCrypto(s.EncrypterKeys.GetKey(), []byte(""))
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +201,7 @@ func (s *NewDownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.Lock
 		memguard.WipeBytes(OutData)
 		return data, nil
 	}
-	cr, err = s.DecryptSpec.MakeCrypto(s.EncrypterKeys.GetOldKey(), 0)
+	cr, err = s.Crypto.MakeCrypto(s.EncrypterKeys.GetOldKey(), []byte(""))
 	if err != nil {
 		return nil, errors.New(ErrorDecryptFile)
 	}
@@ -210,7 +212,7 @@ func (s *NewDownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.Lock
 	data := memguard.NewBuffer(len(outData2))
 	data.Copy(outData2)
 	memguard.WipeBytes(outData2)
-	return data, nil
+	return nil, nil
 }
 func (s *NewDownloadEncrypt) closeSources(reader io.ReadCloser, writer *io.PipeWriter, reader2 *io.PipeReader) error {
 

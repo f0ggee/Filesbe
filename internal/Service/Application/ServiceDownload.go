@@ -3,11 +3,7 @@ package Application
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/FileControls"
-	s3Repo2 "Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
 	"context"
-	"encoding/json"
-	"errors"
-	"log/slog"
 	"net/http"
 
 	"golang.org/x/sync/errgroup"
@@ -22,11 +18,10 @@ type DownloadFileControl struct {
 	Downloader DomainLevel.MakerDownloader
 	Uploader   DomainLevel.MakerUploader
 	Deleter    DomainLevel.MakerDeleter
+	Decoder    DomainLevel.Decoder
 }
 type DownloadDelivery struct {
-	Reader     DomainLevel.ReadingRedis
-	DeleterS3  s3Repo2.DeleterS3
-	S3Download s3Repo2.DownloadingS3
+	Reader DomainLevel.ReadingRedis
 }
 type NewDownload struct {
 	DownloadDelivery
@@ -45,17 +40,16 @@ func (sa *NewDownload) Download(name string, IncomeContext context.Context) erro
 	g, _ := errgroup.WithContext(IncomeContext)
 
 	trueFileName := ""
-	err = json.Unmarshal(fileNameInBytes, &trueFileName)
+	err = sa.Decoder.Decode(fileNameInBytes, []byte(trueFileName))
 	if err != nil {
-		slog.Error("Application Downloader: error to decode data", "ERROR", err.Error())
-		return errors.New(DomainLevel.ErrorParseInfo)
+		return err
 	}
 
 	downloaderObject, err := sa.Downloader.SetName(name).Make(IncomeContext)
 	if err != nil {
 		return err
 	}
-	uploaded, err := sa.Uploader.SetName(name).SetSize(sa.Downloader.GetFileSize()).SetAddWriter(sa.W).Make(IncomeContext)
+	uploaded, err := sa.Uploader.SetName(name).SetSize(sa.Downloader.GetFileSize()).SetAdditionalWriter(sa.W).Make(IncomeContext)
 	if err != nil {
 		return err
 	}
@@ -67,19 +61,18 @@ func (sa *NewDownload) Download(name string, IncomeContext context.Context) erro
 			return err
 		}
 		err = uploaded.Uploader(dow)
+		deletedObj, err := sa.Deleter.SetName(trueFileName).Make(IncomeContext)
+		if err != nil {
+			return err
+		}
+		err = deletedObj.Deleter()
+		if err != nil {
+			return err
+		}
 		return err
 	})
 
 	if err = g.Wait(); err != nil {
-		return err
-	}
-
-	deletedObj, err := sa.Deleter.SetName(trueFileName).Make(IncomeContext)
-	if err != nil {
-		return err
-	}
-	err = deletedObj.Deleter()
-	if err != nil {
 		return err
 	}
 	return nil

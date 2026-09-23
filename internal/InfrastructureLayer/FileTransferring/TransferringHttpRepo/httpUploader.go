@@ -28,7 +28,7 @@ func (h *HttpUploader) SetSize(i int64) DomainLevel.MakerUploader {
 	return h
 }
 
-func (h *HttpUploader) SetAddWriter(writer io.Writer) DomainLevel.MakerUploader {
+func (h *HttpUploader) SetAdditionalWriter(writer io.Writer) DomainLevel.MakerUploader {
 	h.source = writer
 	return h
 }

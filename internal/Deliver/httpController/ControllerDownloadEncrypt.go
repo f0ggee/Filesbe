@@ -39,8 +39,8 @@ func (d NewDownloadEncrypt) DownloadWithEncrypt() {
 		return
 	}
 	err := d.DownloadEncrypt(Application.NewDownloadEncryptIncomingData{NewDownloadEncryptNetwork: Application.NewDownloadEncryptNetwork{d.Net.W},
-		Ctx:          d.Net.R.Context(),
-		EncryptedURl: fileName,
+		Ctx:           d.Net.R.Context(),
+		EncryptedName: fileName,
 	})
 	if err != nil {
 		SetAnswer(InputAnswerData{

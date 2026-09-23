@@ -46,12 +46,12 @@ type Encryption interface {
 }
 
 type Crypto interface {
-	Encrypter([]byte) ([]byte, error)
+	Encrypt([]byte) ([]byte, error)
 	Decrypt([]byte) ([]byte, error)
 }
+
 type CryptoMaker interface {
-	MakeCrypto([]byte) (Crypto, error)
-}
-type CryptoMakerSpec interface {
-	MakeCrypto([]byte, int) (Crypto, error)
+	// MakeCrypto ACD- additional crypto data
+	MakeCrypto(key []byte, ACD []byte) (Crypto, error)
+	GetRequiredRandomSize() int
 }

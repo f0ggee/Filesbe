@@ -2,8 +2,7 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
-	"Kaban/internal/InfrastructureLayer/RepoParsers"
+
 	"context"
 	"errors"
 	"io"
@@ -19,14 +18,13 @@ const (
 )
 
 type NewFileUploaderDataMange struct {
-	Encode RepoParsers.Encode
+	Encode DomainLevel.Encoder
 }
 type NewFileUploaderCrypto struct {
 	Generator DomainLevel.CryptoGenerating
 }
 
 type NewFileUploaderDelivery struct {
-	UploadS3   s3Repo.S3Uploader
 	Uploader   DomainLevel.MakerUploader
 	WriteRedis DomainLevel.WritingRedis
 }
@@ -79,7 +77,7 @@ func (sa *NewUpload) FileUploader(r FileUploaderIncomeData) (string, error) {
 		return nil
 	})
 
-	fileIntoBytes, err := sa.Encode.JsonEncodeMarshall(r.Name)
+	fileIntoBytes, err := sa.Encode.Encode(r.Name)
 	if err != nil {
 		return "", err
 	}

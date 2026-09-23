@@ -35,7 +35,7 @@ func TestParsing_JsonParsers(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			UserData := &Dto.UserDataRegister{}
 			p := Parsing{}
-			err := p.JsonDecode(UserData, tt.args.body)
+			err := p.DecodeFlow(UserData, tt.args.body)
 			if err != nil {
 				t.Errorf("ERROR to pass the test %v\n", err)
 			}

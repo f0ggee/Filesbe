@@ -45,7 +45,7 @@ func GetDownloadEncryptApplicationBuilder(a *RedisCollector, s *S3Collector, z *
 	}
 
 	crypto := Application.NewDownloadEncryptCrypto{
-		Decrypt:       c.Decrypt,
+		Crypto:        c.Decrypt,
 		EncrypterKeys: *z,
 	}
 	file := Application.NewDownloadEncryptFileControl{

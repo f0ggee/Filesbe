@@ -18,7 +18,7 @@ type MakerUploader interface {
 	SetSize(int64) MakerUploader
 	FileDetails
 	Make(context.Context) (Upload, error)
-	SetAddWriter(io.Writer) MakerUploader
+	SetAdditionalWriter(io.Writer) MakerUploader
 }
 type Download interface {
 	Downloader() (io.Reader, error)
@@ -29,7 +29,7 @@ type MakerDownloader interface {
 	SetSize(int64) MakerDownloader
 	FileDetails
 	Make(ctx context.Context) (Download, error)
-	SetAddReader(io.Reader) FileDetails
+	SetAdditionalReader(io.Reader) MakerDownloader
 }
 
 type Delete interface {

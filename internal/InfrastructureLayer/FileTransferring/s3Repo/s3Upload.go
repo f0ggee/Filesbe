@@ -32,7 +32,7 @@ func (s *S3Upload) SetSize(i int64) DomainLevel.MakerUploader {
 	return s
 }
 
-func (s *S3Upload) SetAddWriter(writer io.Writer) DomainLevel.MakerUploader {
+func (s *S3Upload) SetAdditionalWriter(writer io.Writer) DomainLevel.MakerUploader {
 	return nil
 }
 func NewS3Upload() *S3Upload {
@@ -40,13 +40,14 @@ func NewS3Upload() *S3Upload {
 }
 func (s *S3Upload) Uploader(reader io.Reader) error {
 
-	_, err := s.uploader.UploadObject(s.ctx, &transfermanager.UploadObjectInput{
+	sa, err := s.uploader.UploadObject(s.ctx, &transfermanager.UploadObjectInput{
 		Bucket:      aws.String(s3Cred.getBucket()),
 		Key:         aws.String(s.name),
 		Body:        reader,
 		ContentType: aws.String(s.extension),
 	})
 	if err == nil {
+		s.size = *sa.ContentLength
 		return nil
 	}
 
