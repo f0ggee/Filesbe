@@ -12,6 +12,9 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type RegisterApplication interface {
+	Regist(context.Context, *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData
+}
 type NewRegisterCrypto struct {
 	Generator DomainLevel.CryptoGenerating
 }
@@ -29,7 +32,7 @@ func GetNewRegisterApplication(newRegisterDataMange NewRegisterDataMange, newReg
 	return &NewRegisterApplication{NewRegisterDataMange: newRegisterDataMange, NewRegisterCrypto: newRegisterCrypto}
 }
 
-func (sa *NewRegisterApplication) RegisterService(ctx context.Context, de *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
+func (sa *NewRegisterApplication) Regist(ctx context.Context, de *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
 	err := sa.CheckingDb.CheckerUser(de.Email, ctx)
 	if err != nil {
 		return DomainLevel.RegisterApplicationOutComingData{Err: err}

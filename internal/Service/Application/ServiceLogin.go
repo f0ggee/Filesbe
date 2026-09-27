@@ -14,6 +14,9 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type LoginApplication interface {
+	Login(context.Context, Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData
+}
 type NewLoginCrypto struct {
 	Validate DomainLevel.CryptoValidating
 }

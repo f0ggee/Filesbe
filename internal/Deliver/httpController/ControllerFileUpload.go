@@ -24,8 +24,8 @@ type FileUploaderSessions struct {
 type NewFileUploader struct {
 	FileUploaderNet
 	FileUploaderSessions
-	FileUploader func(Application.FileUploaderIncomeData) (string, error)
-	UrlData      func(r *mux.Router, fileName string) (string, error)
+	Application.UploadApplication
+	UrlData func(r *mux.Router, fileName string) (string, error)
 }
 
 func GetNewFileUploader(fileUploaderNoEncryptNet FileUploaderNet, uploadNotEncryptSessions FileUploaderSessions) *NewFileUploader {
@@ -75,7 +75,7 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 		})
 		return
 	}
-	fileName, err := d.FileUploader(Application.FileUploaderIncomeData{
+	fileName, err := d.Upload(Application.FileUploaderIncomeData{
 		File: file,
 		Name: fileDetails.Filename,
 		Size: fileDetails.Size,
@@ -119,7 +119,7 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 func (d *NewFileUploader) getFileData() (multipart.File, *multipart.FileHeader, error) {
 	file, fileDetails, err := d.R.FormFile("File")
 	if err != nil {
-		slog.Error("FileUploader; error to get a File", "ERROR", err)
+		slog.Error("Upload; error to get a File", "ERROR", err)
 		return nil, nil, errors.New(ErrorCantGetFileName)
 	}
 	return file, fileDetails, nil

@@ -1,7 +1,6 @@
 package Crypto
 
 import (
-	"Kaban/internal/DomainLevel"
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
@@ -17,6 +16,7 @@ type Generating struct{}
 
 const ErrorMakeHash = "a hash cannot be created"
 const ErrorMakeSign = "can't make a sign"
+const ErrorStrangeCrypto = "a strange error happened"
 
 func GetNewGenerating() Generating {
 	return Generating{}
@@ -31,8 +31,8 @@ func (g Generating) GenerateText(n int) string {
 func (g Generating) GenerateSignature(message []byte, key []byte) ([]byte, error) {
 	KeyPrivate, err := x509.ParsePKCS1PrivateKey(key)
 	if err != nil {
-		slog.Error("GenerateSignature;Error while converting key to private key", "ERROR", err)
-		return nil, errors.New(DomainLevel.ErrorStrangeCrypto)
+		slog.Error("GenerateSignature;Error while converting key1 to private key1", "ERROR", err)
+		return nil, errors.New(ErrorStrangeCrypto)
 	}
 	HashData := sha256.Sum256(message)
 	SignedMessage, err := rsa.SignPKCS1v15(rand.Reader, KeyPrivate, crypto.SHA256, HashData[:])

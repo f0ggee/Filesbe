@@ -14,7 +14,7 @@ import (
 )
 
 const ErrorStartEncryption = "can't start encrypting"
-const ErrorAuthFail = "the encryption key isn't correct"
+const ErrorAuthFail = "the encryption key1 isn't correct"
 const ErrorInvalidData = "the data isn't correct "
 const ErrorInvalidMode = "the crypto mode isn't correct"
 
@@ -25,49 +25,52 @@ type RsaEncryption struct {
 	kind              []byte
 }
 
-func (r *RsaEncryption) GetRequiredRandomSize() int {
+func NewRsaEncryption() *RsaEncryption {
+	return &RsaEncryption{}
+}
+
+func (r *RsaEncryption) GetRequiredOverheadSize() int {
 	return 0
 }
 
 func (r *RsaEncryption) Encrypt(bytes []byte) ([]byte, error) {
-	if r.isPrivKeyProvided {
-		slog.Error("Rsa Encrypt: decrypter mode was provided", "Mode", r.isPrivKeyProvided)
+	if r.pubKey == nil {
+		slog.Error("Rsa Encrypt: encrypter mode was provided", "Mode", r.isPrivKeyProvided)
 		return nil, errors.New(ErrorInvalidMode)
 	}
 	return rsa.EncryptOAEP(sha256.New(), rand.Reader, r.pubKey, bytes, nil)
 }
 func (r *RsaEncryption) Decrypt(bytes []byte) ([]byte, error) {
-	if !r.isPrivKeyProvided {
-		slog.Error("Rsa Encrypt: encrypter mode was provided", "Mode", r.isPrivKeyProvided)
+	if r.privKey == nil {
+		slog.Error("Rsa Encrypt: decrypter mode was provided", "Mode", r.isPrivKeyProvided)
 		return nil, errors.New(ErrorInvalidMode)
 	}
+
 	return rsa.DecryptOAEP(sha256.New(), rand.Reader, r.privKey, bytes, nil)
 }
 
 func (r *RsaEncryption) MakeCrypto(key []byte, spectr []byte) (DomainLevel.Crypto, error) {
-
-	if bytes.Equal(spectr, []byte("1")) {
-		parsedKey, err := x509.ParsePKCS1PrivateKey(key)
-		if err != nil {
-			slog.Error("MakerCrypto: invalid data provided", "ERROR", err)
-			return nil, errors.New(ErrorInvalidData)
-		}
+	var err error
+	parsedKey, err := x509.ParsePKCS1PrivateKey(key)
+	if err == nil {
 		return &RsaEncryption{
 			privKey:           parsedKey,
 			pubKey:            nil,
 			isPrivKeyProvided: true,
 		}, nil
 	}
-	parsedKey, err := x509.ParsePKCS1PublicKey(key)
-	if err != nil {
-		slog.Error("MakerCrypto: invalid data provided", "ERROR", err)
-		return nil, errors.New(ErrorInvalidData)
+
+	publicKey, err := x509.ParsePKCS1PublicKey(key)
+	if err == nil {
+		return &RsaEncryption{
+			privKey:           nil,
+			pubKey:            publicKey,
+			isPrivKeyProvided: false,
+		}, nil
 	}
-	return &RsaEncryption{
-		privKey:           nil,
-		pubKey:            parsedKey,
-		isPrivKeyProvided: false,
-	}, nil
+
+	slog.Error("RsaCrypotMaker: error to determine a key", "ERROR", err)
+	return nil, errors.New(ErrorInvalidData)
 }
 
 type AesEncryption struct {
@@ -75,11 +78,18 @@ type AesEncryption struct {
 	nonce    []byte
 }
 
-func (a AesEncryption) GetRequiredRandomSize() int {
-	return a.aesBlock.NonceSize()
+func NewAesEncryption() *AesEncryption {
+	return &AesEncryption{}
 }
 
+func (a AesEncryption) GetRequiredOverheadSize() int {
+	return 12
+}
+
+const ErrorCryptoInvalidData = "the crypto input data isn't correct"
+
 func (a AesEncryption) Encrypt(bytes []byte) ([]byte, error) {
+
 	return a.aesBlock.Seal(a.nonce, a.nonce, bytes, nil), nil
 }
 
@@ -94,6 +104,9 @@ func (a AesEncryption) Decrypt(bytes []byte) ([]byte, error) {
 }
 
 func (a AesEncryption) MakeCrypto(bytes []byte, i []byte) (DomainLevel.Crypto, error) {
+	if len(i) != 12 {
+		return nil, errors.New(ErrorCryptoInvalidData)
+	}
 	block, err := aes.NewCipher(bytes)
 	if err != nil {
 		slog.Error("MakeCrypto AES: error can't made a block", "ERROR", err)
@@ -117,7 +130,7 @@ type AesCtr struct {
 	nonce            []byte
 }
 
-func (a AesCtr) GetRequiredRandomSize() int {
+func (a AesCtr) GetRequiredOverheadSize() int {
 	return aes.BlockSize
 }
 
@@ -150,6 +163,9 @@ func (a *AesCtr) Decrypt(cipherText []byte) ([]byte, error) {
 }
 
 func (a *AesCtr) MakeCrypto(key []byte, i []byte) (DomainLevel.Crypto, error) {
+	if key == nil || i == nil {
+		return nil, errors.New(ErrorCryptoInvalidData)
+	}
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err

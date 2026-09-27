@@ -4,18 +4,20 @@ import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/FileControls"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
-	"bufio"
 	"bytes"
 	"context"
 	"encoding/hex"
 	"errors"
 	"io"
 	"log/slog"
-	"net/http"
 
 	"github.com/awnumar/memguard"
 	"golang.org/x/sync/errgroup"
 )
+
+type DownloadEncryptApplication interface {
+	DownloadEncrypt(NewDownloadEncryptIncomingData) error
+}
 
 const ErrorDecryptFile = "error to decrypt data"
 
@@ -46,7 +48,7 @@ func GetNewDownloadEncrypt(newDownloadEncryptDelivery NewDownloadEncryptDelivery
 }
 
 type NewDownloadEncryptNetwork struct {
-	W http.ResponseWriter
+	W io.Writer
 }
 type NewDownloadEncryptIncomingData struct {
 	NewDownloadEncryptNetwork
@@ -55,23 +57,13 @@ type NewDownloadEncryptIncomingData struct {
 }
 
 func (s *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData) error {
-	Reader, writer := io.Pipe()
-	g, ctx := errgroup.WithContext(data.Ctx)
+
+	g, _ := errgroup.WithContext(data.Ctx)
 	downloadedObject, err := s.Downloader.SetName(data.EncryptedName).Make(data.Ctx)
 	if err != nil {
 		return err
 	}
-	defer func() {
-		err = s.closeSources(nil, writer, Reader)
-		if err != nil {
-			return
-		}
-	}()
 
-	readyDownload, err := downloadedObject.Downloader()
-	if err != nil {
-		return err
-	}
 	fileInfoInBytes, err := s.ReaderRedis.GetFileInfo(data.EncryptedName, data.Ctx)
 	if err != nil {
 		return err
@@ -89,16 +81,13 @@ func (s *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData
 	if err != nil {
 		return err
 	}
-
 	g.Go(func() error {
-		err = s.decryptFile(ctx, aesKey.Bytes(), readyDownload, uploadedObject)
+		err = s.decryptFile(aesKey.Bytes(), downloadedObject, uploadedObject)
 		if err != nil {
 			return err
 		}
 		return nil
 	})
-	//s.setStartDecrypter(g, aesKey.Bytes(), readyDownload, writer, ctx)
-	s.setGoroutineDownloader(g, ctx, uploadedObject, Reader)
 	if err = g.Wait(); err != nil {
 		return err
 	}
@@ -111,21 +100,6 @@ func (s *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData
 		return err
 	}
 	return deleteObject.Deleter()
-}
-
-func (s *NewDownloadEncrypt) setGoroutineDownloader(g *errgroup.Group, ctx context.Context, d DomainLevel.Upload, read io.Reader) {
-	g.Go(func() error {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		default:
-			err := d.Uploader(read)
-			if err != nil {
-				return err
-			}
-			return nil
-		}
-	})
 }
 
 func (s *NewDownloadEncrypt) getFileInfoData(safeFileData []byte) (*memguard.LockedBuffer, string, error) {
@@ -144,27 +118,27 @@ func (s *NewDownloadEncrypt) getFileInfoData(safeFileData []byte) (*memguard.Loc
 	return key, outputData.FileName, nil
 }
 
-func (s *NewDownloadEncrypt) decryptFile(ctx context.Context, AesKey []byte, o io.Reader, uploadedObj DomainLevel.Upload) error {
+func (s *NewDownloadEncrypt) decryptFile(AesKey []byte, o DomainLevel.Download, uploadedObj DomainLevel.Upload) error {
 
-	nonce := memguard.NewBuffer(s.Crypto.GetRequiredRandomSize() + len(AesKey))
-	_, err := io.ReadFull(o, nonce.Bytes()[:s.Crypto.GetRequiredRandomSize()])
+	download, err := o.Downloader()
+	if err != nil {
+		return err
+	}
+	nonce := memguard.NewBuffer(s.Crypto.GetRequiredOverheadSize() + len(AesKey))
+	_, err = io.ReadFull(download, nonce.Bytes()[:s.Crypto.GetRequiredOverheadSize()])
 	if err != nil {
 		slog.Error("decryptFile; there is error to generate a nonce", "ERROR", err.Error())
 		return errors.New(ErrorStartUploading)
 	}
-	copy(nonce.Bytes()[s.Crypto.GetRequiredRandomSize():], AesKey)
-	decrBlock, err := s.Crypto.MakeCrypto(nonce.Bytes()[s.Crypto.GetRequiredRandomSize():], nonce.Bytes()[:s.Crypto.GetRequiredRandomSize()])
+	copy(nonce.Bytes()[s.Crypto.GetRequiredOverheadSize():], AesKey)
+	decrBlock, err := s.Crypto.MakeCrypto(nonce.Bytes()[s.Crypto.GetRequiredOverheadSize():], nonce.Bytes()[:s.Crypto.GetRequiredOverheadSize()])
 	if err != nil {
 		return err
 	}
 	plainText := memguard.NewBuffer(35 * 1024)
 	defer plainText.Destroy()
-	file := bufio.NewReader(o)
 	for {
-		if ctx.Err() != nil {
-			return errors.New("context canceled")
-		}
-		n, err := file.Read(plainText.Bytes())
+		n, err := download.Read(plainText.Bytes())
 		if n > 0 {
 			decrData, err := decrBlock.Decrypt(plainText.Bytes()[:n])
 			if err != nil {
@@ -176,6 +150,7 @@ func (s *NewDownloadEncrypt) decryptFile(ctx context.Context, AesKey []byte, o i
 				slog.Error("decryptFile: error to write into a stream", "ERROR", err)
 				return errors.New(ErrorDecryptFile)
 			}
+			memguard.WipeBytes(decrData)
 		}
 		if err == io.EOF {
 
@@ -212,24 +187,5 @@ func (s *NewDownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.Lock
 	data := memguard.NewBuffer(len(outData2))
 	data.Copy(outData2)
 	memguard.WipeBytes(outData2)
-	return nil, nil
-}
-func (s *NewDownloadEncrypt) closeSources(reader io.ReadCloser, writer *io.PipeWriter, reader2 *io.PipeReader) error {
-
-	err := reader.Close()
-	if err != nil {
-		slog.Error("DownloadEncrypt; error to close a writer", "ERROR", err)
-		return err
-	}
-	err = writer.Close()
-	if err != nil {
-		slog.Error("DownloadEncrypt; error to close a writer", "ERROR", err)
-		return err
-	}
-	err = reader2.Close()
-	if err != nil {
-		slog.Error("DownloadEncrypt; error to close a reader", "ERROR", err)
-		return err
-	}
-	return nil
+	return data, nil
 }

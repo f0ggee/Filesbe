@@ -1,7 +1,7 @@
 package httpController
 
 import (
-	"context"
+	"Kaban/internal/Service/Application"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -13,12 +13,16 @@ type DownloadNetwork struct {
 }
 
 type DownloadApp struct {
-	Download func(name string, ctx context.Context) error
+	Application.DownloadApplication
 }
 
 type DownloadNew struct {
 	DownloadNetwork
 	DownloadApp
+}
+
+func GetDownloadNew(downloadNetwork DownloadNetwork, downloadApp DownloadApp) *DownloadNew {
+	return &DownloadNew{DownloadNetwork: downloadNetwork, DownloadApp: downloadApp}
 }
 
 func GetNewDownloadWithNotEncrypt(networkDownloadNoEncrypt DownloadNetwork, newDownloadWithNotEncryptApplication DownloadApp) *DownloadNew {
@@ -39,7 +43,7 @@ func (d *DownloadNew) DownloadWithNotEncrypt() {
 		return
 	}
 
-	err := d.Download(name, d.R.Context())
+	err := d.Download(d.R.Context(), name)
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    d.W,

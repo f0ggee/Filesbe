@@ -11,7 +11,7 @@ import (
 func TestAesCtr_Encrypter(t *testing.T) {
 
 	InputData := []byte("Hello!")
-	key := []byte("examplekey123456") // 16 bytes key for AES-128.
+	key := []byte("examplekey123456") // 16 bytes key1 for AES-128.
 	allData := make([]byte, aes.BlockSize, aes.BlockSize+len(key))
 	if _, err := io.ReadFull(rand.Reader, allData); err != nil {
 		panic(err)

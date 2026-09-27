@@ -17,6 +17,10 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+type UploaderEncryptApplication interface {
+	UploadEncrypt(IncomeData) (string, error)
+}
+
 const ErrorUploadingEncrypt = "an unexpected error occurred while loading encryption"
 
 type NewUploadEncryptCrypto struct {
@@ -56,24 +60,25 @@ func (sa *NewUploadEncrypt) UploadEncrypt(data IncomeData) (string, error) {
 	if data.Size >= FileMaxSize {
 		return "", errors.New(ErrorFileSizeBig)
 	}
-	reader, writer := io.Pipe()
-	defer func() {
-		closeSources(data.File, reader, writer)
-	}()
-
 	g, ctx := errgroup.WithContext(data.Ctx)
 	x, err := sa.Uploader.SetName(data.Name).SetSize(data.Size).Make(ctx)
 	if err != nil {
 		return "", err
 	}
 	shortNameFile := sa.Generate.GenerateText(4)
-	allData := memguard.NewBuffer(sa.Encrypt.GetRequiredRandomSize() + 32)
-	err = fillOut(allData.Data(), sa.Encrypt.GetRequiredRandomSize())
+	allData := memguard.NewBuffer(sa.Encrypt.GetRequiredOverheadSize() + 32)
+	defer allData.Destroy()
+	err = fillOut(allData.Data(), sa.Encrypt.GetRequiredOverheadSize())
 	if err != nil {
 		return "", err
 	}
-	sa.setEncrypter(data, g, x, allData)
-	defer allData.Destroy()
+	g.Go(func() error {
+		err := sa.EncryptFile(data.File, x, allData.Data())
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 
 	FileInfoInBytes, err := sa.Encode.Encode(DomainLevel.FileLabelsBytes{
 		FileName: data.Name,
@@ -83,9 +88,7 @@ func (sa *NewUploadEncrypt) UploadEncrypt(data IncomeData) (string, error) {
 		slog.Error("UploadEncrypt; error to encode data into Json", "ERROR", err)
 		return "", errors.New(ErrorUploadingEncrypt)
 	}
-
-	setUploader(g, x, reader)
-	encr, err := sa.Encrypt.MakeCrypto(sa.ServerKeys.GerOurPrivateKey(), []byte("1"))
+	encr, err := sa.Encrypt.MakeCrypto(sa.ServerKeys.GerOurPrivateKey(), nil)
 	if err != nil {
 		return "", err
 	}
@@ -93,6 +96,10 @@ func (sa *NewUploadEncrypt) UploadEncrypt(data IncomeData) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if err = g.Wait(); err != nil {
+		return "", err
+	}
+
 	err = sa.RedisWriter.WriteData(DomainLevel.WriteDataIncomeData{
 		FileName: shortNameFile,
 		Info:     encryptedFileInfo,
@@ -107,31 +114,6 @@ func (sa *NewUploadEncrypt) UploadEncrypt(data IncomeData) (string, error) {
 
 }
 
-func setUploader(g *errgroup.Group, readyUploader DomainLevel.Upload, src io.Reader) {
-	g.Go(func() error {
-		defer func(readyUploader DomainLevel.Upload) {
-			err := readyUploader.CloseSource()
-			if err != nil {
-				return
-			}
-		}(readyUploader)
-		if err := readyUploader.Uploader(src); err != nil {
-			return err
-		}
-		return nil
-	})
-}
-
-func (sa *NewUploadEncrypt) setEncrypter(data IncomeData, g *errgroup.Group, d DomainLevel.Upload, allData *memguard.LockedBuffer) {
-	g.Go(func() error {
-		err := sa.EncryptFile(data.File, d, allData.Data())
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-}
-
 func fillOut(allData []byte, overHeadSize int) error {
 	if _, err := io.ReadFull(rand.Reader, allData[:overHeadSize]); err != nil {
 		slog.Error("EncryptFile: error to generate a nonce", "ERROR", err)
@@ -144,21 +126,21 @@ func fillOut(allData []byte, overHeadSize int) error {
 	return nil
 }
 
-func (sa *NewUploadEncrypt) EncryptFile(file io.Reader, d DomainLevel.Upload, data []byte) error {
-	cryptoData, err := sa.Encrypt.MakeCrypto(data[sa.Encrypt.GetRequiredRandomSize():], data[:sa.Encrypt.GetRequiredRandomSize()])
+func (sa *NewUploadEncrypt) EncryptFile(src io.Reader, dst DomainLevel.Upload, data []byte) error {
+	cryptoData, err := sa.Encrypt.MakeCrypto(data[sa.Encrypt.GetRequiredOverheadSize():], data[:sa.Encrypt.GetRequiredOverheadSize()])
 	if err != nil {
 		return err
 	}
 	buf := memguard.NewBuffer(32 * 1024)
 	defer buf.Destroy()
 	for {
-		n, err := file.Read(buf.Bytes())
+		n, err := src.Read(buf.Bytes())
 		if n > 0 {
 			outData, err := cryptoData.Encrypt(buf.Bytes()[:n])
 			if err != nil {
 				return err
 			}
-			err = d.Uploader(bytes.NewReader(outData))
+			err = dst.Uploader(bytes.NewReader(outData))
 			if err != nil {
 				slog.Error("EncryptFile; error to write in the stream", "ERROR", err.Error())
 				return errors.New(DomainLevel.ErrorStrangeCrypto)
@@ -171,27 +153,8 @@ func (sa *NewUploadEncrypt) EncryptFile(file io.Reader, d DomainLevel.Upload, da
 			slog.Error("EncryptFile; error to download a File", "ERROR", err.Error())
 			return errors.New(ErrorUploadingEncrypt)
 		}
-
 	}
-
 	return nil
-}
-
-func closeSources(data io.ReadCloser, reader *io.PipeReader, writer *io.PipeWriter) {
-	err := data.Close()
-	if err != nil {
-		slog.Error("UploadEncrypt; error to close a File flow", "ERROR", err)
-		return
-	}
-	err = reader.Close()
-	if err != nil {
-		slog.Error("UploadEncrypt: error close a reader", "ERROR", err)
-		return
-	}
-	err = writer.Close()
-	if err != nil {
-		slog.Error("UploadEncrypt: error to close a writer", "ERROR", err)
-	}
 }
 
 func (sa *NewUploadEncrypt) setDeleteFile(shortNameFile string) *time.Timer {

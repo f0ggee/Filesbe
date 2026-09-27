@@ -35,7 +35,7 @@ func (c *Checking) PasswordVerify(hashOfPassword []byte, password []byte) error 
 func (c *Checking) CheckSign(data DomainLevel.CheckSignKeyIncomingData) error {
 	publicKeyMasterServer, err := x509.ParsePKCS1PublicKey(data.MasterPublicKey)
 	if err != nil {
-		slog.Error("CheckSignKey; Error marshalling public key", "ERROR", err.Error())
+		slog.Error("CheckSignKey; Error marshalling public key1", "ERROR", err.Error())
 		return err
 	}
 

@@ -17,6 +17,10 @@ const (
 	ErrorStartUploading = "an unexpected error happened"
 )
 
+type UploadApplication interface {
+	Upload(FileUploaderIncomeData) (string, error)
+}
+
 type NewFileUploaderDataMange struct {
 	Encode DomainLevel.Encoder
 }
@@ -45,7 +49,7 @@ type FileUploaderIncomeData struct {
 	Ctx  context.Context
 }
 
-func (sa *NewUpload) FileUploader(r FileUploaderIncomeData) (string, error) {
+func (sa *NewUpload) Upload(r FileUploaderIncomeData) (string, error) {
 	g, ctx := errgroup.WithContext(r.Ctx)
 	if r.Size >= FileMaxSize {
 		return "", errors.New(ErrorFileSizeBig)
@@ -53,7 +57,7 @@ func (sa *NewUpload) FileUploader(r FileUploaderIncomeData) (string, error) {
 	defer func() {
 		err := r.File.Close()
 		if err != nil {
-			slog.Error("FileUploader; error to close a body", "ERROR", err)
+			slog.Error("Upload; error to close a body", "ERROR", err)
 			return
 		}
 	}()

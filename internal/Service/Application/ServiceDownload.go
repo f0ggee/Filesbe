@@ -9,6 +9,9 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+type DownloadApplication interface {
+	Download(context.Context, string) error
+}
 type DownloadNetwork struct {
 	W http.ResponseWriter
 }
@@ -32,7 +35,7 @@ type NewDownload struct {
 func GetNewDownload(downloadWithNonEncryptDelivery DownloadDelivery, downloadWithNonEncryptFileControl DownloadFileControl, downloadNotEncryptNetwork DownloadNetwork) *NewDownload {
 	return &NewDownload{DownloadDelivery: downloadWithNonEncryptDelivery, DownloadFileControl: downloadWithNonEncryptFileControl, DownloadNetwork: downloadNotEncryptNetwork}
 }
-func (sa *NewDownload) Download(name string, IncomeContext context.Context) error {
+func (sa *NewDownload) Download(IncomeContext context.Context, name string) error {
 	fileNameInBytes, err := sa.Reader.GetFileInfo(name, IncomeContext)
 	if err != nil {
 		return err

@@ -3,15 +3,14 @@ package httpController
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
-	"Kaban/internal/InfrastructureLayer/RepoParsers"
 	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
-	"context"
+	"Kaban/internal/Service/Application"
 	"net/http"
 )
 
 type NewRegisterDetails struct {
 	Session RepoSessionHandle.Session
-	D       RepoParsers.Decode
+	D       DomainLevel.Decoder
 }
 
 type RegisterNet struct {
@@ -21,7 +20,7 @@ type RegisterNet struct {
 type NewRegister struct {
 	RegisterNet
 	NewRegisterDetails
-	RegisterService func(ctx context.Context, de *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData
+	Application.RegisterApplication
 }
 
 func GetNewRegister(registerNet RegisterNet, newRegisterDetails NewRegisterDetails) *NewRegister {
@@ -30,7 +29,7 @@ func GetNewRegister(registerNet RegisterNet, newRegisterDetails NewRegisterDetai
 
 func (D NewRegister) Register() {
 	userDataRegister := &Dto.UserDataRegister{}
-	err := D.D.JsonDecode(userDataRegister, D.R.Body)
+	err := D.D.DecodeFlow(userDataRegister, D.R.Body)
 	defer D.R.Body.Close()
 
 	if err != nil {
@@ -58,7 +57,7 @@ func (D NewRegister) Register() {
 		return
 	}
 
-	RegisterOutput := D.RegisterService(D.R.Context(), userDataRegister)
+	RegisterOutput := D.Regist(D.R.Context(), userDataRegister)
 	if RegisterOutput.Err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,

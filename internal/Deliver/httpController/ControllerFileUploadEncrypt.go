@@ -28,7 +28,7 @@ type NewUploaderEncrypt struct {
 	NewFileUploaderEncryptNetwork
 	NewFileUploaderEncryptSession
 	NewFileUploaderEncryptDetails
-	UploadEncrypt func(data Application.IncomeData) (string, error)
+	Application.UploaderEncryptApplication
 	UrlUploadData func(r *mux.Router, fileName string) (string, error)
 }
 

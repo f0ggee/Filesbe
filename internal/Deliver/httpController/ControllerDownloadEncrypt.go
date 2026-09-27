@@ -12,7 +12,7 @@ type NetworkDownloadEncrypt struct {
 	R *http.Request
 }
 type NewDownloadWithEncryptApplication struct {
-	Application.NewDownloadEncrypt
+	Application.DownloadEncryptApplication
 }
 type NewDownloadEncrypt struct {
 	Net NetworkDownloadEncrypt
