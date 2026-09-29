@@ -48,7 +48,7 @@ func GetCookieStore() *sessions.CookieStore {
 	Store := sessions.NewCookieStore(store1z)
 	return Store
 }
-func (s NewSessionConnect) GetSessionData(data IncomingSessionData) ReturnedSessionKey {
+func (s *NewSessionConnect) GetSessionData(data IncomingSessionData) ReturnedSessionKey {
 	connect, err := s.getUserConnect(data.Request)
 	if err != nil {
 		slog.Error("GetSessionData: error to get an active connect", "error", err)
