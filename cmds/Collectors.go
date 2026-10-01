@@ -11,7 +11,7 @@ import (
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
-	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
+	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"os"
 
 	"github.com/awnumar/memguard"
@@ -114,11 +114,11 @@ func GetDatabaseManageCollector(Db *pgxpool.Pool) CollectorDatabaseManage {
 }
 
 type SessionCollector struct {
-	Session RepoSessionHandle.NewSessionConnect
+	Session RepoSession.NewSessionConnect
 }
 
 func GetSessionCollector(activity *sessions.CookieStore) *SessionCollector {
-	return &SessionCollector{Session: *RepoSessionHandle.GetNewSessionConnect(activity, nil)}
+	return &SessionCollector{Session: *RepoSession.GetNewSessionConnect(activity, nil)}
 }
 
 type GrpcCollector struct {

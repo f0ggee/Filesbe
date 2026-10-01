@@ -15,8 +15,8 @@ type DeleterRedis interface {
 
 type WriteDataIncomeData struct {
 	FileName string
-	Info     []byte
 	Ctx      context.Context
+	Info     []byte
 }
 
 type WritingRedis interface {

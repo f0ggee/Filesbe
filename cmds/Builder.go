@@ -15,7 +15,7 @@ import (
 	"Kaban/internal/InfrastructureLayer/ProtocolManage"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/InfrastructureLayer/RepoParsers"
-	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
+	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"Kaban/internal/Service/Application"
 
 	"github.com/gorilla/mux"
@@ -179,7 +179,7 @@ func GetEncryptDownloadControllerBuilder(d EncryptDownloadControllerIncomeData) 
 
 type UploaderBuilderIncomeData struct {
 	R           *mux.Router
-	ReadSession RepoSessionHandle.Session
+	ReadSession RepoSession.Session
 	AuthCheck   AuthTokensManage.AuthCheck
 	Answers     RepofileUploaderEncryptRepo.AnswersUploadEncrypt
 	Build       RepofileUploaderEncryptRepo.UrlUploadEncrypt
@@ -207,7 +207,7 @@ func GetUploaderEncrypterControllerBuilder(d *UploaderBuilderIncomeData) *httpCo
 type UploaderEncryptBuilderIncomeData struct {
 	S       RepofileUploaderNoEncryptRepo.Answers
 	Builder RepofileUploaderNoEncryptRepo.NewUploaderNoEncrypt
-	Session RepoSessionHandle.Session
+	Session RepoSession.Session
 	Auth    AuthTokensManage.AuthCheck
 	App     Application.NewUpload
 }
@@ -231,7 +231,7 @@ func GetUploaderControllerBuilder(data UploaderEncryptBuilderIncomeData) *httpCo
 
 type NewLoginIncomeData struct {
 	S      *RepoLoginRealizations.LoginAnswers
-	Sess   RepoSessionHandle.Session
+	Sess   RepoSession.Session
 	Parses RepoParsers.Decode
 	App    *Application.NewLogin
 }
@@ -253,7 +253,7 @@ func GetControllerLoginBuilder(data NewLoginIncomeData) *httpController.NewLogin
 
 type CheckUserBuilderIncomeData struct {
 	answers *RepoUsersCheckAuth.SetUsersChecker
-	Session RepoSessionHandle.Session
+	Session RepoSession.Session
 	Auth    AuthTokensManage.AuthCheck
 }
 
@@ -266,7 +266,7 @@ func GetControllerCheckAuthBuilder(data CheckUserBuilderIncomeData) *httpControl
 
 type RegisterBuilderIncomeData struct {
 	Answ    RepoRegisterRepository.RegisterAnswers
-	Session RepoSessionHandle.Session
+	Session RepoSession.Session
 	D       RepoParsers.Decode
 	App     Application.NewRegisterApplication
 }

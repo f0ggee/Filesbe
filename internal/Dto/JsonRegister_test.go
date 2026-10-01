@@ -1,7 +1,7 @@
 package Dto
 
 import (
-	"Kaban/internal/Deliver/httpController"
+	"Kaban/internal/DomainLevel"
 	"testing"
 )
 
@@ -278,7 +278,7 @@ func TestUserDataRegister_getNameError(t *testing.T) {
 			args: args{
 				e: "max",
 			},
-			wantErr: httpController.NameMaxSize,
+			wantErr: DomainLevel.NameMaxSize,
 		},
 		{
 			name:   "test2",
@@ -286,7 +286,7 @@ func TestUserDataRegister_getNameError(t *testing.T) {
 			args: args{
 				e: "min",
 			},
-			wantErr: httpController.NameMinSize,
+			wantErr: DomainLevel.NameMinSize,
 		},
 	}
 	for _, tt := range tests {

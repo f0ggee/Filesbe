@@ -2,7 +2,7 @@ package httpController
 
 import (
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
-	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
+	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"net/http"
 )
 
@@ -16,11 +16,11 @@ func GetNewCheckUserAuthNetWork(w http.ResponseWriter, r *http.Request) *CheckUs
 }
 
 type CheckUserAuthSessions struct {
-	Session RepoSessionHandle.Session
+	Session RepoSession.Session
 	Auth    AuthTokensManage.AuthCheck
 }
 
-func GetNewCheckUserAuthSessions(auth AuthTokensManage.AuthCheck, session RepoSessionHandle.Session) *CheckUserAuthSessions {
+func GetNewCheckUserAuthSessions(auth AuthTokensManage.AuthCheck, session RepoSession.Session) *CheckUserAuthSessions {
 	return &CheckUserAuthSessions{Auth: auth, Session: session}
 }
 
@@ -34,7 +34,7 @@ func GetNewCheckUserAuth(newCheckUserAuthNetWork CheckUserAuthNetWork, newCheckU
 }
 
 func (s *CheckUserAuth) CheckUserAuth() {
-	returnedData := s.Session.GetSessionData(RepoSessionHandle.IncomingSessionData{Writer: s.W, Request: s.R})
+	returnedData := s.Session.GetSessionData(RepoSession.IncomingSessionData{Writer: s.W, Request: s.R})
 	if returnedData.Error != nil {
 		SetAnswer(InputAnswerData{
 			W:    s.W,
@@ -61,7 +61,7 @@ func (s *CheckUserAuth) CheckUserAuth() {
 		return
 	}
 	if OutData.IsNewJwtCreated {
-		s.Session.SetNewSession(RepoSessionHandle.IncomingSessionData{
+		s.Session.SetNewSession(RepoSession.IncomingSessionData{
 			Writer:  s.W,
 			Request: s.R,
 			Jwt:     OutData.NewJwt,

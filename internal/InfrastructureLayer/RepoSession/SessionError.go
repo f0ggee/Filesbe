@@ -1,4 +1,4 @@
-package RepoSessionHandle
+package RepoSession
 
 const (
 	ErrorSaveCookie  = "error save a cookie"

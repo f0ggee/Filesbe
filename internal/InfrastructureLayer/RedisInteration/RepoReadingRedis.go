@@ -1,7 +1,6 @@
 package RedisInteration
 
 import (
-	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
 	"context"
 	"errors"
@@ -14,6 +13,7 @@ import (
 
 const (
 	ErrorFindFileInfo = "file's info wasn't found"
+	ServerName        = "serverName"
 )
 
 type RedisReader struct {
@@ -48,7 +48,7 @@ func (d *RedisReader) GetKey(Ctx context.Context) ([]byte, error) {
 		if count > 20 {
 			return nil, errors.New(ErrorReadTimeout)
 		}
-		err := d.Re.Get(ctx, os.Getenv(DomainLevel.ServerName)).Err()
+		err := d.Re.Get(ctx, os.Getenv(ServerName)).Err()
 
 		if err != nil {
 			count, sec = +1, +1
@@ -56,13 +56,13 @@ func (d *RedisReader) GetKey(Ctx context.Context) ([]byte, error) {
 			continue
 		}
 		var data []byte
-		err = d.Re.Get(ctx, os.Getenv(DomainLevel.ServerName)).Scan(&data)
+		err = d.Re.Get(ctx, os.Getenv(ServerName)).Scan(&data)
 		if err != nil {
 			slog.Error("GetKey; error to read data", "ERROR", err)
 			return nil, errors.New(ErrorRead)
 		}
 
-		err = d.Re.Del(ctx, os.Getenv(DomainLevel.ServerName)).Err()
+		err = d.Re.Del(ctx, os.Getenv(ServerName)).Err()
 		if err != nil {
 			slog.Error("GetKey; error to delete file info", "ERROR", err)
 			return nil, errors.New(ErrorDeleteInfo)

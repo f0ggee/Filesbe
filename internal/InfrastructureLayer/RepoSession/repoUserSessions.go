@@ -1,4 +1,4 @@
-package RepoSessionHandle
+package RepoSession
 
 import (
 	"encoding/hex"

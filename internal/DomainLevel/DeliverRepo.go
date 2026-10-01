@@ -9,8 +9,6 @@ const (
 const NonIdentifyError = "the strange error"
 const ErrorParseInfo = "happened an error during getting data"
 
-const SessionError = "cannot create a session"
-
 // The email's errors
 const (
 	NotCorrectEmail = "the email isn't correct"
@@ -31,4 +29,12 @@ type RegisterApplicationOutComingData struct {
 	Jwt string
 	Rft string
 	Err error
+}
+type Auth interface {
+	GetAuthToken(UsefulData []byte) ([]byte, error)
+	IsTokenCorrect(Token []byte) error
+}
+type AuthMaker interface {
+	SetAdditionalData([]byte) AuthMaker
+	Make() (Auth, error)
 }

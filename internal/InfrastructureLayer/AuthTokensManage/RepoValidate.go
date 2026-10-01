@@ -1,7 +1,6 @@
 package AuthTokensManage
 
 import (
-	"Kaban/internal/Dto"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -16,6 +15,12 @@ type CheckingAuthTokens interface {
 type AuthCheck interface {
 	CheckUserAuth(UserAuthCheckIncomingData) OutComingAuthData
 }
+
+type JwtCustomStruct struct {
+	UserID int32
+	jwt.RegisteredClaims
+}
+
 type UserAuthCheckIncomingData struct {
 	Jwt string
 	Rft string
@@ -35,7 +40,7 @@ func GetNNewAuthChecker(createTokens CreatingTokens, key []byte) NewAuthChecker 
 }
 
 func (c NewAuthChecker) CheckRt(Rt string) (jwt.Claims, error) {
-	Key, err := jwt.ParseWithClaims(Rt, &Dto.JwtCustomStruct{}, func(token *jwt.Token) (interface{}, error) {
+	Key, err := jwt.ParseWithClaims(Rt, &JwtCustomStruct{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("неожиданный метод подписи: %v", token.Header["alg"])
 		}
@@ -52,7 +57,7 @@ func (c NewAuthChecker) CheckRt(Rt string) (jwt.Claims, error) {
 }
 
 func (c NewAuthChecker) CheckJwt(JWT string) error {
-	JwtToken, err := jwt.ParseWithClaims(JWT, &Dto.JwtCustomStruct{}, func(token *jwt.Token) (interface{}, error) {
+	JwtToken, err := jwt.ParseWithClaims(JWT, &JwtCustomStruct{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("неожиданный метод подписи: %v", token.Header["alg"])
 		}

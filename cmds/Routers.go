@@ -26,7 +26,7 @@ func GetPhotoRequest(StaticFiles *mux.Router) *mux.Route {
 
 func GetLoginRouter(postRequest *mux.Router) *mux.Route {
 	return postRequest.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "internal/Service/Fronted/Login.html")
+		http.ServeFile(w, r, "internal/Service/Fronted/LoginController.html")
 	})
 }
 

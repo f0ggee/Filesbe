@@ -2,7 +2,7 @@ package httpController
 
 import (
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
-	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
+	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"Kaban/internal/Service/Application"
 	"errors"
 	"log/slog"
@@ -18,7 +18,7 @@ type NewFileUploaderEncryptNetwork struct {
 }
 
 type NewFileUploaderEncryptSession struct {
-	ReadSession RepoSessionHandle.Session
+	ReadSession RepoSession.Session
 	AuthCheck   AuthTokensManage.AuthCheck
 }
 type NewFileUploaderEncryptDetails struct {
@@ -38,7 +38,7 @@ func GetNewFileUploaderEncrypt(fileUploaderEncryptNetwork NewFileUploaderEncrypt
 
 func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 
-	returnedSession := S.ReadSession.GetSessionData(RepoSessionHandle.IncomingSessionData{
+	returnedSession := S.ReadSession.GetSessionData(RepoSession.IncomingSessionData{
 		Writer:  S.W,
 		Request: S.R,
 	})

@@ -15,12 +15,12 @@ type CreateUserIncomingData struct {
 }
 
 type ReadDb interface {
-	LoginData(string, context.Context) OutComingLoginData
+	LoginData(context.Context, string) OutComingLoginData
 }
 
 type WriteDb interface {
 	CreateUser(CreateUserIncomingData) (int32, error)
 }
 type CheckingDb interface {
-	CheckerUser(string, context.Context) error
+	CheckerUser(context.Context, string) error
 }

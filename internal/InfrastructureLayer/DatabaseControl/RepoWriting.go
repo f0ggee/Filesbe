@@ -26,7 +26,7 @@ func (d *Writer) CreateUser(data DomainLevel.CreateUserIncomingData) (int32, err
 	tx, err := d.Db.Begin(context.Background())
 	if err != nil {
 		slog.Error("CreateUser; error to start a transaction", "ERROR", err)
-		return 0, errors.New(DomainLevel.ErrorStrangeDatabaseError)
+		return 0, errors.New(ErrorStrangeDatabaseError)
 	}
 	defer func(tx pgx.Tx, ctx context.Context) {
 		err := tx.Rollback(ctx)
@@ -40,11 +40,11 @@ func (d *Writer) CreateUser(data DomainLevel.CreateUserIncomingData) (int32, err
 	switch {
 	case errors.Is(err, context.DeadlineExceeded):
 		slog.Error("CreateUser; the context is expired", "ERROR", err)
-		return 0, errors.New(DomainLevel.ErrorTimeEnd)
+		return 0, errors.New(ErrorTimeEnd)
 
 	case err != nil:
 		slog.Error("CreateUser; a strange error", "ERROR", err)
-		return 0, errors.New(DomainLevel.ErrorStrangeDatabaseError)
+		return 0, errors.New(ErrorStrangeDatabaseError)
 	}
 
 	if err = tx.Commit(context.Background()); err != nil {

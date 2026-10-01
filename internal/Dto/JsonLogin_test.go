@@ -1,7 +1,7 @@
 package Dto
 
 import (
-	"Kaban/internal/Deliver/httpController"
+	"Kaban/internal/DomainLevel"
 	"testing"
 )
 
@@ -106,7 +106,7 @@ func TestUserLoginData_getPasswordError(t *testing.T) {
 			args: args{
 				e: "min",
 			},
-			wantErr: httpController.PasswordSizeSmall,
+			wantErr: DomainLevel.PasswordSizeSmall,
 		},
 		{
 			name:   "test2",
@@ -114,7 +114,7 @@ func TestUserLoginData_getPasswordError(t *testing.T) {
 			args: args{
 				e: "max",
 			},
-			wantErr: httpController.PasswordSizeBig,
+			wantErr: DomainLevel.PasswordSizeBig,
 		},
 		{
 			name:   "test3",
@@ -122,7 +122,7 @@ func TestUserLoginData_getPasswordError(t *testing.T) {
 			args: args{
 				e: "required",
 			},
-			wantErr: httpController.PasswordEmpty,
+			wantErr: DomainLevel.PasswordEmpty,
 		},
 	}
 	for _, tt := range tests {

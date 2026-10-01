@@ -11,7 +11,7 @@ func GetLoginApi(postRequest *mux.Router, app *http2.NewLoginController) *mux.Ro
 	return postRequest.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
 		app.LoginNet.W = writer
 		app.LoginNet.R = request
-		app.Login()
+		app.LoginController()
 	}).Methods(http.MethodPost)
 }
 func GetRegisterApiRouter(postRequest *mux.Router, app *http2.NewRegister) *mux.Route {

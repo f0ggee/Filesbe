@@ -35,22 +35,22 @@ func (s NewSenderRequests) SetEncrypterKeyRequest(data []byte) ([]byte, error) {
 
 	return OutputData.BytesOutput, nil
 }
-func (s NewSenderRequests) SetMakerRequestEncrypterKey(convertedDataGrpcDataLooks []byte) ([]byte, error) {
+func (s NewSenderRequests) SetNewKeyRequest(convertedDataGrpcDataLooks []byte) ([]byte, error) {
 	attempts, sec := 1, 1
 	for {
 		if attempts > 12 {
-			slog.Error("SetMakerRequestEncrypterKey; attempts are expired")
+			slog.Error("SetNewKeyRequest; attempts are expired")
 			return nil, errors.New(ErrorAttemptsExpired)
 		}
 		OutputData, err := s.SetEncrypterKeyRequest(convertedDataGrpcDataLooks)
 		if err != nil {
-			slog.Error("SetMakerRequestEncrypterKey; error to send a request. Send another request")
+			slog.Error("SetNewKeyRequest; error to send a request. Send another request")
 			attempts++
 			sec++
 			time.Sleep(time.Duration(sec) * time.Second)
 			continue
 		}
-		slog.Info("SetMakerRequestEncrypterKey; data was gotten")
+		slog.Info("SetNewKeyRequest; data was gotten")
 		return OutputData, nil
 	}
 }

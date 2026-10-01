@@ -1,7 +1,6 @@
 package DatabaseControl
 
 import (
-	"Kaban/internal/DomainLevel"
 	"context"
 	"errors"
 	"log/slog"
@@ -17,7 +16,9 @@ func GetNewCheckerDb(db *pgxpool.Pool) *CheckerDb {
 	return &CheckerDb{Db: db}
 }
 
-func (db *CheckerDb) CheckerUser(email string, ctx context.Context) error {
+const ErrorUserExist = "an user already exists"
+
+func (db *CheckerDb) CheckerUser(ctx context.Context, email string) error {
 	logger := slog.With("CheckUser")
 
 	var existingPerson bool
@@ -26,7 +27,7 @@ func (db *CheckerDb) CheckerUser(email string, ctx context.Context) error {
 	switch {
 	case errors.Is(err, context.DeadlineExceeded):
 		logger.Error("The context is end", "ERROR", err)
-		return errors.New(DomainLevel.ErrorTimeEnd)
+		return errors.New(ErrorTimeEnd)
 
 	case err != nil:
 		logger.Info("the strange error", "ERROR", err)
@@ -34,7 +35,7 @@ func (db *CheckerDb) CheckerUser(email string, ctx context.Context) error {
 
 	}
 	if existingPerson {
-		return errors.New(DomainLevel.ErrorUserExist)
+		return errors.New(ErrorUserExist)
 	}
 
 	return nil

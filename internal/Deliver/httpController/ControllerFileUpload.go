@@ -2,7 +2,7 @@ package httpController
 
 import (
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
-	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
+	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"Kaban/internal/Service/Application"
 	"errors"
 	"log/slog"
@@ -18,7 +18,7 @@ type FileUploaderNet struct {
 }
 
 type FileUploaderSessions struct {
-	Session RepoSessionHandle.Session
+	Session RepoSession.Session
 	Auth    AuthTokensManage.AuthCheck
 }
 type NewFileUploader struct {
@@ -33,7 +33,7 @@ func GetNewFileUploader(fileUploaderNoEncryptNet FileUploaderNet, uploadNotEncry
 }
 
 func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
-	returnedData := d.Session.GetSessionData(RepoSessionHandle.IncomingSessionData{Writer: d.W, Request: d.R})
+	returnedData := d.Session.GetSessionData(RepoSession.IncomingSessionData{Writer: d.W, Request: d.R})
 	if returnedData.Error != nil {
 		SetAnswer(InputAnswerData{
 			W:    d.W,
@@ -61,7 +61,7 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 		return
 	}
 	if outData.IsNewJwtCreated {
-		d.Session.SetNewSession(RepoSessionHandle.IncomingSessionData{Jwt: outData.NewJwt})
+		d.Session.SetNewSession(RepoSession.IncomingSessionData{Jwt: outData.NewJwt})
 	}
 	file, fileDetails, err := d.getFileData()
 	if err != nil {

@@ -14,6 +14,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+const SessionError = "cannot create a session"
+
 type LoginApplication interface {
 	Login(context.Context, Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData
 }
@@ -36,8 +38,8 @@ func GetNewLogin(newLoginData NewLoginData, newLoginCrypto NewLoginCrypto, newLo
 	return &NewLogin{NewLoginData: newLoginData, NewLoginCrypto: newLoginCrypto, NewLoginAuth: newLoginAuth}
 }
 
-func (sa *NewLogin) LoginService(ctx context.Context, s Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData {
-	usersData := sa.ReaderDatabase.LoginData(s.Email, ctx)
+func (sa *NewLogin) Login(ctx context.Context, s Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData {
+	usersData := sa.ReaderDatabase.LoginData(ctx, s.Email)
 	if usersData.Err != nil {
 		return DomainLevel.LoginApplicationOutComingData{
 			Err: usersData.Err,
@@ -49,7 +51,7 @@ func (sa *NewLogin) LoginService(ctx context.Context, s Dto.UserLoginData) Domai
 			Err: err,
 		}
 	}
-	RefreshToken, err := sa.GeneratingTokens.GenerateRT(Dto.JwtCustomStruct{
+	RefreshToken, err := sa.GeneratingTokens.GenerateRT(.JwtCustomStruct{
 		UserID: (usersData.Id),
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "Kabaner",
@@ -59,9 +61,9 @@ func (sa *NewLogin) LoginService(ctx context.Context, s Dto.UserLoginData) Domai
 		},
 	})
 	if err != nil {
-		slog.Error("LoginService; error to generate the Refresh Token", "ERROR", err)
+		slog.Error("LoginController; error to generate the Refresh Token", "ERROR", err)
 		return DomainLevel.LoginApplicationOutComingData{
-			Err: errors.New(DomainLevel.SessionError),
+			Err: errors.New(SessionError),
 		}
 	}
 	JwtToken, err := sa.GeneratingTokens.GenerateJWT(Dto.JwtCustomStruct{
@@ -74,9 +76,9 @@ func (sa *NewLogin) LoginService(ctx context.Context, s Dto.UserLoginData) Domai
 		},
 	})
 	if err != nil {
-		slog.Error("LoginService; error to generate a Jwt token", "ERROR", err)
+		slog.Error("LoginController; error to generate a Jwt token", "ERROR", err)
 		return DomainLevel.LoginApplicationOutComingData{
-			Err: errors.New(DomainLevel.SessionError),
+			Err: errors.New(SessionError),
 		}
 	}
 	return DomainLevel.LoginApplicationOutComingData{

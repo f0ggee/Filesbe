@@ -6,7 +6,7 @@ import (
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	s3Repo2 "Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
-	"Kaban/internal/InfrastructureLayer/RepoSessionHandle"
+	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"Kaban/internal/InfrastructureLayer/s3Repo"
 	"Kaban/internal/Service/Application"
 	"log/slog"
@@ -63,8 +63,8 @@ func main() {
 	ServerKeysCollector := cmds.GetNewServerKeysCollector(PrivateKey, MasterKey)
 	AuthCollector := cmds.GetAuthTokensCollector([]byte(os.Getenv("KEY1")))
 	DatabaseCollector := cmds.GetDatabaseManageCollector(db)
-	DeliverPackagesCollector := cmds.GetDeliverPackagesCollector(RepoSessionHandle.GetCookieStore())
-	SessionCollector := cmds.GetSessionCollector(RepoSessionHandle.GetCookieStore())
+	DeliverPackagesCollector := cmds.GetDeliverPackagesCollector(RepoSession.GetCookieStore())
+	SessionCollector := cmds.GetSessionCollector(RepoSession.GetCookieStore())
 	GrpcCollector := cmds.GetGrpcCollector(CryptoCollector.Encrypt, CryptoCollector.Decrypt, ParserCollector.Decode, CryptoCollector.Validate, *EncrypterKeysCollector, *ServerKeysCollector)
 	RedisCollector := cmds.GetRedisCollector(redisConn)
 
