@@ -10,7 +10,7 @@ import (
 	"log/slog"
 	"time"
 
-	"Kaban/internal/InfrastructureLayer/RepoParsers"
+	"Kaban/internal/InfrastructureLayer/Parsers"
 
 	"github.com/awnumar/memguard"
 )
@@ -41,7 +41,7 @@ type NewEncrypt struct {
 	CryptoEncrypt DomainLevel.Encryption
 }
 type NewParser struct {
-	Parse RepoParsers.Decode
+	Parse Parsers.Decode
 }
 
 func (h HandlerGrpcRequest) CheckingGettingNewKey(Packet []byte) (time.Duration, error) {

@@ -143,7 +143,7 @@ func (sa *NewUploadEncrypt) EncryptFile(src io.Reader, dst DomainLevel.Upload, d
 			err = dst.Uploader(bytes.NewReader(outData))
 			if err != nil {
 				slog.Error("EncryptFile; error to write in the stream", "ERROR", err.Error())
-				return errors.New(DomainLevel.ErrorStrangeCrypto)
+				return err
 			}
 		}
 		if err == io.EOF {

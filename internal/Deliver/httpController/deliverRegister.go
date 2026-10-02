@@ -8,35 +8,27 @@ import (
 	"net/http"
 )
 
-type NewRegisterDetails struct {
-	Session RepoSession.Session
-	D       DomainLevel.Decoder
-}
-
 type RegisterNet struct {
 	W http.ResponseWriter
 	R *http.Request
 }
 type NewRegister struct {
 	RegisterNet
-	NewRegisterDetails
-	Application.RegisterApplication
-}
-
-func GetNewRegister(registerNet RegisterNet, newRegisterDetails NewRegisterDetails) *NewRegister {
-	return &NewRegister{RegisterNet: registerNet, NewRegisterDetails: newRegisterDetails}
+	Session RepoSession.Session
+	Decoder DomainLevel.Decoder
+	App     Application.RegisterApplication
 }
 
 func (D NewRegister) Register() {
-	userDataRegister := &Dto.UserDataRegister{}
-	err := D.D.DecodeFlow(userDataRegister, D.R.Body)
+	var userDataRegister Dto.UserDataRegister
+	err := D.Decoder.DecodeFlow(&userDataRegister, D.R.Body)
 	defer D.R.Body.Close()
 
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,
-			code: http.StatusNotFound,
-			data: AnswerRegister{
+			Code: http.StatusNotFound,
+			Data: AnswerRegister{
 				StatusOfOperation: DomainName,
 				Error:             err.Error(),
 			},
@@ -48,8 +40,8 @@ func (D NewRegister) Register() {
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,
-			code: http.StatusNotFound,
-			data: AnswerRegister{
+			Code: http.StatusNotFound,
+			Data: AnswerRegister{
 				StatusOfOperation: NotStart,
 				Error:             err.Error(),
 			},
@@ -57,12 +49,12 @@ func (D NewRegister) Register() {
 		return
 	}
 
-	RegisterOutput := D.Regist(D.R.Context(), userDataRegister)
+	RegisterOutput := D.App.RegisterApp(D.R.Context(), &userDataRegister)
 	if RegisterOutput.Err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,
-			code: http.StatusAlreadyReported,
-			data: AnswerRegister{
+			Code: http.StatusAlreadyReported,
+			Data: AnswerRegister{
 				StatusOfOperation: Break,
 				Error:             RegisterOutput.Err.Error(),
 			},
@@ -77,8 +69,8 @@ func (D NewRegister) Register() {
 	if returnedData.Error != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,
-			code: http.StatusConflict,
-			data: AnswerRegister{
+			Code: http.StatusConflict,
+			Data: AnswerRegister{
 				StatusOfOperation: Break,
 				Error:             returnedData.Error.Error(),
 			},
@@ -89,8 +81,8 @@ func (D NewRegister) Register() {
 
 	SetAnswer(InputAnswerData{
 		W:    D.W,
-		code: http.StatusOK,
-		data: AnswerRegister{
+		Code: http.StatusOK,
+		Data: AnswerRegister{
 			StatusOfOperation: Success,
 			UrlToRedirect:     MainPageUrl,
 		},

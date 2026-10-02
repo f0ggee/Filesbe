@@ -110,6 +110,10 @@ func (s *NewSessionConnect) SetNewSession(data IncomingSessionData) ReturnedSess
 type Mocks struct {
 }
 
+func GetNewMocks() *Mocks {
+	return &Mocks{}
+}
+
 func (m Mocks) GetSessionData(data IncomingSessionData) ReturnedSessionKey {
 
 	return ReturnedSessionKey{}

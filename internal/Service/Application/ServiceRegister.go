@@ -4,6 +4,7 @@ import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
+	"Kaban/internal/InfrastructureLayer/Tokens"
 	"context"
 	"crypto/rand"
 	"log/slog"
@@ -13,8 +14,47 @@ import (
 )
 
 type RegisterApplication interface {
-	Regist(context.Context, *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData
+	RegisterApp(context.Context, *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData
 }
+
+type RegisterTest struct{}
+
+func GetNewRegisterTest() *RegisterTest {
+	return &RegisterTest{}
+}
+
+func (r RegisterTest) RegisterApp(ctx context.Context, register *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
+	JwtToken := Tokens.GetNewJwtToken()
+	RfToken := Tokens.GetNewRfToken()
+
+	jwtMaker, err := JwtToken.Make()
+	if err != nil {
+		panic(err)
+	}
+
+	var bytes = []byte(rand.Text())
+	jwtToken, err := jwtMaker.GetAuthToken(bytes)
+	if err != nil {
+		panic(err)
+	}
+
+	rfMaker, err := RfToken.Make()
+	if err != nil {
+		panic(err)
+	}
+
+	rfToken, err := rfMaker.GetAuthToken(bytes)
+	if err != nil {
+		panic(err)
+	}
+
+	return DomainLevel.RegisterApplicationOutComingData{
+		Jwt: string(jwtToken),
+		Rft: string(rfToken),
+		Err: nil,
+	}
+}
+
 type NewRegisterCrypto struct {
 	Generator DomainLevel.CryptoGenerating
 }
@@ -32,7 +72,7 @@ func GetNewRegisterApplication(newRegisterDataMange NewRegisterDataMange, newReg
 	return &NewRegisterApplication{NewRegisterDataMange: newRegisterDataMange, NewRegisterCrypto: newRegisterCrypto}
 }
 
-func (sa *NewRegisterApplication) Regist(ctx context.Context, de *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
+func (sa *NewRegisterApplication) RegisterApp(ctx context.Context, de *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
 	err := sa.CheckingDb.CheckerUser(ctx, de.Email)
 	if err != nil {
 		return DomainLevel.RegisterApplicationOutComingData{Err: err}

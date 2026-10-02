@@ -25,9 +25,9 @@ func (d *NewBuildUrl) SetUrl() {
 		slog.Error("UrlUploader name file empty", slog.Group("Request details", slog.String("URL", d.Net.r.RequestURI)))
 		SetAnswer(InputAnswerData{
 			W: d.Net.W,
-			data: AnswerUrlBuilder{
+			Data: AnswerUrlBuilder{
 				StatusOperation: NotStart,
-				ErrorMessage:    ErrorFileNameEmpty,
+				ErrorMessage:    ErrorFileNameEmpty.Error(),
 			},
 		})
 		return
@@ -36,8 +36,8 @@ func (d *NewBuildUrl) SetUrl() {
 	case urlData.FileType == "true":
 		SetAnswer(InputAnswerData{
 			W:    d.Net.W,
-			code: http.StatusOK,
-			data: AnswerUrlBuilder{
+			Code: http.StatusOK,
+			Data: AnswerUrlBuilder{
 
 				StatusOperation: Success,
 				Url:             EncryptURLDownload + urlData.NameFile,
@@ -50,9 +50,9 @@ func (d *NewBuildUrl) SetUrl() {
 	case urlData.FileType == "false":
 		SetAnswer(InputAnswerData{
 			W:    d.Net.W,
-			code: http.StatusOK,
+			Code: http.StatusOK,
 
-			data: AnswerUrlBuilder{
+			Data: AnswerUrlBuilder{
 				StatusOperation: Success,
 				Url:             UrlDownload,
 			},
@@ -62,8 +62,8 @@ func (d *NewBuildUrl) SetUrl() {
 
 	SetAnswer(InputAnswerData{
 		W:    d.Net.W,
-		code: http.StatusBadRequest,
-		data: AnswerUrlBuilder{
+		Code: http.StatusBadRequest,
+		Data: AnswerUrlBuilder{
 			ErrorMessage: DomainLevel.NonIdentifyError,
 		},
 	})

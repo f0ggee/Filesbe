@@ -37,8 +37,8 @@ func (D *NewLoginController) LoginController() {
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,
-			code: http.StatusBadRequest,
-			data: AnswerLogin{
+			Code: http.StatusBadRequest,
+			Data: AnswerLogin{
 				StatusOfOperation: NotStart,
 				ErrorMessage:      err.Error(),
 			},
@@ -50,8 +50,8 @@ func (D *NewLoginController) LoginController() {
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,
-			code: http.StatusNotFound,
-			data: AnswerLogin{
+			Code: http.StatusNotFound,
+			Data: AnswerLogin{
 				StatusOfOperation: NotStart,
 				ErrorMessage:      err.Error(),
 			},
@@ -63,8 +63,8 @@ func (D *NewLoginController) LoginController() {
 	if loginDataOutput.Err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,
-			code: http.StatusUnauthorized,
-			data: AnswerLogin{
+			Code: http.StatusUnauthorized,
+			Data: AnswerLogin{
 				StatusOfOperation: Break,
 				ErrorMessage:      loginDataOutput.Err.Error(),
 			},
@@ -80,8 +80,8 @@ func (D *NewLoginController) LoginController() {
 	if ReturnedData.Error != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,
-			code: http.StatusBadRequest,
-			data: AnswerLogin{
+			Code: http.StatusBadRequest,
+			Data: AnswerLogin{
 				StatusOfOperation: Break,
 				ErrorMessage:      ReturnedData.Error.Error(),
 			},
@@ -90,8 +90,8 @@ func (D *NewLoginController) LoginController() {
 	}
 	SetAnswer(InputAnswerData{
 		W:    D.W,
-		code: http.StatusOK,
-		data: AnswerLogin{
+		Code: http.StatusOK,
+		Data: AnswerLogin{
 			StatusOfOperation: Success,
 			UrlToRedirect:     MainPageUrl,
 		},

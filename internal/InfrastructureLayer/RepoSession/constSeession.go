@@ -1,10 +1,7 @@
 package RepoSession
 
-import "time"
-
 const RTCookieName = "RTCookie"
 const JwtCookieName = "JWTCookie"
-const CookieTimeLive = 1000 * time.Hour
 const TokenName = "token6"
 
 const (

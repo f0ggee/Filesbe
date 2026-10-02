@@ -1,20 +1,18 @@
 package httpController
 
-const ContentType = "Content-Type"
+import "errors"
 
-const Json = "application/json"
-const Success = "Success"
-const DomainName = "https://filesbes.com/"
-const EncryptURLDownload = "https://filesbes.com/d2/"
-const UrlDownload = "https://filesbes.com/d/"
-const LocalHostName = "http://localhost:8080/"
-const Bots = "Bot"
-const RequestId = "RequestId"
-const InfoPageUrl = "/informationPage"
+var (
+	Success            = "Success"
+	DomainName         = "https://filesbes.com/"
+	EncryptURLDownload = "https://filesbes.com/d2/"
+	UrlDownload        = "https://filesbes.com/d/"
+	MainPageUrl        = "/main"
+	LoginPage          = "/login"
+	Bots               = "Bot"
+)
 
-const MainPageUrl = "/main"
-const LoginPage = "/login"
-const (
+var (
 	FileUrlName = "name"
 	TypeFile    = "bool"
 )
@@ -63,15 +61,14 @@ type OutComingUrlData struct {
 	FileType string
 }
 
-const (
-	ErrorFileNameEmpty   = "the file's filed is empty"
-	ErrorCantGetFileName = "the file's name isn't set"
-	ErrorFile            = "can't get a file"
-)
-const (
-	MethodNotAllowed = "the method isn't allowed"
-)
-const (
-	Break    = "break"
-	NotStart = "not_start"
+// /the error list
+var (
+	ErrorFileNameEmpty   = errors.New("the file's filed is empty")
+	ErrorCantGetFileName = errors.New("the file's name isn't set")
+	ErrorFile            = errors.New("can't get a file")
+	Break                = "break"
+	NotStart             = "not_start"
+	ErrorGetCookie       = errors.New("error get an user's cookie")
+	ErrorAuthExpired     = errors.New("user's auth expired")
+	ErrorSaveCookie      = errors.New("error save a cookie")
 )

@@ -3,7 +3,6 @@ package TransferringHttpRepo
 import (
 	"Kaban/internal/DomainLevel"
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -40,7 +39,7 @@ func (h *HttpUploader) Uploader(reader io.Reader) error {
 	wri.Header().Set("Content-Length", strconv.FormatUint(uint64(h.sizeFile), 10))
 	if _, err := io.Copy(h.source, reader); err != nil {
 		slog.Error("HttpUploader: error to upload a file", "ERROR", err)
-		return errors.New(ErrorUploadFile)
+		return ErrorUploadFile
 	}
 	return nil
 }

@@ -3,8 +3,8 @@ package ProtocolManage
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
+	"Kaban/internal/InfrastructureLayer/Parsers"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
-	"Kaban/internal/InfrastructureLayer/RepoParsers"
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
@@ -30,11 +30,11 @@ func GetNewExchangeInitializerCrypto(cryptoGenerating DomainLevel.CryptoGenerati
 }
 
 type NewExchangeInitializerParsers struct {
-	Encode RepoParsers.Encode
-	Decode RepoParsers.Decode
+	Encode Parsers.Encode
+	Decode Parsers.Decode
 }
 
-func GetNewExchangeInitializerParsers(encode RepoParsers.Encode, decode RepoParsers.Decode) *NewExchangeInitializerParsers {
+func GetNewExchangeInitializerParsers(encode Parsers.Encode, decode Parsers.Decode) *NewExchangeInitializerParsers {
 	return &NewExchangeInitializerParsers{Encode: encode, Decode: decode}
 }
 

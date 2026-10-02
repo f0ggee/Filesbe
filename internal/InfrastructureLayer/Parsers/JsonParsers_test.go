@@ -1,4 +1,4 @@
-package RepoParsers
+package Parsers
 
 import (
 	"Kaban/internal/Dto"

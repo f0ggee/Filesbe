@@ -4,7 +4,6 @@ import (
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"Kaban/internal/Service/Application"
-	"errors"
 	"log/slog"
 	"mime/multipart"
 	"net/http"
@@ -37,8 +36,8 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 	if returnedData.Error != nil {
 		SetAnswer(InputAnswerData{
 			W:    d.W,
-			code: http.StatusUnauthorized,
-			data: AnswerUploaderFileNoEncrypt{
+			Code: http.StatusUnauthorized,
+			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
 				Error:           returnedData.Error.Error(),
 			},
@@ -52,8 +51,8 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 	if outData.Err != nil {
 		SetAnswer(InputAnswerData{
 			W:    d.W,
-			code: http.StatusUnauthorized,
-			data: AnswerUploaderFileNoEncrypt{
+			Code: http.StatusUnauthorized,
+			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
 				Error:           outData.Err.Error(),
 			},
@@ -67,10 +66,10 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    d.W,
-			code: http.StatusBadRequest,
-			data: AnswerUploaderFileNoEncrypt{
+			Code: http.StatusBadRequest,
+			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
-				Error:           ErrorCantGetFileName,
+				Error:           ErrorCantGetFileName.Error(),
 			},
 		})
 		return
@@ -84,8 +83,8 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    d.W,
-			code: http.StatusBadRequest,
-			data: AnswerUploaderFileNoEncrypt{
+			Code: http.StatusBadRequest,
+			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
 				Error:           err.Error(),
 			},
@@ -97,8 +96,8 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    d.W,
-			code: http.StatusBadRequest,
-			data: AnswerUploaderFileNoEncrypt{
+			Code: http.StatusBadRequest,
+			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
 				Error:           err.Error(),
 			},
@@ -107,8 +106,8 @@ func (d *NewFileUploader) FileUploaderNoEncrypt(router *mux.Router) {
 	}
 	SetAnswer(InputAnswerData{
 		W:    d.W,
-		code: http.StatusCreated,
-		data: AnswerUploaderFileNoEncrypt{
+		Code: http.StatusCreated,
+		Data: AnswerUploaderFileNoEncrypt{
 			StatusOperation: Success,
 			UrlToRedirect:   urlPath,
 		},
@@ -120,7 +119,7 @@ func (d *NewFileUploader) getFileData() (multipart.File, *multipart.FileHeader, 
 	file, fileDetails, err := d.R.FormFile("File")
 	if err != nil {
 		slog.Error("Upload; error to get a File", "ERROR", err)
-		return nil, nil, errors.New(ErrorCantGetFileName)
+		return nil, nil, ErrorCantGetFileName
 	}
 	return file, fileDetails, nil
 }
@@ -129,7 +128,7 @@ func getUploadData(r *mux.Router, fileName string) (string, error) {
 	url, err := r.Get("fileName").URL("name", fileName, "bool", "true")
 	if err != nil {
 		slog.Error("UrlBuilderUploadEncrypt; error to get a file name from the url", "ERROR", err)
-		return "", errors.New(ErrorCantGetFileName)
+		return "", ErrorCantGetFileName
 	}
 	return url.Path, nil
 }

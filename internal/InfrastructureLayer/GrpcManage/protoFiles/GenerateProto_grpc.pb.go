@@ -105,7 +105,7 @@ func _SendingGetting_GetNewKey_Handler(srv interface{}, ctx context.Context, dec
 }
 
 // SendingGetting_ServiceDesc is the grpc.ServiceDesc for SendingGetting service.
-// It's only intended for direct use with grpc.Regist,
+// It's only intended for direct use with grpc.RegisterApp,
 // and not to be introspected or modified (even as a copy)
 var SendingGetting_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "test1.SendingGetting",

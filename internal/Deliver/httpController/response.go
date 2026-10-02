@@ -8,14 +8,14 @@ import (
 
 type InputAnswerData struct {
 	W    http.ResponseWriter
-	code int
-	data any
+	Code int
+	Data any
 }
 
 func SetAnswer(data InputAnswerData) {
-	data.W.Header().Set(ContentType, Json)
-	data.W.WriteHeader(data.code)
-	if err := json.NewEncoder(data.W).Encode(&data.data); err != nil {
+	data.W.Header().Set("Content-Type", "application/json")
+	data.W.WriteHeader(data.Code)
+	if err := json.NewEncoder(data.W).Encode(&data.Data); err != nil {
 		slog.Error("SetAnswer; error to encode a response", "ERROR", err)
 		return
 	}

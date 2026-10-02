@@ -38,8 +38,8 @@ func (s *CheckUserAuth) CheckUserAuth() {
 	if returnedData.Error != nil {
 		SetAnswer(InputAnswerData{
 			W:    s.W,
-			code: http.StatusUnauthorized,
-			data: AnswerUserCheck{
+			Code: http.StatusUnauthorized,
+			Data: AnswerUserCheck{
 				Error: returnedData.Error.Error(),
 			},
 		})
@@ -52,8 +52,8 @@ func (s *CheckUserAuth) CheckUserAuth() {
 	if OutData.Err != nil {
 		SetAnswer(InputAnswerData{
 			W:    s.W,
-			code: http.StatusUnauthorized,
-			data: AnswerUserCheck{
+			Code: http.StatusUnauthorized,
+			Data: AnswerUserCheck{
 				UrlToRedirect: LoginPage,
 				Error:         returnedData.Error.Error(),
 			},
@@ -70,8 +70,8 @@ func (s *CheckUserAuth) CheckUserAuth() {
 
 	SetAnswer(InputAnswerData{
 		W:    s.W,
-		code: http.StatusOK,
-		data: AnswerUserCheck{
+		Code: http.StatusOK,
+		Data: AnswerUserCheck{
 			UrlToRedirect: MainPageUrl,
 		},
 	})

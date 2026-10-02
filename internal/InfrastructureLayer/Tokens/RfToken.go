@@ -10,20 +10,20 @@ import (
 	"github.com/go-jose/go-jose/v4/jwt"
 )
 
-type JwtToken struct {
+type RfToken struct {
 	sig jose.Signer
 }
 
-func GetNewJwtToken() *JwtToken {
-	return &JwtToken{}
+func GetNewRfToken() *RfToken {
+	return &RfToken{}
 }
 
-func (j *JwtToken) GetAuthToken(UsefulData []byte) ([]byte, error) {
+func (j *RfToken) GetAuthToken(UsefulData []byte) ([]byte, error) {
 	cl := jwt.Claims{
 		Issuer:   "Kaban",
 		Subject:  "u",
 		Audience: jwt.Audience{string(UsefulData)},
-		Expiry:   jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+		Expiry:   jwt.NewNumericDate(time.Now().Add(32 * time.Hour)),
 		IssuedAt: jwt.NewNumericDate(time.Now()),
 		ID:       rand.Text(),
 	}
@@ -35,7 +35,7 @@ func (j *JwtToken) GetAuthToken(UsefulData []byte) ([]byte, error) {
 	return []byte(raw), nil
 }
 
-func (j *JwtToken) IsTokenCorrect(Token []byte) error {
+func (j *RfToken) IsTokenCorrect(Token []byte) error {
 
 	parsedToken, err := jwt.ParseSigned(string(Token), []jose.SignatureAlgorithm{jose.HS512})
 	if err != nil {
@@ -58,10 +58,10 @@ func (j *JwtToken) IsTokenCorrect(Token []byte) error {
 	return nil
 }
 
-func (j *JwtToken) SetAdditionalData(bytes []byte) DomainLevel.AuthMaker {
+func (j *RfToken) SetAdditionalData(bytes []byte) DomainLevel.AuthMaker {
 	return j
 }
-func (j *JwtToken) Make() (DomainLevel.Auth, error) {
+func (j *RfToken) Make() (DomainLevel.Auth, error) {
 	d, err := jose.NewSigner(jose.SigningKey{
 		Algorithm: jose.HS512,
 		Key:       Key,

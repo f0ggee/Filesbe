@@ -4,7 +4,6 @@ import (
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"Kaban/internal/Service/Application"
-	"errors"
 	"log/slog"
 	"mime/multipart"
 	"net/http"
@@ -46,8 +45,8 @@ func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 
 		SetAnswer(InputAnswerData{
 			W:    S.W,
-			code: http.StatusBadRequest,
-			data: AnswerUploadEncrypt{
+			Code: http.StatusBadRequest,
+			Data: AnswerUploadEncrypt{
 				StatusOperation: Break,
 				Error:           returnedSession.Error.Error(),
 			},
@@ -61,8 +60,8 @@ func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 	if Data.Err != nil {
 		SetAnswer(InputAnswerData{
 			W:    S.W,
-			code: http.StatusUnauthorized,
-			data: AnswerUploadEncrypt{
+			Code: http.StatusUnauthorized,
+			Data: AnswerUploadEncrypt{
 				StatusOperation: Break,
 				Error:           Data.Err.Error(),
 			},
@@ -73,8 +72,8 @@ func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    S.W,
-			code: http.StatusBadRequest,
-			data: errors.New(ErrorFile),
+			Code: http.StatusBadRequest,
+			Data: ErrorFile,
 		})
 		return
 	}
@@ -87,8 +86,8 @@ func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    S.W,
-			code: http.StatusBadRequest,
-			data: AnswerUploadEncrypt{
+			Code: http.StatusBadRequest,
+			Data: AnswerUploadEncrypt{
 				StatusOperation: NotStart,
 				Error:           err.Error(),
 			},
@@ -100,8 +99,8 @@ func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    S.W,
-			code: http.StatusBadRequest,
-			data: AnswerUploadEncrypt{
+			Code: http.StatusBadRequest,
+			Data: AnswerUploadEncrypt{
 				StatusOperation: NotStart,
 				Error:           err.Error(),
 			},
@@ -110,8 +109,8 @@ func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 	}
 	SetAnswer(InputAnswerData{
 		W:    S.W,
-		code: http.StatusOK,
-		data: AnswerUploadEncrypt{
+		Code: http.StatusOK,
+		Data: AnswerUploadEncrypt{
 			StatusOperation: Success,
 			UrlToRedirect:   urlPath,
 		},
@@ -132,7 +131,7 @@ func getUploadEncryptData(r *mux.Router, fileName string) (string, error) {
 	url, err := r.Get("fileName").URL("name", fileName, "bool", "true")
 	if err != nil {
 		slog.Error("UrlBuilderUploadEncrypt; error to get a file name from the url", "ERROR", err)
-		return "", errors.New(ErrorCantGetFileName)
+		return "", ErrorCantGetFileName
 	}
 	return url.Path, nil
 }

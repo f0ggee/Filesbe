@@ -54,13 +54,13 @@ func (s *S3Upload) Uploader(reader io.Reader) error {
 	switch {
 	case errors.Is(err, context.DeadlineExceeded):
 		slog.Error("S3 uploader: a client stopped uploading")
-		return errors.New(ErrorClientStop)
+		return ErrorClientStop
 
 	case err != nil:
 		slog.Error("S3 uploader: a strange error", "ERROR", err)
-		return errors.New(ErrorStrangeError)
+		return ErrorStrangeError
 	}
-	return errors.New(ErrorStrangeError)
+	return ErrorStrangeError
 }
 
 func (s *S3Upload) CloseSource() error {

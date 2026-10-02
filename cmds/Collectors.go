@@ -8,9 +8,9 @@ import (
 	"Kaban/internal/InfrastructureLayer/FileControls"
 	s3Repo2 "Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
 	"Kaban/internal/InfrastructureLayer/GrpcManage"
+	"Kaban/internal/InfrastructureLayer/Parsers"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
-	"Kaban/internal/InfrastructureLayer/RepoParsers"
 	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"os"
 
@@ -64,7 +64,7 @@ type CollectorCrypto struct {
 }
 
 type NewCryptoCollectorInput struct {
-	Decode RepoParsers.Decode
+	Decode Parsers.Decode
 }
 
 func GetNewCryptoCollector(d NewCryptoCollectorInput) *CollectorCrypto {
@@ -126,7 +126,7 @@ type GrpcCollector struct {
 	Checking GrpcManage.HandlerGrpcRequest
 }
 
-func GetGrpcCollector(CryptoEncrypt DomainLevel.Encryption, CryptoDecrypt DomainLevel.Decryption, Parse RepoParsers.Decode, CryptoValidate DomainLevel.CryptoValidating, Keys RepoEncrypterKeys.Keys, ServerKeys DomainLevel.NewServerKeys) *GrpcCollector {
+func GetGrpcCollector(CryptoEncrypt DomainLevel.Encryption, CryptoDecrypt DomainLevel.Decryption, Parse Parsers.Decode, CryptoValidate DomainLevel.CryptoValidating, Keys RepoEncrypterKeys.Keys, ServerKeys DomainLevel.NewServerKeys) *GrpcCollector {
 
 	return &GrpcCollector{
 		Sender: *GrpcManage.GetNewSenderRequests(),
@@ -170,13 +170,13 @@ func GetEncrypterKeysCollector(Key1 *memguard.LockedBuffer, Key2 *memguard.Locke
 }
 
 type RepoParsersCollector struct {
-	Decode RepoParsers.Decode
-	Encode RepoParsers.Encode
+	Decode Parsers.Decode
+	Encode Parsers.Encode
 }
 
 func GetRepoParsersCollector() *RepoParsersCollector {
 	return &RepoParsersCollector{
-		Decode: RepoParsers.GetNewParsing(),
-		Encode: RepoParsers.GetNewParsing(),
+		Decode: Parsers.GetNewParsing(),
+		Encode: Parsers.GetNewParsing(),
 	}
 }

@@ -3,8 +3,8 @@ package ProtocolManage
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
+	"Kaban/internal/InfrastructureLayer/Parsers"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
-	"Kaban/internal/InfrastructureLayer/RepoParsers"
 	"context"
 	"crypto/sha256"
 	"time"
@@ -17,7 +17,7 @@ type NewExchangerDeliver struct {
 }
 
 type NewExchangerParsers struct {
-	Decoder RepoParsers.Decode
+	Decoder Parsers.Decode
 }
 type NewExchangerCrypto struct {
 	Decrypter  DomainLevel.Decrypter

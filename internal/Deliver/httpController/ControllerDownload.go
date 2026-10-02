@@ -34,10 +34,10 @@ func (d *DownloadNew) DownloadWithNotEncrypt() {
 	if name == "" {
 		SetAnswer(InputAnswerData{
 			W:    d.W,
-			code: http.StatusBadRequest,
-			data: AnswerDownloadNoEncrypt{
+			Code: http.StatusBadRequest,
+			Data: AnswerDownloadNoEncrypt{
 				StatusOperation: Break,
-				Error:           ErrorCantGetFileName,
+				Error:           ErrorCantGetFileName.Error(),
 			},
 		})
 		return
@@ -47,8 +47,8 @@ func (d *DownloadNew) DownloadWithNotEncrypt() {
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    d.W,
-			code: http.StatusBadRequest,
-			data: AnswerDownloadNoEncrypt{
+			Code: http.StatusBadRequest,
+			Data: AnswerDownloadNoEncrypt{
 				StatusOperation: Break,
 				Error:           err.Error(),
 			},

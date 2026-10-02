@@ -1,3 +1,5 @@
 package TransferringHttpRepo
 
-const ErrorUploadFile = "the error happened during uploading"
+import "errors"
+
+var ErrorUploadFile = errors.New("the error happened during uploading")

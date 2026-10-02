@@ -30,10 +30,10 @@ func (d NewDownloadEncrypt) DownloadWithEncrypt() {
 	if fileName == "" {
 		SetAnswer(InputAnswerData{
 			W:    d.Net.W,
-			code: http.StatusCreated,
-			data: AnswerFileDownloadEncrypt{
+			Code: http.StatusCreated,
+			Data: AnswerFileDownloadEncrypt{
 				StatusOperation: Break,
-				Error:           ErrorCantGetFileName,
+				Error:           ErrorCantGetFileName.Error(),
 			},
 		})
 		return
@@ -45,8 +45,8 @@ func (d NewDownloadEncrypt) DownloadWithEncrypt() {
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    d.Net.W,
-			code: http.StatusNotFound,
-			data: AnswerFileDownloadEncrypt{
+			Code: http.StatusNotFound,
+			Data: AnswerFileDownloadEncrypt{
 				StatusOperation: NotStart,
 				Error:           err.Error(),
 			},

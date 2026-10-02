@@ -2,19 +2,10 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
-	"context"
-	"crypto/rand"
-	"errors"
-	"log/slog"
-	"time"
-
 	"Kaban/internal/Dto"
-
-	"github.com/golang-jwt/jwt/v5"
+	"context"
+	"encoding/binary"
 )
-
-const SessionError = "cannot create a session"
 
 type LoginApplication interface {
 	Login(context.Context, Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData
@@ -26,7 +17,8 @@ type NewLoginData struct {
 	ReaderDatabase DomainLevel.ReadDb
 }
 type NewLoginAuth struct {
-	GeneratingTokens AuthTokensManage.Generator
+	GenereteTokens1 DomainLevel.AuthMaker
+	GenereteToken2  DomainLevel.AuthMaker
 }
 type NewLogin struct {
 	NewLoginData
@@ -51,38 +43,43 @@ func (sa *NewLogin) Login(ctx context.Context, s Dto.UserLoginData) DomainLevel.
 			Err: err,
 		}
 	}
-	RefreshToken, err := sa.GeneratingTokens.GenerateRT(.JwtCustomStruct{
-		UserID: (usersData.Id),
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "Kabaner",
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(30 * time.Hour)),
-			ID:        rand.Text(),
-		},
-	})
+
+	var BytesID [4]byte
+	binary.BigEndian.PutUint32(BytesID[:], uint32(usersData.Id))
+	refreshTokenMaker, err := sa.GenereteTokens1.Make()
 	if err != nil {
-		slog.Error("LoginController; error to generate the Refresh Token", "ERROR", err)
 		return DomainLevel.LoginApplicationOutComingData{
-			Err: errors.New(SessionError),
+			Err: err,
 		}
 	}
-	JwtToken, err := sa.GeneratingTokens.GenerateJWT(Dto.JwtCustomStruct{
-		UserID: usersData.Id,
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "Kabaner",
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Hour)),
-			ID:        rand.Text(),
-		},
-	})
+	refreshToken, err := refreshTokenMaker.GetAuthToken(BytesID[:])
 	if err != nil {
-		slog.Error("LoginController; error to generate a Jwt token", "ERROR", err)
 		return DomainLevel.LoginApplicationOutComingData{
-			Err: errors.New(SessionError),
+			Jwt: "",
+			Rft: "",
+			Err: err,
+		}
+	}
+
+	jwtTokenMaker, err := sa.GenereteToken2.Make()
+	if err != nil {
+		return DomainLevel.LoginApplicationOutComingData{
+			Jwt: "",
+			Rft: "",
+			Err: err,
+		}
+	}
+
+	jwtToken, err := jwtTokenMaker.GetAuthToken(BytesID[:])
+	if err != nil {
+		return DomainLevel.LoginApplicationOutComingData{
+			Jwt: "",
+			Rft: "",
+			Err: err,
 		}
 	}
 	return DomainLevel.LoginApplicationOutComingData{
-		Jwt: JwtToken,
-		Rft: RefreshToken,
+		Jwt: string(jwtToken),
+		Rft: string(refreshToken),
 	}
 }

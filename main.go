@@ -25,8 +25,8 @@ func main() {
 	if err != nil {
 		slog.Error("cannot load env file", "Error", err)
 	}
-	Key1 := &memguard.LockedBuffer{}
-	Key2 := &memguard.LockedBuffer{}
+
+	var Key1, Key2 memguard.LockedBuffer
 	cmds.SettingSlog()
 	memguard.CatchInterrupt()
 	defer memguard.Purge()
@@ -56,7 +56,7 @@ func main() {
 	S3Collector := cmds.GetS3Collector(cfg, OldS3Connect)
 	ParserCollector := cmds.GetRepoParsersCollector()
 	FileCollector := cmds.GetFileControlCollector()
-	EncrypterKeysCollector := cmds.GetEncrypterKeysCollector(Key1, Key2)
+	EncrypterKeysCollector := cmds.GetEncrypterKeysCollector(&Key1, &Key2)
 	CryptoCollector := cmds.GetNewCryptoCollector(cmds.NewCryptoCollectorInput{Decode: ParserCollector.Decode})
 	PrivateKey := []byte(os.Getenv("Our_Private_Key"))
 	MasterKey := []byte(os.Getenv("Public_Key_Master_Server"))

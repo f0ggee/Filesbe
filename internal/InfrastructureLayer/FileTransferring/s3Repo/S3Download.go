@@ -47,9 +47,9 @@ func (s *S3Downloader) Downloader() (io.Reader, error) {
 
 	case err != nil:
 		slog.Error("S3Downloader: an strange error happened during downloading", "ERROR", err)
-		return nil, errors.New(ErrorStrangeError)
+		return nil, ErrorStrangeError
 	}
-	return nil, errors.New(ErrorStrangeError)
+	return nil, ErrorStrangeError
 }
 
 func (s *S3Downloader) CloseSource() error {

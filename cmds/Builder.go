@@ -12,9 +12,9 @@ import (
 	"Kaban/internal/Deliver/httpController/DeliverPackages/RepourlBuilder"
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
+	"Kaban/internal/InfrastructureLayer/Parsers"
 	"Kaban/internal/InfrastructureLayer/ProtocolManage"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
-	"Kaban/internal/InfrastructureLayer/RepoParsers"
 	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"Kaban/internal/Service/Application"
 
@@ -232,7 +232,7 @@ func GetUploaderControllerBuilder(data UploaderEncryptBuilderIncomeData) *httpCo
 type NewLoginIncomeData struct {
 	S      *RepoLoginRealizations.LoginAnswers
 	Sess   RepoSession.Session
-	Parses RepoParsers.Decode
+	Parses Parsers.Decode
 	App    *Application.NewLogin
 }
 
@@ -267,7 +267,7 @@ func GetControllerCheckAuthBuilder(data CheckUserBuilderIncomeData) *httpControl
 type RegisterBuilderIncomeData struct {
 	Answ    RepoRegisterRepository.RegisterAnswers
 	Session RepoSession.Session
-	D       RepoParsers.Decode
+	D       Parsers.Decode
 	App     Application.NewRegisterApplication
 }
 

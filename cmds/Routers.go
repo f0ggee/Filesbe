@@ -44,7 +44,7 @@ func GetInformationPageRouter(getRequest *mux.Router) *mux.Route {
 
 func GetRegisterPageRouter(postRequest *mux.Router) *mux.Route {
 	return postRequest.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "internal/Service/Fronted/Regist.html")
+		http.ServeFile(w, r, "internal/Service/Fronted/RegisterApp.html")
 	})
 }
 func GetMainPageRouter(getRequest *mux.Router) *mux.Route {
