@@ -12,9 +12,11 @@ import (
 )
 
 const (
-	FileMaxSize         = 500000000
-	ErrorFileSizeBig    = "the File's size is bigger than the default size"
-	ErrorStartUploading = "an unexpected error happened"
+	FileMaxSize = 500000000
+)
+
+var (
+	ErrorFileSizeBig = errors.New("the File's size is bigger than the default size")
 )
 
 type UploadApplication interface {
@@ -52,7 +54,7 @@ type FileUploaderIncomeData struct {
 func (sa *NewUpload) Upload(r FileUploaderIncomeData) (string, error) {
 	g, ctx := errgroup.WithContext(r.Ctx)
 	if r.Size >= FileMaxSize {
-		return "", errors.New(ErrorFileSizeBig)
+		return "", ErrorFileSizeBig
 	}
 	defer func() {
 		err := r.File.Close()

@@ -36,8 +36,8 @@ func GetUploaderApiRouter(postRequest *mux.Router, app *http2.NewFileUploader) *
 
 func GetMainApiRouter(router *mux.Router, app *http2.CheckUserAuth) *mux.Route {
 	return router.HandleFunc("/maine/api", func(writer http.ResponseWriter, request *http.Request) {
-		app.W = writer
-		app.R = request
+		app.writer = writer
+		app.Request = request
 		app.CheckUserAuth()
 
 	}).Methods("GET")

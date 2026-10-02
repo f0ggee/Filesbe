@@ -19,7 +19,7 @@ type DownloadEncryptApplication interface {
 	DownloadEncrypt(NewDownloadEncryptIncomingData) error
 }
 
-const ErrorDecryptFile = "error to decrypt data"
+var ErrorDecryptFile = errors.New("error to decrypt data")
 
 type NewDownloadEncryptFileControl struct {
 	Transfer   FileControls.Transferring
@@ -128,7 +128,7 @@ func (s *NewDownloadEncrypt) decryptFile(AesKey []byte, o DomainLevel.Download, 
 	_, err = io.ReadFull(download, nonce.Bytes()[:s.Crypto.GetRequiredOverheadSize()])
 	if err != nil {
 		slog.Error("decryptFile; there is error to generate a nonce", "ERROR", err.Error())
-		return errors.New(ErrorStartUploading)
+		return ErrorDecryptFile
 	}
 	copy(nonce.Bytes()[s.Crypto.GetRequiredOverheadSize():], AesKey)
 	decrBlock, err := s.Crypto.MakeCrypto(nonce.Bytes()[s.Crypto.GetRequiredOverheadSize():], nonce.Bytes()[:s.Crypto.GetRequiredOverheadSize()])
@@ -143,22 +143,21 @@ func (s *NewDownloadEncrypt) decryptFile(AesKey []byte, o DomainLevel.Download, 
 			decrData, err := decrBlock.Decrypt(plainText.Bytes()[:n])
 			if err != nil {
 				slog.Error("decryptFile: error to write into a stream", "ERROR", err)
-				return errors.New(ErrorDecryptFile)
+				return ErrorDecryptFile
 			}
 			err = uploadedObj.Uploader(bytes.NewReader(decrData))
 			if err != nil {
 				slog.Error("decryptFile: error to write into a stream", "ERROR", err)
-				return errors.New(ErrorDecryptFile)
+				return ErrorDecryptFile
 			}
 			memguard.WipeBytes(decrData)
 		}
 		if err == io.EOF {
-
 			break
 		}
 		if err != nil {
 			slog.Error("decryptFile; error to read a File", "ERROR", err.Error())
-			return errors.New(ErrorDecryptFile)
+			return ErrorDecryptFile
 		}
 
 	}
@@ -178,11 +177,11 @@ func (s *NewDownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.Lock
 	}
 	cr, err = s.Crypto.MakeCrypto(s.EncrypterKeys.GetOldKey(), []byte(""))
 	if err != nil {
-		return nil, errors.New(ErrorDecryptFile)
+		return nil, ErrorDecryptFile
 	}
 	outData2, err := cr.Decrypt(fileInfoInBytes)
 	if err != nil {
-		return nil, errors.New(ErrorDecryptFile)
+		return nil, ErrorDecryptFile
 	}
 	data := memguard.NewBuffer(len(outData2))
 	data.Copy(outData2)

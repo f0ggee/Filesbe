@@ -1,6 +1,7 @@
 package GrpcManage
 
 import (
+	"Kaban/internal/DomainLevel"
 	pb "Kaban/internal/InfrastructureLayer/GrpcManage/protoFiles"
 	"context"
 	"errors"
@@ -10,12 +11,20 @@ import (
 	"google.golang.org/grpc"
 )
 
-const (
-	ErrorAttemptsExpired = "attempts are expired"
+var (
+	ErrorAttemptsExpired = errors.New("attempts are expired")
 )
 
 type NewSenderRequests struct {
 	Conn *grpc.ClientConn
+}
+
+func (s NewSenderRequests) SetAdditionalData(bytes []byte) DomainLevel.MakerKeyRequest {
+	return s
+}
+
+func (s NewSenderRequests) Make() (DomainLevel.Requests, error) {
+	return s, nil
 }
 
 func GetNewSenderRequests() *NewSenderRequests {
@@ -40,7 +49,7 @@ func (s NewSenderRequests) SetNewKeyRequest(convertedDataGrpcDataLooks []byte) (
 	for {
 		if attempts > 12 {
 			slog.Error("SetNewKeyRequest; attempts are expired")
-			return nil, errors.New(ErrorAttemptsExpired)
+			return nil, ErrorAttemptsExpired
 		}
 		OutputData, err := s.SetEncrypterKeyRequest(convertedDataGrpcDataLooks)
 		if err != nil {

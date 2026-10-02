@@ -23,10 +23,8 @@ func (p FileSettings) FindFormatOfFile() string {
 
 func (p FileSettings) FindBestOptions() (int, int) {
 	switch {
-	case p.Size >= 100*1024*1024:
-
+	case p.Size >= 100*1024:
 		fileResult := p.Size / 1000000
-
 		x := 50
 		ResultPart := int(fileResult) / x
 

@@ -4,7 +4,7 @@ type Requests interface {
 	SetNewKeyRequest([]byte) ([]byte, error)
 }
 
-type MakerKeyReqeust interface {
-	SetAdditionalData([]byte) MakerKeyReqeust
+type MakerKeyRequest interface {
+	SetAdditionalData([]byte) MakerKeyRequest
 	Make() (Requests, error)
 }

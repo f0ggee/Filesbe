@@ -1,79 +1,96 @@
 package httpController
 
 import (
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
-	"Kaban/internal/InfrastructureLayer/RepoSession"
+	"Kaban/internal/DomainLevel"
 	"net/http"
 )
 
 type CheckUserAuthNetWork struct {
-	W http.ResponseWriter
-	R *http.Request
+	writer  http.ResponseWriter
+	Request *http.Request
 }
 
 func GetNewCheckUserAuthNetWork(w http.ResponseWriter, r *http.Request) *CheckUserAuthNetWork {
-	return &CheckUserAuthNetWork{W: w, R: r}
-}
-
-type CheckUserAuthSessions struct {
-	Session RepoSession.Session
-	Auth    AuthTokensManage.AuthCheck
-}
-
-func GetNewCheckUserAuthSessions(auth AuthTokensManage.AuthCheck, session RepoSession.Session) *CheckUserAuthSessions {
-	return &CheckUserAuthSessions{Auth: auth, Session: session}
+	return &CheckUserAuthNetWork{writer: w, Request: r}
 }
 
 type CheckUserAuth struct {
 	CheckUserAuthNetWork
-	CheckUserAuthSessions
-}
-
-func GetNewCheckUserAuth(newCheckUserAuthNetWork CheckUserAuthNetWork, newCheckUserAuthSessions CheckUserAuthSessions) *CheckUserAuth {
-	return &CheckUserAuth{CheckUserAuthNetWork: newCheckUserAuthNetWork, CheckUserAuthSessions: newCheckUserAuthSessions}
+	Checking      Session
+	TokenChecker  DomainLevel.AuthMaker
+	TokenChecker2 DomainLevel.AuthMaker
 }
 
 func (s *CheckUserAuth) CheckUserAuth() {
-	returnedData := s.Session.GetSessionData(RepoSession.IncomingSessionData{Writer: s.W, Request: s.R})
-	if returnedData.Error != nil {
-		SetAnswer(InputAnswerData{
-			W:    s.W,
-			Code: http.StatusUnauthorized,
-			Data: AnswerUserCheck{
-				Error: returnedData.Error.Error(),
-			},
-		})
-		return
-	}
-	OutData := s.Auth.CheckUserAuth(AuthTokensManage.UserAuthCheckIncomingData{
-		Jwt: returnedData.Jwt,
-		Rft: returnedData.Rft,
+	data := s.Checking.GetSessionData(IncomingSessionData{
+		Writer:  s.writer,
+		Request: s.Request,
 	})
-	if OutData.Err != nil {
+	if data.Error != nil {
 		SetAnswer(InputAnswerData{
-			W:    s.W,
+			W:    s.writer,
 			Code: http.StatusUnauthorized,
 			Data: AnswerUserCheck{
-				UrlToRedirect: LoginPage,
-				Error:         returnedData.Error.Error(),
+				UrlToRedirect: "",
+				Error:         data.Error.Error(),
 			},
 		})
 		return
 	}
-	if OutData.IsNewJwtCreated {
-		s.Session.SetNewSession(RepoSession.IncomingSessionData{
-			Writer:  s.W,
-			Request: s.R,
-			Jwt:     OutData.NewJwt,
+	jwtMaker, err := s.TokenChecker.Make()
+	if err != nil {
+		SetAnswer(InputAnswerData{
+			W:    s.writer,
+			Code: http.StatusUnauthorized,
+			Data: AnswerUserCheck{
+				UrlToRedirect: "/login",
+				Error:         "",
+			},
 		})
+		return
+	}
+	err = jwtMaker.IsTokenCorrect([]byte(data.Jwt))
+	if err == nil {
+		SetAnswer(InputAnswerData{
+			W:    s.writer,
+			Code: http.StatusOK,
+			Data: AnswerUserCheck{
+				UrlToRedirect: "/main",
+			},
+		})
+		return
 	}
 
+	rfMaker, err := s.TokenChecker2.Make()
+	if err != nil {
+		SetAnswer(InputAnswerData{
+			W:    s.writer,
+			Code: http.StatusUnauthorized,
+			Data: AnswerUserCheck{
+				UrlToRedirect: "/login",
+			},
+		})
+		return
+	}
+
+	err = rfMaker.IsTokenCorrect([]byte(data.Rft))
+	if err != nil {
+		SetAnswer(InputAnswerData{
+			W:    s.writer,
+			Code: http.StatusUnauthorized,
+			Data: AnswerUserCheck{
+				UrlToRedirect: "/login",
+				Error:         "",
+			},
+		})
+		return
+	}
 	SetAnswer(InputAnswerData{
-		W:    s.W,
-		Code: http.StatusOK,
+		W:    s.writer,
+		Code: http.StatusUnauthorized,
 		Data: AnswerUserCheck{
-			UrlToRedirect: MainPageUrl,
+			UrlToRedirect: "/main",
+			Error:         "",
 		},
 	})
-	return
 }

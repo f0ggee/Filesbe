@@ -7,10 +7,9 @@ import (
 	"Kaban/internal/InfrastructureLayer/Tokens"
 	"context"
 	"crypto/rand"
-	"log/slog"
-	"time"
+	"encoding/binary"
 
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/awnumar/memguard"
 )
 
 type RegisterApplication interface {
@@ -66,6 +65,8 @@ type NewRegisterDataMange struct {
 type NewRegisterApplication struct {
 	NewRegisterDataMange
 	NewRegisterCrypto
+	TokenMaker1 DomainLevel.AuthMaker
+	TokenMaker2 DomainLevel.AuthMaker
 }
 
 func GetNewRegisterApplication(newRegisterDataMange NewRegisterDataMange, newRegisterCrypto NewRegisterCrypto) *NewRegisterApplication {
@@ -81,7 +82,7 @@ func (sa *NewRegisterApplication) RegisterApp(ctx context.Context, de *Dto.UserD
 	if err != nil {
 		return DomainLevel.RegisterApplicationOutComingData{Err: err}
 	}
-
+	memguard.WipeBytes([]byte(de.Password))
 	UnitIdUser, err := sa.WriterDb.CreateUser(DomainLevel.CreateUserIncomingData{
 		Name:         de.Name,
 		Email:        de.Email,
@@ -93,32 +94,30 @@ func (sa *NewRegisterApplication) RegisterApp(ctx context.Context, de *Dto.UserD
 			Err: err,
 		}
 	}
-	RefreshToken, err := sa.GeneratorTokens.GenerateRT(Dto.JwtCustomStruct{
-		UserID: UnitIdUser,
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "Kabaner",
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(30 * time.Hour)),
-			ID:        rand.Text(),
-		},
-	})
+
+	jwtMaker, err := sa.TokenMaker1.Make()
 	if err != nil {
-		slog.Error("RegisterFunc; a strange error happened during creating a JWT token", "ERROR", err)
+		return DomainLevel.RegisterApplicationOutComingData{
+			Jwt: "",
+			Rft: "",
+			Err: err,
+		}
+	}
+	var BytesID [4]byte
+	binary.BigEndian.PutUint32(BytesID[:], uint32(UnitIdUser))
+	jwtToken, err := jwtMaker.GetAuthToken(BytesID[:])
+	if err != nil {
 		return DomainLevel.RegisterApplicationOutComingData{Err: err}
 	}
-	JwtToken, err := sa.GeneratorTokens.GenerateJWT(Dto.JwtCustomStruct{
-		UserID: UnitIdUser,
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "Kabaner",
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Hour)),
-			ID:        rand.Text(),
-		},
-	})
+	refreshMaker, err := sa.TokenMaker2.Make()
 	if err != nil {
-		slog.Error("RegisterFunc; a strange error happened during creating a RFT token", "ERROR", err)
-		return DomainLevel.RegisterApplicationOutComingData{Err: err}
+		return DomainLevel.RegisterApplicationOutComingData{
+			Jwt: "",
+			Rft: "",
+			Err: err,
+		}
 	}
 
-	return DomainLevel.RegisterApplicationOutComingData{Rft: RefreshToken, Jwt: JwtToken}
+	refreshToken, err := refreshMaker.GetAuthToken(BytesID[:])
+	return DomainLevel.RegisterApplicationOutComingData{Rft: string(refreshToken), Jwt: string(jwtToken)}
 }

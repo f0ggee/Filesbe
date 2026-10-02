@@ -4,7 +4,7 @@ import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/FileControls"
 	"context"
-	"net/http"
+	"io"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -13,7 +13,7 @@ type DownloadApplication interface {
 	Download(context.Context, string) error
 }
 type DownloadNetwork struct {
-	W http.ResponseWriter
+	W io.Writer
 }
 
 type DownloadFileControl struct {
@@ -57,7 +57,6 @@ func (sa *NewDownload) Download(IncomeContext context.Context, name string) erro
 		return err
 	}
 	defer uploaded.CloseSource()
-
 	g.Go(func() error {
 		dow, err := downloaderObject.Downloader()
 		if err != nil {

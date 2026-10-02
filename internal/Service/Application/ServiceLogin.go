@@ -17,8 +17,8 @@ type NewLoginData struct {
 	ReaderDatabase DomainLevel.ReadDb
 }
 type NewLoginAuth struct {
-	GenereteTokens1 DomainLevel.AuthMaker
-	GenereteToken2  DomainLevel.AuthMaker
+	GenerateTokens1 DomainLevel.AuthMaker
+	GenerateToken2  DomainLevel.AuthMaker
 }
 type NewLogin struct {
 	NewLoginData
@@ -46,7 +46,7 @@ func (sa *NewLogin) Login(ctx context.Context, s Dto.UserLoginData) DomainLevel.
 
 	var BytesID [4]byte
 	binary.BigEndian.PutUint32(BytesID[:], uint32(usersData.Id))
-	refreshTokenMaker, err := sa.GenereteTokens1.Make()
+	refreshTokenMaker, err := sa.GenerateTokens1.Make()
 	if err != nil {
 		return DomainLevel.LoginApplicationOutComingData{
 			Err: err,
@@ -61,7 +61,7 @@ func (sa *NewLogin) Login(ctx context.Context, s Dto.UserLoginData) DomainLevel.
 		}
 	}
 
-	jwtTokenMaker, err := sa.GenereteToken2.Make()
+	jwtTokenMaker, err := sa.GenerateToken2.Make()
 	if err != nil {
 		return DomainLevel.LoginApplicationOutComingData{
 			Jwt: "",

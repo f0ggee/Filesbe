@@ -58,7 +58,7 @@ type IncomeData struct {
 
 func (sa *NewUploadEncrypt) UploadEncrypt(data IncomeData) (string, error) {
 	if data.Size >= FileMaxSize {
-		return "", errors.New(ErrorFileSizeBig)
+		return "", ErrorFileSizeBig
 	}
 	g, ctx := errgroup.WithContext(data.Ctx)
 	x, err := sa.Uploader.SetName(data.Name).SetSize(data.Size).Make(ctx)

@@ -25,6 +25,7 @@ func CheckBots(next http.Handler) http.Handler {
 				UrlToRedict:     "",
 			}); err != nil {
 				slog.Error("CheckBots:error to check", "ERROR", err.Error())
+
 				return
 			}
 			return
