@@ -76,11 +76,11 @@ func EstablishS3() (*s3.Client, error) {
 		config.WithRetryMaxAttempts(6),
 		config.WithRetryMode("adaptive"),
 		config.WithRegion("ru-1"))
+	config.WithBaseEndpoint(EndPoint)
 	if err != nil {
 		slog.Error("EstablishS3:error to establish connect", "ERROR", err)
 		return nil, errors.New(ErrorConnectS3)
 	}
-	client := s3.NewFromConfig(cfg, func(options *s3.Options) {
-	})
+	client := s3.NewFromConfig(cfg, func(options *s3.Options) {})
 	return client, nil
 }

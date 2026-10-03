@@ -14,8 +14,8 @@ type RfToken struct {
 	sig jose.Signer
 }
 
-func GetNewRfToken() *RfToken {
-	return &RfToken{}
+func GetNewRfToken() RfToken {
+	return RfToken{}
 }
 
 func (j *RfToken) GetAuthToken(UsefulData []byte) ([]byte, error) {

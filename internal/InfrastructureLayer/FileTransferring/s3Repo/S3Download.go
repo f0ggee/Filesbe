@@ -13,7 +13,7 @@ import (
 	"log/slog"
 )
 
-type S3Downloader struct {
+type S3Download struct {
 	name string
 	size int64
 	ctx  context.Context
@@ -21,15 +21,14 @@ type S3Downloader struct {
 	body *io.Reader
 }
 
-func (s *S3Downloader) SetAdditionalReader(reader io.Reader) DomainLevel.MakerDownloader {
+func NewS3Downloader() S3Download {
+	return S3Download{}
+}
+func (s *S3Download) SetAdditionalReader(reader io.Reader) DomainLevel.MakerDownloader {
 	return s
 }
 
-func NewS3Downloader() *S3Downloader {
-	return &S3Downloader{}
-}
-
-func (s *S3Downloader) Downloader() (io.Reader, error) {
+func (s *S3Download) Downloader() (io.Reader, error) {
 	output, err := s.obj.GetObject(s.ctx, &transfermanager.GetObjectInput{
 		Bucket: aws.String(s3Cred.getBucket()),
 		Key:    aws.String(s.name),
@@ -42,39 +41,39 @@ func (s *S3Downloader) Downloader() (io.Reader, error) {
 	var ns *types.NoSuchKey
 	switch {
 	case errors.Is(err, ns):
-		slog.Error("S3Downloader: the file wasn't found")
+		slog.Error("S3Download: the file wasn't found")
 		return nil, errors.New(ErrorNoFile)
 
 	case err != nil:
-		slog.Error("S3Downloader: an strange error happened during downloading", "ERROR", err)
+		slog.Error("S3Download: an strange error happened during downloading", "ERROR", err)
 		return nil, ErrorStrangeError
 	}
 	return nil, ErrorStrangeError
 }
 
-func (s *S3Downloader) CloseSource() error {
+func (s *S3Download) CloseSource() error {
 	return nil
 }
 
-func (s *S3Downloader) SetName(s2 string) DomainLevel.MakerDownloader {
+func (s *S3Download) SetName(s2 string) DomainLevel.MakerDownloader {
 	s.name = s2
 	return s
 }
 
-func (s *S3Downloader) SetSize(i int64) DomainLevel.MakerDownloader {
+func (s *S3Download) SetSize(i int64) DomainLevel.MakerDownloader {
 	s.size = i
 	return s
 }
 
-func (s *S3Downloader) GetFileSize() int64 {
+func (s *S3Download) GetFileSize() int64 {
 	return s.size
 }
 
-func (s *S3Downloader) GetFileName() string {
+func (s *S3Download) GetFileName() string {
 	return s.name
 }
 
-func (s *S3Downloader) Make(ctx context.Context) (DomainLevel.Download, error) {
+func (s *S3Download) Make(ctx context.Context) (DomainLevel.Download, error) {
 	if s.size == 0 {
 		slog.Error("S3 downloader: the file size isn't defined")
 		return nil, errors.New(ErrorFileSize)

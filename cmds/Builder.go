@@ -13,7 +13,7 @@ import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/Parsers"
-	"Kaban/internal/InfrastructureLayer/ProtocolManage"
+	"Kaban/internal/InfrastructureLayer/Protocol"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"Kaban/internal/Service/Application"
@@ -305,46 +305,46 @@ type ProtocolManageBuilder struct {
 }
 
 type ProtocolExchanges struct {
-	Start      ProtocolManage.NewExchangeInitializer
-	Processing ProtocolManage.Exchanger
+	Start      Protocol.NewExchangeInitializer
+	Processing Protocol.Exchanger
 }
 
 func GetProtocolManageBuilder(data ProtocolManageBuilder) *ProtocolExchanges {
-	key := ProtocolManage.NewExchangeInitializerKey{
+	key := Protocol.NewExchangeInitializerKey{
 		Keys:       data.EncrypterKeys,
 		ServerKeys: data.ServerKeys,
 	}
 
-	crypto := ProtocolManage.NewExchangeInitializerCrypto{
+	crypto := Protocol.NewExchangeInitializerCrypto{
 		CryptoGenerating: data.C.Generate,
 		CryptoEncrypt:    data.C.Encrypt,
 		CryptoDecrypt:    data.C.Decrypt,
 		CryptoValidate:   data.C.Validate,
 	}
-	Parser := ProtocolManage.NewExchangeInitializerParsers{
+	Parser := Protocol.NewExchangeInitializerParsers{
 		Encode: data.Parser.Encode,
 		Decode: data.Parser.Decode,
 	}
 
-	Del := ProtocolManage.NewExchangeInitializerDeliver{
+	Del := Protocol.NewExchangeInitializerDeliver{
 		Grcp: data.GrpcConn.Sender,
 	}
-	delProcess := ProtocolManage.NewExchangerDeliver{
+	delProcess := Protocol.NewExchangerDeliver{
 		Redis: &data.Red.Read,
 	}
-	cryptoProcess := ProtocolManage.NewExchangerCrypto{
+	cryptoProcess := Protocol.NewExchangerCrypto{
 		Decrypter:  data.C.Decrypt,
 		Validation: data.C.Validate,
 	}
-	keyProcess := ProtocolManage.NewExchangerKeys{
+	keyProcess := Protocol.NewExchangerKeys{
 		ServerKeys:    data.ServerKeys,
 		EncrypterKeys: data.EncrypterKeys,
 	}
-	parser := ProtocolManage.NewExchangerParsers{
+	parser := Protocol.NewExchangerParsers{
 		Decoder: data.Parser.Decode,
 	}
 	return &ProtocolExchanges{
-		Start:      *ProtocolManage.GetNewExchangeInitializer(key, crypto, Parser, Del),
-		Processing: ProtocolManage.GetNewExchanger(delProcess, parser, cryptoProcess, keyProcess),
+		Start:      *Protocol.GetNewExchangeInitializer(key, crypto, Parser, Del),
+		Processing: Protocol.GetNewExchanger(delProcess, parser, cryptoProcess, keyProcess),
 	}
 }

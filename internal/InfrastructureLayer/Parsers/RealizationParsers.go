@@ -11,8 +11,8 @@ import (
 type Parsing struct {
 }
 
-func GetNewParsing() *Parsing {
-	return &Parsing{}
+func GetNewParsing() Parsing {
+	return Parsing{}
 }
 
 func (p Parsing) EncodeFlow(a any, writer io.Writer) error {

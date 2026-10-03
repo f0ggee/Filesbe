@@ -5,19 +5,16 @@ import (
 	"context"
 	"log/slog"
 	"time"
-
-	"github.com/redis/go-redis/v9"
 )
 
-type ValidationRedis struct {
-	Re *redis.Client
+type RedisCheck struct {
 }
 
-func GetNewValidationRedis(re *redis.Client) *ValidationRedis {
-	return &ValidationRedis{Re: re}
+func NewRedisCheck() RedisCheck {
+	return RedisCheck{}
 }
 
-func (d *ValidationRedis) ChekIsStartDownloadTest(s string, context context.Context) bool {
+func (d *RedisCheck) ChekIsStartDownloadTest(s string, context context.Context) bool {
 
 	select {
 	case <-time.After(1 * time.Second):
@@ -35,13 +32,13 @@ func (d *ValidationRedis) ChekIsStartDownloadTest(s string, context context.Cont
 
 }
 
-func (d *ValidationRedis) ChekIsStartDownload(name string, ctx context.Context) bool {
+func (d *RedisCheck) ChekIsStartDownload(name string, ctx context.Context) bool {
 
 	isExit := Dto.FileInfoLabels{
 		InfoAboutFile:   nil,
 		IsStartDownload: false,
 	}
-	err := d.Re.HGetAll(context.Background(), name).Scan(&isExit)
+	err := redisConn.HGetAll(context.Background(), name).Scan(&isExit)
 
 	if err != nil {
 		slog.Error("Can't get the label IsStartDownload", "Error", err)
@@ -54,9 +51,9 @@ func (d *ValidationRedis) ChekIsStartDownload(name string, ctx context.Context) 
 	return false
 
 }
-func (d *ValidationRedis) CheckFileInfoExists(FileName string, ctx context.Context) bool {
+func (d *RedisCheck) CheckFileInfoExists(FileName string, ctx context.Context) bool {
 
-	c, err := d.Re.Exists(ctx, FileName).Result()
+	c, err := redisConn.Exists(ctx, FileName).Result()
 	if err != nil {
 		slog.Error("CheckExistFileInfo error:", "Error", err)
 		return false

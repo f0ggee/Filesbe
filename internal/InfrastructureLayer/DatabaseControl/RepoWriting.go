@@ -9,24 +9,22 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Writer struct {
-	Db *pgxpool.Pool
+	Db DatabaseConn
 }
 
-func GetNewWriter(db *pgxpool.Pool) *Writer {
+func NewWriter(db DatabaseConn) *Writer {
 	return &Writer{Db: db}
 }
 
 func (d *Writer) CreateUser(data DomainLevel.CreateUserIncomingData) (int32, error) {
-
 	var UnitId int32
-	tx, err := d.Db.Begin(context.Background())
+	tx, err := d.Db.Db.Begin(context.Background())
 	if err != nil {
 		slog.Error("CreateUser; error to start a transaction", "ERROR", err)
-		return 0, errors.New(ErrorStrangeDatabaseError)
+		return 0, ErrorStrangeDatabaseError
 	}
 	defer func(tx pgx.Tx, ctx context.Context) {
 		err := tx.Rollback(ctx)
@@ -40,18 +38,17 @@ func (d *Writer) CreateUser(data DomainLevel.CreateUserIncomingData) (int32, err
 	switch {
 	case errors.Is(err, context.DeadlineExceeded):
 		slog.Error("CreateUser; the context is expired", "ERROR", err)
-		return 0, errors.New(ErrorTimeEnd)
+		return 0, ErrorTimeEnd
 
 	case err != nil:
 		slog.Error("CreateUser; a strange error", "ERROR", err)
-		return 0, errors.New(ErrorStrangeDatabaseError)
+		return 0, ErrorStrangeDatabaseError
 	}
 
 	if err = tx.Commit(context.Background()); err != nil {
-		slog.Error("Error cant commit", "Err", err)
+		slog.Error("CreateUser:error can't commit", "ERROR", err)
 		return 0, err
 	}
-
 	return UnitId, nil
 
 }

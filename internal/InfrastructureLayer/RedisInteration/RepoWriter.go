@@ -6,21 +6,18 @@ import (
 	"context"
 	"errors"
 	"log/slog"
-
-	"github.com/redis/go-redis/v9"
 )
 
-type Writing struct {
-	Re *redis.Client
+type RedisWrite struct {
 }
 
-func GetNewWriting(re *redis.Client) *Writing {
-	return &Writing{Re: re}
+func NewRedisWrite() RedisWrite {
+	return RedisWrite{}
 }
 
-func (d *Writing) EnableDownloadingParameter(nameOfFileInfo string, ctx context.Context) error {
+func (d *RedisWrite) EnableDownloadingParameter(nameOfFileInfo string, ctx context.Context) error {
 
-	err := d.Re.HSet(ctx, nameOfFileInfo, "IsStartDownload", true).Err()
+	err := redisConn.HSet(ctx, nameOfFileInfo, "IsStartDownload", true).Err()
 	if err != nil {
 		slog.Error("EnableDownloadingParameter;Error set up the labels isStartDownload on true", "ERROR", err.Error())
 		return err
@@ -29,9 +26,9 @@ func (d *Writing) EnableDownloadingParameter(nameOfFileInfo string, ctx context.
 	return nil
 }
 
-func (s *Writing) WriteData(data DomainLevel.WriteDataIncomeData) error {
+func (s *RedisWrite) WriteData(data DomainLevel.WriteDataIncomeData) error {
 
-	err := s.Re.HSet(data.Ctx, data.FileName, Dto.FileInfoLabels{
+	err := redisConn.HSet(data.Ctx, data.FileName, Dto.FileInfoLabels{
 		InfoAboutFile:   data.Info,
 		IsStartDownload: false,
 	}).Err()

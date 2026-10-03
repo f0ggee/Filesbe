@@ -21,6 +21,9 @@ type S3Upload struct {
 	size      int64
 }
 
+func NewS3Upload() S3Upload {
+	return S3Upload{}
+}
 func (s *S3Upload) SetName(s2 string) DomainLevel.MakerUploader {
 	s.name = s2
 	return s
@@ -35,9 +38,7 @@ func (s *S3Upload) SetSize(i int64) DomainLevel.MakerUploader {
 func (s *S3Upload) SetAdditionalWriter(writer io.Writer) DomainLevel.MakerUploader {
 	return nil
 }
-func NewS3Upload() *S3Upload {
-	return &S3Upload{}
-}
+
 func (s *S3Upload) Uploader(reader io.Reader) error {
 
 	sa, err := s.uploader.UploadObject(s.ctx, &transfermanager.UploadObjectInput{

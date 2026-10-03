@@ -25,8 +25,8 @@ type RsaEncryption struct {
 	kind              []byte
 }
 
-func NewRsaEncryption() *RsaEncryption {
-	return &RsaEncryption{}
+func NewRsaEncryption() RsaEncryption {
+	return RsaEncryption{}
 }
 
 func (r *RsaEncryption) GetRequiredOverheadSize() int {
@@ -78,8 +78,8 @@ type AesEncryption struct {
 	nonce    []byte
 }
 
-func NewAesEncryption() *AesEncryption {
-	return &AesEncryption{}
+func NewAesEncryption() AesEncryption {
+	return AesEncryption{}
 }
 
 func (a AesEncryption) GetRequiredOverheadSize() int {
@@ -123,22 +123,22 @@ func (a AesEncryption) MakeCrypto(bytes []byte, i []byte) (DomainLevel.Crypto, e
 	}, nil
 }
 
-type AesCtr struct {
+type AesCtrEncryption struct {
 	block            cipher.Stream
 	isStart          bool
 	isDecryptedStart bool
 	nonce            []byte
 }
 
-func (a AesCtr) GetRequiredOverheadSize() int {
+func (a AesCtrEncryption) GetRequiredOverheadSize() int {
 	return aes.BlockSize
 }
 
-func NewAesCtr() *AesCtr {
-	return &AesCtr{}
+func NewAesCtr() AesCtrEncryption {
+	return AesCtrEncryption{}
 }
 
-func (a *AesCtr) Encrypt(bytes []byte) ([]byte, error) {
+func (a *AesCtrEncryption) Encrypt(bytes []byte) ([]byte, error) {
 
 	if !a.isStart {
 		cip := make([]byte, len(bytes)+aes.BlockSize)
@@ -151,7 +151,7 @@ func (a *AesCtr) Encrypt(bytes []byte) ([]byte, error) {
 	return bytes, nil
 }
 
-func (a *AesCtr) Decrypt(cipherText []byte) ([]byte, error) {
+func (a *AesCtrEncryption) Decrypt(cipherText []byte) ([]byte, error) {
 	if !a.isDecryptedStart && len(cipherText) > 16 && bytes.Equal(cipherText[:aes.BlockSize], a.nonce) {
 		ciphertext := cipherText[aes.BlockSize:]
 		a.block.XORKeyStream(ciphertext, ciphertext)
@@ -162,7 +162,7 @@ func (a *AesCtr) Decrypt(cipherText []byte) ([]byte, error) {
 	return cipherText, nil
 }
 
-func (a *AesCtr) MakeCrypto(key []byte, i []byte) (DomainLevel.Crypto, error) {
+func (a *AesCtrEncryption) MakeCrypto(key []byte, i []byte) (DomainLevel.Crypto, error) {
 	if key == nil || i == nil {
 		return nil, errors.New(ErrorCryptoInvalidData)
 	}
@@ -171,7 +171,7 @@ func (a *AesCtr) MakeCrypto(key []byte, i []byte) (DomainLevel.Crypto, error) {
 		return nil, err
 	}
 	ctrBlock := cipher.NewCTR(block, i)
-	return &AesCtr{
+	return &AesCtrEncryption{
 		block:   ctrBlock,
 		isStart: false,
 		nonce:   i,

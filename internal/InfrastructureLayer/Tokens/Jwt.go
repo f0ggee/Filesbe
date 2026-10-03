@@ -14,8 +14,8 @@ type JwtToken struct {
 	sig jose.Signer
 }
 
-func GetNewJwtToken() *JwtToken {
-	return &JwtToken{}
+func GetNewJwtToken() JwtToken {
+	return JwtToken{}
 }
 
 func (j *JwtToken) GetAuthToken(UsefulData []byte) ([]byte, error) {

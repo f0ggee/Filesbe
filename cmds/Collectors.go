@@ -1,182 +1,128 @@
+//A collector layer is a collection of functions that build
+//necessary modules. This layer is an entry point of a program
+
 package cmds
 
 import (
-	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/Crypto"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
-	"Kaban/internal/InfrastructureLayer/FileControls"
-	s3Repo2 "Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
-	"Kaban/internal/InfrastructureLayer/GrpcManage"
+	"Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo"
+	"Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
+	grcRec "Kaban/internal/InfrastructureLayer/Grpc/GrpcRequests"
 	"Kaban/internal/InfrastructureLayer/Parsers"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
-	"Kaban/internal/InfrastructureLayer/RepoSession"
-	"os"
-
-	"github.com/awnumar/memguard"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/gorilla/sessions"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/redis/go-redis/v9"
+	"Kaban/internal/InfrastructureLayer/Tokens"
 )
 
-type S3Collector struct {
-	Deleter    s3Repo2.DeleterS3
-	Uploader   s3Repo2.S3Uploader
-	S3Download s3Repo2.DownloadingS3
-}
-type S3CollectorAnother interface {
-	s3Repo2.DeleterS3
-	s3Repo2.S3Uploader
-	s3Repo2.DownloadingS3
+type CryptoCollector struct {
+	RsaRealization    Crypto.RsaEncryption
+	AesRealization    Crypto.AesEncryption
+	AesCtrRealization Crypto.AesCtrEncryption
 }
 
-func GetS3Collector(cfg *s3.Client, OldS3Connect *ses.Session) *S3Collector {
-	s3Info := s3Repo2.GetNewVariables(os.Getenv("Bucket"), cfg, OldS3Connect)
-	S3Upload := s3Repo2.GetNewUploading(*s3Info)
-	S3Download := s3Repo2.GetNewS3Download(*s3Info)
-	S3Deleter := s3Repo2.GetNewDeleterS3(*s3Info)
-	return &S3Collector{
-		Deleter:    S3Deleter,
-		Uploader:   S3Upload,
-		S3Download: S3Download,
+func GetCryptoCollector() CryptoCollector {
+	return CryptoCollector{
+		RsaRealization:    Crypto.NewRsaEncryption(),
+		AesRealization:    Crypto.NewAesEncryption(),
+		AesCtrRealization: Crypto.NewAesCtr(),
 	}
 }
 
-type FileControlCollector struct {
-	Transfer     FileControls.Transfer
-	FileSettings FileControls.FileSettings
+type DatabaseCollector struct {
+	Check *DatabaseControl.CheckerDb
+	Read  *DatabaseControl.Read
+	Write *DatabaseControl.Writer
 }
 
-func GetFileControlCollector() *FileControlCollector {
-	return &FileControlCollector{
-		Transfer:     *FileControls.GetNewTransfer(),
-		FileSettings: *FileControls.GetNewFileSettings(),
+func GetDatabaseCollector(conn DatabaseControl.DatabaseConn) DatabaseCollector {
+	return DatabaseCollector{
+		Check: DatabaseControl.NewCheckerDb(conn),
+		Read:  DatabaseControl.NewRead(conn),
+		Write: DatabaseControl.NewWriter(conn),
 	}
 }
 
-type CollectorCrypto struct {
-	Validate DomainLevel.CryptoValidating
-	Encrypt  DomainLevel.Encryption
-	Decrypt  DomainLevel.Decryption
-	Generate DomainLevel.CryptoGenerating
+type S3FileTransferringCollector struct {
+	Upload   s3Repo.S3Upload
+	Download s3Repo.S3Download
+	Delete   s3Repo.S3Delete
+}
+type HttpFileTransferringCollector struct {
+	Upload TransferringHttpRepo.HttpUploader
+}
+type FileTransferringCollector struct {
+	S3FileTransferringCollector
+	HttpFileTransferringCollector
 }
 
-type NewCryptoCollectorInput struct {
-	Decode Parsers.Decode
-}
-
-func GetNewCryptoCollector(d NewCryptoCollectorInput) *CollectorCrypto {
-
-	Validation := Crypto.GetNeValidating()
-	Encrypter := Crypto.GetNewEncrypter()
-	Decrypter := Crypto.GetNewDecryption(d.Decode)
-	Generate := Crypto.GetNewGenerating()
-	return &CollectorCrypto{
-		Validate: Validation,
-		Encrypt:  Encrypter,
-		Decrypt:  Decrypter,
-		Generate: Generate,
+func GetFileTransferring() FileTransferringCollector {
+	return FileTransferringCollector{
+		S3FileTransferringCollector: S3FileTransferringCollector{
+			Upload:   s3Repo.NewS3Upload(),
+			Download: s3Repo.NewS3Downloader(),
+			Delete:   s3Repo.NewS3Deleter(),
+		},
+		HttpFileTransferringCollector: HttpFileTransferringCollector{
+			Upload: TransferringHttpRepo.NewHttpUploader(),
+		},
 	}
-}
-
-type CollectorAuthTokensManage struct {
-	Creating AuthTokensManage.CreatingTokens
-	Validate AuthTokensManage.NewAuthChecker
-}
-
-func GetAuthTokensCollector(key []byte) *CollectorAuthTokensManage {
-	creating := AuthTokensManage.GetNewCreatingTokens()
-	Validate := AuthTokensManage.GetNNewAuthChecker(*creating, key)
-	return &CollectorAuthTokensManage{
-		Creating: *creating,
-		Validate: *Validate,
-	}
-}
-
-type CollectorDatabaseManage struct {
-	Checker DatabaseControl.CheckerDb
-	Reader  DatabaseControl.Read
-	Writer  DatabaseControl.Writer
-}
-
-func GetDatabaseManageCollector(Db *pgxpool.Pool) CollectorDatabaseManage {
-	Checker := DatabaseControl.GetNewCheckerDb(Db)
-	Reader := DatabaseControl.GetNewRead(Db)
-	Writer := DatabaseControl.GetNewWriter(Db)
-
-	return CollectorDatabaseManage{
-		Checker: *Checker,
-		Reader:  *Reader,
-		Writer:  *Writer,
-	}
-}
-
-type SessionCollector struct {
-	Session RepoSession.NewSessionConnect
-}
-
-func GetSessionCollector(activity *sessions.CookieStore) *SessionCollector {
-	return &SessionCollector{Session: *RepoSession.GetNewSessionConnect(activity, nil)}
 }
 
 type GrpcCollector struct {
-	Sender   GrpcManage.NewSenderRequests
-	Checking GrpcManage.HandlerGrpcRequest
+	Reqs grcRec.SetNewKeyRequest
 }
 
-func GetGrpcCollector(CryptoEncrypt DomainLevel.Encryption, CryptoDecrypt DomainLevel.Decryption, Parse Parsers.Decode, CryptoValidate DomainLevel.CryptoValidating, Keys RepoEncrypterKeys.Keys, ServerKeys DomainLevel.NewServerKeys) *GrpcCollector {
-
-	return &GrpcCollector{
-		Sender: *GrpcManage.GetNewSenderRequests(),
-		Checking: *GrpcManage.GetNewHandlerGrpcRequest(GrpcManage.NewValidating{
-			CryptoValidate: CryptoValidate,
-		}, GrpcManage.NewKeys{
-			Keys:       Keys,
-			ServerKeys: ServerKeys,
-		}, GrpcManage.NewDecrypt{
-			CryptoDecrypt: CryptoDecrypt,
-		}, GrpcManage.NewEncrypt{
-			CryptoEncrypt: CryptoEncrypt,
-		}, GrpcManage.NewParser{
-			Parse: Parse,
-		}),
+func GetGrpcCollector() GrpcCollector {
+	return GrpcCollector{
+		Reqs: grcRec.GetNewSetNewKeyRequest(),
 	}
 }
 
-type RedisCollector struct {
-	Delete RedisInteration.DeleterRedis
-	Write  RedisInteration.Writing
-	Read   RedisInteration.RedisReader
-	Check  RedisInteration.ValidationRedis
+type ParsersCollector struct {
+	Encode Parsers.Parsing
 }
 
-func GetRedisCollector(Re *redis.Client) *RedisCollector {
-	return &RedisCollector{
-		Delete: *RedisInteration.GetNewDeleterRedis(Re),
-		Write:  *RedisInteration.GetNewWriting(Re),
-		Read:   *RedisInteration.GetNewRedisReader(Re),
-		Check:  *RedisInteration.GetNewValidationRedis(Re),
-	}
-}
-
-func GetNewServerKeysCollector(key1 []byte, key2 []byte) *DomainLevel.NewServerKeys {
-	return DomainLevel.GetNewSetKeys(key1, key2)
-}
-
-func GetEncrypterKeysCollector(Key1 *memguard.LockedBuffer, Key2 *memguard.LockedBuffer) *RepoEncrypterKeys.Keys {
-	return RepoEncrypterKeys.GetNewKeys(Key1, Key2)
-}
-
-type RepoParsersCollector struct {
-	Decode Parsers.Decode
-	Encode Parsers.Encode
-}
-
-func GetRepoParsersCollector() *RepoParsersCollector {
-	return &RepoParsersCollector{
-		Decode: Parsers.GetNewParsing(),
+func NewParsersCollector() ParsersCollector {
+	return ParsersCollector{
 		Encode: Parsers.GetNewParsing(),
+	}
+}
+
+type Redis struct {
+	Read   RedisInteration.RedisRead
+	Write  RedisInteration.RedisWrite
+	Check  RedisInteration.RedisCheck
+	Delete RedisInteration.RedisDelete
+}
+
+func NewRedis() *Redis {
+	return &Redis{
+		Read:   RedisInteration.NewRedisRead(),
+		Write:  RedisInteration.NewRedisWrite(),
+		Check:  RedisInteration.NewRedisCheck(),
+		Delete: RedisInteration.NewRedisDelete(),
+	}
+}
+
+type SessionKeys struct {
+	Keys RepoEncrypterKeys.Keys
+}
+
+func NewSessionKeys() SessionKeys {
+	return SessionKeys{
+		Keys: RepoEncrypterKeys.GetNewKeys(),
+	}
+}
+
+type TokensAuth struct {
+	Jwt Tokens.JwtToken
+	Rf  Tokens.RfToken
+}
+
+func NewTokensAuth() TokensAuth {
+	return TokensAuth{
+		Jwt: Tokens.GetNewJwtToken(),
+		Rf:  Tokens.GetNewRfToken(),
 	}
 }

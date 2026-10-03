@@ -2,13 +2,10 @@ package main
 
 import (
 	"Kaban/cmds"
-	"Kaban/internal/Deliver/httpController"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	s3Repo2 "Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoSession"
-	"Kaban/internal/InfrastructureLayer/s3Repo"
-	"Kaban/internal/Service/Application"
 	"log/slog"
 	"os"
 	"runtime"
@@ -169,16 +166,6 @@ func main() {
 		return
 
 	}
-}
-
-func LoginTest(DeliverPackagesCollector *cmds.DeliverPackagesCollector, SessionCollector *cmds.SessionCollector, ParserCollector *cmds.RepoParsersCollector, LoginApplicationBuilder *Application.NewLogin) *httpController.NewLoginController {
-	ControllerLoginBuilder := cmds.GetControllerLoginBuilder(cmds.NewLoginIncomeData{
-		S:      &DeliverPackagesCollector.LoginCollector.Answ,
-		Sess:   &SessionCollector.Session,
-		Parses: ParserCollector.Decode,
-		App:    LoginApplicationBuilder,
-	})
-	return ControllerLoginBuilder
 }
 
 func Routers() (*mux.Router, *mux.Router, *mux.Router, *mux.Router) {

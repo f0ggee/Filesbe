@@ -76,8 +76,12 @@ func Connect() (*pgxpool.Pool, error) {
 		slog.Error("Err ping", "error", err)
 		return nil, err
 	}
-	slog.Info("Connect to db")
+	slog.Info("GrpcRequests to Db")
 
 	return connPool, nil
 
+}
+
+type DatabaseConn struct {
+	Db *pgxpool.Pool
 }

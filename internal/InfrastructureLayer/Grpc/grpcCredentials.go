@@ -1,6 +1,7 @@
-package GrpcManage
+package Grpc
 
 import (
+	"errors"
 	"log/slog"
 	"os"
 
@@ -8,12 +9,15 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func GetNewGrpcConnect() *grpc.ClientConn {
+var GrpcConn *grpc.ClientConn
+var ErrorMakeClient = errors.New("error to make a new key request")
+
+func init() {
 	credentials := grpc.WithTransportCredentials(insecure.NewCredentials())
 	conn, err := grpc.NewClient(os.Getenv("GRPC_ADDR"), credentials)
 	if err != nil {
-		slog.Error("GetNewGrpcConnect; error to create a connect", "ERROR", err)
-		return nil
+		slog.Error("MakeNewKeyRequest: error to make a new client", "ERROR", err)
+		panic(ErrorMakeClient)
 	}
-	return conn
+	GrpcConn = conn
 }

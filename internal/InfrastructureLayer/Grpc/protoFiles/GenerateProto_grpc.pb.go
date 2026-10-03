@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SendingGetting_GetNewKey_FullMethodName = "/test1.SendingGetting/GetNewKey"
+	SendingGetting_GetNewKey_FullMethodName = "/test1.SendingGetting/GetPacketData"
 )
 
 // SendingGettingClient is the client API for SendingGetting service.
@@ -63,7 +63,7 @@ type SendingGettingServer interface {
 type UnimplementedSendingGettingServer struct{}
 
 func (UnimplementedSendingGettingServer) GetNewKey(context.Context, *InputSendData) (*OutputSendData, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetNewKey not implemented")
+	return nil, status.Error(codes.Unimplemented, "method GetPacketData not implemented")
 }
 func (UnimplementedSendingGettingServer) mustEmbedUnimplementedSendingGettingServer() {}
 func (UnimplementedSendingGettingServer) testEmbeddedByValue()                        {}
@@ -112,7 +112,7 @@ var SendingGetting_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*SendingGettingServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetNewKey",
+			MethodName: "GetPacketData",
 			Handler:    _SendingGetting_GetNewKey_Handler,
 		},
 	},

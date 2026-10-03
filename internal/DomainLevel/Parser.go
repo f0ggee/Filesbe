@@ -5,10 +5,10 @@ import (
 )
 
 type Decoder interface {
-	DecodeFlow(any, io.Reader) error
-	Decode(any, []byte) error
+	DecodeFlow(dst any, src io.Reader) error
+	Decode(dst any, src []byte) error
 }
 type Encoder interface {
-	EncodeFlow(any, io.Writer) error
-	Encode(any) ([]byte, error)
+	EncodeFlow(dst any, src io.Writer) error
+	Encode(dst any) ([]byte, error)
 }

@@ -148,8 +148,8 @@ var file_GenerateProto_proto_goTypes = []any{
 	(*OutputSendData)(nil), // 1: test1.OutputSendData
 }
 var file_GenerateProto_proto_depIdxs = []int32{
-	0, // 0: test1.SendingGetting.GetNewKey:input_type -> test1.InputSendData
-	1, // 1: test1.SendingGetting.GetNewKey:output_type -> test1.OutputSendData
+	0, // 0: test1.SendingGetting.GetPacketData:input_type -> test1.InputSendData
+	1, // 1: test1.SendingGetting.GetPacketData:output_type -> test1.OutputSendData
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

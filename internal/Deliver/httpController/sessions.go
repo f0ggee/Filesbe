@@ -1,5 +1,4 @@
-//This file contains functions that can work with users' sessions
-//
+//This file contains functions that can work with users' sessions(save it or modify it)
 
 package httpController
 
