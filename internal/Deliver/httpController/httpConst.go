@@ -71,4 +71,5 @@ var (
 	ErrorGetCookie       = errors.New("error get an user's cookie")
 	ErrorAuthExpired     = errors.New("user's auth expired")
 	ErrorSaveCookie      = errors.New("error save a cookie")
+	ErrorStrangeError    = errors.New("a strange error happened")
 )

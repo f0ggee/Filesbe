@@ -2,7 +2,6 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/FileControls"
 	"context"
 	"io"
 
@@ -17,7 +16,6 @@ type DownloadNetwork struct {
 }
 
 type DownloadFileControl struct {
-	Transfer   FileControls.Transferring
 	Downloader DomainLevel.MakerDownloader
 	Uploader   DomainLevel.MakerUploader
 	Deleter    DomainLevel.MakerDeleter
@@ -41,8 +39,7 @@ func (sa *NewDownload) Download(IncomeContext context.Context, name string) erro
 		return err
 	}
 	g, _ := errgroup.WithContext(IncomeContext)
-
-	trueFileName := ""
+	var trueFileName string
 	err = sa.Decoder.Decode(fileNameInBytes, []byte(trueFileName))
 	if err != nil {
 		return err

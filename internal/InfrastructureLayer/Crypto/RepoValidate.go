@@ -18,7 +18,7 @@ const (
 
 type Checking struct{}
 
-func GetNeValidating() Checking {
+func GetNewChecking() Checking {
 	return Checking{}
 }
 

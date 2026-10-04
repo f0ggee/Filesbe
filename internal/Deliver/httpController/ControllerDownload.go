@@ -13,23 +13,18 @@ type DownloadNetwork struct {
 }
 
 type DownloadApp struct {
+}
+
+type NewDownload struct {
+	DownloadNetwork
 	Application.DownloadApplication
 }
 
-type DownloadNew struct {
-	DownloadNetwork
-	DownloadApp
+func GetNewDownload(downloadNetwork DownloadNetwork, downloadApplication Application.DownloadApplication) *NewDownload {
+	return &NewDownload{DownloadNetwork: downloadNetwork, DownloadApplication: downloadApplication}
 }
 
-func GetDownloadNew(downloadNetwork DownloadNetwork, downloadApp DownloadApp) *DownloadNew {
-	return &DownloadNew{DownloadNetwork: downloadNetwork, DownloadApp: downloadApp}
-}
-
-func GetNewDownloadWithNotEncrypt(networkDownloadNoEncrypt DownloadNetwork, newDownloadWithNotEncryptApplication DownloadApp) *DownloadNew {
-	return &DownloadNew{DownloadNetwork: networkDownloadNoEncrypt, DownloadApp: newDownloadWithNotEncryptApplication}
-}
-
-func (d *DownloadNew) DownloadWithNotEncrypt() {
+func (d *NewDownload) DownloadWithNotEncrypt() {
 	name := d.getData(d.R)
 	if name == "" {
 		SetAnswer(InputAnswerData{
@@ -56,7 +51,7 @@ func (d *DownloadNew) DownloadWithNotEncrypt() {
 		return
 	}
 }
-func (n *DownloadNew) getData(request *http.Request) string {
+func (n *NewDownload) getData(request *http.Request) string {
 	vars := mux.Vars(request)
 	name := vars["name"]
 	return name

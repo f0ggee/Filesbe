@@ -3,32 +3,16 @@ package httpController
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
-	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"Kaban/internal/Service/Application"
 	"net/http"
 )
 
-type LoginNet struct {
-	W http.ResponseWriter
-	R *http.Request
-}
-
-type LoginDepends struct {
-	Sess RepoSession.Session
-}
-type ParseLogin struct {
-	Parses DomainLevel.Decoder
-}
-
 type NewLoginController struct {
-	LoginNet
-	LoginDepends
-	Application.LoginApplication
-	ParseLogin
-}
-
-func GetNewLogin(networkLogin LoginNet, loginDepends LoginDepends, parseLogin ParseLogin) *NewLoginController {
-	return &NewLoginController{LoginNet: networkLogin, LoginDepends: loginDepends, ParseLogin: parseLogin}
+	Sess   Session
+	Parses DomainLevel.Decoder
+	W      http.ResponseWriter
+	R      *http.Request
+	App    Application.LoginApplication
 }
 
 func (D *NewLoginController) LoginController() {
@@ -59,7 +43,7 @@ func (D *NewLoginController) LoginController() {
 		return
 	}
 
-	loginDataOutput := D.Login(D.R.Context(), *DataUserLogin)
+	loginDataOutput := D.App.Login(D.R.Context(), *DataUserLogin)
 	if loginDataOutput.Err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,
@@ -71,7 +55,7 @@ func (D *NewLoginController) LoginController() {
 		})
 		return
 	}
-	ReturnedData := D.Sess.SetNewSession(RepoSession.IncomingSessionData{
+	ReturnedData := D.Sess.SetNewSession(IncomingSessionData{
 		Writer:  D.W,
 		Request: D.R,
 		Jwt:     loginDataOutput.Jwt,

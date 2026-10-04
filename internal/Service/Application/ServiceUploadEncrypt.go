@@ -24,9 +24,8 @@ type UploaderEncryptApplication interface {
 const ErrorUploadingEncrypt = "an unexpected error occurred while loading encryption"
 
 type NewUploadEncryptCrypto struct {
-	Generate   DomainLevel.CryptoGenerating
-	ServerKeys DomainLevel.NewServerKeys
-	Encrypt    DomainLevel.CryptoMaker
+	Generate DomainLevel.CryptoGenerating
+	Encrypt  DomainLevel.CryptoMaker
 }
 type NewUploadEncryptDataManage struct {
 	Encode DomainLevel.Encoder
@@ -36,8 +35,7 @@ type NewUploadEncryptDelivery struct {
 	RedisWriter  DomainLevel.WritingRedis
 	RedisChecker DomainLevel.RedisChecker
 	RedisDeleter DomainLevel.DeleterRedis
-
-	Deleter DomainLevel.MakerDeleter
+	Deleter      DomainLevel.MakerDeleter
 }
 type NewUploadEncrypt struct {
 	NewUploadEncryptDataManage
@@ -88,7 +86,7 @@ func (sa *NewUploadEncrypt) UploadEncrypt(data IncomeData) (string, error) {
 		slog.Error("UploadEncrypt; error to encode data into Json", "ERROR", err)
 		return "", errors.New(ErrorUploadingEncrypt)
 	}
-	encr, err := sa.Encrypt.MakeCrypto(sa.ServerKeys.GerOurPrivateKey(), nil)
+	encr, err := sa.Encrypt.MakeCrypto(DomainLevel.ServerKeys.GerOurPrivateKey(), nil)
 	if err != nil {
 		return "", err
 	}
@@ -109,7 +107,6 @@ func (sa *NewUploadEncrypt) UploadEncrypt(data IncomeData) (string, error) {
 		return "", err
 	}
 	sa.setDeleteFile(shortNameFile)
-
 	return shortNameFile, nil
 
 }

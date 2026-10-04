@@ -11,17 +11,10 @@ type NetworkDownloadEncrypt struct {
 	W http.ResponseWriter
 	R *http.Request
 }
-type NewDownloadWithEncryptApplication struct {
-	Application.DownloadEncryptApplication
-}
 type NewDownloadEncrypt struct {
 	Net NetworkDownloadEncrypt
-	NewDownloadWithEncryptApplication
+	Application.DownloadEncryptApplication
 	GetDataRequest func(r *http.Request) string
-}
-
-func GetNewDownloadEncrypt(net NetworkDownloadEncrypt, newDownloadWithEncryptApplication NewDownloadWithEncryptApplication) *NewDownloadEncrypt {
-	return &NewDownloadEncrypt{Net: net, NewDownloadWithEncryptApplication: newDownloadWithEncryptApplication}
 }
 
 func (d NewDownloadEncrypt) DownloadWithEncrypt() {

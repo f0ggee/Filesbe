@@ -1,8 +1,7 @@
 package httpController
 
 import (
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
-	"Kaban/internal/InfrastructureLayer/RepoSession"
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Service/Application"
 	"log/slog"
 	"mime/multipart"
@@ -17,27 +16,23 @@ type NewFileUploaderEncryptNetwork struct {
 }
 
 type NewFileUploaderEncryptSession struct {
-	ReadSession RepoSession.Session
-	AuthCheck   AuthTokensManage.AuthCheck
+	ReadSession Session
+	Jwt         DomainLevel.AuthMaker
+	Rf          DomainLevel.AuthMaker
 }
-type NewFileUploaderEncryptDetails struct {
-	Rout *mux.Router
-}
+
 type NewUploaderEncrypt struct {
 	NewFileUploaderEncryptNetwork
 	NewFileUploaderEncryptSession
-	NewFileUploaderEncryptDetails
 	Application.UploaderEncryptApplication
-	UrlUploadData func(r *mux.Router, fileName string) (string, error)
-}
+	Rout *mux.Router
 
-func GetNewFileUploaderEncrypt(fileUploaderEncryptNetwork NewFileUploaderEncryptNetwork, newFileUploaderEncryptSession NewFileUploaderEncryptSession, newFileUploaderEncryptDetails NewFileUploaderEncryptDetails) *NewUploaderEncrypt {
-	return &NewUploaderEncrypt{NewFileUploaderEncryptNetwork: fileUploaderEncryptNetwork, NewFileUploaderEncryptSession: newFileUploaderEncryptSession, NewFileUploaderEncryptDetails: newFileUploaderEncryptDetails}
+	UrlUploadData func(r *mux.Router, fileName string) (string, error)
 }
 
 func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 
-	returnedSession := S.ReadSession.GetSessionData(RepoSession.IncomingSessionData{
+	returnedSession := S.ReadSession.GetSessionData(IncomingSessionData{
 		Writer:  S.W,
 		Request: S.R,
 	})
@@ -53,20 +48,45 @@ func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 		})
 		return
 	}
-	Data := S.AuthCheck.CheckUserAuth(AuthTokensManage.UserAuthCheckIncomingData{
-		Jwt: returnedSession.Jwt,
-		Rft: returnedSession.Rft,
-	})
-	if Data.Err != nil {
+	jwtMaker, err := S.Jwt.Make()
+	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    S.W,
 			Code: http.StatusUnauthorized,
-			Data: AnswerUploadEncrypt{
+			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
-				Error:           Data.Err.Error(),
+				UrlToRedirect:   "",
+				Error:           ErrorStrangeError.Error(),
 			},
 		})
 		return
+	}
+	rfMaker, err := S.Rf.Make()
+	if err != nil {
+		SetAnswer(InputAnswerData{
+			W:    S.W,
+			Code: http.StatusUnauthorized,
+			Data: AnswerUploaderFileNoEncrypt{
+				StatusOperation: Break,
+				UrlToRedirect:   "",
+				Error:           ErrorStrangeError.Error(),
+			},
+		})
+		return
+	}
+	jwtError := jwtMaker.IsTokenCorrect([]byte(returnedSession.Jwt))
+	rfError := rfMaker.IsTokenCorrect([]byte(returnedSession.Rft))
+	if rfError != nil && jwtError != nil {
+		SetAnswer(InputAnswerData{
+			W:    S.W,
+			Code: http.StatusUnauthorized,
+			Data: AnswerUploaderFileNoEncrypt{
+				StatusOperation: Break,
+				UrlToRedirect:   "/login",
+				Error:           ErrorAuthExpired.Error(),
+			},
+		})
+
 	}
 	file, sizeAndName, err := S.getFile()
 	if err != nil {
@@ -127,7 +147,7 @@ func (S *NewUploaderEncrypt) getFile() (multipart.File, *multipart.FileHeader, e
 	return file, sizeAndName, nil
 }
 
-func getUploadEncryptData(r *mux.Router, fileName string) (string, error) {
+func GetUploadEncryptData(r *mux.Router, fileName string) (string, error) {
 	url, err := r.Get("fileName").URL("name", fileName, "bool", "true")
 	if err != nil {
 		slog.Error("UrlBuilderUploadEncrypt; error to get a file name from the url", "ERROR", err)

@@ -17,7 +17,7 @@ func NewRedisWrite() RedisWrite {
 
 func (d *RedisWrite) EnableDownloadingParameter(nameOfFileInfo string, ctx context.Context) error {
 
-	err := redisConn.HSet(ctx, nameOfFileInfo, "IsStartDownload", true).Err()
+	err := RedisConn.HSet(ctx, nameOfFileInfo, "IsStartDownload", true).Err()
 	if err != nil {
 		slog.Error("EnableDownloadingParameter;Error set up the labels isStartDownload on true", "ERROR", err.Error())
 		return err
@@ -28,7 +28,7 @@ func (d *RedisWrite) EnableDownloadingParameter(nameOfFileInfo string, ctx conte
 
 func (s *RedisWrite) WriteData(data DomainLevel.WriteDataIncomeData) error {
 
-	err := redisConn.HSet(data.Ctx, data.FileName, Dto.FileInfoLabels{
+	err := RedisConn.HSet(data.Ctx, data.FileName, Dto.FileInfoLabels{
 		InfoAboutFile:   data.Info,
 		IsStartDownload: false,
 	}).Err()

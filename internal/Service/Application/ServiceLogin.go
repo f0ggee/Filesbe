@@ -10,24 +10,12 @@ import (
 type LoginApplication interface {
 	Login(context.Context, Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData
 }
-type NewLoginCrypto struct {
-	Validate DomainLevel.CryptoValidating
-}
-type NewLoginData struct {
-	ReaderDatabase DomainLevel.ReadDb
-}
-type NewLoginAuth struct {
-	GenerateTokens1 DomainLevel.AuthMaker
-	GenerateToken2  DomainLevel.AuthMaker
-}
-type NewLogin struct {
-	NewLoginData
-	NewLoginCrypto
-	NewLoginAuth
-}
 
-func GetNewLogin(newLoginData NewLoginData, newLoginCrypto NewLoginCrypto, newLoginAuth NewLoginAuth) *NewLogin {
-	return &NewLogin{NewLoginData: newLoginData, NewLoginCrypto: newLoginCrypto, NewLoginAuth: newLoginAuth}
+type NewLogin struct {
+	ReaderDatabase DomainLevel.ReadDb
+	Validate       DomainLevel.CryptoValidating
+	Rf             DomainLevel.AuthMaker
+	Jwt            DomainLevel.AuthMaker
 }
 
 func (sa *NewLogin) Login(ctx context.Context, s Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData {
@@ -46,7 +34,7 @@ func (sa *NewLogin) Login(ctx context.Context, s Dto.UserLoginData) DomainLevel.
 
 	var BytesID [4]byte
 	binary.BigEndian.PutUint32(BytesID[:], uint32(usersData.Id))
-	refreshTokenMaker, err := sa.GenerateTokens1.Make()
+	refreshTokenMaker, err := sa.Rf.Make()
 	if err != nil {
 		return DomainLevel.LoginApplicationOutComingData{
 			Err: err,
@@ -61,7 +49,7 @@ func (sa *NewLogin) Login(ctx context.Context, s Dto.UserLoginData) DomainLevel.
 		}
 	}
 
-	jwtTokenMaker, err := sa.GenerateToken2.Make()
+	jwtTokenMaker, err := sa.Jwt.Make()
 	if err != nil {
 		return DomainLevel.LoginApplicationOutComingData{
 			Jwt: "",

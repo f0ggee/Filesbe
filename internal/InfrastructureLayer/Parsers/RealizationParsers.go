@@ -28,7 +28,7 @@ func (p Parsing) Encode(a any) ([]byte, error) {
 
 	marshal, err := json.Marshal(&a)
 	if err != nil {
-		slog.Error("Encode; error to parse data", "ERROR", err)
+		slog.Error("Parser; error to parse data", "ERROR", err)
 		return nil, errors.New(DomainLevel.ErrorParseInfo)
 	}
 	return marshal, nil

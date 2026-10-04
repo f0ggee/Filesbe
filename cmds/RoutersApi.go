@@ -24,13 +24,13 @@ func GetRegisterApiRouter(postRequest *mux.Router, app *http2.NewRegister) *mux.
 	}).Methods(http.MethodPost)
 }
 
-func GetUploaderApiRouter(postRequest *mux.Router, app *http2.NewFileUploader) *mux.Route {
+func GetUploaderApiRouter(postRequest *mux.Router, app *http2.NewFileUpload) *mux.Route {
 	return postRequest.HandleFunc("/downloader/api", func(writer http.ResponseWriter, request *http.Request) {
 		app.FileUploaderNet = http2.FileUploaderNet{
 			W: writer,
 			R: request,
 		}
-		app.FileUploaderNoEncrypt(postRequest)
+		app.FileUploader(postRequest)
 	}).Methods(http.MethodPost)
 }
 
@@ -58,7 +58,7 @@ func GetEncryptUploaderApiRouter(postRequest *mux.Router, app *http2.NewUploader
 	}).Methods(http.MethodPost)
 }
 
-func GetDownloadApi(getRequest *mux.Router, app *http2.DownloadNew) *mux.Route {
+func GetDownloadApi(getRequest *mux.Router, app *http2.NewDownload) *mux.Route {
 	return getRequest.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
 		app.DownloadNetwork.W = writer
 		app.DownloadNetwork.R = request

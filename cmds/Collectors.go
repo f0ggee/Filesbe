@@ -1,9 +1,11 @@
 //A collector layer is a collection of functions that build
 //necessary modules. This layer is an entry point of a program
+//Warning! Every name in the collector must follow this syntax - ModuleNameCollector for structs and functions
 
 package cmds
 
 import (
+	"Kaban/internal/Deliver/httpController"
 	"Kaban/internal/InfrastructureLayer/Crypto"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	"Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo"
@@ -17,15 +19,19 @@ import (
 
 type CryptoCollector struct {
 	RsaRealization    Crypto.RsaEncryption
-	AesRealization    Crypto.AesEncryption
+	AesGcmRealization Crypto.AesEncryption
 	AesCtrRealization Crypto.AesCtrEncryption
+	Validate          Crypto.Checking
+	Generate          Crypto.Generating
 }
 
 func GetCryptoCollector() CryptoCollector {
 	return CryptoCollector{
 		RsaRealization:    Crypto.NewRsaEncryption(),
-		AesRealization:    Crypto.NewAesEncryption(),
+		AesGcmRealization: Crypto.NewAesGcmEncryption(),
 		AesCtrRealization: Crypto.NewAesCtr(),
+		Validate:          Crypto.GetNewChecking(),
+		Generate:          Crypto.GetNewGenerating(),
 	}
 }
 
@@ -56,7 +62,7 @@ type FileTransferringCollector struct {
 	HttpFileTransferringCollector
 }
 
-func GetFileTransferring() FileTransferringCollector {
+func GetFileTransferringCollector() FileTransferringCollector {
 	return FileTransferringCollector{
 		S3FileTransferringCollector: S3FileTransferringCollector{
 			Upload:   s3Repo.NewS3Upload(),
@@ -80,24 +86,24 @@ func GetGrpcCollector() GrpcCollector {
 }
 
 type ParsersCollector struct {
-	Encode Parsers.Parsing
+	Parser Parsers.Parsing
 }
 
-func NewParsersCollector() ParsersCollector {
+func GetNewParsersCollector() ParsersCollector {
 	return ParsersCollector{
-		Encode: Parsers.GetNewParsing(),
+		Parser: Parsers.GetNewParsing(),
 	}
 }
 
-type Redis struct {
+type RedisCollector struct {
 	Read   RedisInteration.RedisRead
 	Write  RedisInteration.RedisWrite
 	Check  RedisInteration.RedisCheck
 	Delete RedisInteration.RedisDelete
 }
 
-func NewRedis() *Redis {
-	return &Redis{
+func GetNewRedisCollector() RedisCollector {
+	return RedisCollector{
 		Read:   RedisInteration.NewRedisRead(),
 		Write:  RedisInteration.NewRedisWrite(),
 		Check:  RedisInteration.NewRedisCheck(),
@@ -105,24 +111,28 @@ func NewRedis() *Redis {
 	}
 }
 
-type SessionKeys struct {
+type SessionKeysCollector struct {
 	Keys RepoEncrypterKeys.Keys
 }
 
-func NewSessionKeys() SessionKeys {
-	return SessionKeys{
-		Keys: RepoEncrypterKeys.GetNewKeys(),
+func GetNewSessionKeysCollector() SessionKeysCollector {
+	return SessionKeysCollector{
+		Keys: RepoEncrypterKeys.GetKeys(),
 	}
 }
 
-type TokensAuth struct {
+type TokensAuthCollector struct {
 	Jwt Tokens.JwtToken
 	Rf  Tokens.RfToken
 }
 
-func NewTokensAuth() TokensAuth {
-	return TokensAuth{
+func GetNewTokensAuthCollector() TokensAuthCollector {
+	return TokensAuthCollector{
 		Jwt: Tokens.GetNewJwtToken(),
 		Rf:  Tokens.GetNewRfToken(),
 	}
+}
+
+func GetNewSessionCollector() httpController.Session {
+	return httpController.GetNewSessionConnect()
 }

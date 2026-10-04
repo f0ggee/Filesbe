@@ -42,7 +42,7 @@ func (s *S3Download) Downloader() (io.Reader, error) {
 	switch {
 	case errors.Is(err, ns):
 		slog.Error("S3Download: the file wasn't found")
-		return nil, errors.New(ErrorNoFile)
+		return nil, ErrorNoFile
 
 	case err != nil:
 		slog.Error("S3Download: an strange error happened during downloading", "ERROR", err)
@@ -76,11 +76,11 @@ func (s *S3Download) GetFileName() string {
 func (s *S3Download) Make(ctx context.Context) (DomainLevel.Download, error) {
 	if s.size == 0 {
 		slog.Error("S3 downloader: the file size isn't defined")
-		return nil, errors.New(ErrorFileSize)
+		return nil, ErrorFileSize
 	}
 	if s.name == "" {
 		slog.Error("S3 downloader: the file name isn't defined")
-		return nil, errors.New(ErrorFileName)
+		return nil, ErrorFileName
 	}
 
 	opts, goroutines := DomainLevel.GetNewFileSettings(s.size, "").FindBestOptions()

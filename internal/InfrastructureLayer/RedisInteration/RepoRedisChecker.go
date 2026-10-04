@@ -38,7 +38,7 @@ func (d *RedisCheck) ChekIsStartDownload(name string, ctx context.Context) bool 
 		InfoAboutFile:   nil,
 		IsStartDownload: false,
 	}
-	err := redisConn.HGetAll(context.Background(), name).Scan(&isExit)
+	err := RedisConn.HGetAll(context.Background(), name).Scan(&isExit)
 
 	if err != nil {
 		slog.Error("Can't get the label IsStartDownload", "Error", err)
@@ -53,7 +53,7 @@ func (d *RedisCheck) ChekIsStartDownload(name string, ctx context.Context) bool 
 }
 func (d *RedisCheck) CheckFileInfoExists(FileName string, ctx context.Context) bool {
 
-	c, err := redisConn.Exists(ctx, FileName).Result()
+	c, err := RedisConn.Exists(ctx, FileName).Result()
 	if err != nil {
 		slog.Error("CheckExistFileInfo error:", "Error", err)
 		return false

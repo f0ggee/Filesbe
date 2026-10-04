@@ -3,7 +3,6 @@ package Application
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
 	"Kaban/internal/InfrastructureLayer/Tokens"
 	"context"
 	"crypto/rand"
@@ -54,23 +53,13 @@ func (r RegisterTest) RegisterApp(ctx context.Context, register *Dto.UserDataReg
 	}
 }
 
-type NewRegisterCrypto struct {
-	Generator DomainLevel.CryptoGenerating
-}
-type NewRegisterDataMange struct {
-	CheckingDb      DomainLevel.CheckingDb
-	WriterDb        DomainLevel.WriteDb
-	GeneratorTokens AuthTokensManage.Generator
-}
 type NewRegisterApplication struct {
-	NewRegisterDataMange
-	NewRegisterCrypto
-	TokenMaker1 DomainLevel.AuthMaker
-	TokenMaker2 DomainLevel.AuthMaker
-}
+	CheckingDb DomainLevel.CheckingDb
+	WriterDb   DomainLevel.WriteDb
+	Generator  DomainLevel.CryptoGenerating
 
-func GetNewRegisterApplication(newRegisterDataMange NewRegisterDataMange, newRegisterCrypto NewRegisterCrypto) *NewRegisterApplication {
-	return &NewRegisterApplication{NewRegisterDataMange: newRegisterDataMange, NewRegisterCrypto: newRegisterCrypto}
+	Rft DomainLevel.AuthMaker
+	Jwt DomainLevel.AuthMaker
 }
 
 func (sa *NewRegisterApplication) RegisterApp(ctx context.Context, de *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
@@ -94,22 +83,10 @@ func (sa *NewRegisterApplication) RegisterApp(ctx context.Context, de *Dto.UserD
 			Err: err,
 		}
 	}
-
-	jwtMaker, err := sa.TokenMaker1.Make()
-	if err != nil {
-		return DomainLevel.RegisterApplicationOutComingData{
-			Jwt: "",
-			Rft: "",
-			Err: err,
-		}
-	}
 	var BytesID [4]byte
 	binary.BigEndian.PutUint32(BytesID[:], uint32(UnitIdUser))
-	jwtToken, err := jwtMaker.GetAuthToken(BytesID[:])
-	if err != nil {
-		return DomainLevel.RegisterApplicationOutComingData{Err: err}
-	}
-	refreshMaker, err := sa.TokenMaker2.Make()
+
+	rfMaker, err := sa.Rft.Make()
 	if err != nil {
 		return DomainLevel.RegisterApplicationOutComingData{
 			Jwt: "",
@@ -117,7 +94,29 @@ func (sa *NewRegisterApplication) RegisterApp(ctx context.Context, de *Dto.UserD
 			Err: err,
 		}
 	}
-
-	refreshToken, err := refreshMaker.GetAuthToken(BytesID[:])
-	return DomainLevel.RegisterApplicationOutComingData{Rft: string(refreshToken), Jwt: string(jwtToken)}
+	jwtMaker, err := sa.Jwt.Make()
+	if err != nil {
+		return DomainLevel.RegisterApplicationOutComingData{
+			Jwt: "",
+			Rft: "",
+			Err: err,
+		}
+	}
+	jwt, err := jwtMaker.GetAuthToken(BytesID[:])
+	if err != nil {
+		return DomainLevel.RegisterApplicationOutComingData{
+			Jwt: "",
+			Rft: "",
+			Err: err,
+		}
+	}
+	rfToken, err := rfMaker.GetAuthToken(BytesID[:])
+	if err != nil {
+		return DomainLevel.RegisterApplicationOutComingData{
+			Jwt: "",
+			Rft: "",
+			Err: err,
+		}
+	}
+	return DomainLevel.RegisterApplicationOutComingData{Rft: string(rfToken), Jwt: string(jwt)}
 }

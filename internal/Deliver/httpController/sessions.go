@@ -45,11 +45,11 @@ type ReturnedSessionKey struct {
 
 type SessionConnect struct{}
 
-func GetNewSessionConnect() *SessionConnect {
-	return &SessionConnect{}
+func GetNewSessionConnect() SessionConnect {
+	return SessionConnect{}
 }
 
-func (s *SessionConnect) getUserConnect(r *http.Request) (*sessions.Session, error) {
+func (s SessionConnect) getUserConnect(r *http.Request) (*sessions.Session, error) {
 	return store.Get(r, TokenName)
 }
 
@@ -60,7 +60,7 @@ type IncomingSessionData struct {
 	Rt      string
 }
 
-func (s *SessionConnect) GetSessionData(data IncomingSessionData) ReturnedSessionKey {
+func (s SessionConnect) GetSessionData(data IncomingSessionData) ReturnedSessionKey {
 	connect, err := s.getUserConnect(data.Request)
 	if err != nil {
 		slog.Error("GetSessionData: error to get an active connect", "error", err)
@@ -84,7 +84,7 @@ func (s *SessionConnect) GetSessionData(data IncomingSessionData) ReturnedSessio
 		Jwt: jwts,
 	}
 }
-func (s *SessionConnect) SetNewSession(data IncomingSessionData) ReturnedSessionKey {
+func (s SessionConnect) SetNewSession(data IncomingSessionData) ReturnedSessionKey {
 	connect, err := s.getUserConnect(data.Request)
 	if err != nil {
 		return ReturnedSessionKey{Error: ErrorGetCookie}

@@ -2,7 +2,6 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/FileControls"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"bytes"
 	"context"
@@ -22,7 +21,6 @@ type DownloadEncryptApplication interface {
 var ErrorDecryptFile = errors.New("error to decrypt data")
 
 type NewDownloadEncryptFileControl struct {
-	Transfer   FileControls.Transferring
 	Uploader   DomainLevel.MakerUploader
 	Downloader DomainLevel.MakerDownloader
 	Deleter    DomainLevel.MakerDeleter
@@ -41,10 +39,6 @@ type NewDownloadEncrypt struct {
 	NewDownloadEncryptCrypto
 	NewDownloadEncryptFileControl
 	d DomainLevel.Decoder
-}
-
-func GetNewDownloadEncrypt(newDownloadEncryptDelivery NewDownloadEncryptDelivery, newDownloadEncryptCrypto NewDownloadEncryptCrypto, newDownloadEncryptFileControl NewDownloadEncryptFileControl) *NewDownloadEncrypt {
-	return &NewDownloadEncrypt{NewDownloadEncryptDelivery: newDownloadEncryptDelivery, NewDownloadEncryptCrypto: newDownloadEncryptCrypto, NewDownloadEncryptFileControl: newDownloadEncryptFileControl}
 }
 
 type NewDownloadEncryptNetwork struct {
@@ -77,11 +71,11 @@ func (s *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData
 		return err
 	}
 	defer aesKey.Destroy()
-	uploadedObject, err := s.Uploader.SetName(fileName).SetAdditionalWriter(data.W).SetSize(s.Downloader.GetFileSize()).Make(data.Ctx)
-	if err != nil {
-		return err
-	}
 	g.Go(func() error {
+		uploadedObject, err := s.Uploader.SetName(fileName).SetAdditionalWriter(data.W).SetSize(s.Downloader.GetFileSize()).Make(data.Ctx)
+		if err != nil {
+			return err
+		}
 		err = s.decryptFile(aesKey.Bytes(), downloadedObject, uploadedObject)
 		if err != nil {
 			return err

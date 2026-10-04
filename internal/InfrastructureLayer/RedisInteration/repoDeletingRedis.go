@@ -13,7 +13,7 @@ func NewRedisDelete() RedisDelete {
 	return RedisDelete{}
 }
 
-func (d *RedisDelete) DeleterFileInfoTest(s string, context context.Context) error {
+func (d RedisDelete) DeleterFileInfoTest(s string, context context.Context) error {
 
 	if ax, dsa := context.Value("isFallRedis").(bool); ax != false {
 
@@ -25,9 +25,9 @@ func (d *RedisDelete) DeleterFileInfoTest(s string, context context.Context) err
 	return nil
 }
 
-func (d *RedisDelete) DeleteFileInfo(fileInfo string, ctx context.Context) error {
+func (d RedisDelete) DeleteFileInfo(fileInfo string, ctx context.Context) error {
 
-	err := redisConn.Del(ctx, fileInfo).Err()
+	err := RedisConn.Del(ctx, fileInfo).Err()
 	if err != nil {
 		slog.Error("File info's already been deleted", err)
 		return errors.New(ErrorDeleteInfo)

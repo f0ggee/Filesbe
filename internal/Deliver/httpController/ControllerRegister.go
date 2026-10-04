@@ -3,7 +3,6 @@ package httpController
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Dto"
-	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"Kaban/internal/Service/Application"
 	"net/http"
 )
@@ -14,7 +13,7 @@ type RegisterNet struct {
 }
 type NewRegister struct {
 	RegisterNet
-	Session RepoSession.Session
+	Session Session
 	Decoder DomainLevel.Decoder
 	App     Application.RegisterApplication
 }
@@ -61,7 +60,7 @@ func (D NewRegister) Register() {
 		})
 		return
 	}
-	returnedData := D.Session.SetNewSession(RepoSession.IncomingSessionData{
+	returnedData := D.Session.SetNewSession(IncomingSessionData{
 		Writer:  D.W,
 		Request: D.R,
 		Jwt:     RegisterOutput.Jwt,

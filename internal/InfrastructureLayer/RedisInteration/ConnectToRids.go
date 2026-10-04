@@ -6,7 +6,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var redisConn *redis.Client
+var RedisConn *redis.Client
 
 func init() {
 	redisConnect := redis.NewClient(&redis.Options{
@@ -14,5 +14,5 @@ func init() {
 		Username: DomainLevel.RedisServer,
 		Password: DomainLevel.RedisPassword,
 	})
-	redisConn = redisConnect
+	RedisConn = redisConnect
 }

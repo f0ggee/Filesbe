@@ -21,13 +21,13 @@ func NewRedisRead() RedisRead {
 	return RedisRead{}
 }
 
-func (d *RedisRead) GetFileInfo(fileInfoName string, ctx context.Context) ([]byte, error) {
+func (d RedisRead) GetFileInfo(fileInfoName string, ctx context.Context) ([]byte, error) {
 
 	StructOfFileInfo := Dto.FileInfoLabels{
 		InfoAboutFile: nil,
 	}
 
-	err := redisConn.HGetAll(ctx, fileInfoName).Scan(&StructOfFileInfo)
+	err := RedisConn.HGetAll(ctx, fileInfoName).Scan(&StructOfFileInfo)
 	if err != nil {
 		slog.Error("Redis GetFileInfo; error happened during getting info about a file", "ERROR", err)
 		return nil, errors.New(ErrorFindFileInfo)
@@ -36,7 +36,7 @@ func (d *RedisRead) GetFileInfo(fileInfoName string, ctx context.Context) ([]byt
 	return StructOfFileInfo.InfoAboutFile, nil
 
 }
-func (d *RedisRead) GetKey(Ctx context.Context) ([]byte, error) {
+func (d RedisRead) GetKey(Ctx context.Context) ([]byte, error) {
 	count, sec := 0, 1
 
 	ctx, cancel := context.WithTimeout(Ctx, time.Second*10)
@@ -45,7 +45,7 @@ func (d *RedisRead) GetKey(Ctx context.Context) ([]byte, error) {
 		if count > 20 {
 			return nil, errors.New(ErrorReadTimeout)
 		}
-		err := redisConn.Get(ctx, os.Getenv(ServerName)).Err()
+		err := RedisConn.Get(ctx, os.Getenv(ServerName)).Err()
 
 		if err != nil {
 			count, sec = +1, +1
@@ -53,13 +53,13 @@ func (d *RedisRead) GetKey(Ctx context.Context) ([]byte, error) {
 			continue
 		}
 		var data []byte
-		err = redisConn.Get(ctx, os.Getenv(ServerName)).Scan(&data)
+		err = RedisConn.Get(ctx, os.Getenv(ServerName)).Scan(&data)
 		if err != nil {
 			slog.Error("GetPacketData; error to read data", "ERROR", err)
 			return nil, errors.New(ErrorRead)
 		}
 
-		err = redisConn.Del(ctx, os.Getenv(ServerName)).Err()
+		err = RedisConn.Del(ctx, os.Getenv(ServerName)).Err()
 		if err != nil {
 			slog.Error("GetPacketData; error to delete file info", "ERROR", err)
 			return nil, errors.New(ErrorDeleteInfo)

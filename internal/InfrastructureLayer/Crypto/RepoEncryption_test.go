@@ -87,7 +87,7 @@ func TestAesEncryption_MakeCrypto(t *testing.T) {
 	var NonceGeneration func() []byte
 
 	NonceGeneration = func() []byte {
-		nonce := make([]byte, NewAesEncryption().GetRequiredOverheadSize())
+		nonce := make([]byte, NewAesGcmEncryption().GetRequiredOverheadSize())
 		if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
 			panic(err)
 		}
@@ -152,7 +152,7 @@ func TestAesEncryption_MakeCrypto(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewAesEncryption().MakeCrypto(tt.args.bytes, tt.args.i)
+			got, err := NewAesGcmEncryption().MakeCrypto(tt.args.bytes, tt.args.i)
 			if err != nil && !tt.wantErr {
 				t.Errorf("MakeCrypto() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -167,7 +167,7 @@ func TestAesEncryption_MakeCrypto(t *testing.T) {
 			} else if err != nil && tt.wantErr {
 				t.SkipNow()
 			}
-			newGot2, err := NewAesEncryption().MakeCrypto(tt.args.bytes, tt.args.i)
+			newGot2, err := NewAesGcmEncryption().MakeCrypto(tt.args.bytes, tt.args.i)
 			if err != nil && !tt.wantErr {
 				t.Errorf("MakeCrypto() error = %v, wantErr %v", err, tt.wantErr)
 				return

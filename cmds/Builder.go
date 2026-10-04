@@ -1,350 +1,230 @@
+//This file contains special functions that build objects.
+//It's a second part of building objects.
+
 package cmds
 
 import (
 	"Kaban/internal/Deliver/httpController"
-	"Kaban/internal/Deliver/httpController/DeliverPackages/RepoDownloadEncryptRepo"
-	"Kaban/internal/Deliver/httpController/DeliverPackages/RepoDownloadNoEncrypt"
-	"Kaban/internal/Deliver/httpController/DeliverPackages/RepoLoginRealizations"
-	"Kaban/internal/Deliver/httpController/DeliverPackages/RepoRegisterRepository"
-	"Kaban/internal/Deliver/httpController/DeliverPackages/RepoUsersCheckAuth"
-	"Kaban/internal/Deliver/httpController/DeliverPackages/RepofileUploaderEncryptRepo"
-	"Kaban/internal/Deliver/httpController/DeliverPackages/RepofileUploaderNoEncryptRepo"
-	"Kaban/internal/Deliver/httpController/DeliverPackages/RepourlBuilder"
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/AuthTokensManage"
-	"Kaban/internal/InfrastructureLayer/Parsers"
-	"Kaban/internal/InfrastructureLayer/Protocol"
-	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
-	"Kaban/internal/InfrastructureLayer/RepoSession"
 	"Kaban/internal/Service/Application"
 
 	"github.com/gorilla/mux"
 )
 
-// application builders
-func GetDownloadApplicationBuilder(s *S3Collector, a *RedisCollector, f *FileControlCollector) *Application.NewDownload {
-	delivery := Application.DownloadDelivery{
-		Reader:     &a.Read,
-		DeleterS3:  s.Deleter,
-		S3Download: s.S3Download,
-	}
-	fileControl := Application.DownloadFileControl{
-		Transfer:     f.Transfer,
-		FileManaging: f.FileSettings,
-	}
-	return Application.GetNewDownload(delivery, fileControl, Application.DownloadNetwork{})
+//WARNING! Every module's name must follow this syntax: SomethingBuilder
+//There are application builder functions
+
+type DownloadBuilderApplication struct {
+	Trans FileTransferringCollector
+	Red   RedisCollector
+	Parse ParsersCollector
 }
 
-func GetDownloadEncryptApplicationBuilder(a *RedisCollector, s *S3Collector, z *RepoEncrypterKeys.Keys, c *CollectorCrypto, f *FileControlCollector) *Application.NewDownloadEncrypt {
-
-	delivery := Application.NewDownloadEncryptDelivery{
-		ReaderRedis:  &a.Read,
-		DownloadS3:   s.S3Download,
-		DeleterRedis: &a.Delete,
-		DeleterS3:    s.Deleter,
+func GetDownloadApplicationBuilder(Transferring DownloadBuilderApplication) Application.NewDownload {
+	return Application.NewDownload{
+		DownloadDelivery: Application.DownloadDelivery{
+			Reader: Transferring.Red.Read,
+		},
+		DownloadFileControl: Application.DownloadFileControl{
+			Downloader: &Transferring.Trans.Download,
+			Uploader:   &Transferring.Trans.HttpFileTransferringCollector.Upload,
+			Deleter:    &Transferring.Trans.Delete,
+			Decoder:    Transferring.Parse.Parser,
+		},
 	}
-
-	crypto := Application.NewDownloadEncryptCrypto{
-		Crypto:        c.Decrypt,
-		EncrypterKeys: *z,
-	}
-	file := Application.NewDownloadEncryptFileControl{
-		Transfer:     f.Transfer,
-		FileManaging: f.FileSettings,
-	}
-	return Application.GetNewDownloadEncrypt(delivery, crypto, file)
 }
 
-func GetLoginApplicationBuilder(c *CollectorCrypto, d *CollectorDatabaseManage, x *CollectorAuthTokensManage) *Application.NewLogin {
-
-	data := Application.NewLoginData{
-		ReaderDatabase: d.Reader,
-	}
-	crypto := Application.NewLoginCrypto{
-		Validate: c.Validate,
-	}
-
-	auth := Application.NewLoginAuth{
-		GeneratingTokens: x.Creating,
-	}
-
-	return Application.GetNewLogin(data, crypto, auth)
+type DownloadEncryptApplication struct {
+	Red          RedisCollector
+	Crypt        CryptoCollector
+	Keys         SessionKeysCollector
+	Transferring FileTransferringCollector
 }
 
-func GetRegisterApplicationBuilder(d *CollectorDatabaseManage, x *CollectorAuthTokensManage, c *CollectorCrypto) *Application.NewRegisterApplication {
-	data := Application.NewRegisterDataMange{
-		CheckingDb:      &d.Checker,
-		WriterDb:        &d.Writer,
-		GeneratorTokens: x.Creating,
+func GetDownloadEncryptApplicationBuilder(D DownloadEncryptApplication) Application.NewDownloadEncrypt {
+	return Application.NewDownloadEncrypt{
+		NewDownloadEncryptDelivery: Application.NewDownloadEncryptDelivery{
+			ReaderRedis:  D.Red.Read,
+			DeleterRedis: D.Red.Delete,
+		},
+		NewDownloadEncryptCrypto: Application.NewDownloadEncryptCrypto{
+			Crypto:        &D.Crypt.AesCtrRealization,
+			EncrypterKeys: D.Keys.Keys,
+		},
+		NewDownloadEncryptFileControl: Application.NewDownloadEncryptFileControl{
+			Uploader:   &D.Transferring.HttpFileTransferringCollector.Upload,
+			Downloader: &D.Transferring.S3FileTransferringCollector.Download,
+			Deleter:    &D.Transferring.Delete,
+		},
 	}
-	crypto := Application.NewRegisterCrypto{
-		Generator: c.Generate,
-	}
-	return Application.GetNewRegisterApplication(data, crypto)
-}
-func GetUploadApplicationBuilder(c *CollectorCrypto, f *FileControlCollector, z *RepoParsersCollector, s3 *S3Collector, r *RedisCollector) *Application.NewUpload {
-
-	crypto := Application.NewFileUploaderCrypto{
-		Generator: c.Generate,
-	}
-
-	data := Application.NewFileUploaderDataMange{
-		FileSettings: f.FileSettings,
-		Encode:       z.Encode,
-	}
-	delivery := Application.NewFileUploaderDelivery{
-		UploadS3:   s3.Uploader,
-		WriteRedis: &r.Write,
-	}
-	return Application.GetNewFileUploader(crypto, data, delivery)
 }
 
-type UploadEncryptBuilderIncomeData struct {
-	F          *FileControlCollector
-	S3         *S3Collector
-	Z          *RepoParsersCollector
-	C          *CollectorCrypto
-	ServerKeys *DomainLevel.NewServerKeys
-	R          *RedisCollector
+type LoginApplication struct {
+	DB     DatabaseCollector
+	Crypt  CryptoCollector
+	Tokens TokensAuthCollector
 }
 
-func GetUploadEncryptApplicationBuilder(d UploadEncryptBuilderIncomeData) *Application.NewUploadEncrypt {
+func GetLoginApplicationBuilder(L LoginApplication) Application.NewLogin {
 
-	data := Application.NewUploadEncryptDataManage{
-		FileManger: d.F.FileSettings,
-		Encode:     d.Z.Encode,
+	return Application.NewLogin{
+		ReaderDatabase: L.DB.Read,
+		Validate:       &L.Crypt.Validate,
+		Rf:             &L.Tokens.Rf,
+		Jwt:            &L.Tokens.Rf,
 	}
-
-	crypto := Application.NewUploadEncryptCrypto{
-		Generate:   d.C.Generate,
-		ServerKeys: *d.ServerKeys,
-		Encrypt:    d.C.Encrypt,
-	}
-
-	delivery := Application.NewUploadEncryptDelivery{
-		UploaderS3:   d.S3.Uploader,
-		RedisWriter:  &d.R.Write,
-		RedisChecker: &d.R.Check,
-		RedisDeleter: &d.R.Delete,
-		DeleterS3:    d.S3.Deleter,
-	}
-	return Application.GetNewUploadEncrypt(data, crypto, delivery)
 }
 
-// Delivery builders
-
-type RegisterControllerBuilderIncomeData struct {
-	Answ    RepoDownloadNoEncrypt.Answer
-	UrlWork RepoDownloadNoEncrypt.UrlWork
-	App     *Application.NewDownload
+type RegisterApplication struct {
+	DB     DatabaseCollector
+	Tokens TokensAuthCollector
+	Crypt  CryptoCollector
 }
 
-func GetControllerDownloadBuilder(d *RegisterControllerBuilderIncomeData) *httpController.DownloadNew {
-
-	answ := httpController.AnswerDownloadNoEncrypt{
-		Answ: d.Answ,
+func GetRegisterBuilder(R RegisterApplication) Application.NewRegisterApplication {
+	return Application.NewRegisterApplication{
+		CheckingDb: nil,
+		WriterDb:   nil,
+		Generator:  nil,
+		Rft:        nil,
+		Jwt:        nil,
 	}
-
-	url := httpController.NewDownloadWithNotEncryptUrlBuilder{
-		UrlWork: d.UrlWork,
-	}
-
-	NetWork := httpController.DownloadNetwork{}
-	App := httpController.DownloadApp{
-		NewDownload: *d.App,
-	}
-
-	return httpController.GetNewDownloadWithNotEncrypt(answ, url, NetWork, App)
 }
 
-type EncryptDownloadControllerIncomeData struct {
-	Answ     RepoDownloadEncryptRepo.AnswersDownloadEncrypt
-	UrlBuild RepoDownloadEncryptRepo.UrlWork
-	App      *Application.NewDownloadEncrypt
+type UploadApplication struct {
+	Crypt CryptoCollector
+	Parse ParsersCollector
+	S3    S3FileTransferringCollector
+	Red   RedisCollector
 }
 
-func GetEncryptDownloadControllerBuilder(d EncryptDownloadControllerIncomeData) *httpController.NewDownloadEncrypt {
-	answ := httpController.AnswerDownloadEncrypt{
-		S: d.Answ,
+func GetUploadBuilder(U UploadApplication) Application.NewUpload {
+	return Application.NewUpload{
+		NewFileUploaderCrypto: Application.NewFileUploaderCrypto{
+			Generator: U.Crypt.Generate,
+		},
+		NewFileUploaderDataMange: Application.NewFileUploaderDataMange{
+			Encode: U.Parse.Parser,
+		},
+		NewFileUploaderDelivery: Application.NewFileUploaderDelivery{
+			Uploader:   &U.S3.Upload,
+			WriteRedis: &U.Red.Write,
+		},
 	}
-	url := httpController.UrlBuilderDownloadEncrypt{
-		UrlBuild: d.UrlBuild,
-	}
-	net := httpController.NetworkDownloadEncrypt{}
-	App := httpController.NewDownloadWithEncryptApplication{
-		NewDownloadEncrypt: *d.App,
-	}
-	return httpController.GetNewDownloadEncrypt(answ, url, net, App)
 }
 
-type UploaderBuilderIncomeData struct {
-	R           *mux.Router
-	ReadSession RepoSession.Session
-	AuthCheck   AuthTokensManage.AuthCheck
-	Answers     RepofileUploaderEncryptRepo.AnswersUploadEncrypt
-	Build       RepofileUploaderEncryptRepo.UrlUploadEncrypt
-	A           Application.NewUploadEncrypt
+type UploadEncrypt struct {
+	Parse        ParsersCollector
+	Crypt        CryptoCollector
+	Transferring FileTransferringCollector
+	Red          RedisCollector
 }
 
-func GetUploaderEncrypterControllerBuilder(d *UploaderBuilderIncomeData) *httpController.NewUploaderEncrypt {
-	net := httpController.NewFileUploaderEncryptNetwork{}
-	sess := httpController.NewFileUploaderEncryptSession{
-		ReadSession: d.ReadSession,
-		AuthCheck:   d.AuthCheck,
-	}
-	details := httpController.NewFileUploaderEncryptDetails{
-		Answers: d.Answers,
-		Build:   d.Build,
-		Rout:    d.R,
-	}
+func GetUploadEncryptBuilder(d UploadEncrypt) Application.NewUploadEncrypt {
 
-	App := httpController.NewFileUploaderEncryptApplication{
-		NewUploadEncrypt: d.A,
+	return Application.NewUploadEncrypt{
+		NewUploadEncryptDataManage: Application.NewUploadEncryptDataManage{
+			Encode: d.Parse.Parser,
+		},
+		NewUploadEncryptCrypto: Application.NewUploadEncryptCrypto{
+			Generate: d.Crypt.Generate,
+			Encrypt:  &d.Crypt.AesGcmRealization,
+		},
+		NewUploadEncryptDelivery: Application.NewUploadEncryptDelivery{
+			Uploader:     &d.Transferring.S3FileTransferringCollector.Upload,
+			RedisWriter:  &d.Red.Write,
+			RedisChecker: &d.Red.Check,
+			RedisDeleter: d.Red.Delete,
+			Deleter:      &d.Transferring.S3FileTransferringCollector.Delete,
+		},
 	}
-	return httpController.GetNewFileUploaderEncrypt(net, sess, details, App)
 }
 
-type UploaderEncryptBuilderIncomeData struct {
-	S       RepofileUploaderNoEncryptRepo.Answers
-	Builder RepofileUploaderNoEncryptRepo.NewUploaderNoEncrypt
-	Session RepoSession.Session
-	Auth    AuthTokensManage.AuthCheck
-	App     Application.NewUpload
+//There are controller builders
+
+func GetControllerDownloadBuilder(app Application.NewDownload) httpController.NewDownload {
+	return httpController.NewDownload{
+		DownloadApplication: &app,
+	}
 }
 
-func GetUploaderControllerBuilder(data UploaderEncryptBuilderIncomeData) *httpController.NewFileUploader {
-	net := httpController.FileUploaderNet{}
-	details := httpController.NewFileUploaderWorkDetails{
-		S:       data.S,
-		Builder: data.Builder,
+func GetControllerDownloadEncryptBuilder(app Application.DownloadEncryptApplication) httpController.NewDownloadEncrypt {
+	return httpController.NewDownloadEncrypt{
+		DownloadEncryptApplication: app,
+		GetDataRequest:             httpController.GetDataRequest,
 	}
-	session := httpController.FileUploaderSessions{
-		Session: data.Session,
-		Auth:    data.Auth,
-	}
-
-	app := httpController.NewFileUploaderApp{
-		NewUpload: data.App,
-	}
-	return httpController.GetNewFileUploader(net, details, session, app)
 }
 
-type NewLoginIncomeData struct {
-	S      *RepoLoginRealizations.LoginAnswers
-	Sess   RepoSession.Session
-	Parses Parsers.Decode
-	App    *Application.NewLogin
+type ControllerFileUploadBuilder struct {
+	Token    DomainLevel.AuthMaker
+	Sessions httpController.Session
+	App      Application.UploadApplication
 }
 
-func GetControllerLoginBuilder(data NewLoginIncomeData) *httpController.NewLoginController {
-	net := httpController.LoginNet{}
-	depends := httpController.LoginDepends{
-		S:    data.S,
-		Sess: data.Sess,
+func GetControllerFileUploadBuilder(C ControllerFileUploadBuilder) httpController.NewFileUpload {
+
+	return httpController.NewFileUpload{
+		FileUploaderSessions: httpController.FileUploaderSessions{
+			Rf:       C.Token,
+			Jwt:      C.Token,
+			Sessions: C.Sessions,
+		},
+		UploadApplication: C.App,
+		UrlData:           httpController.GetUploadData,
 	}
-	parse := httpController.ParseLogin{
-		Parses: data.Parses,
-	}
-	app := httpController.LoginApplication{
-		NewLogin: *data.App,
-	}
-	return httpController.GetNewLogin(net, depends, parse, app)
 }
 
-type CheckUserBuilderIncomeData struct {
-	answers *RepoUsersCheckAuth.SetUsersChecker
-	Session RepoSession.Session
-	Auth    AuthTokensManage.AuthCheck
+type ControllerFileUploadEncrypt struct {
+	Token    DomainLevel.AuthMaker
+	Sessions httpController.Session
+	App      Application.NewUploadEncrypt
 }
 
-func GetControllerCheckAuthBuilder(data CheckUserBuilderIncomeData) *httpController.CheckUserAuth {
-	net := httpController.GetNewCheckUserAuthNetWork(nil, nil)
-	auth := httpController.GetNewCheckUserAuthWorkDetails(data.answers)
-	session := httpController.GetNewCheckUserAuthSessions(data.Auth, data.Session)
-	return httpController.GetNewCheckUserAuth(*net, *auth, *session)
+func GetControllerFileUploadEncryptBuilder(C ControllerFileUploadEncrypt, r *mux.Router) httpController.NewUploaderEncrypt {
+	return httpController.NewUploaderEncrypt{
+		NewFileUploaderEncryptSession: httpController.NewFileUploaderEncryptSession{
+			ReadSession: C.Sessions,
+			Jwt:         C.Token,
+			Rf:          C.Token,
+		},
+		UploaderEncryptApplication: &C.App,
+		Rout:                       r,
+		UrlUploadData:              httpController.GetUploadEncryptData,
+	}
 }
 
-type RegisterBuilderIncomeData struct {
-	Answ    RepoRegisterRepository.RegisterAnswers
-	Session RepoSession.Session
-	D       Parsers.Decode
-	App     Application.NewRegisterApplication
+type ControllerLoginBuilder struct {
+	Sessions httpController.Session
+	Parser   ParsersCollector
+	App      Application.LoginApplication
 }
 
-func GetControllerRegisterBuilder(data RegisterBuilderIncomeData) *httpController.NewRegister {
-
-	Details := httpController.NewRegisterDetails{
-		Answ:    data.Answ,
-		Session: data.Session,
-		D:       data.D,
+func GetControllerLoginBuilder(C ControllerLoginBuilder) httpController.NewLoginController {
+	return httpController.NewLoginController{
+		Sess:   C.Sessions,
+		Parses: C.Parser.Parser,
+		App:    C.App,
 	}
-
-	app := httpController.NewRegisterApp{
-		App: data.App,
-	}
-
-	net := httpController.RegisterNet{}
-	return httpController.GetNewRegister(net, Details, app)
 }
 
-func GetControllerUrlUploaderBuilder(Url RepourlBuilder.UrlBuilderAnswer) *httpController.NewBuildUrl {
-	url := httpController.UrlSettings{
-		Url: Url,
-	}
-	net := httpController.UrlNetwork{}
-	return httpController.GetNewBuildUrl(url, net)
+type RegisterController struct {
+	Sessions httpController.Session
+	App      Application.NewRegisterApplication
+	Parser   ParsersCollector
 }
 
-type ProtocolManageBuilder struct {
-	EncrypterKeys RepoEncrypterKeys.Keys
-	ServerKeys    DomainLevel.NewServerKeys
-	C             *CollectorCrypto
-	Parser        *RepoParsersCollector
-	GrpcConn      GrpcCollector
-	Red           RedisCollector
+func GetControllerRegisterBuilder(c RegisterController) httpController.NewRegister {
+
+	return httpController.NewRegister{
+		RegisterNet: httpController.RegisterNet{},
+		Session:     c.Sessions,
+		Decoder:     c.Parser.Parser,
+		App:         &c.App,
+	}
 }
 
-type ProtocolExchanges struct {
-	Start      Protocol.NewExchangeInitializer
-	Processing Protocol.Exchanger
-}
-
-func GetProtocolManageBuilder(data ProtocolManageBuilder) *ProtocolExchanges {
-	key := Protocol.NewExchangeInitializerKey{
-		Keys:       data.EncrypterKeys,
-		ServerKeys: data.ServerKeys,
-	}
-
-	crypto := Protocol.NewExchangeInitializerCrypto{
-		CryptoGenerating: data.C.Generate,
-		CryptoEncrypt:    data.C.Encrypt,
-		CryptoDecrypt:    data.C.Decrypt,
-		CryptoValidate:   data.C.Validate,
-	}
-	Parser := Protocol.NewExchangeInitializerParsers{
-		Encode: data.Parser.Encode,
-		Decode: data.Parser.Decode,
-	}
-
-	Del := Protocol.NewExchangeInitializerDeliver{
-		Grcp: data.GrpcConn.Sender,
-	}
-	delProcess := Protocol.NewExchangerDeliver{
-		Redis: &data.Red.Read,
-	}
-	cryptoProcess := Protocol.NewExchangerCrypto{
-		Decrypter:  data.C.Decrypt,
-		Validation: data.C.Validate,
-	}
-	keyProcess := Protocol.NewExchangerKeys{
-		ServerKeys:    data.ServerKeys,
-		EncrypterKeys: data.EncrypterKeys,
-	}
-	parser := Protocol.NewExchangerParsers{
-		Decoder: data.Parser.Decode,
-	}
-	return &ProtocolExchanges{
-		Start:      *Protocol.GetNewExchangeInitializer(key, crypto, Parser, Del),
-		Processing: Protocol.GetNewExchanger(delProcess, parser, cryptoProcess, keyProcess),
+func GetControllerUrlBuildBuilder() httpController.NewBuildUrl {
+	return httpController.NewBuildUrl{
+		Url: httpController.UrlBuilder,
 	}
 }

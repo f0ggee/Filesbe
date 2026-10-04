@@ -78,7 +78,7 @@ type AesEncryption struct {
 	nonce    []byte
 }
 
-func NewAesEncryption() AesEncryption {
+func NewAesGcmEncryption() AesEncryption {
 	return AesEncryption{}
 }
 
