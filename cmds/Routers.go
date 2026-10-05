@@ -6,6 +6,36 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func apiRouters(r *mux.Router, c Controllers) {
+	postRouter := r.Methods(http.MethodPost).Subrouter()
+	getRouter := r.Methods(http.MethodGet).Subrouter()
+
+	postRouter.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
+		c.login.W = writer
+		c.login.R = request
+		c.login.LoginController()
+	})
+
+	postRouter.HandleFunc("/register/api", func(writer http.ResponseWriter, request *http.Request) {
+		c.register.W = writer
+		c.register.R = request
+		c.register.Register()
+	})
+	postRouter.HandleFunc("/upload/api", func(writer http.ResponseWriter, request *http.Request) {
+		c.uploader.W = writer
+		c.uploader.R = request
+		c.uploader.FileUploader(postRouter)
+	})
+	postRouter.HandleFunc("/uploadEncrypt/api", func(writer http.ResponseWriter, request *http.Request) {
+		c.encryptUpload.W = writer
+		c.encryptUpload.R = request
+		c.encryptUpload.FileUploaderEncrypt()
+	})
+}
+
+func SetRouters(r *mux.Router, controllers *Controllers) {
+
+}
 func GetAboutProjectUrlRouter(getRequest *mux.Router) *mux.Route {
 	return getRequest.HandleFunc("/aboutProject", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "internal/Service/Fronted/InfoPageAboutApp.html")
@@ -32,7 +62,7 @@ func GetLoginRouter(postRequest *mux.Router) *mux.Route {
 
 func SetRobotsRouter(router *mux.Router) *mux.Route {
 	return router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./pkg/robots.txt")
+		http.ServeFile(w, r, "./pcf/robots.txt")
 	})
 }
 func GetInformationPageRouter(getRequest *mux.Router) *mux.Route {

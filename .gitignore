@@ -1,4 +1,4 @@
-pkg/notes.txt
+pcf/notes.txt
 internal/Service/Диаграмма без названия.drawio.png
 
 
@@ -7,7 +7,5 @@ internal/Service/Диаграмма без названия.drawio.png
 
 .gitignore
 robots.txt
-pkg/qodana.yaml
-pkg/Lae.json
-internal/InfrastructureLayer/RedisInteration/ConnectToRids.go
-internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go
+pcf/qodana.yaml
+pcf/Lae.json

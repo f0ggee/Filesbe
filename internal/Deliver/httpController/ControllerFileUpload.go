@@ -21,18 +21,18 @@ type FileUploaderSessions struct {
 	Jwt      DomainLevel.AuthMaker
 	Sessions Session
 }
-type NewFileUpload struct {
+type UploadController struct {
 	FileUploaderNet
 	FileUploaderSessions
 	Application.UploadApplication
 	UrlData func(r *mux.Router, fileName string) (string, error)
 }
 
-func GetNewFileUploader(fileUploaderNoEncryptNet FileUploaderNet, uploadNotEncryptSessions FileUploaderSessions) *NewFileUpload {
-	return &NewFileUpload{FileUploaderNet: fileUploaderNoEncryptNet, FileUploaderSessions: uploadNotEncryptSessions}
+func GetNewFileUploader(fileUploaderNoEncryptNet FileUploaderNet, uploadNotEncryptSessions FileUploaderSessions) *UploadController {
+	return &UploadController{FileUploaderNet: fileUploaderNoEncryptNet, FileUploaderSessions: uploadNotEncryptSessions}
 }
 
-func (d *NewFileUpload) FileUploader(router *mux.Router) {
+func (d *UploadController) FileUploader(router *mux.Router) {
 
 	returnedData := d.Sessions.GetSessionData(IncomingSessionData{Writer: d.W, Request: d.R})
 	if returnedData.Error != nil {
@@ -143,7 +143,7 @@ func (d *NewFileUpload) FileUploader(router *mux.Router) {
 	return
 }
 
-func (d *NewFileUpload) getFileData() (multipart.File, *multipart.FileHeader, error) {
+func (d *UploadController) getFileData() (multipart.File, *multipart.FileHeader, error) {
 	file, fileDetails, err := d.R.FormFile("File")
 	if err != nil {
 		slog.Error("Upload; error to get a File", "ERROR", err)

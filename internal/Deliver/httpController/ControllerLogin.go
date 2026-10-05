@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type NewLoginController struct {
+type LoginController struct {
 	Sess   Session
 	Parses DomainLevel.Decoder
 	W      http.ResponseWriter
@@ -15,7 +15,7 @@ type NewLoginController struct {
 	App    Application.LoginApplication
 }
 
-func (D *NewLoginController) LoginController() {
+func (D *LoginController) LoginController() {
 	DataUserLogin := &Dto.UserLoginData{}
 	err := D.Parses.DecodeFlow(DataUserLogin, D.R.Body)
 	if err != nil {

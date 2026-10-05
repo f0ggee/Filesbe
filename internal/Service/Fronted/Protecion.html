@@ -367,7 +367,7 @@
     selectedFiles.forEach(f => fd.append('file', f));
 
     try {
-      const response = await fetch('/downloader2/api', {
+      const response = await fetch('/uploadEncrypt/api', {
         method: 'POST',
         body: fd
       });

@@ -11,13 +11,13 @@ type NetworkDownloadEncrypt struct {
 	W http.ResponseWriter
 	R *http.Request
 }
-type NewDownloadEncrypt struct {
+type DownloadEncryptController struct {
 	Net NetworkDownloadEncrypt
 	Application.DownloadEncryptApplication
 	GetDataRequest func(r *http.Request) string
 }
 
-func (d NewDownloadEncrypt) DownloadWithEncrypt() {
+func (d DownloadEncryptController) DownloadWithEncrypt() {
 
 	fileName := d.GetDataRequest(d.Net.R)
 	if fileName == "" {

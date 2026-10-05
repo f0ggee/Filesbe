@@ -4,62 +4,43 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 02.10.26&#10;Some changes were on a global scope">
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/databaseConst.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/GrpcRequests/GetNewKeyConnect.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/GrpcRequests/grpcRequestsErrors.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Protocol/PacketWork.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Protocol/ProtocolChecks.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Protocol/ProtocolErrors.go" afterDir="false" />
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 04.10.26&#10;A main is being developed">
+      <change afterPath="$PROJECT_DIR$/cmds/collectApps.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmds/collectControllers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Deliver/Middlewares/checkAuth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmds/Builder.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Builder.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Collectors.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Collectors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Http2Config.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/HttpsServerConfig.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/HttpsServerConfig.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/sessions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/sessions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/Parser.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/Parser.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/RepoGrpc.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/RepoGrpc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/AuthTokensConst.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/GenerateAuthTokens.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/AuthTokensManage/RepoValidate.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/Connect_to_bd.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/RepoCheck.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/RepoCheck.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/RepoReading.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/RepoReading.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/RepoWriting.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/RepoWriting.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileControls/RepoFileDownloader.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileControls/newRepoFileSettings.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo/httpUploader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo/httpUploader.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/ConnectionToS3ServerV2.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Consts.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Consts.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Deleter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Deleter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Download.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Download.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/s3Credentials.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/s3Credentials.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/s3Upload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/s3Upload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/RepoRequestsHandling.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/getGrpcConnect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/grpcCredentials.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/protoFiles/GenerateProto.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/protoFiles/GenerateProto.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/protoFiles/GenerateProto.proto" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/protoFiles/GenerateProto.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/protoFiles/GenerateProto_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/protoFiles/GenerateProto_grpc.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/GrpcManage/repoSending.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Parsers/RealizationParsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Parsers/RealizationParsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/ProtocolManage/ExchangeInitializerRepo.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/ProtocolManage/ExchangeRepo.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/ProtocolManage/ProcolsConst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/ProtocolConst.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/ConnectToRids.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/ConnectToRids.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoReadingRedis.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoReadingRedis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoRedisChecker.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoRedisChecker.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoWriter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoWriter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/repoDeletingRedis.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/repoDeletingRedis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoSession/SessionError.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoSession/constSeession.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoSession/repoUserSessions.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/Jwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/Jwt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/RfToken.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/RfToken.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmds/Routers.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Routers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmds/RoutersApi.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/RoutersApi.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckGetRequests.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckPostRequsts.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerCheckUsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownloadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownloadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUpload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerUrlUploader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerUrlUploader.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/RedisInteration.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/Redis.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/GrpcRequests/GetNewKeyConnect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/GrpcRequests/KeyConnect.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Parsers/RealizationParsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Parsers/parsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/ConnectToRids.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisConn.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RedisConst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisConst.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoReadingRedis.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/readingRedis.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoRedisChecker.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisChecker.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/repoDeletingRedis.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/deletingRedis.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/RfToken.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/Rf.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Main_Page.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Main_Page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Protecion.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Protecion.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/Architecture" beforeDir="false" afterPath="$PROJECT_DIR$/pcf/Architecture" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/Architecture.md" beforeDir="false" afterPath="$PROJECT_DIR$/pcf/Architecture.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/SECURITY.md" beforeDir="false" afterPath="$PROJECT_DIR$/pcf/SECURITY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/UserAuthSpec.json" beforeDir="false" afterPath="$PROJECT_DIR$/pcf/UserAuthSpec.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -259,11 +240,11 @@
       <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/internal/Protocol/receive" />
+      <recent name="$PROJECT_DIR$/internal/Protocol/Preparing" />
       <recent name="$PROJECT_DIR$/internal" />
       <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc" />
       <recent name="$PROJECT_DIR$/internal/Deliver/httpController" />
-      <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring" />
-      <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/s3Repo" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -418,7 +399,9 @@
     <MESSAGE value="WP 27.09.26&#10;The controller and application layers have been changed" />
     <MESSAGE value="WP 02.10.26&#10;Token interfaces have been finished" />
     <MESSAGE value="WP 02.10.26&#10;Some changes were on a global scope" />
-    <option name="LAST_COMMIT_MESSAGE" value="WP 02.10.26&#10;Some changes were on a global scope" />
+    <MESSAGE value="WP 02.10.26&#10;A collector is being developed.&#10;Some functions that are parts of a protocol were moved to a special directory." />
+    <MESSAGE value="WP 04.10.26&#10;A main is being developed" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 04.10.26&#10;A main is being developed" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="VgoProject">
@@ -484,7 +467,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
-          <line>128</line>
+          <line>125</line>
           <option name="timeStamp" value="44" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
@@ -494,7 +477,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go</url>
-          <line>120</line>
+          <line>114</line>
           <option name="timeStamp" value="53" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
@@ -543,7 +526,7 @@
           <option name="timeStamp" value="98" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/deliverRegister.go</url>
+          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go</url>
           <line>63</line>
           <option name="timeStamp" value="100" />
         </line-breakpoint>
@@ -563,13 +546,13 @@
           <option name="timeStamp" value="103" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go</url>
-          <line>21</line>
+          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go</url>
+          <line>26</line>
           <option name="timeStamp" value="104" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go</url>
-          <line>29</line>
+          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go</url>
+          <line>37</line>
           <option name="timeStamp" value="106" />
         </line-breakpoint>
       </breakpoints>

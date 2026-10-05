@@ -142,14 +142,14 @@ func GetUploadEncryptBuilder(d UploadEncrypt) Application.NewUploadEncrypt {
 
 //There are controller builders
 
-func GetControllerDownloadBuilder(app Application.NewDownload) httpController.NewDownload {
-	return httpController.NewDownload{
+func GetControllerDownloadBuilder(app Application.NewDownload) httpController.DownloadController {
+	return httpController.DownloadController{
 		DownloadApplication: &app,
 	}
 }
 
-func GetControllerDownloadEncryptBuilder(app Application.DownloadEncryptApplication) httpController.NewDownloadEncrypt {
-	return httpController.NewDownloadEncrypt{
+func GetControllerDownloadEncryptBuilder(app Application.DownloadEncryptApplication) httpController.DownloadEncryptController {
+	return httpController.DownloadEncryptController{
 		DownloadEncryptApplication: app,
 		GetDataRequest:             httpController.GetDataRequest,
 	}
@@ -161,9 +161,9 @@ type ControllerFileUploadBuilder struct {
 	App      Application.UploadApplication
 }
 
-func GetControllerFileUploadBuilder(C ControllerFileUploadBuilder) httpController.NewFileUpload {
+func GetControllerFileUploadBuilder(C ControllerFileUploadBuilder) httpController.UploadController {
 
-	return httpController.NewFileUpload{
+	return httpController.UploadController{
 		FileUploaderSessions: httpController.FileUploaderSessions{
 			Rf:       C.Token,
 			Jwt:      C.Token,
@@ -180,8 +180,8 @@ type ControllerFileUploadEncrypt struct {
 	App      Application.NewUploadEncrypt
 }
 
-func GetControllerFileUploadEncryptBuilder(C ControllerFileUploadEncrypt, r *mux.Router) httpController.NewUploaderEncrypt {
-	return httpController.NewUploaderEncrypt{
+func GetControllerFileUploadEncryptBuilder(C ControllerFileUploadEncrypt, r *mux.Router) httpController.UploadEncryptController {
+	return httpController.UploadEncryptController{
 		NewFileUploaderEncryptSession: httpController.NewFileUploaderEncryptSession{
 			ReadSession: C.Sessions,
 			Jwt:         C.Token,
@@ -199,8 +199,8 @@ type ControllerLoginBuilder struct {
 	App      Application.LoginApplication
 }
 
-func GetControllerLoginBuilder(C ControllerLoginBuilder) httpController.NewLoginController {
-	return httpController.NewLoginController{
+func GetControllerLoginBuilder(C ControllerLoginBuilder) httpController.LoginController {
+	return httpController.LoginController{
 		Sess:   C.Sessions,
 		Parses: C.Parser.Parser,
 		App:    C.App,
@@ -213,9 +213,9 @@ type RegisterController struct {
 	Parser   ParsersCollector
 }
 
-func GetControllerRegisterBuilder(c RegisterController) httpController.NewRegister {
+func GetControllerRegisterBuilder(c RegisterController) httpController.RegisterController {
 
-	return httpController.NewRegister{
+	return httpController.RegisterController{
 		RegisterNet: httpController.RegisterNet{},
 		Session:     c.Sessions,
 		Decoder:     c.Parser.Parser,
@@ -223,8 +223,14 @@ func GetControllerRegisterBuilder(c RegisterController) httpController.NewRegist
 	}
 }
 
-func GetControllerUrlBuildBuilder() httpController.NewBuildUrl {
-	return httpController.NewBuildUrl{
+func GetControllerUrlBuildBuilder() httpController.BuildUrlController {
+	return httpController.BuildUrlController{
 		Url: httpController.UrlBuilder,
+	}
+}
+
+func GetCheckUsers() httpController.CheckUserAuthController {
+	return httpController.CheckUserAuthController{
+		CheckUserAuthNetWork: httpController.CheckUserAuthNetWork{},
 	}
 }

@@ -21,7 +21,7 @@ type NewFileUploaderEncryptSession struct {
 	Rf          DomainLevel.AuthMaker
 }
 
-type NewUploaderEncrypt struct {
+type UploadEncryptController struct {
 	NewFileUploaderEncryptNetwork
 	NewFileUploaderEncryptSession
 	Application.UploaderEncryptApplication
@@ -30,7 +30,7 @@ type NewUploaderEncrypt struct {
 	UrlUploadData func(r *mux.Router, fileName string) (string, error)
 }
 
-func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
+func (S *UploadEncryptController) FileUploaderEncrypt() {
 
 	returnedSession := S.ReadSession.GetSessionData(IncomingSessionData{
 		Writer:  S.W,
@@ -138,7 +138,7 @@ func (S *NewUploaderEncrypt) FileUploaderEncrypt() {
 	return
 }
 
-func (S *NewUploaderEncrypt) getFile() (multipart.File, *multipart.FileHeader, error) {
+func (S *UploadEncryptController) getFile() (multipart.File, *multipart.FileHeader, error) {
 	file, sizeAndName, err := S.R.FormFile("file")
 	if err != nil {
 		slog.Error("UploadEncrypt; error to get a file", "ERROR", err)

@@ -7,14 +7,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func GetLoginApi(postRequest *mux.Router, app *http2.NewLoginController) *mux.Route {
+func GetLoginApi(postRequest *mux.Router, app *http2.LoginController) *mux.Route {
 	return postRequest.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
 		app.LoginNet.W = writer
 		app.LoginNet.R = request
 		app.LoginController()
 	}).Methods(http.MethodPost)
 }
-func GetRegisterApiRouter(postRequest *mux.Router, app *http2.NewRegister) *mux.Route {
+func GetRegisterApiRouter(postRequest *mux.Router, app *http2.RegisterController) *mux.Route {
 	return postRequest.HandleFunc("/register/api", func(writer http.ResponseWriter, request *http.Request) {
 		app.RegisterNet = http2.RegisterNet{
 			W: writer,
@@ -24,7 +24,7 @@ func GetRegisterApiRouter(postRequest *mux.Router, app *http2.NewRegister) *mux.
 	}).Methods(http.MethodPost)
 }
 
-func GetUploaderApiRouter(postRequest *mux.Router, app *http2.NewFileUpload) *mux.Route {
+func GetUploaderApiRouter(postRequest *mux.Router, app *http2.UploadController) *mux.Route {
 	return postRequest.HandleFunc("/downloader/api", func(writer http.ResponseWriter, request *http.Request) {
 		app.FileUploaderNet = http2.FileUploaderNet{
 			W: writer,
@@ -34,7 +34,7 @@ func GetUploaderApiRouter(postRequest *mux.Router, app *http2.NewFileUpload) *mu
 	}).Methods(http.MethodPost)
 }
 
-func GetMainApiRouter(router *mux.Router, app *http2.CheckUserAuth) *mux.Route {
+func GetMainApiRouter(router *mux.Router, app *http2.CheckUserAuthController) *mux.Route {
 	return router.HandleFunc("/maine/api", func(writer http.ResponseWriter, request *http.Request) {
 		app.writer = writer
 		app.Request = request
@@ -42,14 +42,14 @@ func GetMainApiRouter(router *mux.Router, app *http2.CheckUserAuth) *mux.Route {
 
 	}).Methods("GET")
 }
-func GetDoUrlApiRouter(router *mux.Router, app *http2.NewBuildUrl) *mux.Route {
+func GetDoUrlApiRouter(router *mux.Router, app *http2.BuildUrlController) *mux.Route {
 	return router.HandleFunc("/doUrl/api", func(writer http.ResponseWriter, request *http.Request) {
 		app.Net.W = writer
 		app.SetUrl()
 	}).Methods(http.MethodGet)
 }
 
-func GetEncryptUploaderApiRouter(postRequest *mux.Router, app *http2.NewUploaderEncrypt) *mux.Route {
+func GetEncryptUploaderApiRouter(postRequest *mux.Router, app *http2.UploadEncryptController) *mux.Route {
 	return postRequest.HandleFunc("/downloader2/api", func(writer http.ResponseWriter, request *http.Request) {
 		app.NewFileUploaderEncryptNetwork.W = writer
 		app.NewFileUploaderEncryptNetwork.R = request
@@ -58,14 +58,14 @@ func GetEncryptUploaderApiRouter(postRequest *mux.Router, app *http2.NewUploader
 	}).Methods(http.MethodPost)
 }
 
-func GetDownloadApi(getRequest *mux.Router, app *http2.NewDownload) *mux.Route {
+func GetDownloadApi(getRequest *mux.Router, app *http2.DownloadController) *mux.Route {
 	return getRequest.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
 		app.DownloadNetwork.W = writer
 		app.DownloadNetwork.R = request
 		app.DownloadWithNotEncrypt()
 	}).Methods(http.MethodGet)
 }
-func GetEncryptDownloadApi(getRequest *mux.Router, app *http2.NewDownloadEncrypt) *mux.Route {
+func GetEncryptDownloadApi(getRequest *mux.Router, app *http2.DownloadEncryptController) *mux.Route {
 	return getRequest.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {
 		app.Net.W = writer
 		app.Net.R = request

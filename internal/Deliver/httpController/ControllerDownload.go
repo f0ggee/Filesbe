@@ -15,16 +15,16 @@ type DownloadNetwork struct {
 type DownloadApp struct {
 }
 
-type NewDownload struct {
+type DownloadController struct {
 	DownloadNetwork
 	Application.DownloadApplication
 }
 
-func GetNewDownload(downloadNetwork DownloadNetwork, downloadApplication Application.DownloadApplication) *NewDownload {
-	return &NewDownload{DownloadNetwork: downloadNetwork, DownloadApplication: downloadApplication}
+func GetNewDownload(downloadNetwork DownloadNetwork, downloadApplication Application.DownloadApplication) *DownloadController {
+	return &DownloadController{DownloadNetwork: downloadNetwork, DownloadApplication: downloadApplication}
 }
 
-func (d *NewDownload) DownloadWithNotEncrypt() {
+func (d *DownloadController) DownloadWithNotEncrypt() {
 	name := d.getData(d.R)
 	if name == "" {
 		SetAnswer(InputAnswerData{
@@ -51,7 +51,7 @@ func (d *NewDownload) DownloadWithNotEncrypt() {
 		return
 	}
 }
-func (n *NewDownload) getData(request *http.Request) string {
+func (n *DownloadController) getData(request *http.Request) string {
 	vars := mux.Vars(request)
 	name := vars["name"]
 	return name

@@ -37,7 +37,7 @@ func (d RedisRead) GetFileInfo(fileInfoName string, ctx context.Context) ([]byte
 
 }
 func (d RedisRead) GetKey(Ctx context.Context) ([]byte, error) {
-	count, sec := 0, 1
+	count, sec := 1, 1
 
 	ctx, cancel := context.WithTimeout(Ctx, time.Second*10)
 	defer cancel()

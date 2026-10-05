@@ -2,7 +2,7 @@ package main
 
 import (
 	"Kaban/cmds"
-	"Kaban/internal/DomainLevel"
+	"Kaban/internal/Deliver/Middlewares"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	gr "Kaban/internal/InfrastructureLayer/Grpc"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/awnumar/memguard"
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
 
@@ -48,64 +49,23 @@ func main() {
 	authTokensCollector := cmds.GetNewTokensAuthCollector()
 	sessionCollector := cmds.GetNewSessionCollector()
 
-	downloadApplication := cmds.GetDownloadApplicationBuilder(cmds.DownloadBuilderApplication{
-		Trans: fileTransferringCollector,
-		Red:   redisCollector,
-		Parse: parserCollector,
-	})
-	downloadEncryptApplication := cmds.GetDownloadEncryptApplicationBuilder(cmds.DownloadEncryptApplication{
-		Red:          redisCollector,
-		Crypt:        cryptoCollector,
-		Keys:         sessionKeys,
-		Transferring: fileTransferringCollector,
-	})
-	loginApplication := cmds.GetLoginApplicationBuilder(cmds.LoginApplication{
-		DB:     databaseCollector,
-		Crypt:  cryptoCollector,
-		Tokens: authTokensCollector,
-	})
-	registerApplication := cmds.GetRegisterBuilder(cmds.RegisterApplication{
-		DB:     databaseCollector,
-		Tokens: authTokensCollector,
-		Crypt:  cryptoCollector,
-	})
-	uploadApplication := cmds.GetUploadBuilder(cmds.UploadApplication{
-		Crypt: cryptoCollector,
-		Parse: parserCollector,
-		S3:    fileTransferringCollector.S3FileTransferringCollector,
-		Red:   redisCollector,
-	})
-	uploadEncrypt := cmds.GetUploadEncryptBuilder(cmds.UploadEncrypt{
-		Parse:        parserCollector,
-		Crypt:        cryptoCollector,
-		Transferring: fileTransferringCollector,
-		Red:          redisCollector,
+	apps := cmds.CollectApplicationBuilders(cmds.CollectorsApp{
+		FileTransferringCollector: fileTransferringCollector,
+		RedisCollector:            redisCollector,
+		ParserCollector:           parserCollector,
+		CryptoCollector:           cryptoCollector,
+		SessionKeys:               sessionKeys,
+		DatabaseCollector:         databaseCollector,
+		AuthTokensCollector:       authTokensCollector,
 	})
 
-	controllerDownload := cmds.GetControllerDownloadBuilder(downloadApplication)
-	controllerEncryptDownload := cmds.GetControllerDownloadEncryptBuilder(&downloadEncryptApplication)
-	controllerUploader := cmds.GetControllerFileUploadBuilder(cmds.ControllerFileUploadBuilder{
-		Token:    &authTokensCollector.Rf,
-		Sessions: sessionCollector,
-		App:      &uploadApplication,
+	controlers := cmds.CollectControllers(cmds.CollectorsController{
+		Apps:                apps,
+		AuthTokensCollector: authTokensCollector,
+		SessionCollector:    sessionCollector,
+		Router:              router,
+		ParserCollector:     parserCollector,
 	})
-
-	controllerUploadEncrypt := cmds.GetControllerFileUploadEncryptBuilder(cmds.ControllerFileUploadEncrypt{
-		Token:    &authTokensCollector.Jwt,
-		Sessions: sessionCollector,
-		App:      uploadEncrypt,
-	}, router)
-	controllerLogin := cmds.GetControllerLoginBuilder(cmds.ControllerLoginBuilder{
-		Sessions: sessionCollector,
-		Parser:   parserCollector,
-		App:      &loginApplication,
-	})
-	controllerRegister := cmds.GetControllerRegisterBuilder(cmds.RegisterController{
-		Sessions: sessionCollector,
-		App:      registerApplication,
-		Parser:   parserCollector,
-	})
-	controllerUrlBuild := cmds.GetControllerUrlBuildBuilder()
 
 	var protocolFirst = send.FirstExchange{
 		CryptoGenerate: cryptoCollector.Generate,
@@ -139,15 +99,15 @@ func main() {
 	}
 	ticker := time.NewTicker(timeDuration)
 	defer ticker.Stop()
+	ctx, cancel := context.WithTimeout(context.Background(), 7*time.Second)
+	defer cancel()
 	go func() {
-		for t := range ticker.C {
-			slog.Time("Func Ticker: Got a ticker", t)
-			Time := ControllerProtocolManageBuilder.Processing.GetPlanningExchanger()
-			slog.Duration("Func Ticker: Time", Time)
-			ticker = time.NewTicker(Time)
+		for _ = range ticker.C {
+			exchangeTime := planExchange(redisCollector, ctx, GetPacketData)
+			ticker = time.NewTicker(exchangeTime)
 		}
 	}()
-
+	var serverConfig = cmds.ServerConfig(router)
 	runtime.GC()
 	slog.Info("The server started at", "Configure", serverConfig.Addr)
 	if err = serverConfig.ListenAndServe(); err != nil {
@@ -157,6 +117,26 @@ func main() {
 	}
 }
 
-func SetExchanger() {
+func planExchange(redisCollector cmds.RedisCollector, ctx context.Context, GetPacketData receive.GetNewKey) time.Duration {
+	slog.Info("Main: starting planning exchange", "TIME", time.Now().Hour())
+	packet, err := redisCollector.Read.GetKey(ctx)
+	if err != nil {
+		return 0
+	}
+	exchangeTime, err := GetPacketData.GetPacketData(packet)
+	if err != nil {
+		return 0
+	}
+	return exchangeTime
+}
+func RouterGet(router *mux.Router) *mux.Router {
+	getRequest := router.PathPrefix("/").Subrouter()
+	getRequest.Use(Middlewares.CheckerGetRequests)
+	return getRequest
+}
 
+func RouterPost(newRouter *mux.Router) *mux.Router {
+	postRequest := newRouter.PathPrefix("/").Subrouter()
+	postRequest.Use(Middlewares.CheckPostRequest)
+	return postRequest
 }

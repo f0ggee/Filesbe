@@ -11,14 +11,14 @@ type RegisterNet struct {
 	W http.ResponseWriter
 	R *http.Request
 }
-type NewRegister struct {
+type RegisterController struct {
 	RegisterNet
 	Session Session
 	Decoder DomainLevel.Decoder
 	App     Application.RegisterApplication
 }
 
-func (D NewRegister) Register() {
+func (D RegisterController) Register() {
 	var userDataRegister Dto.UserDataRegister
 	err := D.Decoder.DecodeFlow(&userDataRegister, D.R.Body)
 	defer D.R.Body.Close()

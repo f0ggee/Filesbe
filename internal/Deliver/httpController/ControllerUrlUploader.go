@@ -10,16 +10,16 @@ type UrlNetwork struct {
 	W http.ResponseWriter
 	r *http.Request
 }
-type NewBuildUrl struct {
+type BuildUrlController struct {
 	Url func(r *http.Request) OutComingUrlData
 	Net UrlNetwork
 }
 
-func GetNewBuildUrl(net UrlNetwork) *NewBuildUrl {
-	return &NewBuildUrl{Net: net}
+func GetNewBuildUrl(net UrlNetwork) *BuildUrlController {
+	return &BuildUrlController{Net: net}
 }
 
-func (d *NewBuildUrl) SetUrl() {
+func (d *BuildUrlController) SetUrl() {
 	urlData := d.Url(d.Net.r)
 	if urlData.NameFile == "" {
 		slog.Error("UrlUploader name file empty", slog.Group("Request details", slog.String("URL", d.Net.r.RequestURI)))
