@@ -2,7 +2,6 @@ package main
 
 import (
 	"Kaban/cmds"
-	"Kaban/internal/Deliver/Middlewares"
 	"Kaban/internal/InfrastructureLayer/DatabaseControl"
 	gr "Kaban/internal/InfrastructureLayer/Grpc"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
@@ -14,7 +13,7 @@ import (
 	"time"
 
 	"github.com/awnumar/memguard"
-	"github.com/gorilla/mux"
+
 	"github.com/joho/godotenv"
 )
 
@@ -109,6 +108,7 @@ func main() {
 	}()
 	var serverConfig = cmds.ServerConfig(router)
 	runtime.GC()
+	cmds.SetRouters(router, &controlers)
 	slog.Info("The server started at", "Configure", serverConfig.Addr)
 	if err = serverConfig.ListenAndServe(); err != nil {
 		slog.Error("Server couldn't start", "Error", err)
@@ -128,15 +128,4 @@ func planExchange(redisCollector cmds.RedisCollector, ctx context.Context, GetPa
 		return 0
 	}
 	return exchangeTime
-}
-func RouterGet(router *mux.Router) *mux.Router {
-	getRequest := router.PathPrefix("/").Subrouter()
-	getRequest.Use(Middlewares.CheckerGetRequests)
-	return getRequest
-}
-
-func RouterPost(newRouter *mux.Router) *mux.Router {
-	postRequest := newRouter.PathPrefix("/").Subrouter()
-	postRequest.Use(Middlewares.CheckPostRequest)
-	return postRequest
 }

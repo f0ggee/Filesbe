@@ -8,7 +8,7 @@ import (
 
 type UrlNetwork struct {
 	W http.ResponseWriter
-	r *http.Request
+	R *http.Request
 }
 type BuildUrlController struct {
 	Url func(r *http.Request) OutComingUrlData
@@ -20,9 +20,9 @@ func GetNewBuildUrl(net UrlNetwork) *BuildUrlController {
 }
 
 func (d *BuildUrlController) SetUrl() {
-	urlData := d.Url(d.Net.r)
+	urlData := d.Url(d.Net.R)
 	if urlData.NameFile == "" {
-		slog.Error("UrlUploader name file empty", slog.Group("Request details", slog.String("URL", d.Net.r.RequestURI)))
+		slog.Error("UrlUploader name file empty", slog.Group("Request details", slog.String("URL", d.Net.R.RequestURI)))
 		SetAnswer(InputAnswerData{
 			W: d.Net.W,
 			Data: AnswerUrlBuilder{

@@ -31,73 +31,77 @@ func apiRouters(r *mux.Router, c Controllers) {
 		c.encryptUpload.R = request
 		c.encryptUpload.FileUploaderEncrypt()
 	})
+	getRouter.HandleFunc("/doUrl/api", func(writer http.ResponseWriter, request *http.Request) {
+		c.urlBuild.Net.W = writer
+		c.urlBuild.Net.R = request
+		c.urlBuild.SetUrl()
+	})
+
+	getRouter.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
+		c.download.W = writer
+		c.download.R = request
+		c.download.DownloadWithNotEncrypt()
+	})
+
+	getRouter.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {
+		c.encryptDownload.Net.W = writer
+		c.encryptDownload.Net.R = request
+		c.encryptDownload.DownloadWithEncrypt()
+	})
 }
 
 func SetRouters(r *mux.Router, controllers *Controllers) {
+	apiRouters(r, *controllers)
+	userRouters(r)
 
 }
-func GetAboutProjectUrlRouter(getRequest *mux.Router) *mux.Route {
-	return getRequest.HandleFunc("/aboutProject", func(writer http.ResponseWriter, request *http.Request) {
+
+func userRouters(r *mux.Router) {
+	getRouter := r.Methods(http.MethodGet).Subrouter()
+	staticRouters := r.PathPrefix("/static").Subrouter()
+	getRouter.HandleFunc("/aboutProject", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "internal/Service/Fronted/InfoPageAboutApp.html")
 	})
-}
-func GetDefaultRouter(router *mux.Router) *mux.Route {
-	return router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			http.ServeFile(w, r, "internal/Service/Fronted/Maine.html")
 		}
-
 	})
-}
 
-func GetPhotoRequest(StaticFiles *mux.Router) *mux.Route {
-	return StaticFiles.Handle("/favicon.png", http.FileServer(http.Dir("./internal/Service/Fronted/favicon.png")))
-}
-
-func GetLoginRouter(postRequest *mux.Router) *mux.Route {
-	return postRequest.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "internal/Service/Fronted/LoginController.html")
+	staticRouters.HandleFunc("/favicon.png", func(writer http.ResponseWriter, request *http.Request) {
+		http.ServeFile(writer, request, "/internal/Service/Fronted/favicon.png")
 	})
-}
 
-func SetRobotsRouter(router *mux.Router) *mux.Route {
-	return router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./pcf/robots.txt")
+	getRouter.HandleFunc("/login", func(writer http.ResponseWriter, request *http.Request) {
+		http.ServeFile(writer, request, "internal/Service/Fronted/Login.html")
 	})
-}
-func GetInformationPageRouter(getRequest *mux.Router) *mux.Route {
-	return getRequest.HandleFunc("/informationPage", func(writer http.ResponseWriter, request *http.Request) {
+	staticRouters.HandleFunc("/robots.txt", func(writer http.ResponseWriter, request *http.Request) {
+		http.ServeFile(writer, request, "/pcf/robots.txt")
+	})
+
+	getRouter.HandleFunc("/informationPage", func(writer http.ResponseWriter, request *http.Request) {
+
 		http.ServeFile(writer, request, "internal/Service/Fronted/InformationPage.html")
 
-	}).Name("NameFile")
-}
-
-func GetRegisterPageRouter(postRequest *mux.Router) *mux.Route {
-	return postRequest.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "internal/Service/Fronted/RegisterApp.html")
 	})
-}
-func GetMainPageRouter(getRequest *mux.Router) *mux.Route {
-	return getRequest.HandleFunc("/main", func(writer http.ResponseWriter, request *http.Request) {
+	getRouter.HandleFunc("/register", func(writer http.ResponseWriter, request *http.Request) {
+
+		http.ServeFile(writer, request, "internal/Service/Fronted/RegisterApp.html")
+
+	})
+	getRouter.HandleFunc("/main", func(writer http.ResponseWriter, request *http.Request) {
 
 		http.ServeFile(writer, request, "internal/Service/Fronted/Main_Page.html")
-
 	})
-}
-func GetSitemapRouter(router *mux.Router) *mux.Route {
-	return router.HandleFunc("/sitemap.xml", func(writer http.ResponseWriter, request *http.Request) {
+	staticRouters.HandleFunc("/sitemap.xml", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "internal/Service/Fronted/sitemap.xml")
-
 	})
-}
-func GetProtectPageRouter(postRequest *mux.Router) *mux.Route {
-	return postRequest.HandleFunc("/protect", func(writer http.ResponseWriter, request *http.Request) {
+	getRouter.HandleFunc("/protect", func(writer http.ResponseWriter, request *http.Request) {
+
 		http.ServeFile(writer, request, "internal/Service/Fronted/Protecion.html")
-
 	})
-}
-func GetUrlPageRouter(router *mux.Router) *mux.Route {
-	return router.HandleFunc("/URL/{name}/{bool}", func(writer http.ResponseWriter, request *http.Request) {
+	getRouter.HandleFunc("/URL/{name}/{bool}", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "internal/Service/Fronted/UrlFronted.html")
 
 	}).Name("fileName")

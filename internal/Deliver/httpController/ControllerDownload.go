@@ -12,9 +12,6 @@ type DownloadNetwork struct {
 	R *http.Request
 }
 
-type DownloadApp struct {
-}
-
 type DownloadController struct {
 	DownloadNetwork
 	Application.DownloadApplication
