@@ -4,43 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 04.10.26&#10;A main is being developed">
-      <change afterPath="$PROJECT_DIR$/cmds/collectApps.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmds/collectControllers.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Deliver/Middlewares/checkAuth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 06.10.26&#10;a routers system has been finished">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Builder.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Builder.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Routers.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Routers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/RoutersApi.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/RoutersApi.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckGetRequests.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/Middlewares/CheckPostRequsts.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerCheckUsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownloadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownloadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUpload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerUrlUploader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerUrlUploader.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/RedisInteration.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/Redis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/GrpcRequests/GetNewKeyConnect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/GrpcRequests/KeyConnect.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Parsers/RealizationParsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Parsers/parsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/ConnectToRids.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisConn.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RedisConst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisConst.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoReadingRedis.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/readingRedis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoRedisChecker.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisChecker.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/repoDeletingRedis.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/deletingRedis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/RepoEncrypterKeys_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/RfToken.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/Rf.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Main_Page.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Main_Page.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Fronted/Protecion.html" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Fronted/Protecion.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Protocol/send/preparePacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/send/preparePacket.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/Architecture" beforeDir="false" afterPath="$PROJECT_DIR$/pcf/Architecture" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/Architecture.md" beforeDir="false" afterPath="$PROJECT_DIR$/pcf/Architecture.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/SECURITY.md" beforeDir="false" afterPath="$PROJECT_DIR$/pcf/SECURITY.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/UserAuthSpec.json" beforeDir="false" afterPath="$PROJECT_DIR$/pcf/UserAuthSpec.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -377,7 +344,6 @@
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="SV" />
     <MESSAGE value="WP 27.06.26&#10;&#10;The register controller was refactored. Some methods were added in Dto register data" />
     <MESSAGE value="WP 30.06.26&#10;I added some updates in my code(Checking register data and login data). Also, I finished refactoring Register controller. Also, it was started changing the check user function" />
     <MESSAGE value="WP&#10;I finished refactoring handlers" />
@@ -401,7 +367,9 @@
     <MESSAGE value="WP 02.10.26&#10;Some changes were on a global scope" />
     <MESSAGE value="WP 02.10.26&#10;A collector is being developed.&#10;Some functions that are parts of a protocol were moved to a special directory." />
     <MESSAGE value="WP 04.10.26&#10;A main is being developed" />
-    <option name="LAST_COMMIT_MESSAGE" value="WP 04.10.26&#10;A main is being developed" />
+    <MESSAGE value="WP 05.10.26&#10;collectors and builders have been finished&#10;Routers system is being developed" />
+    <MESSAGE value="WP 06.10.26&#10;a routers system has been finished" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 06.10.26&#10;a routers system has been finished" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="VgoProject">

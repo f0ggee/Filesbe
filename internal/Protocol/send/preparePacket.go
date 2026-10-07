@@ -40,7 +40,6 @@ func (f FirstExchange) GetEncryptedPacket() ([]byte, error) {
 		return nil, err
 	}
 
-	//Additional crypto data
 	var ACD = f.Aes.GetRequiredOverheadSize()
 	aesKey, err := memguard.NewBufferFromReader(rand.Reader, 32+ACD)
 	if err != nil {

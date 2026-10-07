@@ -58,7 +58,7 @@ func main() {
 		AuthTokensCollector:       authTokensCollector,
 	})
 
-	controlers := cmds.CollectControllers(cmds.CollectorsController{
+	controllers := cmds.CollectControllers(cmds.CollectorsController{
 		Apps:                apps,
 		AuthTokensCollector: authTokensCollector,
 		SessionCollector:    sessionCollector,
@@ -108,7 +108,7 @@ func main() {
 	}()
 	var serverConfig = cmds.ServerConfig(router)
 	runtime.GC()
-	cmds.SetRouters(router, &controlers)
+	cmds.SetRouters(router, &controllers)
 	slog.Info("The server started at", "Configure", serverConfig.Addr)
 	if err = serverConfig.ListenAndServe(); err != nil {
 		slog.Error("Server couldn't start", "Error", err)
