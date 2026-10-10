@@ -1,7 +1,7 @@
 package RedisInteration
 
 import (
-	"Kaban/internal/Dto"
+	"Kaban/internal/DomainLevel"
 	"context"
 	"errors"
 	"log/slog"
@@ -23,7 +23,7 @@ func NewRedisRead() RedisRead {
 
 func (d RedisRead) GetFileInfo(fileInfoName string, ctx context.Context) ([]byte, error) {
 
-	StructOfFileInfo := Dto.FileInfoLabels{
+	StructOfFileInfo := DomainLevel.FileInfoLabels{
 		InfoAboutFile: nil,
 	}
 

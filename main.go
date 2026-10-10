@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/awnumar/memguard"
+	"github.com/gorilla/mux"
 
 	"github.com/joho/godotenv"
 )
@@ -37,8 +38,7 @@ func main() {
 		Db: db,
 	}
 	grpcCollector := cmds.GetGrpcCollector()
-
-	router := cmds.GetRouter()
+	router := mux.NewRouter()
 	cryptoCollector := cmds.GetCryptoCollector()
 	databaseCollector := cmds.GetDatabaseCollector(databaseConn)
 	fileTransferringCollector := cmds.GetFileTransferringCollector()

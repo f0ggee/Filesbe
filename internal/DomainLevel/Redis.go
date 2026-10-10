@@ -12,6 +12,10 @@ type DeleterRedis interface {
 	DeleteFileInfo(string, context.Context) error
 	DeleterFileInfoTest(string, context.Context) error
 }
+type FileInfoLabels struct {
+	InfoAboutFile   []byte `redis:"InfoAboutFile"`
+	IsStartDownload bool   `redis:"IsStartDownload"`
+}
 
 type WriteDataIncomeData struct {
 	FileName string
@@ -26,7 +30,6 @@ type WritingRedis interface {
 
 type RedisChecker interface {
 	ChekIsStartDownload(string, context.Context) bool
-	ChekIsStartDownloadTest(string, context.Context) bool
 	CheckFileInfoExists(string, context.Context) bool
 }
 

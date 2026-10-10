@@ -5,7 +5,6 @@ package send
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/Dto"
 	"Kaban/internal/Protocol"
 	"crypto/rand"
 	"log/slog"
@@ -29,7 +28,7 @@ func (f FirstExchange) GetEncryptedPacket() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	var GrpcStruct = Dto.GrpcOutComingPacketDetails{
+	var GrpcStruct = Protocol.OutPacketDetails{
 		Time:             time.Now(),
 		ServerName:       []byte(serverName),
 		SignedServerName: signedServerName,
@@ -65,7 +64,7 @@ func (f FirstExchange) GetEncryptedPacket() ([]byte, error) {
 		return nil, err
 	}
 
-	var EncryptedOutData = Dto.GrpcOutComingPacketForSending{
+	var EncryptedOutData = Protocol.OutComePacket{
 		AesKeyData: encryptedFileInfo,
 		CipherData: encryptedPacket,
 	}

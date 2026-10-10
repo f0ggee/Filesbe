@@ -2,7 +2,6 @@ package RedisInteration
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/Dto"
 	"context"
 	"errors"
 	"log/slog"
@@ -28,7 +27,7 @@ func (d *RedisWrite) EnableDownloadingParameter(nameOfFileInfo string, ctx conte
 
 func (s *RedisWrite) WriteData(data DomainLevel.WriteDataIncomeData) error {
 
-	err := RedisConn.HSet(data.Ctx, data.FileName, Dto.FileInfoLabels{
+	err := RedisConn.HSet(data.Ctx, data.FileName, DomainLevel.FileInfoLabels{
 		InfoAboutFile:   data.Info,
 		IsStartDownload: false,
 	}).Err()
@@ -38,4 +37,19 @@ func (s *RedisWrite) WriteData(data DomainLevel.WriteDataIncomeData) error {
 	}
 	return nil
 
+}
+
+type RedisWriteTest struct {
+}
+
+func NewRedisWriteTest() *RedisWriteTest {
+	return &RedisWriteTest{}
+}
+
+func (r RedisWriteTest) WriteData(data DomainLevel.WriteDataIncomeData) error {
+	return nil
+}
+
+func (r RedisWriteTest) EnableDownloadingParameter(s string, ctx context.Context) error {
+	return nil
 }

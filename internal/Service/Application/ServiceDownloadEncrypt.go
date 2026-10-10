@@ -62,14 +62,17 @@ func (s *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData
 	if err != nil {
 		return err
 	}
+
 	safeFileData, err := s.getFileData(fileInfoInBytes)
 	if err != nil {
 		return err
 	}
+
 	aesKey, fileName, err := s.getFileInfoData(safeFileData.Data())
 	if err != nil {
 		return err
 	}
+
 	defer aesKey.Destroy()
 	g.Go(func() error {
 		uploadedObject, err := s.Uploader.SetName(fileName).SetAdditionalWriter(data.W).SetSize(s.Downloader.GetFileSize()).Make(data.Ctx)
@@ -82,17 +85,21 @@ func (s *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData
 		}
 		return nil
 	})
+
 	if err = g.Wait(); err != nil {
 		return err
 	}
+
 	err = s.DeleterRedis.DeleteFileInfo(data.EncryptedName, data.Ctx)
 	if err != nil {
 		return err
 	}
+
 	deleteObject, err := s.Deleter.SetName(data.EncryptedName).Make(data.Ctx)
 	if err != nil {
 		return err
 	}
+
 	return deleteObject.Deleter()
 }
 

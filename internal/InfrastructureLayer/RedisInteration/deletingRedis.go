@@ -34,3 +34,20 @@ func (d RedisDelete) DeleteFileInfo(fileInfo string, ctx context.Context) error 
 	}
 	return nil
 }
+
+type NewRedisDeleteTest struct {
+}
+
+func NewNewRedisDeleteTest() *NewRedisDeleteTest {
+	return &NewRedisDeleteTest{}
+}
+
+func (n NewRedisDeleteTest) DeleteFileInfo(s string, ctx context.Context) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (n NewRedisDeleteTest) DeleterFileInfoTest(s string, ctx context.Context) error {
+	//TODO implement me
+	panic("implement me")
+}

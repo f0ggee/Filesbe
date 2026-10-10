@@ -1,3 +1,6 @@
+//This module collects controllers and then returns it back
+//It takes as input all necessary abstractions that controllers need and returns ready-to-use controllers
+
 package cmds
 
 import (

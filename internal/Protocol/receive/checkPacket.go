@@ -2,8 +2,8 @@ package receive
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/Dto"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
+	"Kaban/internal/Protocol"
 	"crypto/sha256"
 	"time"
 
@@ -18,9 +18,9 @@ type GetNewKey struct {
 	TempKey        RepoEncrypterKeys.Keys
 }
 
-// GetPacketData decrypts and cheks a packer and then returns data.
+// GetPacketData decrypts and cheks a packet and then returns data.
 func (f GetNewKey) GetPacketData(packet []byte) (time.Duration, error) {
-	var IncomePacket Dto.GrpcOutComingPacketForSending
+	var IncomePacket Protocol.OutComePacket
 	err := f.Decoder.Decode(&IncomePacket, packet)
 	if err != nil {
 		return 0, err
@@ -48,7 +48,7 @@ func (f GetNewKey) GetPacketData(packet []byte) (time.Duration, error) {
 	}
 	defer memguard.WipeBytes(packetData)
 
-	var PacketInfo Dto.GrpcIncomingPacketDetails
+	var PacketInfo Protocol.IncomePacketDetails
 	err = f.Decoder.Decode(&PacketInfo, packetData)
 	if err != nil {
 		return 0, err

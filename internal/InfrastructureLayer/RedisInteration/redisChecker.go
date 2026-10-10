@@ -1,7 +1,7 @@
 package RedisInteration
 
 import (
-	"Kaban/internal/Dto"
+	"Kaban/internal/DomainLevel"
 	"context"
 	"log/slog"
 	"time"
@@ -34,7 +34,7 @@ func (d *RedisCheck) ChekIsStartDownloadTest(s string, context context.Context) 
 
 func (d *RedisCheck) ChekIsStartDownload(name string, ctx context.Context) bool {
 
-	isExit := Dto.FileInfoLabels{
+	isExit := DomainLevel.FileInfoLabels{
 		InfoAboutFile:   nil,
 		IsStartDownload: false,
 	}
@@ -63,4 +63,20 @@ func (d *RedisCheck) CheckFileInfoExists(FileName string, ctx context.Context) b
 		return true
 	}
 	return false
+}
+
+type RedisCheckTest struct {
+}
+
+func NewRedisCheckTest() *RedisCheckTest {
+	return &RedisCheckTest{}
+}
+
+func (r RedisCheckTest) ChekIsStartDownload(s string, ctx context.Context) bool {
+	return false
+}
+
+func (r RedisCheckTest) CheckFileInfoExists(s string, ctx context.Context) bool {
+
+	return true
 }
