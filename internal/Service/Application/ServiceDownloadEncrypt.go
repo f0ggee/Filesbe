@@ -5,7 +5,6 @@ import (
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"bytes"
 	"context"
-	"encoding/hex"
 	"errors"
 	"io"
 	"log/slog"
@@ -31,32 +30,26 @@ type NewDownloadEncryptDelivery struct {
 }
 
 type NewDownloadEncryptCrypto struct {
-	Crypto        DomainLevel.CryptoMaker
+	Aes           DomainLevel.CryptoMaker
+	Rsa           DomainLevel.CryptoMaker
 	EncrypterKeys RepoEncrypterKeys.Keys
 }
-type NewDownloadEncrypt struct {
+type DownloadEncrypt struct {
 	NewDownloadEncryptDelivery
 	NewDownloadEncryptCrypto
 	NewDownloadEncryptFileControl
-	d DomainLevel.Decoder
+	decoder DomainLevel.Decoder
 }
 
-type NewDownloadEncryptNetwork struct {
-	W io.Writer
-}
 type NewDownloadEncryptIncomingData struct {
-	NewDownloadEncryptNetwork
+	dst           io.Writer
 	Ctx           context.Context
 	EncryptedName string
 }
 
-func (s *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData) error {
+func (s *DownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData) error {
 
 	g, _ := errgroup.WithContext(data.Ctx)
-	downloadedObject, err := s.Downloader.SetName(data.EncryptedName).Make(data.Ctx)
-	if err != nil {
-		return err
-	}
 
 	fileInfoInBytes, err := s.ReaderRedis.GetFileInfo(data.EncryptedName, data.Ctx)
 	if err != nil {
@@ -67,18 +60,26 @@ func (s *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData
 	if err != nil {
 		return err
 	}
-
+	defer safeFileData.Destroy()
 	aesKey, fileName, err := s.getFileInfoData(safeFileData.Data())
 	if err != nil {
 		return err
 	}
-
 	defer aesKey.Destroy()
+
+	downloadedObject, err := s.Downloader.SetName(fileName).Make(data.Ctx)
+	if err != nil {
+		return err
+	}
+	defer downloadedObject.CloseSource()
+	defer aesKey.Destroy()
+
 	g.Go(func() error {
-		uploadedObject, err := s.Uploader.SetName(fileName).SetAdditionalWriter(data.W).SetSize(s.Downloader.GetFileSize()).Make(data.Ctx)
+		uploadedObject, err := s.Uploader.SetName(fileName).SetAdditionalWriter(data.dst).SetSize(s.Downloader.GetFileSize()).Make(data.Ctx)
 		if err != nil {
 			return err
 		}
+		defer uploadedObject.CloseSource()
 		err = s.decryptFile(aesKey.Bytes(), downloadedObject, uploadedObject)
 		if err != nil {
 			return err
@@ -103,40 +104,35 @@ func (s *NewDownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData
 	return deleteObject.Deleter()
 }
 
-func (s *NewDownloadEncrypt) getFileInfoData(safeFileData []byte) (*memguard.LockedBuffer, string, error) {
+func (s *DownloadEncrypt) getFileInfoData(safeFileData []byte) (*memguard.LockedBuffer, string, error) {
 	var outputData DomainLevel.FileLabelsBytes
-	err := s.d.Decode(&s, safeFileData)
+	err := s.decoder.Decode(&outputData, safeFileData)
 	if err != nil {
 		return nil, "", err
 	}
 	key := memguard.NewBuffer(len(outputData.AesKey))
-	x, err := hex.DecodeString(outputData.AesKey)
-	if err != nil {
-		return nil, "", errors.New(DomainLevel.ErrorParseInfo)
-	}
-	key.Copy(x)
-	memguard.WipeBytes(x)
+	key.Copy(outputData.AesKey)
+	memguard.WipeBytes(outputData.AesKey)
 	return key, outputData.FileName, nil
 }
 
-func (s *NewDownloadEncrypt) decryptFile(AesKey []byte, o DomainLevel.Download, uploadedObj DomainLevel.Upload) error {
-
+func (s *DownloadEncrypt) decryptFile(AesKey []byte, o DomainLevel.Download, uploadedObj DomainLevel.Upload) error {
 	download, err := o.Downloader()
 	if err != nil {
 		return err
 	}
-	nonce := memguard.NewBuffer(s.Crypto.GetRequiredOverheadSize() + len(AesKey))
-	_, err = io.ReadFull(download, nonce.Bytes()[:s.Crypto.GetRequiredOverheadSize()])
+	nonce := memguard.NewBuffer(s.Aes.GetRequiredOverheadSize() + len(AesKey))
+	_, err = io.ReadFull(download, nonce.Bytes()[:s.Aes.GetRequiredOverheadSize()])
 	if err != nil {
 		slog.Error("decryptFile; there is error to generate a nonce", "ERROR", err.Error())
 		return ErrorDecryptFile
 	}
-	copy(nonce.Bytes()[s.Crypto.GetRequiredOverheadSize():], AesKey)
-	decrBlock, err := s.Crypto.MakeCrypto(nonce.Bytes()[s.Crypto.GetRequiredOverheadSize():], nonce.Bytes()[:s.Crypto.GetRequiredOverheadSize()])
+	copy(nonce.Bytes()[s.Aes.GetRequiredOverheadSize():], AesKey)
+	decrBlock, err := s.Aes.MakeCrypto(nonce.Bytes()[s.Aes.GetRequiredOverheadSize():], nonce.Bytes()[:s.Aes.GetRequiredOverheadSize()])
 	if err != nil {
 		return err
 	}
-	plainText := memguard.NewBuffer(35 * 1024)
+	plainText := memguard.NewBuffer(DomainLevel.ChunkSize)
 	defer plainText.Destroy()
 	for {
 		n, err := download.Read(plainText.Bytes())
@@ -164,8 +160,8 @@ func (s *NewDownloadEncrypt) decryptFile(AesKey []byte, o DomainLevel.Download, 
 	}
 	return nil
 }
-func (s *NewDownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedBuffer, error) {
-	cr, err := s.Crypto.MakeCrypto(s.EncrypterKeys.GetKey(), []byte(""))
+func (s *DownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedBuffer, error) {
+	cr, err := s.Rsa.MakeCrypto(s.EncrypterKeys.GetKey(), []byte(""))
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +172,7 @@ func (s *NewDownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.Lock
 		memguard.WipeBytes(OutData)
 		return data, nil
 	}
-	cr, err = s.Crypto.MakeCrypto(s.EncrypterKeys.GetOldKey(), []byte(""))
+	cr, err = s.Rsa.MakeCrypto(s.EncrypterKeys.GetOldKey(), []byte(""))
 	if err != nil {
 		return nil, ErrorDecryptFile
 	}

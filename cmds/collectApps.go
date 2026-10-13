@@ -4,11 +4,11 @@ import "Kaban/internal/Service/Application"
 
 type AppBuilders struct {
 	download        Application.NewDownload
-	encryptDownload Application.NewDownloadEncrypt
+	encryptDownload Application.DownloadEncrypt
 	login           Application.NewLogin
 	register        Application.NewRegisterApplication
 	upload          Application.NewUpload
-	encryptUpload   Application.NewUploadEncrypt
+	encryptUpload   Application.UploadEncrypt
 }
 type CollectorsApp struct {
 	FileTransferringCollector FileTransferringCollector

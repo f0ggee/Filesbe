@@ -11,7 +11,7 @@ type Upload2 struct {
 	f *os.File
 }
 
-func NewUpload2() *Upload2 {
+func NewUploadingDecrypted() *Upload2 {
 	return &Upload2{}
 }
 
@@ -41,9 +41,8 @@ func (u *Upload2) SetName(s string) DomainLevel.MakerUploader {
 	return u
 }
 
-func (u Upload2) SetSize(i int64) DomainLevel.MakerUploader {
-	//TODO implement me
-	panic("implement me")
+func (u *Upload2) SetSize(i int64) DomainLevel.MakerUploader {
+	return u
 }
 
 func (u Upload2) GetFileSize() int64 {
@@ -65,7 +64,6 @@ func (u *Upload2) Make(ctx context.Context) (DomainLevel.Upload, error) {
 	return u, nil
 }
 
-func (u Upload2) SetAdditionalWriter(writer io.Writer) DomainLevel.MakerUploader {
-	//TODO implement me
-	panic("implement me")
+func (u *Upload2) SetAdditionalWriter(writer io.Writer) DomainLevel.MakerUploader {
+	return u
 }

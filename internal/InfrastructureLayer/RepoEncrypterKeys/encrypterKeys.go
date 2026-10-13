@@ -1,6 +1,9 @@
 package RepoEncrypterKeys
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
 	"sync"
 
 	"github.com/awnumar/memguard"
@@ -12,12 +15,24 @@ type Keys struct {
 	Rm     *sync.RWMutex
 }
 
-func GetKeys() Keys {
-	return Keys{
-		OldKey: &memguard.LockedBuffer{},
-		NewKey: &memguard.LockedBuffer{},
-		Rm:     &sync.RWMutex{},
+func GetKeysTest() Keys {
+	keys, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		panic(err)
 	}
+
+	var k Keys
+	x := x509.MarshalPKCS1PrivateKey(keys)
+	k.Rm = &sync.RWMutex{}
+	k.UpdateNewKey(x)
+	return k
+}
+func GetKeys() Keys {
+
+	var k Keys
+	k.NewKey, _ = memguard.NewBufferFromReader(rand.Reader, 32)
+	k.OldKey, _ = memguard.NewBufferFromReader(rand.Reader, 32)
+	return k
 }
 
 func (s *Keys) GetKey() []byte {

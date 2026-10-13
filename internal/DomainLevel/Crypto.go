@@ -7,7 +7,7 @@ type IncomeData struct {
 
 type FileLabelsBytes struct {
 	FileName string
-	AesKey   string
+	AesKey   []byte
 }
 
 type CheckSignKeyIncomingData struct {

@@ -11,7 +11,7 @@ type Uploader struct {
 	f *os.File
 }
 
-func NewUploader() *Uploader {
+func NewStartUploading() *Uploader {
 	return &Uploader{}
 }
 
@@ -43,19 +43,22 @@ func (u Uploader) CloseSource() error {
 	panic("implement me")
 }
 
-func (u Uploader) SetName(s string) DomainLevel.MakerUploader {
+func (u *Uploader) SetName(s string) DomainLevel.MakerUploader {
 	//TODO implement me
-	panic("implement me")
+	return u
 }
 
-func (u Uploader) SetSize(i int64) DomainLevel.MakerUploader {
+func (u *Uploader) SetSize(i int64) DomainLevel.MakerUploader {
 	//TODO implement me
-	panic("implement me")
+	return u
 }
 
 func (u Uploader) GetFileSize() int64 {
-	//TODO implement me
-	panic("implement me")
+	s, err := u.f.Stat()
+	if err != nil {
+		panic(err)
+	}
+	return s.Size()
 }
 
 func (u Uploader) GetFileName() string {

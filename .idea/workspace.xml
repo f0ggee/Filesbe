@@ -4,29 +4,30 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 07.10.26&#10;Some changes">
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 10.10.26&#10;Dto structures have been distributed">
+      <change afterPath="$PROJECT_DIR$/internal/Service/Application/io_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/RoutersApi.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/collectControllers.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/collectControllers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/setMiddlewares.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/Redis.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/Redis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/GrpcDataType.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/GrpcIncomingPacket.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/GrpcOutPacketLook.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/JwtType.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/RedisFileStructFromMasterServer.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/UrlUploader.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmds/Builder.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Builder.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmds/collectApps.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/collectApps.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/Crypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/Crypto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/FileTransferring.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/FileTransferring.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/ServerKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/ServerKeys.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Encryption_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Encryption_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Deleter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Deleter.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/s3Upload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/s3Upload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testDownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testDownload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/startUploading.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testUpload2.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/startUploadingDecrypted.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoWriter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/RepoWriter.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/deletingRedis.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/deletingRedis.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/readingRedis.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/readingRedis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisChecker.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisChecker.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Protocol/ProtocolConst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/ProtocolConst.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Protocol/receive/checkPacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/receive/checkPacket.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Protocol/send/preparePacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/send/preparePacket.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt_test.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +68,7 @@
     &quot;accountId&quot;: &quot;25a889ef-3371-42b2-aefc-5131d46e9c81&quot;
   }
 }</component>
+  <component name="GoLinterSelectedExecutable" path="/opt/homebrew/bin/golangci-lint" />
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/main.go" root0="FORCE_HIGHLIGHTING" />
@@ -82,7 +84,7 @@
   &quot;isMigrated&quot;: true
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -98,7 +100,7 @@
   &quot;keyToString&quot;: {
     &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
     &quot;Docker.Dockerfile.executor&quot;: &quot;Run&quot;,
-    &quot;Go Build.go build Kaban.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build Kaban.executor&quot;: &quot;Profiler#5&quot;,
     &quot;Go Build.go build RepoEncryption.go.executor&quot;: &quot;Debug&quot;,
     &quot;Go Build.go build main.go.executor&quot;: &quot;Run&quot;,
     &quot;Go Build.go build sa.go.executor&quot;: &quot;Run&quot;,
@@ -110,6 +112,7 @@
     &quot;Go Build.go build scratch.go.executor&quot;: &quot;Run&quot;,
     &quot;Go Build.go build scratch_1.go.executor&quot;: &quot;Run&quot;,
     &quot;Go Build.go build testData.go.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestAesCtrEncryption in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestAesCtr_Encrypter in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestAesCtr_MakeCrypto in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestAesCtr_MakeCrypto/test1 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
@@ -122,6 +125,7 @@
     &quot;Go Test.TestAesEncryption_MakeCrypto/test4 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Debug&quot;,
     &quot;Go Test.TestAesStreamCTR_MakeCrypto in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Debug&quot;,
     &quot;Go Test.TestAesStreamCTR_MakeCrypto/test_1 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestApplicationLayer in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestChecking_CheckJwt in Kaban/internal/InfrastructureLayer/AuthTokensManage.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestChecking_CheckJwt/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestChecking_CheckJwt/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
@@ -129,12 +133,19 @@
     &quot;Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestCrypto in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestCryptoFunctions in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadEncrypt_DownloadEncryptdecryptFile in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestEe2 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestEe2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestEncryptFile in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestEncryptFile/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Debug&quot;,
     &quot;Go Test.TestEncryptFile/test2 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestEncryption in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestEncryption/test2 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestEncryption/test3 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestIo in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestKeys_UpdateNewKey in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestKeys_UpdateNewKey/#00 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Debug&quot;,
     &quot;Go Test.TestKeys_UpdateNewKey/test1 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Run&quot;,
@@ -142,6 +153,7 @@
     &quot;Go Test.TestKeys_UpdateOldKey/test1 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Debug&quot;,
     &quot;Go Test.TestKeys_UpdateOldKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Debug&quot;,
     &quot;Go Test.TestKeys_UpdateOldKey/test3 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestNewAesGcmEncryption in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestNewDownloadEncrypt_decryptFile in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestNewDownloadEncrypt_decryptFile/test_1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestNewLoginController_Login in Kaban/internal/Deliver/http.executor&quot;: &quot;Run&quot;,
@@ -154,6 +166,7 @@
     &quot;Go Test.TestNewUploadEncrypt_EncryptFile/test_1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestNewUploadEncrypt_EncryptFile1 in Kaban/internal/Service/Application.executor&quot;: &quot;Debug&quot;,
     &quot;Go Test.TestNewUploadEncrypt_EncryptFile1/test_1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewUploadEncrypt_UploadEncrypt/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestParsing_JsonDecode/test1 in Kaban/internal/InfrastructureLayer/RepoParsers.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/RepoParsers.executor&quot;: &quot;Run&quot;,
@@ -194,17 +207,22 @@
     &quot;Go Test.gobench Kaban/internal/Dto.executor&quot;: &quot;Profiler#1&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginOnboardingV2&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoOptimizationToolWindowEnableInLayout.v333333&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.analysis.ui.options.defaults&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;RefactoringFilesbes&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
     &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/pasabaranov/GolandProjects/Kaban/internal/InfrastructureLayer/Tokens&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/pasabaranov/GolandProjects/Kaban/internal/DomainLevel&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
@@ -218,28 +236,13 @@
     ]
   }
 }</component>
-  <component name="QodanaHighlightedReportService">
-    <option name="localRunNotPublishedPersistedInfo">
-      <LocalReportPersistedInfo>
-        <option name="path" value="/private/var/folders/zl/zh1n0jhd2yqgdnnxs5ft3pmh0000gn/T/qodana_output/qodana.sarif.json" />
-        <option name="reportGuid" value="20e86611-baa4-46e7-aa9c-c07594333bc9" />
-        <option name="reportName" value="Kaban/qodana/2026-10-10" />
-      </LocalReportPersistedInfo>
-    </option>
-  </component>
-  <component name="QodanaIsSelectedPersistenceService">
-    <option name="selectedOrLoading" value="true" />
-  </component>
-  <component name="QodanaReportsService">
-    <option name="descriptions">
-      <ReportDescription localRun="true" path="/private/var/folders/zl/zh1n0jhd2yqgdnnxs5ft3pmh0000gn/T/qodana_output/qodana.sarif.json" reportGuid="20e86611-baa4-46e7-aa9c-c07594333bc9" reportId="Kaban/qodana/2026-10-10" />
-    </option>
-  </component>
   <component name="RecentsManager">
     <key name="GoExtractInterfaceDialog.RECENT_KEY">
       <recent name="$PROJECT_DIR$/internal/Service/Application" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/internal/DomainLevel" />
+      <recent name="$PROJECT_DIR$/internal/Service/Application" />
       <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -256,8 +259,19 @@
         <option value="GoApplicationRunConfiguration" />
       </set>
     </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="GoApplicationRunConfiguration">
+          <value>
+            <map>
+              <entry key="go build Kaban" value="FAILED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
-  <component name="RunManager" selected="Go Test.TestKeys_UpdateNewKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys">
+  <component name="RunManager" selected="Go Test.TestCryptoFunctions in Kaban/internal/Service/Application">
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
       <deployment type="dockerfile">
         <settings />
@@ -270,67 +284,16 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="TestKeys_UpdateNewKey/#00 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="go build Kaban" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys" />
-      <root_directory value="$PROJECT_DIR$" />
+      <working_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
+      <package value="Kaban" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestKeys_UpdateNewKey\E$/^\Q#00\E$" />
+      <auto_managed_config_id value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestKeys_UpdateNewKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestKeys_UpdateNewKey\E$/^\Qtest2\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestKeys_UpdateOldKey/test1 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestKeys_UpdateOldKey\E$/^\Qtest1\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestKeys_UpdateOldKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestKeys_UpdateOldKey\E$/^\Qtest2\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestKeys_UpdateOldKey/test3 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestKeys_UpdateOldKey\E$/^\Qtest3\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestNewDownloadEncrypt_decryptFile in Kaban/internal/Service/Application" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestApplicationLayer in Kaban/internal/Service/Application" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
       <working_directory value="$PROJECT_DIR$/internal/Service/Application" />
       <root_directory value="$PROJECT_DIR$" />
@@ -339,7 +302,55 @@
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestNewDownloadEncrypt_decryptFile\E$" />
+      <pattern value="^\QTestApplicationLayer\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestCrypto in Kaban/internal/InfrastructureLayer/Crypto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/InfrastructureLayer/Crypto" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestCrypto\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestCryptoFunctions in Kaban/internal/Service/Application" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/Service/Application" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/Service/Application" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestCryptoFunctions\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestEncryption in Kaban/internal/InfrastructureLayer/Crypto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/InfrastructureLayer/Crypto" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestEncryption\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestEncryption/test3 in Kaban/internal/InfrastructureLayer/Crypto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/InfrastructureLayer/Crypto" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestEncryption\E$/^\Qtest3\E$" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
@@ -350,19 +361,19 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.TestKeys_UpdateNewKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
-        <item itemvalue="Go Test.TestKeys_UpdateNewKey/#00 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
-        <item itemvalue="Go Test.TestKeys_UpdateOldKey/test3 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
-        <item itemvalue="Go Test.TestKeys_UpdateOldKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
-        <item itemvalue="Go Test.TestKeys_UpdateOldKey/test1 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys" />
+        <item itemvalue="Go Test.TestCryptoFunctions in Kaban/internal/Service/Application" />
+        <item itemvalue="Go Test.TestApplicationLayer in Kaban/internal/Service/Application" />
+        <item itemvalue="Go Test.TestCrypto in Kaban/internal/InfrastructureLayer/Crypto" />
+        <item itemvalue="Go Test.TestEncryption/test3 in Kaban/internal/InfrastructureLayer/Crypto" />
+        <item itemvalue="Go Test.TestEncryption in Kaban/internal/InfrastructureLayer/Crypto" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-gosdk-f466f9b0953e-61a6b8fd16fd-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-252.28539.22" />
-        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-GO-252.28539.22" />
+        <option value="bundled-gosdk-63c95d513abe-08e7ff217c2b-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-262.10968.67" />
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-GO-262.10968.67" />
       </set>
     </attachedChunks>
   </component>
@@ -379,8 +390,18 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="WP 30.06.26&#10;I added some updates in my code(Checking register data and login data). Also, I finished refactoring Register controller. Also, it was started changing the check user function" />
     <MESSAGE value="WP&#10;I finished refactoring handlers" />
     <MESSAGE value="WP 07.07.26" />
     <MESSAGE value="WP 07.07.26&#10;I started doing collector" />
@@ -405,11 +426,9 @@
     <MESSAGE value="WP 05.10.26&#10;collectors and builders have been finished&#10;Routers system is being developed" />
     <MESSAGE value="WP 06.10.26&#10;a routers system has been finished" />
     <MESSAGE value="WP 07.10.26&#10;Some changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="WP 07.10.26&#10;Some changes" />
+    <MESSAGE value="WP 10.10.26&#10;Dto structures have been distributed" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 10.10.26&#10;Dto structures have been distributed" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
-  </component>
-  <component name="VgoProject">
-    <settings-migrated>true</settings-migrated>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -459,90 +478,120 @@
           <line>14</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+        <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/Deliver/httpController/DeliverPackages/RepourlBuilder/repoUrlBuilder.go</url>
           <line>20</line>
           <option name="timeStamp" value="30" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+        <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$APPLICATION_CONFIG_DIR$/scratches/scratch.go</url>
           <line>7</line>
           <option name="timeStamp" value="35" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
-          <line>125</line>
-          <option name="timeStamp" value="44" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testUpload.go</url>
+        <line-breakpoint type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/startUploading.go</url>
           <line>17</line>
           <option name="timeStamp" value="45" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go</url>
-          <line>121</line>
-          <option name="timeStamp" value="53" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption.go</url>
-          <line>140</line>
-          <option name="timeStamp" value="69" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+        <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption.go</url>
           <line>153</line>
           <option name="timeStamp" value="70" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption_test.go</url>
-          <line>134</line>
-          <option name="timeStamp" value="91" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption_test.go</url>
-          <line>155</line>
-          <option name="timeStamp" value="92" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption_test.go</url>
-          <line>162</line>
-          <option name="timeStamp" value="93" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption_test.go</url>
-          <line>55</line>
-          <option name="timeStamp" value="98" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+        <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go</url>
           <line>63</line>
           <option name="timeStamp" value="100" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+        <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/Deliver/httpController/response_test.go</url>
           <line>18</line>
           <option name="timeStamp" value="101" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+        <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/DomainLevel/FileTransferring.go</url>
-          <line>22</line>
+          <line>24</line>
           <option name="timeStamp" value="102" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+        <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/DomainLevel/RepoGrpc.go</url>
           <line>4</line>
           <option name="timeStamp" value="103" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+        <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go</url>
-          <line>26</line>
+          <line>41</line>
           <option name="timeStamp" value="104" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+        <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go</url>
-          <line>37</line>
+          <line>52</line>
           <option name="timeStamp" value="106" />
+        </line-breakpoint>
+        <line-breakpoint type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go</url>
+          <line>162</line>
+          <option name="timeStamp" value="108" />
+        </line-breakpoint>
+        <line-breakpoint type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/DomainLevel/Redis.go</url>
+          <line>37</line>
+          <option name="timeStamp" value="109" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go</url>
+          <line>118</line>
+          <option name="timeStamp" value="111" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption.go</url>
+          <line>100</line>
+          <option name="timeStamp" value="117" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go</url>
+          <line>139</line>
+          <option name="timeStamp" value="118" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption.go</url>
+          <line>78</line>
+          <option name="timeStamp" value="119" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/RepoEncryption.go</url>
+          <line>109</line>
+          <option name="timeStamp" value="120" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/io_test.go</url>
+          <line>19</line>
+          <option name="timeStamp" value="121" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go</url>
+          <line>57</line>
+          <option name="timeStamp" value="124" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/ServiceDownloadEncrypt.go</url>
+          <line>49</line>
+          <option name="timeStamp" value="125" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/io_test.go</url>
+          <line>92</line>
+          <option name="timeStamp" value="126" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/io_test.go</url>
+          <line>104</line>
+          <option name="timeStamp" value="127" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/DomainLevel/Redis.go</url>
+          <line>11</line>
+          <option name="timeStamp" value="128" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

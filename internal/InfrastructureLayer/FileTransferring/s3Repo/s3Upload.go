@@ -79,7 +79,7 @@ func (s *S3Upload) GetFileName() string {
 
 func (s *S3Upload) Make(ctx context.Context) (DomainLevel.Upload, error) {
 	if s.size == 0 {
-		return nil, errors.New(ErrorFileSize)
+		return nil, ErrorFileSize
 	}
 	if s.name == "" {
 		var x strings.Builder

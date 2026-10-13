@@ -56,3 +56,26 @@ func (s *S3Delete) Make(ctx context.Context) (DomainLevel.Delete, error) {
 
 	return s, nil
 }
+
+type s3DeleteTest struct {
+}
+
+func (s s3DeleteTest) Deleter() error {
+	return nil
+}
+
+func NewS3DeleteTest() *s3DeleteTest {
+	return &s3DeleteTest{}
+}
+
+func (s s3DeleteTest) SetName(s2 string) DomainLevel.MakerDeleter {
+	return s
+}
+
+func (s s3DeleteTest) SetSize(i int64) DomainLevel.MakerDeleter {
+	return s
+}
+
+func (s s3DeleteTest) Make(ctx context.Context) (DomainLevel.Delete, error) {
+	return s, nil
+}

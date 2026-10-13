@@ -40,16 +40,17 @@ func (s *RedisWrite) WriteData(data DomainLevel.WriteDataIncomeData) error {
 }
 
 type RedisWriteTest struct {
+	datas []DomainLevel.WriteDataIncomeData
 }
 
 func NewRedisWriteTest() *RedisWriteTest {
 	return &RedisWriteTest{}
 }
 
-func (r RedisWriteTest) WriteData(data DomainLevel.WriteDataIncomeData) error {
+func (r *RedisWriteTest) WriteData(data DomainLevel.WriteDataIncomeData) error {
 	return nil
 }
 
-func (r RedisWriteTest) EnableDownloadingParameter(s string, ctx context.Context) error {
+func (r *RedisWriteTest) EnableDownloadingParameter(s string, ctx context.Context) error {
 	return nil
 }

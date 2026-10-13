@@ -3,6 +3,7 @@ package RedisInteration
 import (
 	"Kaban/internal/DomainLevel"
 	"context"
+	"crypto/rand"
 	"errors"
 	"log/slog"
 	"os"
@@ -67,4 +68,40 @@ func (d RedisRead) GetKey(Ctx context.Context) ([]byte, error) {
 		return data, nil
 
 	}
+}
+
+type RedisTest struct {
+}
+
+func (r RedisTest) GetKey(ctx context.Context) ([]byte, error) {
+	return []byte(rand.Text()), nil
+}
+
+func (r RedisTest) GetFileInfo(s string, ctx context.Context) ([]byte, error) {
+	return nil, nil
+}
+
+type RedisTestIO struct {
+	d []byte
+}
+
+func NewRedisTestIO() *RedisTestIO {
+	return &RedisTestIO{}
+}
+
+func (r *RedisTestIO) WriteData(data DomainLevel.WriteDataIncomeData) error {
+	r.d = data.Info
+	return nil
+}
+
+func (r *RedisTestIO) EnableDownloadingParameter(s string, ctx context.Context) error {
+	return nil
+}
+
+func (r *RedisTestIO) GetKey(ctx context.Context) ([]byte, error) {
+	return nil, nil
+}
+
+func (r *RedisTestIO) GetFileInfo(s string, ctx context.Context) ([]byte, error) {
+	return r.d, nil
 }

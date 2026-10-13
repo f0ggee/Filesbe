@@ -41,14 +41,14 @@ type DownloadEncryptApplication struct {
 	Transferring FileTransferringCollector
 }
 
-func GetDownloadEncryptApplicationBuilder(D DownloadEncryptApplication) Application.NewDownloadEncrypt {
-	return Application.NewDownloadEncrypt{
+func GetDownloadEncryptApplicationBuilder(D DownloadEncryptApplication) Application.DownloadEncrypt {
+	return Application.DownloadEncrypt{
 		NewDownloadEncryptDelivery: Application.NewDownloadEncryptDelivery{
 			ReaderRedis:  D.Red.Read,
 			DeleterRedis: D.Red.Delete,
 		},
 		NewDownloadEncryptCrypto: Application.NewDownloadEncryptCrypto{
-			Crypto:        &D.Crypt.AesCtrRealization,
+			Aes:           &D.Crypt.AesCtrRealization,
 			EncrypterKeys: D.Keys.Keys,
 		},
 		NewDownloadEncryptFileControl: Application.NewDownloadEncryptFileControl{
@@ -120,9 +120,9 @@ type UploadEncrypt struct {
 	Red          RedisCollector
 }
 
-func GetUploadEncryptBuilder(d UploadEncrypt) Application.NewUploadEncrypt {
+func GetUploadEncryptBuilder(d UploadEncrypt) Application.UploadEncrypt {
 
-	return Application.NewUploadEncrypt{
+	return Application.UploadEncrypt{
 		NewUploadEncryptDataManage: Application.NewUploadEncryptDataManage{
 			Encode: d.Parse.Parser,
 		},
@@ -177,7 +177,7 @@ func GetControllerFileUploadBuilder(C ControllerFileUploadBuilder) httpControlle
 type ControllerFileUploadEncrypt struct {
 	Token    DomainLevel.AuthMaker
 	Sessions httpController.Session
-	App      Application.NewUploadEncrypt
+	App      Application.UploadEncrypt
 }
 
 func GetControllerFileUploadEncryptBuilder(C ControllerFileUploadEncrypt, r *mux.Router) httpController.UploadEncryptController {

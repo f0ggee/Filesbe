@@ -15,32 +15,28 @@ func NewTestDownload() *TestDownload {
 	return &TestDownload{}
 }
 
-func (t TestDownload) Downloader() (io.Reader, error) {
+func (t *TestDownload) Downloader() (io.Reader, error) {
 	return t.f, nil
 }
 
-func (t TestDownload) CloseSource() error {
+func (t *TestDownload) CloseSource() error {
 	return t.f.Close()
 }
 
-func (t TestDownload) SetName(s string) DomainLevel.MakerDownloader {
-	//TODO implement me
-	panic("implement me")
+func (t *TestDownload) SetName(s string) DomainLevel.MakerDownloader {
+	return t
 }
 
-func (t TestDownload) SetSize(i int64) DomainLevel.MakerDownloader {
-	//TODO implement me
-	panic("implement me")
+func (t *TestDownload) SetSize(i int64) DomainLevel.MakerDownloader {
+	return t
 }
 
-func (t TestDownload) GetFileSize() int64 {
-	//TODO implement me
-	panic("implement me")
+func (t *TestDownload) GetFileSize() int64 {
+	return 0
 }
 
-func (t TestDownload) GetFileName() string {
-	//TODO implement me
-	panic("implement me")
+func (t *TestDownload) GetFileName() string {
+	return ""
 }
 
 func (t *TestDownload) Make(ctx context.Context) (DomainLevel.Download, error) {
