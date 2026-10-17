@@ -31,7 +31,7 @@ func (d DownloadEncryptController) DownloadWithEncrypt() {
 		})
 		return
 	}
-	err := d.DownloadEncrypt(Application.NewDownloadEncryptIncomingData{NewDownloadEncryptNetwork: Application.NewDownloadEncryptNetwork{d.Net.W},
+	err := d.DownloadEncrypt(Application.DownloadEncryptIncomeData{
 		Ctx:           d.Net.R.Context(),
 		EncryptedName: fileName,
 	})

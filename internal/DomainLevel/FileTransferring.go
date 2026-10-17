@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-const ChunkSize = 35 * 1024
+const ChunkSize = 30 * 1024 * 1024
 
 type Upload interface {
 	Uploader(io.Reader) error

@@ -71,15 +71,13 @@
       border-color:var(--focus); box-shadow:0 0 0 3px rgba(45,212,167,.12);
     }
 
+    .input.invalid{ border-color:#a33; }
+
     .toggle{
       position:absolute; right:12px; top:50%; transform:translateY(-50%);
       background:none; border:0; color:var(--muted);
       font-size:14px; cursor:pointer; font-weight:600; padding:5px;
     }
-
-    .forgot{ text-align:right; margin-top:8px; margin-bottom:24px; }
-    .forgot a{ color:var(--muted); text-decoration:none; font-size:15px; }
-    .forgot a:hover{ color:var(--text) }
 
     .btn-primary{
       width:100%; padding:clamp(16px, 4vw, 20px);
@@ -130,22 +128,20 @@
 
     <form id="loginForm" action="/login/api" method="post" novalidate>
       <div class="field">
-        <label data-i18n="emailLabel">Email</label>
-        <input id="email" class="input" type="email" placeholder="name@example.com" required>
+        <label for="email" data-i18n="emailLabel">Email</label>
+        <input id="email" class="input" type="email" placeholder="name@example.com" autocomplete="email" required>
       </div>
 
       <div class="field">
-        <label data-i18n="passLabel">Password</label>
+        <label for="password" data-i18n="passLabel">Password</label>
         <div class="input-wrap">
-          <input id="password" class="input" type="password" required>
+          <input id="password" class="input" type="password" autocomplete="current-password" required>
           <button type="button" class="toggle" id="togglePwd" data-i18n="show">Show</button>
         </div>
       </div>
 
-
-
-      <button id="submitBtn" type="submit" class="btn-primary" data-i18n="h1">Sign in</button>
-      <div id="responseMessage" class="message"></div>
+      <button id="submitBtn" type="submit" class="btn-primary" data-i18n="btnReady">Sign in</button>
+      <div id="responseMessage" class="message" role="alert" aria-live="polite"></div>
     </form>
 
     <div class="create">
@@ -157,7 +153,7 @@
 </div>
 
 <script>
-  // 1. Словарь текстов интерфейса
+  // ==== 1. Тексты интерфейса ====
   const uiTranslations = {
     en: {
       brandSub: "Fast file sharing without extra steps",
@@ -171,7 +167,14 @@
       passPlaceholder: "Enter your password",
       btnLoading: "Signing in...",
       btnReady: "Sign in",
-      defaultError: "Connection error"
+      emptyFields: "Please enter email and password",
+      badEmail: "Please enter a valid email",
+      defaultError: "Connection error",
+      badRequest: "Invalid email or password",
+      unauthorized: "Invalid email or password",
+      forbidden: "Access denied",
+      tooMany: "Too many attempts. Please try again later",
+      serverError: "Server error. Please try again later"
     },
     ru: {
       brandSub: "Быстрый обмен файлами без лишних шагов",
@@ -184,40 +187,73 @@
       create: "Создать аккаунт",
       passPlaceholder: "Введите пароль",
       btnLoading: "Вход...",
-      btnReady: "Вход",
-      defaultError: "Ошибка подключения"
+      btnReady: "Войти",
+      emptyFields: "Введите почту и пароль",
+      badEmail: "Введите корректную почту",
+      defaultError: "Ошибка подключения",
+      badRequest: "Неверная почта или пароль",
+      unauthorized: "Неверная почта или пароль",
+      forbidden: "Доступ запрещён",
+      tooMany: "Слишком много попыток. Попробуйте позже",
+      serverError: "Ошибка сервера. Попробуйте позже"
     }
   };
 
-  // 2. Словарь перевода ОШИБОК БЭКЕНДА
+  // ==== 2. Перевод сообщений из поля error_message ====
+  // Ключ — ровно та строка, которую отдаёт бэкенд (регистр и пробелы по краям не важны).
+  // Если сообщения нет в словаре — показывается как есть.
   const backendErrors = {
-    "Data is invalid": {
+    "data is invalid": {
       en: "Invalid email or password",
       ru: "Неверная почта или пароль"
     },
-    "Something went wrong": {
+    "something went wrong": {
       en: "Server error. Please try again later",
       ru: "Ошибка сервера. Попробуйте позже"
     }
+    // Добавляйте сюда свои сообщения, например:
+    // "user not found": { en: "User not found", ru: "Пользователь не найден" },
   };
 
-  const currentLang = localStorage.getItem('userLanguage') || 'en';
+  const savedLang = (() => { try { return localStorage.getItem('userLanguage'); } catch { return null; } })();
+  const currentLang = uiTranslations[savedLang] ? savedLang : 'en';
+  const t = (key) => uiTranslations[currentLang][key] || uiTranslations.en[key] || key;
 
   function applyLanguage() {
+    document.documentElement.lang = currentLang;
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (uiTranslations[currentLang][key]) el.textContent = uiTranslations[currentLang][key];
     });
-    document.getElementById('password').placeholder = uiTranslations[currentLang].passPlaceholder;
+    document.getElementById('password').placeholder = t('passPlaceholder');
   }
 
-  function getTranslatedError(serverMsg) {
-    if (backendErrors[serverMsg] && backendErrors[serverMsg][currentLang]) {
-      return backendErrors[serverMsg][currentLang];
+  // Перевод error_message; если пусто — запасной текст по HTTP-статусу
+  function translateBackendError(serverMsg, httpStatus) {
+    const msg = (serverMsg || '').trim();
+    if (msg) {
+      const entry = backendErrors[msg.toLowerCase()];
+      return (entry && entry[currentLang]) ? entry[currentLang] : msg;
     }
-    return serverMsg || uiTranslations[currentLang].defaultError;
+    return fallbackByStatus(httpStatus);
   }
 
+  function fallbackByStatus(status) {
+    if (status === 400) return t('badRequest');
+    if (status === 401) return t('unauthorized');
+    if (status === 403) return t('forbidden');
+    if (status === 429) return t('tooMany');
+    if (status >= 500)  return t('serverError');
+    return t('defaultError');
+  }
+
+  // Является ли status_of_operation признаком ошибки
+  function isErrorStatus(s) {
+    if (!s) return false;
+    return ['error', 'fail', 'failed', 'failure', 'false'].includes(String(s).trim().toLowerCase());
+  }
+
+  // ==== 3. Элементы ====
   const form = document.getElementById('loginForm');
   const submitBtn = document.getElementById('submitBtn');
   const responseDiv = document.getElementById('responseMessage');
@@ -226,65 +262,89 @@
   const emailInput = document.getElementById('email');
   const registerBtn = document.getElementById('registerBtn');
 
+  function showError(text) {
+    responseDiv.className = 'message error';
+    responseDiv.textContent = text;
+    responseDiv.style.display = 'block';
+  }
+
+  function clearError() {
+    responseDiv.className = 'message';
+    responseDiv.textContent = '';
+    responseDiv.style.display = 'none';
+    emailInput.classList.remove('invalid');
+    pwdInput.classList.remove('invalid');
+  }
+
   togglePwd.onclick = () => {
     const isPwd = pwdInput.type === 'password';
     pwdInput.type = isPwd ? 'text' : 'password';
-    togglePwd.textContent = isPwd ? uiTranslations[currentLang].hide : uiTranslations[currentLang].show;
+    togglePwd.textContent = isPwd ? t('hide') : t('show');
   };
 
   registerBtn.onclick = () => window.location.href = '/register';
 
+  emailInput.addEventListener('input', () => emailInput.classList.remove('invalid'));
+  pwdInput.addEventListener('input', () => pwdInput.classList.remove('invalid'));
+
+  // ==== 4. Отправка формы ====
   form.onsubmit = async (e) => {
     e.preventDefault();
-    responseDiv.style.display = 'none';
-    responseDiv.className = 'message';
+    clearError();
+
+    const email = emailInput.value.trim();
+    const password = pwdInput.value;
+
+    // Клиентская проверка до запроса
+    if (!email || !password) {
+      if (!email) emailInput.classList.add('invalid');
+      if (!password) pwdInput.classList.add('invalid');
+      showError(t('emptyFields'));
+      return;
+    }
+    if (!emailInput.checkValidity()) {
+      emailInput.classList.add('invalid');
+      showError(t('badEmail'));
+      return;
+    }
+
     submitBtn.disabled = true;
-    const originalBtnText = submitBtn.textContent;
-    submitBtn.textContent = uiTranslations[currentLang].btnLoading;
+    submitBtn.textContent = t('btnLoading');
 
     try {
       const res = await fetch(form.action, {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body:JSON.stringify({ email: emailInput.value.trim(), password: pwdInput.value })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email, password })
       });
 
-      let data;
-      try { data = await res.json(); } catch (e) { data = null; }
+      // Ответ бэкенда: { status_of_operation, url_to_redirect, error_message }
+      let data = null;
+      try { data = await res.json(); } catch { data = null; }
 
-      // 1. УСПЕХ (200)
-      if (res.status === 200) {
-        if (data && data.UrlToRedict) {
-          window.location.href = data.UrlToRedict;
-        } else {
-          window.location.href = '/main';
-        }
+      const errorMessage = data && typeof data.error_message === 'string' ? data.error_message : '';
+      const redirectUrl  = data && typeof data.url_to_redirect === 'string' ? data.url_to_redirect.trim() : '';
+      const opStatus     = data ? data.status_of_operation : '';
+
+      // Успех: HTTP 2xx, нет error_message и статус операции не "ошибка"
+      if (res.ok && !errorMessage.trim() && !isErrorStatus(opStatus)) {
+        window.location.href = redirectUrl || '/main';
+        return; // кнопку не разблокируем — идёт переход
       }
-      // 2. ОШИБКА КЛИЕНТА (400)
-      else if (res.status === 400) {
-        responseDiv.className = 'message error';
-        if (data && data.ErrorMessage) {
-          responseDiv.textContent = getTranslatedError(data.ErrorMessage);
-        } else {
-          responseDiv.textContent = getTranslatedError("Data is invalid");
-        }
-        responseDiv.style.display = 'block';
+
+      // Любая ошибка: показываем error_message (переведённый) или текст по статусу
+      if (res.status === 400 || res.status === 401) {
+        emailInput.classList.add('invalid');
+        pwdInput.classList.add('invalid');
       }
-      // 3. ОШИБКА СЕРВЕРА (500 и прочие)
-      else {
-        responseDiv.className = 'message error';
-        const msg = (data && data.ErrorMessage) ? data.ErrorMessage : "Something went wrong";
-        responseDiv.textContent = getTranslatedError(msg);
-        responseDiv.style.display = 'block';
-      }
+      showError(translateBackendError(errorMessage, res.ok ? 0 : res.status));
     } catch (err) {
-      responseDiv.className = 'message error';
-      responseDiv.textContent = uiTranslations[currentLang].defaultError;
-      responseDiv.style.display = 'block';
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalBtnText;
+      // Сеть недоступна / CORS / сервер не ответил
+      showError(t('defaultError'));
     }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = t('btnReady');
   };
 
   applyLanguage();

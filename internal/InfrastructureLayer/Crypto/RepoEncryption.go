@@ -25,12 +25,12 @@ type RsaEncryption struct {
 	kind    []byte
 }
 
-func NewRsaEncryption() *RsaEncryption {
-	return &RsaEncryption{}
-}
-
 func (r *RsaEncryption) GetRequiredOverheadSize() int {
 	return 0
+}
+
+func NewRsaEncryption() *RsaEncryption {
+	return &RsaEncryption{}
 }
 
 func (r *RsaEncryption) Encrypt(bytes []byte) ([]byte, error) {
@@ -132,6 +132,7 @@ type AesCtrEncryption struct {
 }
 
 func (a *AesCtrEncryption) GetRequiredOverheadSize() int {
+
 	return aes.BlockSize
 }
 
@@ -171,9 +172,8 @@ func (a *AesCtrEncryption) MakeCrypto(key []byte, i []byte) (DomainLevel.Crypto,
 		return nil, err
 	}
 	ctrBlock := cipher.NewCTR(block, i)
-	return &AesCtrEncryption{
-		block:   ctrBlock,
-		isStart: false,
-		nonce:   i,
-	}, nil
+	a.nonce = i
+	a.block = ctrBlock
+	a.isStart = false
+	return a, nil
 }

@@ -23,7 +23,7 @@ func (s *SetNewKeyRequest) SetNewKeyRequest(data []byte) ([]byte, error) {
 	defer s.cancelFunc()
 	clientRequest := pb.NewSendingGettingClient(Grpc.GrpcConn)
 
-	attempts, sec := 1, 1
+	attempts, sec := 1, 2
 	for {
 		if attempts > 12 {
 			slog.Error("SetNewKeyRequest; attempts are expired")

@@ -102,7 +102,7 @@ func (d *UploadController) FileUploader(router *mux.Router) {
 		return
 	}
 
-	fileName, err := d.Upload(Application.FileUploaderIncomeData{
+	fileName, err := d.Upload(Application.UploadIncomeData{
 		File: file,
 		Name: fileDetails.Filename,
 		Size: fileDetails.Size,

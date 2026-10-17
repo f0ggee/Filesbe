@@ -1,6 +1,7 @@
 package Application
 
 import (
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/Crypto"
 	"Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
 	"Kaban/internal/InfrastructureLayer/FileTransferring/testFileTransfering"
@@ -15,100 +16,338 @@ import (
 	"testing"
 )
 
-const LongText = `ssssssssssssjh  j`
+func TestIoCrypto(t *testing.T) {
+	crypt := Crypto.NewAesCtr()
+	fistUpload, _ := testFileTransfering.GetFirstUploading().Make(nil)
+	download := testFileTransfering.GetTestDownloader()
+	secondUpload := testFileTransfering.GetUploaderSecond()
 
-func TestCryptoFunctions(t *testing.T) {
-	encr := Crypto.NewAesCtr()
-	uploadEncrypt := UploadEncrypt{
-		NewUploadEncryptCrypto: NewUploadEncryptCrypto{
-			Encrypt: encr,
+	key := make([]byte, crypt.GetRequiredOverheadSize()+32)
+	if _, err := io.ReadFull(rand.Reader, key); err != nil {
+		panic(err)
+	}
+
+	type IncomeUploadEncrypt struct {
+		src io.Reader
+		dst DomainLevel.Upload
+		key []byte
+	}
+	type IncomeDownloadEncrypt struct {
+		key    []byte
+		o      DomainLevel.Download
+		upload DomainLevel.Upload
+	}
+	tests := []struct {
+		name          string
+		uploadParam   IncomeUploadEncrypt
+		downloadParam IncomeDownloadEncrypt
+		uploadField   UploadEncrypt
+		downloadField DownloadEncrypt
+		wantErr       bool
+	}{
+		{
+			name: "test1",
+			uploadParam: IncomeUploadEncrypt{
+				src: bytes.NewReader([]byte("It's example")),
+				dst: fistUpload,
+				key: key,
+			},
+			downloadParam: IncomeDownloadEncrypt{
+				key:    key,
+				o:      download,
+				upload: &secondUpload,
+			},
+			uploadField: UploadEncrypt{
+				NewUploadEncryptCrypto: NewUploadEncryptCrypto{
+					Encrypt: crypt,
+				},
+			},
+			downloadField: DownloadEncrypt{
+				NewDownloadEncryptCrypto: NewDownloadEncryptCrypto{
+					Aes: crypt,
+				},
+			},
+			wantErr: false,
 		},
 	}
-	downloadDecrypt := DownloadEncrypt{
-		NewDownloadEncryptCrypto: NewDownloadEncryptCrypto{
-			Aes: encr,
-		},
-	}
-	firstUploading, _ := testFileTransfering.NewStartUploading().Make(nil)
-	download, _ := testFileTransfering.NewTestDownload().Make(nil)
-	uploadingEncr, _ := testFileTransfering.NewUploadingDecrypted().Make(nil)
-	allData := make([]byte, encr.GetRequiredOverheadSize()+32)
-	if _, err := io.ReadFull(rand.Reader, allData); err != nil {
-		panic(err)
-	}
-	err := uploadEncrypt.encryptFile(bytes.NewReader([]byte(LongText)), firstUploading, allData)
-	if err != nil {
-		panic(err)
-	}
-	err = downloadDecrypt.decryptFile(allData[encr.GetRequiredOverheadSize():], download, uploadingEncr)
-	if err != nil {
-		panic(err)
+
+	for _, tt := range tests {
+
+		t.Run(tt.name, func(t *testing.T) {
+
+			err := tt.uploadField.encryptFile(tt.uploadParam.src, tt.uploadParam.dst, tt.uploadParam.key)
+			if err != nil && !tt.wantErr {
+				t.Errorf("We wanted %v but got %v\n", tt.wantErr, err)
+			}
+
+			err = tt.downloadField.decryptFile(tt.downloadParam.key[crypt.GetRequiredOverheadSize():], tt.downloadParam.o, tt.downloadParam.upload)
+			if err != nil && !tt.wantErr {
+				t.Errorf("We wanted %v but got %v\n", tt.wantErr, err)
+			}
+
+		})
 	}
 }
 
-func TestApplicationLayer(t *testing.T) {
-	encr := Crypto.NewAesGcmEncryption()
-	rsa := Crypto.NewRsaEncryption()
-	firstUploading := testFileTransfering.NewStartUploading()
-	download := testFileTransfering.NewTestDownload()
-	uploadingEncr := testFileTransfering.NewUploadingDecrypted()
-	keys := RepoEncrypterKeys.GetKeysTest()
-	redisTestIo := RedisInteration.NewRedisTestIO()
-	uploadEncrypt := UploadEncrypt{
-		NewUploadEncryptDataManage: NewUploadEncryptDataManage{
-			Encode: Parsers.GetNewParsing(),
-		},
-		NewUploadEncryptCrypto: NewUploadEncryptCrypto{
-			Generate:      Crypto.GetNewGenerating(),
-			Encrypt:       encr,
-			Rsa:           rsa,
-			EncrypterKeys: keys,
-		},
-		NewUploadEncryptDelivery: NewUploadEncryptDelivery{
-			Uploader:     firstUploading,
-			RedisWriter:  redisTestIo,
-			RedisChecker: RedisInteration.NewRedisCheckTest(),
-			RedisDeleter: RedisInteration.NewRedisDelete(),
-			Deleter:      s3Repo.NewS3DeleteTest(),
-		},
-	}
-	downloadDecrypt := DownloadEncrypt{
-		NewDownloadEncryptDelivery: NewDownloadEncryptDelivery{
-			ReaderRedis:  redisTestIo,
-			DeleterRedis: RedisInteration.NewRedisDeleteTest(),
-		},
-		NewDownloadEncryptCrypto: NewDownloadEncryptCrypto{
-			Aes:           encr,
-			Rsa:           rsa,
-			EncrypterKeys: keys,
-		},
-		NewDownloadEncryptFileControl: NewDownloadEncryptFileControl{
-			Uploader:   uploadingEncr,
-			Downloader: download,
-			Deleter:    s3Repo.NewS3DeleteTest(),
-		},
-		decoder: Parsers.GetNewParsing(),
+func TestApplicationIOCrypto(t *testing.T) {
+
+	crypt := Crypto.NewAesCtr()
+	fistUpload := testFileTransfering.GetFirstUploading()
+	download := testFileTransfering.GetTestDownloader()
+	secondUpload := testFileTransfering.GetUploaderSecond()
+	redisIOTest := RedisInteration.NewRedisTestIO()
+
+	encrypterKeysTest := RepoEncrypterKeys.GetKeysTest()
+	key := make([]byte, crypt.GetRequiredOverheadSize()+32)
+	if _, err := io.ReadFull(rand.Reader, key); err != nil {
+		panic(err)
 	}
 
-	_, err := uploadEncrypt.UploadEncrypt(IncomeData{
-		File: bytes.NewReader([]byte(LongText)),
-		Name: "da",
-		Ctx:  context.Background(),
-		Size: int64(len([]byte(LongText))),
-	})
-
-	if err != nil {
-		t.Errorf("Got error %v\n", err)
-		return
+	type IncomeUploadEncrypt struct {
+		src io.Reader
+		dst DomainLevel.Upload
+		key []byte
+	}
+	type IncomeDownloadEncrypt struct {
+		key    []byte
+		o      DomainLevel.Download
+		upload DomainLevel.Upload
+	}
+	tests := []struct {
+		name          string
+		uploadParam   IncomeUploadEncrypt
+		downloadParam IncomeDownloadEncrypt
+		uploadField   UploadEncrypt
+		downloadField DownloadEncrypt
+		wantErr       bool
+	}{
+		{
+			name: "test1",
+			uploadParam: IncomeUploadEncrypt{
+				src: bytes.NewReader([]byte("It's example")),
+				dst: &fistUpload,
+				key: key,
+			},
+			downloadParam: IncomeDownloadEncrypt{
+				key:    key,
+				o:      download,
+				upload: &secondUpload,
+			},
+			uploadField: UploadEncrypt{
+				NewUploadEncryptDataManage: NewUploadEncryptDataManage{
+					Encode: Parsers.GetNewParsing(),
+				},
+				NewUploadEncryptCrypto: NewUploadEncryptCrypto{
+					Generate:      Crypto.GetNewGenerating(),
+					Encrypt:       crypt,
+					Rsa:           Crypto.NewRsaEncryption(),
+					EncrypterKeys: encrypterKeysTest,
+				},
+				NewUploadEncryptDelivery: NewUploadEncryptDelivery{
+					Uploader:     fistUpload,
+					RedisWriter:  redisIOTest,
+					RedisChecker: RedisInteration.NewRedisCheckTest(),
+					RedisDeleter: RedisInteration.NewRedisDeleteTest(),
+					Deleter:      s3Repo.NewS3DeleteTest(),
+				},
+			},
+			downloadField: DownloadEncrypt{
+				NewDownloadEncryptDelivery: NewDownloadEncryptDelivery{
+					ReaderRedis:  redisIOTest,
+					DeleterRedis: RedisInteration.NewRedisDeleteTest(),
+				},
+				NewDownloadEncryptCrypto: NewDownloadEncryptCrypto{
+					Aes:           crypt,
+					Rsa:           Crypto.NewRsaEncryption(),
+					EncrypterKeys: encrypterKeysTest,
+				},
+				NewDownloadEncryptFileControl: NewDownloadEncryptFileControl{
+					Uploader:   &secondUpload,
+					Downloader: download,
+					Deleter:    s3Repo.NewS3DeleteTest(),
+				},
+				decoder: Parsers.GetNewParsing(),
+			},
+			wantErr: false,
+		},
+		{
+			name: "test1",
+			uploadParam: IncomeUploadEncrypt{
+				src: bytes.NewReader([]byte("dkjnhssssssssss kkkkkdskdksdkskdksdkskdksdks kdjsj dkjsdj ksjd kjskdj ksjdkj skjdksdksjdkskdskdskdjaksjdklaksdaklsdlkasdklaslkfaklflkafklfklkmfvkvdfnkjfkdfjkdnvdjfngvjdkfjk")),
+				dst: &fistUpload,
+				key: key,
+			},
+			downloadParam: IncomeDownloadEncrypt{
+				key:    key,
+				o:      download,
+				upload: &secondUpload,
+			},
+			uploadField: UploadEncrypt{
+				NewUploadEncryptDataManage: NewUploadEncryptDataManage{
+					Encode: Parsers.GetNewParsing(),
+				},
+				NewUploadEncryptCrypto: NewUploadEncryptCrypto{
+					Generate:      Crypto.GetNewGenerating(),
+					Encrypt:       crypt,
+					Rsa:           Crypto.NewRsaEncryption(),
+					EncrypterKeys: encrypterKeysTest,
+				},
+				NewUploadEncryptDelivery: NewUploadEncryptDelivery{
+					Uploader:     fistUpload,
+					RedisWriter:  redisIOTest,
+					RedisChecker: RedisInteration.NewRedisCheckTest(),
+					RedisDeleter: RedisInteration.NewRedisDeleteTest(),
+					Deleter:      s3Repo.NewS3DeleteTest(),
+				},
+			},
+			downloadField: DownloadEncrypt{
+				NewDownloadEncryptDelivery: NewDownloadEncryptDelivery{
+					ReaderRedis:  redisIOTest,
+					DeleterRedis: RedisInteration.NewRedisDeleteTest(),
+				},
+				NewDownloadEncryptCrypto: NewDownloadEncryptCrypto{
+					Aes:           crypt,
+					Rsa:           Crypto.NewRsaEncryption(),
+					EncrypterKeys: encrypterKeysTest,
+				},
+				NewDownloadEncryptFileControl: NewDownloadEncryptFileControl{
+					Uploader:   &secondUpload,
+					Downloader: download,
+					Deleter:    s3Repo.NewS3DeleteTest(),
+				},
+				decoder: Parsers.GetNewParsing(),
+			},
+			wantErr: false,
+		},
 	}
 
-	err = downloadDecrypt.DownloadEncrypt(NewDownloadEncryptIncomingData{
-		dst:           httptest.NewRecorder(),
-		Ctx:           context.Background(),
-		EncryptedName: "",
-	})
-	if err != nil {
-		t.Errorf("Got error %v\n", err)
-		return
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := tt.uploadField.UploadEncrypt(UploadEncryptIncomeData{
+				File: tt.uploadParam.src,
+				Name: "",
+				Ctx:  context.Background(),
+				Size: 100,
+			})
+			if err != nil && !tt.wantErr {
+				t.Fatalf("Got an error %v but wanted %v", err, tt.wantErr)
+			}
+
+			err = tt.downloadField.DownloadEncrypt(DownloadEncryptIncomeData{
+				dst:           httptest.NewRecorder(),
+				Ctx:           context.Background(),
+				EncryptedName: "",
+			})
+		})
 	}
+
+}
+
+func TestApplicationIO(t *testing.T) {
+	fistUpload := testFileTransfering.GetFirstUploading()
+	download := testFileTransfering.GetTestDownloader()
+	secondUpload := testFileTransfering.GetUploaderSecond()
+	redisIOTest := RedisInteration.NewRedisTestIO()
+	tests := []struct {
+		name          string
+		Upload        NewUpload
+		Download      NewDownload
+		UploadParam   UploadIncomeData
+		DownloadParam struct {
+			name string
+			ctx  context.Context
+		}
+	}{
+		{
+			name: "test1",
+			Upload: NewUpload{
+				NewFileUploaderCrypto: NewFileUploaderCrypto{
+					Generator: Crypto.GetNewGenerating(),
+				},
+				NewFileUploaderDataMange: NewFileUploaderDataMange{
+					Encode: Parsers.GetNewParsing(),
+				},
+				NewFileUploaderDelivery: NewFileUploaderDelivery{
+					Uploader:   fistUpload,
+					WriteRedis: redisIOTest,
+				},
+			},
+			Download: NewDownload{
+				DownloadFileControl: DownloadFileControl{
+					Downloader: download,
+					Uploader:   &secondUpload,
+					Deleter:    testFileTransfering.NewTestDelete(),
+					Decoder:    Parsers.GetNewParsing(),
+				},
+				Reader: redisIOTest,
+				W:      httptest.NewRecorder(),
+			},
+			UploadParam: UploadIncomeData{
+				File: bytes.NewReader([]byte("It's example")),
+				Name: "test",
+				Size: 100,
+				Ctx:  context.Background(),
+			},
+			DownloadParam: struct {
+				name string
+				ctx  context.Context
+			}{
+				name: "test",
+				ctx:  context.Background(),
+			},
+		},
+		{
+			name: "test1",
+			Upload: NewUpload{
+				NewFileUploaderCrypto: NewFileUploaderCrypto{
+					Generator: Crypto.GetNewGenerating(),
+				},
+				NewFileUploaderDataMange: NewFileUploaderDataMange{
+					Encode: Parsers.GetNewParsing(),
+				},
+				NewFileUploaderDelivery: NewFileUploaderDelivery{
+					Uploader:   fistUpload,
+					WriteRedis: redisIOTest,
+				},
+			},
+			Download: NewDownload{
+				DownloadFileControl: DownloadFileControl{
+					Downloader: download,
+					Uploader:   &secondUpload,
+					Deleter:    testFileTransfering.NewTestDelete(),
+					Decoder:    Parsers.GetNewParsing(),
+				},
+				Reader: redisIOTest,
+				W:      httptest.NewRecorder(),
+			},
+			UploadParam: UploadIncomeData{
+				File: bytes.NewReader([]byte("It's example")),
+				Name: "test",
+				Size: 100,
+				Ctx:  context.Background(),
+			},
+			DownloadParam: struct {
+				name string
+				ctx  context.Context
+			}{
+				name: "test",
+				ctx:  context.Background(),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			_, err := tt.Upload.Upload(tt.UploadParam)
+			if err != nil {
+				t.Fatalf("Error %v\n", err)
+			}
+			err = tt.Download.Download(tt.DownloadParam.ctx, tt.DownloadParam.name)
+			if err != nil {
+				t.Fatalf("Error %v\n", err)
+			}
+		})
+	}
+
 }

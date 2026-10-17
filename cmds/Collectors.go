@@ -27,9 +27,9 @@ type CryptoCollector struct {
 
 func GetCryptoCollector() CryptoCollector {
 	return CryptoCollector{
-		RsaRealization:    Crypto.NewRsaEncryption(),
+		RsaRealization:    *Crypto.NewRsaEncryption(),
 		AesGcmRealization: Crypto.NewAesGcmEncryption(),
-		AesCtrRealization: Crypto.NewAesCtr(),
+		AesCtrRealization: *Crypto.NewAesCtr(),
 		Validate:          Crypto.GetNewChecking(),
 		Generate:          Crypto.GetNewGenerating(),
 	}

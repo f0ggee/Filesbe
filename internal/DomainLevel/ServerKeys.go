@@ -1,6 +1,7 @@
 package DomainLevel
 
 import (
+	"encoding/hex"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -20,13 +21,21 @@ func (s NewServerKeys) GerOurPrivateKey() []byte {
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		//panic(err)
+		panic(err)
 	}
 	masterKey := os.Getenv("Public_Key_Master_Server")
 	ourKey := os.Getenv("Our_Private_Key")
+	k1, err := hex.DecodeString(masterKey)
+	if err != nil {
+		panic(err)
+	}
+	k2, err := hex.DecodeString(ourKey)
+	if err != nil {
+		panic(err)
+	}
 	ServerKeys = NewServerKeys{
-		MasterKeyPublic:  []byte(masterKey),
-		WorkerPrivateKey: []byte(ourKey),
+		MasterKeyPublic:  k1,
+		WorkerPrivateKey: k2,
 	}
 }
 

@@ -14,7 +14,7 @@ import (
 )
 
 type DownloadEncryptApplication interface {
-	DownloadEncrypt(NewDownloadEncryptIncomingData) error
+	DownloadEncrypt(DownloadEncryptIncomeData) error
 }
 
 var ErrorDecryptFile = errors.New("error to decrypt data")
@@ -41,13 +41,13 @@ type DownloadEncrypt struct {
 	decoder DomainLevel.Decoder
 }
 
-type NewDownloadEncryptIncomingData struct {
+type DownloadEncryptIncomeData struct {
 	dst           io.Writer
 	Ctx           context.Context
 	EncryptedName string
 }
 
-func (s *DownloadEncrypt) DownloadEncrypt(data NewDownloadEncryptIncomingData) error {
+func (s *DownloadEncrypt) DownloadEncrypt(data DownloadEncryptIncomeData) error {
 
 	g, _ := errgroup.WithContext(data.Ctx)
 
@@ -121,14 +121,13 @@ func (s *DownloadEncrypt) decryptFile(AesKey []byte, o DomainLevel.Download, upl
 	if err != nil {
 		return err
 	}
-	nonce := memguard.NewBuffer(s.Aes.GetRequiredOverheadSize() + len(AesKey))
-	_, err = io.ReadFull(download, nonce.Bytes()[:s.Aes.GetRequiredOverheadSize()])
+	nonce := memguard.NewBuffer(s.Aes.GetRequiredOverheadSize())
+	_, err = io.ReadFull(download, nonce.Bytes())
 	if err != nil {
 		slog.Error("decryptFile; there is error to generate a nonce", "ERROR", err.Error())
 		return ErrorDecryptFile
 	}
-	copy(nonce.Bytes()[s.Aes.GetRequiredOverheadSize():], AesKey)
-	decrBlock, err := s.Aes.MakeCrypto(nonce.Bytes()[s.Aes.GetRequiredOverheadSize():], nonce.Bytes()[:s.Aes.GetRequiredOverheadSize()])
+	decrBlock, err := s.Aes.MakeCrypto(AesKey, nonce.Bytes())
 	if err != nil {
 		return err
 	}
@@ -161,13 +160,14 @@ func (s *DownloadEncrypt) decryptFile(AesKey []byte, o DomainLevel.Download, upl
 	return nil
 }
 func (s *DownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedBuffer, error) {
+	var data *memguard.LockedBuffer
 	cr, err := s.Rsa.MakeCrypto(s.EncrypterKeys.GetKey(), []byte(""))
 	if err != nil {
 		return nil, err
 	}
 	OutData, err := cr.Decrypt(fileInfoInBytes)
 	if err == nil {
-		data := memguard.NewBuffer(len(OutData))
+		data = memguard.NewBuffer(len(OutData))
 		data.Copy(OutData)
 		memguard.WipeBytes(OutData)
 		return data, nil
@@ -180,7 +180,7 @@ func (s *DownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedB
 	if err != nil {
 		return nil, ErrorDecryptFile
 	}
-	data := memguard.NewBuffer(len(outData2))
+	data = memguard.NewBuffer(len(outData2))
 	data.Copy(outData2)
 	memguard.WipeBytes(outData2)
 	return data, nil

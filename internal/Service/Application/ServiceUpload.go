@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"io"
-	"log/slog"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -20,7 +19,7 @@ var (
 )
 
 type UploadApplication interface {
-	Upload(FileUploaderIncomeData) (string, error)
+	Upload(UploadIncomeData) (string, error)
 }
 
 type NewFileUploaderDataMange struct {
@@ -44,25 +43,19 @@ func GetNewFileUploader(newFileUploaderCrypto NewFileUploaderCrypto, newFileUplo
 	return &NewUpload{NewFileUploaderCrypto: newFileUploaderCrypto, NewFileUploaderDataMange: newFileUploaderDataMange, NewFileUploaderDelivery: newFileUploaderDelivery}
 }
 
-type FileUploaderIncomeData struct {
-	File io.ReadCloser
+type UploadIncomeData struct {
+	File io.Reader
 	Name string
 	Size int64
 	Ctx  context.Context
 }
 
-func (sa *NewUpload) Upload(r FileUploaderIncomeData) (string, error) {
+func (sa *NewUpload) Upload(r UploadIncomeData) (string, error) {
 	g, ctx := errgroup.WithContext(r.Ctx)
 	if r.Size >= FileMaxSize {
 		return "", ErrorFileSizeBig
 	}
-	defer func() {
-		err := r.File.Close()
-		if err != nil {
-			slog.Error("Upload; error to close a body", "ERROR", err)
-			return
-		}
-	}()
+
 	shortNameFile := sa.Generator.GenerateText(4)
 
 	g.Go(func() error {

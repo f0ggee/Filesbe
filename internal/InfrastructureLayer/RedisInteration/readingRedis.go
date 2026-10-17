@@ -4,6 +4,7 @@ import (
 	"Kaban/internal/DomainLevel"
 	"context"
 	"crypto/rand"
+	"encoding/json"
 	"errors"
 	"log/slog"
 	"os"
@@ -70,15 +71,23 @@ func (d RedisRead) GetKey(Ctx context.Context) ([]byte, error) {
 	}
 }
 
-type RedisTest struct {
+type RedisReadTest struct {
 }
 
-func (r RedisTest) GetKey(ctx context.Context) ([]byte, error) {
-	return []byte(rand.Text()), nil
+func NewRedisReadTest() *RedisReadTest {
+	return &RedisReadTest{}
 }
 
-func (r RedisTest) GetFileInfo(s string, ctx context.Context) ([]byte, error) {
-	return nil, nil
+func (r RedisReadTest) GetKey(ctx context.Context) ([]byte, error) {
+
+	d, _ := json.Marshal([]byte(rand.Text()))
+	return d, nil
+}
+
+func (r RedisReadTest) GetFileInfo(s string, ctx context.Context) ([]byte, error) {
+	d, _ := json.Marshal([]byte(rand.Text()))
+
+	return d, nil
 }
 
 type RedisTestIO struct {

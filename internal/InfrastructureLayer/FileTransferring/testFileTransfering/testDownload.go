@@ -2,55 +2,46 @@ package testFileTransfering
 
 import (
 	"Kaban/internal/DomainLevel"
+	"bytes"
 	"context"
 	"io"
-	"os"
 )
 
-type TestDownload struct {
-	f *os.File
+type TestDownloader struct {
 }
 
-func NewTestDownload() *TestDownload {
-	return &TestDownload{}
+func GetTestDownloader() *TestDownloader {
+	return &TestDownloader{}
 }
 
-func (t *TestDownload) Downloader() (io.Reader, error) {
-	return t.f, nil
+func (t TestDownloader) Downloader() (io.Reader, error) {
+	return bytes.NewReader(Hub), nil
 }
 
-func (t *TestDownload) CloseSource() error {
-	return t.f.Close()
+func (t TestDownloader) CloseSource() error {
+	return nil
 }
 
-func (t *TestDownload) SetName(s string) DomainLevel.MakerDownloader {
+func (t TestDownloader) SetName(s string) DomainLevel.MakerDownloader {
 	return t
 }
 
-func (t *TestDownload) SetSize(i int64) DomainLevel.MakerDownloader {
+func (t TestDownloader) SetSize(i int64) DomainLevel.MakerDownloader {
 	return t
 }
 
-func (t *TestDownload) GetFileSize() int64 {
-	return 0
+func (t TestDownloader) GetFileSize() int64 {
+	return 100
 }
 
-func (t *TestDownload) GetFileName() string {
-	return ""
+func (t TestDownloader) GetFileName() string {
+	return "test"
 }
 
-func (t *TestDownload) Make(ctx context.Context) (DomainLevel.Download, error) {
-	file, err := os.Open("example1.txt")
-	if err != nil {
-		panic(err)
-	}
-
-	t.f = file
-
+func (t TestDownloader) Make(ctx context.Context) (DomainLevel.Download, error) {
 	return t, nil
 }
 
-func (t TestDownload) SetAdditionalReader(reader io.Reader) DomainLevel.MakerDownloader {
-	//TODO implement me
-	panic("implement me")
+func (t TestDownloader) SetAdditionalReader(reader io.Reader) DomainLevel.MakerDownloader {
+	return t
 }

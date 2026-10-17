@@ -17,7 +17,7 @@ import (
 )
 
 type UploaderEncryptApplication interface {
-	UploadEncrypt(IncomeData) (string, error)
+	UploadEncrypt(UploadEncryptIncomeData) (string, error)
 }
 
 const ErrorUploadingEncrypt = "an unexpected error occurred while loading encryption"
@@ -48,22 +48,25 @@ func GetNewUploadEncrypt(newUploadEncryptDataManage NewUploadEncryptDataManage, 
 	return &UploadEncrypt{NewUploadEncryptDataManage: newUploadEncryptDataManage, NewUploadEncryptCrypto: newUploadEncryptCrypto, NewUploadEncryptDelivery: newUploadEncryptDelivery}
 }
 
-type IncomeData struct {
+type UploadEncryptIncomeData struct {
 	File io.Reader
 	Name string
 	Ctx  context.Context
 	Size int64
 }
 
-func (sa *UploadEncrypt) UploadEncrypt(data IncomeData) (string, error) {
+func (sa *UploadEncrypt) UploadEncrypt(data UploadEncryptIncomeData) (string, error) {
 	if data.Size >= FileMaxSize {
 		return "", ErrorFileSizeBig
 	}
+
 	g, ctx := errgroup.WithContext(data.Ctx)
+
 	x, err := sa.Uploader.SetName(data.Name).SetSize(data.Size).Make(ctx)
 	if err != nil {
 		return "", err
 	}
+
 	defer x.CloseSource()
 
 	shortNameFile := sa.Generate.GenerateText(4)

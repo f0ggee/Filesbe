@@ -11,9 +11,6 @@ import (
 type DownloadApplication interface {
 	Download(context.Context, string) error
 }
-type DownloadNetwork struct {
-	W io.Writer
-}
 
 type DownloadFileControl struct {
 	Downloader DomainLevel.MakerDownloader
@@ -21,18 +18,13 @@ type DownloadFileControl struct {
 	Deleter    DomainLevel.MakerDeleter
 	Decoder    DomainLevel.Decoder
 }
-type DownloadDelivery struct {
-	Reader DomainLevel.ReadingRedis
-}
+
 type NewDownload struct {
-	DownloadDelivery
 	DownloadFileControl
-	DownloadNetwork
+	Reader DomainLevel.ReadingRedis
+	W      io.Writer
 }
 
-func GetNewDownload(downloadWithNonEncryptDelivery DownloadDelivery, downloadWithNonEncryptFileControl DownloadFileControl, downloadNotEncryptNetwork DownloadNetwork) *NewDownload {
-	return &NewDownload{DownloadDelivery: downloadWithNonEncryptDelivery, DownloadFileControl: downloadWithNonEncryptFileControl, DownloadNetwork: downloadNotEncryptNetwork}
-}
 func (sa *NewDownload) Download(IncomeContext context.Context, name string) error {
 	fileNameInBytes, err := sa.Reader.GetFileInfo(name, IncomeContext)
 	if err != nil {
@@ -40,7 +32,7 @@ func (sa *NewDownload) Download(IncomeContext context.Context, name string) erro
 	}
 	g, _ := errgroup.WithContext(IncomeContext)
 	var trueFileName string
-	err = sa.Decoder.Decode(fileNameInBytes, []byte(trueFileName))
+	err = sa.Decoder.Decode([]byte(trueFileName), fileNameInBytes)
 	if err != nil {
 		return err
 	}
