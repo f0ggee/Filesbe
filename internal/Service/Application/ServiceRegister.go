@@ -18,8 +18,8 @@ func GetNewRegisterTest() *RegisterTest {
 }
 
 func (r RegisterTest) RegisterApplication(ctx context.Context, register *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
-	JwtToken := Tokens.GetNewJwtToken()
-	RfToken := Tokens.GetNewRfToken()
+	JwtToken := Tokens.NewJwtToken()
+	RfToken := Tokens.NewRfToken()
 
 	jwtMaker, err := JwtToken.Make()
 	if err != nil {

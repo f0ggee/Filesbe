@@ -128,8 +128,8 @@ type TokensAuthCollector struct {
 
 func GetNewTokensAuthCollector() TokensAuthCollector {
 	return TokensAuthCollector{
-		Jwt: Tokens.GetNewJwtToken(),
-		Rf:  Tokens.GetNewRfToken(),
+		Jwt: Tokens.NewJwtToken(),
+		Rf:  Tokens.NewRfToken(),
 	}
 }
 

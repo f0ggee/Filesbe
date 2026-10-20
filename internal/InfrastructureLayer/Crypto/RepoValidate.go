@@ -11,22 +11,22 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const (
-	ErrorSignCheck = "the signature isn't correct"
-	ErrorPassword  = "the password isn't correct"
+var (
+	ErrorSignCheck = errors.New("the signature isn't correct")
+	ErrorPassword  = errors.New("the password isn't correct")
 )
 
 type Checking struct{}
 
-func GetNewChecking() Checking {
-	return Checking{}
+func GetNewChecking() *Checking {
+	return &Checking{}
 }
 
 func (c *Checking) PasswordVerify(hashOfPassword []byte, password []byte) error {
-	err := bcrypt.CompareHashAndPassword((hashOfPassword), []byte(password))
+	err := bcrypt.CompareHashAndPassword(hashOfPassword, password)
 	if err != nil {
-		slog.Error("PasswordVerify;Error while checking the password", "Error", err.Error())
-		return errors.New(ErrorPassword)
+		slog.Error("PasswordVerify: the password isn't correct", "ERROR", err.Error())
+		return ErrorPassword
 
 	}
 	return nil
@@ -42,7 +42,38 @@ func (c *Checking) CheckSign(data DomainLevel.CheckSignKeyIncomingData) error {
 	err = rsa.VerifyPKCS1v15(publicKeyMasterServer, crypto.SHA256, data.Hash, data.Sign)
 	if err != nil {
 		slog.Error("CheckSignKey; Error verifying signature", "Error", err.Error())
-		return errors.New(ErrorSignCheck)
+		return ErrorSignCheck
 	}
 	return nil
+}
+
+type CheckingTest struct {
+}
+
+func NewCheckingTest() *CheckingTest {
+	return &CheckingTest{}
+}
+
+func (c CheckingTest) CheckSign(data DomainLevel.CheckSignKeyIncomingData) error {
+	return nil
+}
+
+func (c CheckingTest) PasswordVerify(bytes []byte, bytes2 []byte) error {
+	return nil
+}
+
+type CheckingTestError struct {
+}
+
+func NewCheckingTestError() *CheckingTestError {
+	return &CheckingTestError{}
+}
+
+func (c CheckingTestError) CheckSign(data DomainLevel.CheckSignKeyIncomingData) error {
+	return nil
+}
+
+func (c CheckingTestError) PasswordVerify(bytes []byte, bytes2 []byte) error {
+
+	return ErrorPassword
 }

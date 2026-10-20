@@ -2,7 +2,9 @@ package DatabaseControl
 
 import (
 	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/Crypto"
 	"context"
+	"crypto/rand"
 	"database/sql"
 	"errors"
 	"log/slog"
@@ -46,5 +48,47 @@ func (D Read) LoginData(ctx context.Context, s string) DomainLevel.OutComingLogi
 	return DomainLevel.OutComingLoginData{
 		Id:           id,
 		HashPassword: password,
+	}
+}
+
+type ReaderTest struct {
+}
+
+func NewReaderTest() *ReaderTest {
+	return &ReaderTest{}
+}
+
+func (r ReaderTest) LoginData(ctx context.Context, s string) DomainLevel.OutComingLoginData {
+
+	if ctx.Value("mode").(int) == 1 {
+		return DomainLevel.OutComingLoginData{
+			Id:           123,
+			HashPassword: "password",
+			Err:          nil,
+		}
+	}
+	if ctx.Value("mode").(int) == 2 {
+		hash, _ := Crypto.GetNewGenerating().GenerateHash([]byte(rand.Text()))
+		return DomainLevel.OutComingLoginData{
+			Id:           123,
+			HashPassword: string(hash),
+			Err:          nil,
+		}
+
+	}
+	if ctx.Value("mode").(int) == 3 {
+		hash, _ := Crypto.GetNewGenerating().GenerateHash([]byte("1234"))
+
+		return DomainLevel.OutComingLoginData{
+			Id:           1234,
+			HashPassword: string(hash),
+			Err:          nil,
+		}
+
+	}
+	return DomainLevel.OutComingLoginData{
+		Id:           123,
+		HashPassword: "password",
+		Err:          nil,
 	}
 }

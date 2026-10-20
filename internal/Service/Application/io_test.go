@@ -297,7 +297,7 @@ func TestApplicationIO(t *testing.T) {
 			},
 		},
 		{
-			name: "test1",
+			name: "test2",
 			Upload: NewUpload{
 				NewFileUploaderCrypto: NewFileUploaderCrypto{
 					Generator: Crypto.GetNewGenerating(),
@@ -338,7 +338,6 @@ func TestApplicationIO(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			_, err := tt.Upload.UploadApplication(tt.UploadParam)
 			if err != nil {
 				t.Fatalf("Error %v\n", err)

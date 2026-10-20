@@ -25,7 +25,14 @@ type CryptoGenerating interface {
 	GenerateSignature(message []byte, key []byte) ([]byte, error)
 	GenerateHash([]byte) ([]byte, error)
 }
-
+type Sign interface {
+	MakeNew() ([]byte, error)
+	Check(signature []byte) error
+}
+type SignatureMaker interface {
+	SetAdditionalData(data []byte) SignatureMaker
+	Make(key []byte) Sign
+}
 type Crypto interface {
 	Encrypt([]byte) ([]byte, error)
 	Decrypt([]byte) ([]byte, error)

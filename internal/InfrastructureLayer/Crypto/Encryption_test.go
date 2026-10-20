@@ -79,7 +79,7 @@ func TestCrypto(t *testing.T) {
 					return key
 				}(),
 				nonce: func() []byte {
-					key := make([]byte, Crypto.NewRsaEncryption().GetRequiredOverheadSize())
+					key := make([]byte, Crypto.NewAesGcmEncryption().GetRequiredOverheadSize())
 					if _, err := io.ReadFull(rand.Reader, key); err != nil {
 						panic(err)
 					}
