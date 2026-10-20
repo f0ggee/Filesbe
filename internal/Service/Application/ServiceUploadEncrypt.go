@@ -16,10 +16,6 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-type UploaderEncryptApplication interface {
-	UploadEncrypt(UploadEncryptIncomeData) (string, error)
-}
-
 const ErrorUploadingEncrypt = "an unexpected error occurred while loading encryption"
 
 type NewUploadEncryptCrypto struct {
@@ -55,7 +51,7 @@ type UploadEncryptIncomeData struct {
 	Size int64
 }
 
-func (sa *UploadEncrypt) UploadEncrypt(data UploadEncryptIncomeData) (string, error) {
+func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) (string, error) {
 	if data.Size >= FileMaxSize {
 		return "", ErrorFileSizeBig
 	}

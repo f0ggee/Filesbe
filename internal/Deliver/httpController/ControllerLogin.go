@@ -43,7 +43,7 @@ func (D *LoginController) LoginController() {
 		return
 	}
 
-	loginDataOutput := D.App.Login(D.R.Context(), *DataUserLogin)
+	loginDataOutput := D.App.LoginApplication(D.R.Context(), *DataUserLogin)
 	if loginDataOutput.Err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,

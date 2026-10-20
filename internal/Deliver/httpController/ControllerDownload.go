@@ -35,7 +35,7 @@ func (d *DownloadController) DownloadWithNotEncrypt() {
 		return
 	}
 
-	err := d.Download(d.R.Context(), name)
+	err := d.DownloadApplication(d.R.Context(), name)
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    d.W,

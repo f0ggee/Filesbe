@@ -5,19 +5,12 @@ import (
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"bytes"
 	"context"
-	"errors"
 	"io"
 	"log/slog"
 
 	"github.com/awnumar/memguard"
 	"golang.org/x/sync/errgroup"
 )
-
-type DownloadEncryptApplication interface {
-	DownloadEncrypt(DownloadEncryptIncomeData) error
-}
-
-var ErrorDecryptFile = errors.New("error to decrypt data")
 
 type NewDownloadEncryptFileControl struct {
 	Uploader   DomainLevel.MakerUploader
@@ -47,7 +40,7 @@ type DownloadEncryptIncomeData struct {
 	EncryptedName string
 }
 
-func (s *DownloadEncrypt) DownloadEncrypt(data DownloadEncryptIncomeData) error {
+func (s *DownloadEncrypt) DownloadEncryptApplication(data DownloadEncryptIncomeData) error {
 
 	g, _ := errgroup.WithContext(data.Ctx)
 

@@ -7,10 +7,6 @@ import (
 	"encoding/binary"
 )
 
-type LoginApplication interface {
-	Login(context.Context, Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData
-}
-
 type NewLogin struct {
 	ReaderDatabase DomainLevel.ReadDb
 	Validate       DomainLevel.CryptoValidating
@@ -18,7 +14,7 @@ type NewLogin struct {
 	Jwt            DomainLevel.AuthMaker
 }
 
-func (sa *NewLogin) Login(ctx context.Context, s Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData {
+func (sa *NewLogin) LoginApplication(ctx context.Context, s Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData {
 	usersData := sa.ReaderDatabase.LoginData(ctx, s.Email)
 	if usersData.Err != nil {
 		return DomainLevel.LoginApplicationOutComingData{

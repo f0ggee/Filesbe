@@ -223,7 +223,7 @@ func TestApplicationIOCrypto(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := tt.uploadField.UploadEncrypt(UploadEncryptIncomeData{
+			_, err := tt.uploadField.UploadEncryptApplication(UploadEncryptIncomeData{
 				File: tt.uploadParam.src,
 				Name: "",
 				Ctx:  context.Background(),
@@ -233,7 +233,7 @@ func TestApplicationIOCrypto(t *testing.T) {
 				t.Fatalf("Got an error %v but wanted %v", err, tt.wantErr)
 			}
 
-			err = tt.downloadField.DownloadEncrypt(DownloadEncryptIncomeData{
+			err = tt.downloadField.DownloadEncryptApplication(DownloadEncryptIncomeData{
 				dst:           httptest.NewRecorder(),
 				Ctx:           context.Background(),
 				EncryptedName: "",
@@ -339,11 +339,11 @@ func TestApplicationIO(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			_, err := tt.Upload.Upload(tt.UploadParam)
+			_, err := tt.Upload.UploadApplication(tt.UploadParam)
 			if err != nil {
 				t.Fatalf("Error %v\n", err)
 			}
-			err = tt.Download.Download(tt.DownloadParam.ctx, tt.DownloadParam.name)
+			err = tt.Download.DownloadApplication(tt.DownloadParam.ctx, tt.DownloadParam.name)
 			if err != nil {
 				t.Fatalf("Error %v\n", err)
 			}

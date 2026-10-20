@@ -8,10 +8,6 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-type DownloadApplication interface {
-	Download(context.Context, string) error
-}
-
 type DownloadFileControl struct {
 	Downloader DomainLevel.MakerDownloader
 	Uploader   DomainLevel.MakerUploader
@@ -25,7 +21,7 @@ type NewDownload struct {
 	W      io.Writer
 }
 
-func (sa *NewDownload) Download(IncomeContext context.Context, name string) error {
+func (sa *NewDownload) DownloadApplication(IncomeContext context.Context, name string) error {
 	fileNameInBytes, err := sa.Reader.GetFileInfo(name, IncomeContext)
 	if err != nil {
 		return err

@@ -11,17 +11,13 @@ import (
 	"github.com/awnumar/memguard"
 )
 
-type RegisterApplication interface {
-	RegisterApp(context.Context, *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData
-}
-
 type RegisterTest struct{}
 
 func GetNewRegisterTest() *RegisterTest {
 	return &RegisterTest{}
 }
 
-func (r RegisterTest) RegisterApp(ctx context.Context, register *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
+func (r RegisterTest) RegisterApplication(ctx context.Context, register *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
 	JwtToken := Tokens.GetNewJwtToken()
 	RfToken := Tokens.GetNewRfToken()
 
@@ -62,7 +58,7 @@ type NewRegisterApplication struct {
 	Jwt DomainLevel.AuthMaker
 }
 
-func (sa *NewRegisterApplication) RegisterApp(ctx context.Context, de *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
+func (sa *NewRegisterApplication) RegisterApplication(ctx context.Context, de *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
 	err := sa.CheckingDb.CheckerUser(ctx, de.Email)
 	if err != nil {
 		return DomainLevel.RegisterApplicationOutComingData{Err: err}

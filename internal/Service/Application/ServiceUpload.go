@@ -4,23 +4,10 @@ import (
 	"Kaban/internal/DomainLevel"
 
 	"context"
-	"errors"
 	"io"
 
 	"golang.org/x/sync/errgroup"
 )
-
-const (
-	FileMaxSize = 500000000
-)
-
-var (
-	ErrorFileSizeBig = errors.New("the File's size is bigger than the default size")
-)
-
-type UploadApplication interface {
-	Upload(UploadIncomeData) (string, error)
-}
 
 type NewFileUploaderDataMange struct {
 	Encode DomainLevel.Encoder
@@ -50,7 +37,7 @@ type UploadIncomeData struct {
 	Ctx  context.Context
 }
 
-func (sa *NewUpload) Upload(r UploadIncomeData) (string, error) {
+func (sa *NewUpload) UploadApplication(r UploadIncomeData) (string, error) {
 	g, ctx := errgroup.WithContext(r.Ctx)
 	if r.Size >= FileMaxSize {
 		return "", ErrorFileSizeBig

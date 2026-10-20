@@ -97,7 +97,7 @@ func (S *UploadEncryptController) FileUploaderEncrypt() {
 		})
 		return
 	}
-	fileName, err := S.UploadEncrypt(Application.UploadEncryptIncomeData{
+	fileName, err := S.UploadEncryptApplication(Application.UploadEncryptIncomeData{
 		File: file,
 		Name: sizeAndName.Filename,
 		Size: sizeAndName.Size,

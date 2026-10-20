@@ -22,15 +22,13 @@ type DownloadBuilderApplication struct {
 
 func GetDownloadApplicationBuilder(Transferring DownloadBuilderApplication) Application.NewDownload {
 	return Application.NewDownload{
-		DownloadDelivery: Application.DownloadDelivery{
-			Reader: Transferring.Red.Read,
-		},
 		DownloadFileControl: Application.DownloadFileControl{
 			Downloader: &Transferring.Trans.Download,
 			Uploader:   &Transferring.Trans.HttpFileTransferringCollector.Upload,
 			Deleter:    &Transferring.Trans.Delete,
 			Decoder:    Transferring.Parse.Parser,
 		},
+		Reader: Transferring.Red.Read,
 	}
 }
 

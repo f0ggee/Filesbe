@@ -48,7 +48,7 @@ func (D RegisterController) Register() {
 		return
 	}
 
-	RegisterOutput := D.App.RegisterApp(D.R.Context(), &userDataRegister)
+	RegisterOutput := D.App.RegisterApplication(D.R.Context(), &userDataRegister)
 	if RegisterOutput.Err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,
