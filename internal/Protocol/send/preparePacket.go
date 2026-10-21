@@ -19,12 +19,19 @@ type FirstExchange struct {
 	Encoder        DomainLevel.Encoder
 	Aes            DomainLevel.CryptoMaker
 	Rsa            DomainLevel.CryptoMaker
+	Sign           DomainLevel.SignatureMaker
 }
 
 // GetEncryptedPacket prepares and encrypts a packet to send it to a Master server
 func (f FirstExchange) GetEncryptedPacket() ([]byte, error) {
 	var serverName = os.Getenv("server_name")
-	signedServerName, err := f.CryptoGenerate.GenerateSignature([]byte(serverName), DomainLevel.ServerKeys.GerOurPrivateKey())
+
+	singMaker, err := f.Sign.MakeSigner(DomainLevel.ServerKeys.GerOurPrivateKey())
+	if err != nil {
+		return nil, err
+	}
+	signedServerName, err := singMaker.MakeSign([]byte(serverName))
+
 	if err != nil {
 		return nil, err
 	}

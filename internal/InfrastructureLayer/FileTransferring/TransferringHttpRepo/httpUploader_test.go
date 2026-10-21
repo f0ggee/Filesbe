@@ -69,7 +69,7 @@ func TestHttpUploader_Uploader(t *testing.T) {
 				name:     tt.fields.name,
 				source:   tt.fields.source,
 			}
-			if err := h.Uploader(bytes.NewReader(tt.args.data)); (err != nil) != tt.wantErr {
+			if err := h.Upload(bytes.NewReader(tt.args.data)); (err != nil) != tt.wantErr {
 				t.Errorf("Uploader() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if !bytes.Equal(h.source.(*httptest.ResponseRecorder).Body.Bytes(), tt.args.data) {

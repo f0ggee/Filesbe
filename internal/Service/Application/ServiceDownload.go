@@ -47,7 +47,7 @@ func (sa *NewDownload) DownloadApplication(IncomeContext context.Context, name s
 		if err != nil {
 			return err
 		}
-		err = uploaded.Uploader(dow)
+		err = uploaded.Upload(dow)
 		deletedObj, err := sa.Deleter.SetName(trueFileName).Make(IncomeContext)
 		if err != nil {
 			return err

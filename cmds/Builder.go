@@ -6,6 +6,9 @@ package cmds
 import (
 	"Kaban/internal/Deliver/httpController"
 	"Kaban/internal/DomainLevel"
+	"Kaban/internal/InfrastructureLayer/Parsers"
+	"Kaban/internal/Protocol/receive"
+	"Kaban/internal/Protocol/send"
 	"Kaban/internal/Service/Application"
 
 	"github.com/gorilla/mux"
@@ -46,8 +49,7 @@ func GetDownloadEncryptApplicationBuilder(D DownloadEncryptApplication) Applicat
 			DeleterRedis: D.Red.Delete,
 		},
 		NewDownloadEncryptCrypto: Application.NewDownloadEncryptCrypto{
-			Aes:           &D.Crypt.AesCtrRealization,
-			EncrypterKeys: D.Keys.Keys,
+			Aes: &D.Crypt.AesCtrRealization,
 		},
 		NewDownloadEncryptFileControl: Application.NewDownloadEncryptFileControl{
 			Uploader:   &D.Transferring.HttpFileTransferringCollector.Upload,
@@ -67,7 +69,7 @@ func GetLoginApplicationBuilder(L LoginApplication) Application.NewLogin {
 
 	return Application.NewLogin{
 		ReaderDatabase: L.DB.Read,
-		Validate:       &L.Crypt.Validate,
+		Validate:       &L.Crypt.CryptoCheck,
 		Rf:             &L.Tokens.Rf,
 		Jwt:            &L.Tokens.Rf,
 	}
@@ -81,11 +83,11 @@ type RegisterApplication struct {
 
 func GetRegisterBuilder(R RegisterApplication) Application.NewRegisterApplication {
 	return Application.NewRegisterApplication{
-		CheckingDb: nil,
-		WriterDb:   nil,
-		Generator:  nil,
-		Rft:        nil,
-		Jwt:        nil,
+		CheckingDb: R.DB.Check,
+		WriterDb:   R.DB.Write,
+		Generator:  R.Crypt.Generate,
+		Rft:        &R.Tokens.Rf,
+		Jwt:        &R.Tokens.Jwt,
 	}
 }
 
@@ -230,5 +232,36 @@ func GetControllerUrlBuildBuilder() httpController.BuildUrlController {
 func GetCheckUsers() httpController.CheckUserAuthController {
 	return httpController.CheckUserAuthController{
 		CheckUserAuthNetWork: httpController.CheckUserAuthNetWork{},
+	}
+}
+
+//protocol functions
+
+type IncomeCheckPacketBuilder struct {
+	Parser      Parsers.Parsing
+	CryptoGraph CryptoCollector
+}
+
+func GetCheckPacketBuilder(I IncomeCheckPacketBuilder) receive.GetNewKey {
+	return receive.GetNewKey{
+		Decoder:  I.Parser,
+		Aes:      I.CryptoGraph.AesGcmRealization,
+		Rsa:      &I.CryptoGraph.RsaRealization,
+		Validate: &I.CryptoGraph.RsaSigns,
+	}
+}
+
+type IncomeEncryptedPacketBuilder struct {
+	CryptoGraph CryptoCollector
+	Parser      Parsers.Parsing
+}
+
+func GetEncryptedPacketBuilder(I IncomeEncryptedPacketBuilder) send.FirstExchange {
+	return send.FirstExchange{
+		CryptoGenerate: I.CryptoGraph.Generate,
+		Encoder:        I.Parser,
+		Aes:            I.CryptoGraph.AesGcmRealization,
+		Rsa:            &I.CryptoGraph.RsaRealization,
+		Sign:           &I.CryptoGraph.RsaSigns,
 	}
 }

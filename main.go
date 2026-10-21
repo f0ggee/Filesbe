@@ -6,7 +6,6 @@ import (
 	gr "Kaban/internal/InfrastructureLayer/Grpc"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/Protocol/receive"
-	"Kaban/internal/Protocol/send"
 	"context"
 	"log/slog"
 	"runtime"
@@ -65,13 +64,10 @@ func main() {
 		Router:              router,
 		ParserCollector:     parserCollector,
 	})
-
-	var protocolFirst = send.FirstExchange{
-		CryptoGenerate: cryptoCollector.Generate,
-		Encoder:        parserCollector.Parser,
-		Aes:            cryptoCollector.AesGcmRealization,
-		Rsa:            &cryptoCollector.RsaRealization,
-	}
+	protocolFirst := cmds.GetEncryptedPacketBuilder(cmds.IncomeEncryptedPacketBuilder{
+		CryptoGraph: cryptoCollector,
+		Parser:      parserCollector.Parser,
+	})
 
 	preparingData, err := protocolFirst.GetEncryptedPacket()
 	if err != nil {
@@ -85,12 +81,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	var GetPacketData = receive.GetNewKey{
-		Decoder:        parserCollector.Parser,
-		CryptoValidate: &cryptoCollector.Validate,
-		TempKey:        sessionKeys.Keys,
-	}
+	GetPacketData := cmds.GetCheckPacketBuilder(cmds.IncomeCheckPacketBuilder{
+		Parser:      parserCollector.Parser,
+		CryptoGraph: cryptoCollector,
+	})
 
 	timeDuration, err := GetPacketData.GetPacketData(data)
 	if err != nil {

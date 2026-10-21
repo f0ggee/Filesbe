@@ -21,8 +21,9 @@ type CryptoCollector struct {
 	RsaRealization    Crypto.RsaEncryption
 	AesGcmRealization Crypto.AesEncryption
 	AesCtrRealization Crypto.AesCtrEncryption
-	Validate          Crypto.Checking
+	RsaSigns          Crypto.RsaSigner
 	Generate          Crypto.Generating
+	CryptoCheck       Crypto.Checking
 }
 
 func GetCryptoCollector() CryptoCollector {
@@ -30,8 +31,9 @@ func GetCryptoCollector() CryptoCollector {
 		RsaRealization:    *Crypto.NewRsaEncryption(),
 		AesGcmRealization: Crypto.NewAesGcmEncryption(),
 		AesCtrRealization: *Crypto.NewAesCtr(),
-		Validate:          Crypto.GetNewChecking(),
+		RsaSigns:          *Crypto.NewRsaSigner(),
 		Generate:          Crypto.GetNewGenerating(),
+		CryptoCheck:       *Crypto.GetNewChecking(),
 	}
 }
 
@@ -128,8 +130,8 @@ type TokensAuthCollector struct {
 
 func GetNewTokensAuthCollector() TokensAuthCollector {
 	return TokensAuthCollector{
-		Jwt: Tokens.NewJwtToken(),
-		Rf:  Tokens.NewRfToken(),
+		Jwt: *Tokens.NewJwtToken(),
+		Rf:  *Tokens.NewRfToken(),
 	}
 }
 

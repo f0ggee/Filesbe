@@ -19,10 +19,9 @@ import (
 const ErrorUploadingEncrypt = "an unexpected error occurred while loading encryption"
 
 type NewUploadEncryptCrypto struct {
-	Generate      DomainLevel.CryptoGenerating
-	Encrypt       DomainLevel.CryptoMaker
-	Rsa           DomainLevel.CryptoMaker
-	EncrypterKeys RepoEncrypterKeys.Keys
+	Generate DomainLevel.CryptoGenerating
+	Encrypt  DomainLevel.CryptoMaker
+	Rsa      DomainLevel.CryptoMaker
 }
 type NewUploadEncryptDataManage struct {
 	Encode DomainLevel.Encoder
@@ -38,6 +37,7 @@ type UploadEncrypt struct {
 	NewUploadEncryptDataManage
 	NewUploadEncryptCrypto
 	NewUploadEncryptDelivery
+	enc EncryptFile
 }
 
 func GetNewUploadEncrypt(newUploadEncryptDataManage NewUploadEncryptDataManage, newUploadEncryptCrypto NewUploadEncryptCrypto, newUploadEncryptDelivery NewUploadEncryptDelivery) *UploadEncrypt {
@@ -71,7 +71,7 @@ func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) 
 	fillOut(allData.Data())
 
 	g.Go(func() error {
-		err := sa.encryptFile(data.File, x, allData.Data())
+		err := sa.enc.encryptFile(data.File, x, allData.Data())
 		if err != nil {
 			return err
 		}
@@ -86,7 +86,7 @@ func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) 
 		slog.Error("UploadEncrypt; error to encode data into Json", "ERROR", err)
 		return "", errors.New(ErrorUploadingEncrypt)
 	}
-	encr, err := sa.Rsa.MakeCrypto(sa.EncrypterKeys.GetKey(), nil)
+	encr, err := sa.Rsa.MakeCrypto(RepoEncrypterKeys.KeysControl.GetKey(), nil)
 	if err != nil {
 		return "", err
 	}
@@ -119,7 +119,11 @@ func fillOut(allData []byte) {
 	return
 }
 
-func (sa *UploadEncrypt) encryptFile(src io.Reader, dst DomainLevel.Upload, data []byte) error {
+type EncryptFile struct {
+	Encrypt DomainLevel.CryptoMaker
+}
+
+func (sa *EncryptFile) encryptFile(src io.Reader, dst DomainLevel.Upload, data []byte) error {
 	cryptoData, err := sa.Encrypt.MakeCrypto(data[sa.Encrypt.GetRequiredOverheadSize():], data[:sa.Encrypt.GetRequiredOverheadSize()])
 	if err != nil {
 		return err
@@ -133,7 +137,7 @@ func (sa *UploadEncrypt) encryptFile(src io.Reader, dst DomainLevel.Upload, data
 			if err != nil {
 				return err
 			}
-			err = dst.Uploader(bytes.NewReader(outData))
+			err = dst.Upload(bytes.NewReader(outData))
 			if err != nil {
 				slog.Error("EncryptFile; error to write in the stream", "ERROR", err.Error())
 				return err

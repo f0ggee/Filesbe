@@ -14,11 +14,6 @@ import (
 	"log/slog"
 )
 
-const ErrorStartEncryption = "can't start encrypting"
-const ErrorAuthFail = "the encryption key1 isn't correct"
-const ErrorInvalidData = "the data isn't correct "
-const ErrorInvalidMode = "the crypto mode isn't correct"
-
 type RsaEncryption struct {
 	privKey *rsa.PrivateKey
 	pubKey  *rsa.PublicKey
@@ -35,13 +30,13 @@ func NewRsaEncryption() *RsaEncryption {
 
 func (r *RsaEncryption) Encrypt(bytes []byte) ([]byte, error) {
 	if r.pubKey == nil {
-		return nil, errors.New(ErrorInvalidMode)
+		return nil, ErrorInvalidMode
 	}
 	return rsa.EncryptOAEP(sha256.New(), rand.Reader, r.pubKey, bytes, nil)
 }
 func (r *RsaEncryption) Decrypt(bytes []byte) ([]byte, error) {
 	if r.privKey == nil {
-		return nil, errors.New(ErrorInvalidMode)
+		return nil, ErrorInvalidMode
 	}
 
 	return rsa.DecryptOAEP(sha256.New(), rand.Reader, r.privKey, bytes, nil)
@@ -66,7 +61,7 @@ func (r *RsaEncryption) MakeCrypto(key []byte, spectr []byte) (DomainLevel.Crypt
 	}
 
 	slog.Error("RsaCrypotMaker: error to determine a key", "ERROR", err)
-	return nil, errors.New(ErrorInvalidData)
+	return nil, ErrorInvalidData
 }
 
 type AesEncryption struct {
@@ -111,12 +106,12 @@ func (a AesEncryption) MakeCrypto(bytes []byte, i []byte) (DomainLevel.Crypto, e
 	block, err := aes.NewCipher(bytes)
 	if err != nil {
 		slog.Error("MakeCrypto AES: error can't made a block", "ERROR", err)
-		return nil, errors.New(ErrorStartEncryption)
+		return nil, ErrorStartEncryption
 	}
 	aead, err := cipher.NewGCM(block)
 	if err != nil {
 		slog.Error("MakeCrypto AES: error can't initializer a GCM mode", "ERROR", err)
-		return nil, errors.New(ErrorStartEncryption)
+		return nil, ErrorStartEncryption
 	}
 	return AesEncryption{
 		aesBlock: aead,

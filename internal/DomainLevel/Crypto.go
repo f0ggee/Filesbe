@@ -16,22 +16,20 @@ type CheckSignKeyIncomingData struct {
 	MasterPublicKey []byte
 }
 type CryptoValidating interface {
-	CheckSign(CheckSignKeyIncomingData) error
 	PasswordVerify([]byte, []byte) error
 }
 
 type CryptoGenerating interface {
 	GenerateText(int) string
-	GenerateSignature(message []byte, key []byte) ([]byte, error)
 	GenerateHash([]byte) ([]byte, error)
 }
-type Sign interface {
-	MakeNew() ([]byte, error)
-	Check(signature []byte) error
+type Signer interface {
+	MakeSign(signData []byte) ([]byte, error)
+	CheckSign(signature []byte) error
 }
 type SignatureMaker interface {
 	SetAdditionalData(data []byte) SignatureMaker
-	Make(key []byte) Sign
+	MakeSigner(key []byte) (Signer, error)
 }
 type Crypto interface {
 	Encrypt([]byte) ([]byte, error)

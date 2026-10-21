@@ -15,18 +15,23 @@ type Keys struct {
 	Rm     *sync.RWMutex
 }
 
-func GetKeysTest() Keys {
+var KeysControl Keys
+
+func init() {
 	keys, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		panic(err)
 	}
-
-	var k Keys
+	KeysControl = Keys{
+		OldKey: &memguard.LockedBuffer{},
+		NewKey: &memguard.LockedBuffer{},
+		Rm:     &sync.RWMutex{},
+	}
 	x := x509.MarshalPKCS1PrivateKey(keys)
-	k.Rm = &sync.RWMutex{}
-	k.UpdateNewKey(x)
-	return k
+	KeysControl.UpdateNewKey(x)
+
 }
+
 func GetKeys() Keys {
 
 	var k Keys
@@ -36,9 +41,15 @@ func GetKeys() Keys {
 }
 
 func (s *Keys) GetKey() []byte {
+	s.Rm.RLock()
+	defer s.Rm.RUnlock()
 	return s.NewKey.Data()
 }
-func (s *Keys) GetOldKey() []byte { return s.OldKey.Bytes() }
+func (s *Keys) GetOldKey() []byte {
+	s.Rm.RLock()
+	defer s.Rm.RUnlock()
+	return s.OldKey.Bytes()
+}
 func (s *Keys) UpdateNewKey(key []byte) {
 
 	s.Rm.Lock()

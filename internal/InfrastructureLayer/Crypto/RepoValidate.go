@@ -5,15 +5,9 @@ import (
 	"crypto"
 	"crypto/rsa"
 	"crypto/x509"
-	"errors"
 	"log/slog"
 
 	"golang.org/x/crypto/bcrypt"
-)
-
-var (
-	ErrorSignCheck = errors.New("the signature isn't correct")
-	ErrorPassword  = errors.New("the password isn't correct")
 )
 
 type Checking struct{}

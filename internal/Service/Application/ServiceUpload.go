@@ -56,7 +56,7 @@ func (sa *NewUpload) UploadApplication(r UploadIncomeData) (string, error) {
 				return
 			}
 		}(uploader)
-		err = uploader.Uploader(r.File)
+		err = uploader.Upload(r.File)
 		if err != nil {
 			return err
 		}

@@ -4,18 +4,16 @@ import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/Protocol"
-	"crypto/sha256"
 	"time"
 
 	"github.com/awnumar/memguard"
 )
 
 type GetNewKey struct {
-	Decoder        DomainLevel.Decoder
-	aes            DomainLevel.CryptoMaker
-	rsa            DomainLevel.CryptoMaker
-	CryptoValidate DomainLevel.CryptoValidating
-	TempKey        RepoEncrypterKeys.Keys
+	Decoder  DomainLevel.Decoder
+	Aes      DomainLevel.CryptoMaker
+	Rsa      DomainLevel.CryptoMaker
+	Validate DomainLevel.SignatureMaker
 }
 
 // GetPacketData decrypts and cheks a packet and then returns data.
@@ -26,9 +24,9 @@ func (f GetNewKey) GetPacketData(packet []byte) (time.Duration, error) {
 		return 0, err
 	}
 
-	var ACD = f.aes.GetRequiredOverheadSize()
+	var ACD = f.Aes.GetRequiredOverheadSize()
 
-	rsaDecrypter, err := f.rsa.MakeCrypto(DomainLevel.ServerKeys.GerOurPrivateKey(), nil)
+	rsaDecrypter, err := f.Rsa.MakeCrypto(DomainLevel.ServerKeys.GerOurPrivateKey(), nil)
 	if err != nil {
 		return 0, err
 	}
@@ -38,7 +36,7 @@ func (f GetNewKey) GetPacketData(packet []byte) (time.Duration, error) {
 		return 0, err
 	}
 
-	aesCrypto, err := f.aes.MakeCrypto(decryptedAesKey, IncomePacket.CipherData[:ACD])
+	aesCrypto, err := f.Aes.MakeCrypto(decryptedAesKey, IncomePacket.CipherData[:ACD])
 	if err != nil {
 		return 0, err
 	}
@@ -60,21 +58,15 @@ func (f GetNewKey) GetPacketData(packet []byte) (time.Duration, error) {
 		return 0, err
 	}
 
-	err = f.CryptoValidate.CheckSign(DomainLevel.CheckSignKeyIncomingData{
-		Sign: PacketInfo.Sign,
-		Hash: func() []byte {
-			hash := sha256.New()
-			hash.Write(PacketInfo.RsaKey)
-			return hash.Sum(nil)
-		}(),
-		MasterPublicKey: DomainLevel.ServerKeys.GetMasterPublicKey(),
-	})
+	signMaker, err := f.Validate.MakeSigner(DomainLevel.ServerKeys.GetMasterPublicKey())
 	if err != nil {
 		return 0, err
 	}
-
-	f.TempKey.UpdateNewKey(PacketInfo.RsaKey)
-	f.TempKey.UpdateOldKey()
-
+	err = signMaker.CheckSign(PacketInfo.Sign)
+	if err != nil {
+		return 0, err
+	}
+	RepoEncrypterKeys.KeysControl.UpdateNewKey(PacketInfo.RsaKey)
+	RepoEncrypterKeys.KeysControl.UpdateOldKey()
 	return PacketInfo.T1, nil
 }

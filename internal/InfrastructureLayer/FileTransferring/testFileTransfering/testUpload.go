@@ -19,7 +19,7 @@ func (f *FirstUploading) CloseSource() error {
 	return nil
 
 }
-func (f *FirstUploading) Uploader(r io.Reader) error {
+func (f *FirstUploading) Upload(r io.Reader) error {
 	buf := make([]byte, 1024)
 	for {
 
@@ -72,7 +72,7 @@ func (u *UploaderSecond) CloseSource() error {
 
 }
 
-func (u *UploaderSecond) Uploader(r io.Reader) error {
+func (u *UploaderSecond) Upload(r io.Reader) error {
 
 	buf := make([]byte, 1024)
 

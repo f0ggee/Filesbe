@@ -23,15 +23,15 @@ type NewDownloadEncryptDelivery struct {
 }
 
 type NewDownloadEncryptCrypto struct {
-	Aes           DomainLevel.CryptoMaker
-	Rsa           DomainLevel.CryptoMaker
-	EncrypterKeys RepoEncrypterKeys.Keys
+	Aes DomainLevel.CryptoMaker
+	Rsa DomainLevel.CryptoMaker
 }
 type DownloadEncrypt struct {
 	NewDownloadEncryptDelivery
 	NewDownloadEncryptCrypto
 	NewDownloadEncryptFileControl
 	decoder DomainLevel.Decoder
+	decrypt DecryptFile
 }
 
 type DownloadEncryptIncomeData struct {
@@ -73,7 +73,7 @@ func (s *DownloadEncrypt) DownloadEncryptApplication(data DownloadEncryptIncomeD
 			return err
 		}
 		defer uploadedObject.CloseSource()
-		err = s.decryptFile(aesKey.Bytes(), downloadedObject, uploadedObject)
+		err = s.decrypt.decryptFile(aesKey.Bytes(), downloadedObject, uploadedObject)
 		if err != nil {
 			return err
 		}
@@ -109,8 +109,12 @@ func (s *DownloadEncrypt) getFileInfoData(safeFileData []byte) (*memguard.Locked
 	return key, outputData.FileName, nil
 }
 
-func (s *DownloadEncrypt) decryptFile(AesKey []byte, o DomainLevel.Download, uploadedObj DomainLevel.Upload) error {
-	download, err := o.Downloader()
+type DecryptFile struct {
+	Aes DomainLevel.CryptoMaker
+}
+
+func (s *DecryptFile) decryptFile(AesKey []byte, src DomainLevel.Download, dst DomainLevel.Upload) error {
+	download, err := src.Downloader()
 	if err != nil {
 		return err
 	}
@@ -134,7 +138,7 @@ func (s *DownloadEncrypt) decryptFile(AesKey []byte, o DomainLevel.Download, upl
 				slog.Error("decryptFile: error to write into a stream", "ERROR", err)
 				return ErrorDecryptFile
 			}
-			err = uploadedObj.Uploader(bytes.NewReader(decrData))
+			err = dst.Upload(bytes.NewReader(decrData))
 			if err != nil {
 				slog.Error("decryptFile: error to write into a stream", "ERROR", err)
 				return ErrorDecryptFile
@@ -154,7 +158,7 @@ func (s *DownloadEncrypt) decryptFile(AesKey []byte, o DomainLevel.Download, upl
 }
 func (s *DownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedBuffer, error) {
 	var data *memguard.LockedBuffer
-	cr, err := s.Rsa.MakeCrypto(s.EncrypterKeys.GetKey(), []byte(""))
+	cr, err := s.Rsa.MakeCrypto(RepoEncrypterKeys.KeysControl.GetKey(), []byte(""))
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +169,7 @@ func (s *DownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedB
 		memguard.WipeBytes(OutData)
 		return data, nil
 	}
-	cr, err = s.Rsa.MakeCrypto(s.EncrypterKeys.GetOldKey(), []byte(""))
+	cr, err = s.Rsa.MakeCrypto(RepoEncrypterKeys.KeysControl.GetOldKey(), []byte(""))
 	if err != nil {
 		return nil, ErrorDecryptFile
 	}

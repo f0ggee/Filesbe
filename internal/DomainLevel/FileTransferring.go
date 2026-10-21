@@ -8,7 +8,7 @@ import (
 const ChunkSize = 30 * 1024 * 1024
 
 type Upload interface {
-	Uploader(io.Reader) error
+	Upload(io.Reader) error
 	CloseSource() error
 }
 type FileDetails interface {

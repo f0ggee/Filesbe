@@ -39,7 +39,7 @@ func (s *S3Upload) SetAdditionalWriter(writer io.Writer) DomainLevel.MakerUpload
 	return nil
 }
 
-func (s *S3Upload) Uploader(reader io.Reader) error {
+func (s *S3Upload) Upload(reader io.Reader) error {
 
 	sa, err := s.uploader.UploadObject(s.ctx, &transfermanager.UploadObjectInput{
 		Bucket:      aws.String(s3Cred.getBucket()),
