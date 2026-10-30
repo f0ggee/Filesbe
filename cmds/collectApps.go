@@ -1,6 +1,8 @@
 package cmds
 
-import "Kaban/internal/Service/Application"
+import (
+	"Kaban/internal/Service/Application"
+)
 
 type AppBuilders struct {
 	download        Application.NewDownload
@@ -31,6 +33,7 @@ func CollectApplicationBuilders(c CollectorsApp) AppBuilders {
 		Crypt:        c.CryptoCollector,
 		Keys:         c.SessionKeys,
 		Transferring: c.FileTransferringCollector,
+		Parser:       c.ParserCollector.Parser,
 	})
 	loginApplication := GetLoginApplicationBuilder(LoginApplication{
 		DB:     c.DatabaseCollector,

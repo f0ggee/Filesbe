@@ -115,3 +115,40 @@ func TestCrypto(t *testing.T) {
 	}
 
 }
+
+var acdS []byte
+
+func BenchmarkNewAesCtr(b *testing.B) {
+
+	alld := make([]byte, 32+Crypto.NewAesGcmEncryption().GetRequiredOverheadSize())
+	io.ReadFull(rand.Reader, alld)
+
+	cryptsText := []byte{}
+
+	for i := 0; i < 10000; i++ {
+		cryptsText = append(cryptsText, []byte(rand.Text())...)
+	}
+	aes := Crypto.NewAesGcmEncryption()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		crypts, err := aes.MakeCrypto(alld[aes.GetRequiredOverheadSize():], alld[:aes.GetRequiredOverheadSize()])
+		if err != nil {
+			panic(err)
+		}
+		cipherText, err := crypts.Encrypt(cryptsText)
+		if err != nil {
+			panic(err)
+		}
+		crypts, err = aes.MakeCrypto(alld[aes.GetRequiredOverheadSize():], alld[:aes.GetRequiredOverheadSize()])
+		if err != nil {
+			panic(err)
+		}
+
+		acdS, err = crypts.Decrypt(cipherText)
+		if err != nil {
+			panic(err)
+		}
+
+	}
+}

@@ -40,6 +40,7 @@ type DownloadEncryptApplication struct {
 	Crypt        CryptoCollector
 	Keys         SessionKeysCollector
 	Transferring FileTransferringCollector
+	Parser       Parsers.Parsing
 }
 
 func GetDownloadEncryptApplicationBuilder(D DownloadEncryptApplication) Application.DownloadEncrypt {
@@ -56,6 +57,7 @@ func GetDownloadEncryptApplicationBuilder(D DownloadEncryptApplication) Applicat
 			Downloader: &D.Transferring.S3FileTransferringCollector.Download,
 			Deleter:    &D.Transferring.Delete,
 		},
+		Decoder: D.Parser,
 	}
 }
 
@@ -128,7 +130,7 @@ func GetUploadEncryptBuilder(d UploadEncrypt) Application.UploadEncrypt {
 		},
 		NewUploadEncryptCrypto: Application.NewUploadEncryptCrypto{
 			Generate: d.Crypt.Generate,
-			Encrypt:  &d.Crypt.AesGcmRealization,
+			Aes:      &d.Crypt.AesCtrRealization,
 		},
 		NewUploadEncryptDelivery: Application.NewUploadEncryptDelivery{
 			Uploader:     &d.Transferring.S3FileTransferringCollector.Upload,

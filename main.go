@@ -6,6 +6,7 @@ import (
 	gr "Kaban/internal/InfrastructureLayer/Grpc"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/Protocol/receive"
+	"Kaban/internal/Protocol/send"
 	"context"
 	"log/slog"
 	"runtime"
@@ -69,10 +70,7 @@ func main() {
 		Parser:      parserCollector.Parser,
 	})
 
-	preparingData, err := protocolFirst.GetEncryptedPacket()
-	if err != nil {
-		panic(err)
-	}
+	preparingData := tryPacket(protocolFirst)
 	grpcMaker, err := grpcCollector.Reqs.Make(context.Background())
 	if err != nil {
 		panic(err)
@@ -109,6 +107,20 @@ func main() {
 		return
 
 	}
+}
+
+// try to get a first packet from a Master Server. If there is an error, start panic
+func tryPacket(protocolFirst send.FirstExchange) []byte {
+
+	sec := 0
+	for i := 0; i < 5; i++ {
+
+	}
+	preparingData, err := protocolFirst.GetEncryptedPacket()
+	if err != nil {
+		panic(err)
+	}
+	return preparingData
 }
 
 func planExchange(redisCollector cmds.RedisCollector, ctx context.Context, GetPacketData receive.GetNewKey) time.Duration {

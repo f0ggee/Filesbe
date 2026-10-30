@@ -1,11 +1,7 @@
 package Crypto
 
 import (
-	"crypto"
 	"crypto/rand"
-	"crypto/rsa"
-	"crypto/sha256"
-	"crypto/x509"
 	"log/slog"
 
 	"golang.org/x/crypto/bcrypt"
@@ -22,21 +18,6 @@ func (g Generating) GenerateText(n int) string {
 		return rand.Text()
 	}
 	return rand.Text()[:5]
-}
-func (g Generating) GenerateSignature(message []byte, key []byte) ([]byte, error) {
-	KeyPrivate, err := x509.ParsePKCS1PrivateKey(key)
-	if err != nil {
-		slog.Error("GenerateSignature;Error while converting key1 to private key1", "ERROR", err)
-		return nil, ErrorStrangeCrypto
-	}
-	HashData := sha256.Sum256(message)
-	SignedMessage, err := rsa.SignPKCS1v15(rand.Reader, KeyPrivate, crypto.SHA256, HashData[:])
-	if err != nil {
-		slog.Error("GenerateSignature;Error while signing message", "ERROR", err)
-		return nil, ErrorMakeSign
-	}
-	return SignedMessage, nil
-
 }
 func (g Generating) GenerateHash(password []byte) ([]byte, error) {
 	bytes, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)

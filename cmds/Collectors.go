@@ -21,7 +21,7 @@ type CryptoCollector struct {
 	RsaRealization    Crypto.RsaEncryption
 	AesGcmRealization Crypto.AesEncryption
 	AesCtrRealization Crypto.AesCtrEncryption
-	RsaSigns          Crypto.RsaSigner
+	RsaSigns          Crypto.RsaSign
 	Generate          Crypto.Generating
 	CryptoCheck       Crypto.Checking
 }

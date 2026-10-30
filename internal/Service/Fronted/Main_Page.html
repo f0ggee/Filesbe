@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="icon" type="image/png" href="./internal/Service/Fronted/favicon.png">
+    <link rel="icon" type="image/png" href="/static/favicon.png">
     <title>Filesb — File Upload</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -412,7 +412,7 @@
             const data = await response.json().catch(() => ({}));
 
             if (response.status === 401) {
-                if (data.UrlToRedict) window.location.href = data.UrlToRedict;
+                if (data.UrlRedict) window.location.href = data.UrlRedict;
                 else window.location.href = "/login";
                 return;
             }
@@ -427,7 +427,7 @@
             if (response.status === 200) {
                 terminalText.textContent = translations[currentLang].completed;
                 setTimeout(() => {
-                    if (data.UrlToRedict) window.location.href = data.UrlToRedict;
+                    if (data.UrlRedict) window.location.href = data.UrlRedict;
                     else overlay.classList.remove('show');
                 }, 1000);
                 return;

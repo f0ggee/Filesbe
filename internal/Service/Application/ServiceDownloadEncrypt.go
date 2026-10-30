@@ -30,8 +30,7 @@ type DownloadEncrypt struct {
 	NewDownloadEncryptDelivery
 	NewDownloadEncryptCrypto
 	NewDownloadEncryptFileControl
-	decoder DomainLevel.Decoder
-	decrypt DecryptFile
+	Decoder DomainLevel.Decoder
 }
 
 type DownloadEncryptIncomeData struct {
@@ -73,7 +72,7 @@ func (s *DownloadEncrypt) DownloadEncryptApplication(data DownloadEncryptIncomeD
 			return err
 		}
 		defer uploadedObject.CloseSource()
-		err = s.decrypt.decryptFile(aesKey.Bytes(), downloadedObject, uploadedObject)
+		err = s.decryptFile(aesKey.Bytes(), downloadedObject, uploadedObject)
 		if err != nil {
 			return err
 		}
@@ -99,7 +98,7 @@ func (s *DownloadEncrypt) DownloadEncryptApplication(data DownloadEncryptIncomeD
 
 func (s *DownloadEncrypt) getFileInfoData(safeFileData []byte) (*memguard.LockedBuffer, string, error) {
 	var outputData DomainLevel.FileLabelsBytes
-	err := s.decoder.Decode(&outputData, safeFileData)
+	err := s.Decoder.Decode(&outputData, safeFileData)
 	if err != nil {
 		return nil, "", err
 	}
@@ -109,11 +108,7 @@ func (s *DownloadEncrypt) getFileInfoData(safeFileData []byte) (*memguard.Locked
 	return key, outputData.FileName, nil
 }
 
-type DecryptFile struct {
-	Aes DomainLevel.CryptoMaker
-}
-
-func (s *DecryptFile) decryptFile(AesKey []byte, src DomainLevel.Download, dst DomainLevel.Upload) error {
+func (s *DownloadEncrypt) decryptFile(AesKey []byte, src DomainLevel.Download, dst DomainLevel.Upload) error {
 	download, err := src.Downloader()
 	if err != nil {
 		return err
@@ -124,11 +119,11 @@ func (s *DecryptFile) decryptFile(AesKey []byte, src DomainLevel.Download, dst D
 		slog.Error("decryptFile; there is error to generate a nonce", "ERROR", err.Error())
 		return ErrorDecryptFile
 	}
-	decrBlock, err := s.Aes.MakeCrypto(AesKey, nonce.Bytes())
+	decrBlock, err := s.Aes.MakeCrypto(AesKey[s.Aes.GetRequiredOverheadSize():], nonce.Bytes())
 	if err != nil {
 		return err
 	}
-	plainText := memguard.NewBuffer(DomainLevel.ChunkSize)
+	plainText := memguard.NewBuffer(ChunkSize)
 	defer plainText.Destroy()
 	for {
 		n, err := download.Read(plainText.Bytes())

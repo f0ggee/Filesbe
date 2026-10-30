@@ -6,6 +6,6 @@ internal/Service/Диаграмма без названия.drawio.png
 .env
 
 .gitignore
-robots.txt
+pcf/robots.txt
 pcf/qodana.yaml
 pcf/Lae.json

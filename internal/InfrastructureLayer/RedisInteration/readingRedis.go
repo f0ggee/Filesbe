@@ -39,18 +39,16 @@ func (d RedisRead) GetFileInfo(fileInfoName string, ctx context.Context) ([]byte
 
 }
 func (d RedisRead) GetKey(Ctx context.Context) ([]byte, error) {
-	count, sec := 1, 1
+	sec := 1
 
 	ctx, cancel := context.WithTimeout(Ctx, time.Second*10)
 	defer cancel()
-	for {
-		if count > 20 {
-			return nil, errors.New(ErrorReadTimeout)
-		}
+	for count := range 20 {
 		err := RedisConn.Get(ctx, os.Getenv(ServerName)).Err()
 
 		if err != nil {
-			count, sec = +1, +1
+			sec++
+			slog.Group("Redis GetFileInfo:Retry again", slog.Int("Counts:", count), slog.Int("Sec", sec))
 			time.Sleep(time.Duration(sec) * time.Second)
 			continue
 		}
@@ -69,6 +67,7 @@ func (d RedisRead) GetKey(Ctx context.Context) ([]byte, error) {
 		return data, nil
 
 	}
+	return nil, errors.New(ErrorReadTimeout)
 }
 
 type RedisReadTest struct {

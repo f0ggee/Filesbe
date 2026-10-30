@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="icon" type="image/png" href="/static/favicon.png">
 
     <!-- SEO ТЕГИ -->
     <title data-i18n="headTitle">Filesb — Secure File Sharing</title>
@@ -14,8 +14,8 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Filesb — Secure File Sharing">
     <meta property="og:description" content="Быстрый и защищенный способ загрузки и обмена документами с шифрованием.">
-    <meta property="og:image" content="/favicon.png">
-    <meta property="og:url" content="https://filesb.com">
+    <meta property="og:image" content="https://filesbes.com/static/favicon.png">
+    <meta property="og:url" content="https://filesbes.com/">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -150,7 +150,7 @@
         btn.textContent = translations[currentLang].loading;
         fetch('/maine/api', { method: 'GET', credentials: 'same-origin' })
             .then(res => res.json())
-            .then(data => { window.location.href = data.status_redict || '/login'; })
+            .then(data => { window.location.href = data.url_to_redirect || '/login'; })
             .catch(() => { window.location.href = '/login'; });
     });
 

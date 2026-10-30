@@ -10,15 +10,15 @@ import (
 	"log/slog"
 )
 
-type RsaSigner struct {
+type RsaSign struct {
 	key []byte
 }
 
-func NewRsaSigner() *RsaSigner {
-	return &RsaSigner{}
+func NewRsaSigner() *RsaSign {
+	return &RsaSign{}
 }
 
-func (r *RsaSigner) MakeSign(signData []byte) ([]byte, error) {
+func (r *RsaSign) MakeSign(signData []byte) ([]byte, error) {
 	KeyPrivate, err := x509.ParsePKCS1PrivateKey(r.key)
 	if err != nil {
 		slog.Error("RsaMake: error to convert a key", "ERROR", err)
@@ -33,7 +33,7 @@ func (r *RsaSigner) MakeSign(signData []byte) ([]byte, error) {
 	return SignedMessage, nil
 }
 
-func (r *RsaSigner) CheckSign(signature []byte) error {
+func (r *RsaSign) CheckSign(signature []byte) error {
 	publicKeyMasterServer, err := x509.ParsePKCS1PublicKey(r.key)
 	if err != nil {
 		slog.Error("CheckSignKey; Error marshalling public key1", "ERROR", err.Error())
@@ -49,11 +49,11 @@ func (r *RsaSigner) CheckSign(signature []byte) error {
 	return nil
 }
 
-func (r *RsaSigner) SetAdditionalData(data []byte) DomainLevel.SignatureMaker {
+func (r *RsaSign) SetAdditionalData(data []byte) DomainLevel.SignatureMaker {
 	return r
 }
 
-func (r *RsaSigner) MakeSigner(key []byte) (DomainLevel.Signer, error) {
+func (r *RsaSign) MakeSigner(key []byte) (DomainLevel.Signer, error) {
 	r.key = key
 	return r, nil
 }

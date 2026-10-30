@@ -7,4 +7,5 @@ var ErrorFileSizeBig = errors.New("the File's size is bigger than the default si
 
 const (
 	FileMaxSize = 500 * 1000 * 1000
+	ChunkSize   = 30 * 1024 * 1024
 )

@@ -52,6 +52,7 @@ func (f FirstUploading) GetFileName() string {
 }
 
 func (f FirstUploading) Make(ctx context.Context) (DomainLevel.Upload, error) {
+	Hub = []byte{}
 	return &f, nil
 }
 
@@ -62,8 +63,8 @@ func (f FirstUploading) SetAdditionalWriter(writer io.Writer) DomainLevel.MakerU
 type UploaderSecond struct {
 }
 
-func GetUploaderSecond() UploaderSecond {
-	return UploaderSecond{}
+func GetUploaderSecond() *UploaderSecond {
+	return &UploaderSecond{}
 }
 
 func (u *UploaderSecond) CloseSource() error {

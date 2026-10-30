@@ -37,7 +37,10 @@ func (h *HttpUploader) SetAdditionalWriter(writer io.Writer) DomainLevel.MakerUp
 }
 
 func (h *HttpUploader) Upload(reader io.Reader) error {
-	wri := h.source.(http.ResponseWriter)
+	wri, ok := h.source.(http.ResponseWriter)
+	if !ok {
+		return ErrorUploadFile
+	}
 	wri.Header().Set("Content-Type", DomainLevel.GetNewFileSettings(0, h.name).FindFormatOfFile())
 	wri.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename= %v", h.name))
 	wri.Header().Set("Content-Length", strconv.FormatUint(uint64(h.sizeFile), 10))

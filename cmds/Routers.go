@@ -87,7 +87,7 @@ func userRouters(r *mux.Router) {
 	})
 	getRouter.HandleFunc("/register", func(writer http.ResponseWriter, request *http.Request) {
 
-		http.ServeFile(writer, request, "internal/Service/Fronted/RegisterApp.html")
+		http.ServeFile(writer, request, "internal/Service/Fronted/Register.html")
 
 	})
 	getRouter.HandleFunc("/main", func(writer http.ResponseWriter, request *http.Request) {

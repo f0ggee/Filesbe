@@ -5,8 +5,6 @@ import (
 	"io"
 )
 
-const ChunkSize = 30 * 1024 * 1024
-
 type Upload interface {
 	Upload(io.Reader) error
 	CloseSource() error

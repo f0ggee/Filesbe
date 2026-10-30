@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <link rel="icon" type="image/png" href="/Fronted/favicon.png">
+  <link rel="icon" type="image/png" href="/static/favicon.png">
   <title>Filesb — Protection</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -373,26 +373,28 @@
       });
 
       const data = await response.json();
+      // Ответ бэкенда приходит в двух форматах: { url_to_redirect, error } или { UrlRedict, Error }
+      const redirectUrl = data.url_to_redirect || data.UrlRedict;
 
       if (response.status === 401) {
-        if (data.UrlToRedict) window.location.href = data.UrlToRedict;
+        if (redirectUrl) window.location.href = redirectUrl;
         else window.location.href = "/login";
         return;
       }
 
       if (response.status === 400) {
         overlay.classList.remove('show');
-        const rawError = data.Error || "";
+        const rawError = data.error || data.Error || "";
         const finalMsg = translateServerError(rawError);
         showError(finalMsg);
         return;
       }
 
       if (response.status === 200) {
-        if (data.UrlToRedict) {
+        if (redirectUrl) {
           terminalText.textContent = translations[currentLang].completed;
           setTimeout(() => {
-            window.location.href = data.UrlToRedict;
+            window.location.href = redirectUrl;
           }, 1000);
         } else {
           overlay.classList.remove('show');

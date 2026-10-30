@@ -20,7 +20,7 @@ const ErrorUploadingEncrypt = "an unexpected error occurred while loading encryp
 
 type NewUploadEncryptCrypto struct {
 	Generate DomainLevel.CryptoGenerating
-	Encrypt  DomainLevel.CryptoMaker
+	Aes      DomainLevel.CryptoMaker
 	Rsa      DomainLevel.CryptoMaker
 }
 type NewUploadEncryptDataManage struct {
@@ -37,7 +37,6 @@ type UploadEncrypt struct {
 	NewUploadEncryptDataManage
 	NewUploadEncryptCrypto
 	NewUploadEncryptDelivery
-	enc EncryptFile
 }
 
 func GetNewUploadEncrypt(newUploadEncryptDataManage NewUploadEncryptDataManage, newUploadEncryptCrypto NewUploadEncryptCrypto, newUploadEncryptDelivery NewUploadEncryptDelivery) *UploadEncrypt {
@@ -66,12 +65,12 @@ func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) 
 	defer x.CloseSource()
 
 	shortNameFile := sa.Generate.GenerateText(4)
-	allData := memguard.NewBuffer(sa.Encrypt.GetRequiredOverheadSize() + 32)
+	allData := memguard.NewBuffer(sa.Aes.GetRequiredOverheadSize() + 32)
 	defer allData.Destroy()
 	fillOut(allData.Data())
 
 	g.Go(func() error {
-		err := sa.enc.encryptFile(data.File, x, allData.Data())
+		err := sa.encryptFile(data.File, x, allData.Data())
 		if err != nil {
 			return err
 		}
@@ -80,7 +79,7 @@ func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) 
 
 	FileInfoInBytes, err := sa.Encode.Encode(DomainLevel.FileLabelsBytes{
 		FileName: data.Name,
-		AesKey:   allData.Data()[sa.Encrypt.GetRequiredOverheadSize():],
+		AesKey:   allData.Data()[sa.Aes.GetRequiredOverheadSize():],
 	})
 	if err != nil {
 		slog.Error("UploadEncrypt; error to encode data into Json", "ERROR", err)
@@ -119,16 +118,12 @@ func fillOut(allData []byte) {
 	return
 }
 
-type EncryptFile struct {
-	Encrypt DomainLevel.CryptoMaker
-}
-
-func (sa *EncryptFile) encryptFile(src io.Reader, dst DomainLevel.Upload, data []byte) error {
-	cryptoData, err := sa.Encrypt.MakeCrypto(data[sa.Encrypt.GetRequiredOverheadSize():], data[:sa.Encrypt.GetRequiredOverheadSize()])
+func (sa *UploadEncrypt) encryptFile(src io.Reader, dst DomainLevel.Upload, data []byte) error {
+	cryptoData, err := sa.Aes.MakeCrypto(data[sa.Aes.GetRequiredOverheadSize():], data[:sa.Aes.GetRequiredOverheadSize()])
 	if err != nil {
 		return err
 	}
-	buf := memguard.NewBuffer(DomainLevel.ChunkSize)
+	buf := memguard.NewBuffer(ChunkSize)
 	defer buf.Destroy()
 	for {
 		n, err := src.Read(buf.Bytes())

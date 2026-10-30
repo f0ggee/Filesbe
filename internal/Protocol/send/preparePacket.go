@@ -31,7 +31,6 @@ func (f FirstExchange) GetEncryptedPacket() ([]byte, error) {
 		return nil, err
 	}
 	signedServerName, err := singMaker.MakeSign([]byte(serverName))
-
 	if err != nil {
 		return nil, err
 	}
