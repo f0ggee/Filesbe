@@ -6,13 +6,21 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var RedisConn *redis.Client
+type redisHub struct {
+	RedisConn *redis.Client
+}
 
-func init() {
-	redisConnect := redis.NewClient(&redis.Options{
+var hub redisHub
+
+func SetHub(client *redis.Client) {
+	hub = redisHub{
+		RedisConn: client,
+	}
+}
+func GetRedisConn() *redis.Client {
+	return redis.NewClient(&redis.Options{
 		Addr:     DomainLevel.RedisHost,
 		Username: DomainLevel.RedisServer,
 		Password: DomainLevel.RedisPassword,
 	})
-	RedisConn = redisConnect
 }

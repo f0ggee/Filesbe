@@ -5,15 +5,13 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/json"
-	"errors"
 	"log/slog"
 	"os"
 	"time"
 )
 
 const (
-	ErrorFindFileInfo = "file's info wasn't found"
-	ServerName        = "serverName"
+	ServerName = "serverName"
 )
 
 type RedisRead struct {
@@ -29,10 +27,10 @@ func (d RedisRead) GetFileInfo(fileInfoName string, ctx context.Context) ([]byte
 		InfoAboutFile: nil,
 	}
 
-	err := RedisConn.HGetAll(ctx, fileInfoName).Scan(&StructOfFileInfo)
+	err := hub.RedisConn.HGetAll(ctx, fileInfoName).Scan(&StructOfFileInfo)
 	if err != nil {
 		slog.Error("Redis GetFileInfo; error happened during getting info about a file", "ERROR", err)
-		return nil, errors.New(ErrorFindFileInfo)
+		return nil, ErrorFindFileInfo
 	}
 
 	return StructOfFileInfo.InfoAboutFile, nil
@@ -40,11 +38,10 @@ func (d RedisRead) GetFileInfo(fileInfoName string, ctx context.Context) ([]byte
 }
 func (d RedisRead) GetKey(Ctx context.Context) ([]byte, error) {
 	sec := 1
-
 	ctx, cancel := context.WithTimeout(Ctx, time.Second*10)
 	defer cancel()
 	for count := range 20 {
-		err := RedisConn.Get(ctx, os.Getenv(ServerName)).Err()
+		err := hub.RedisConn.Get(ctx, os.Getenv(ServerName)).Err()
 
 		if err != nil {
 			sec++
@@ -53,21 +50,21 @@ func (d RedisRead) GetKey(Ctx context.Context) ([]byte, error) {
 			continue
 		}
 		var data []byte
-		err = RedisConn.Get(ctx, os.Getenv(ServerName)).Scan(&data)
+		err = hub.RedisConn.Get(ctx, os.Getenv(ServerName)).Scan(&data)
 		if err != nil {
 			slog.Error("GetPacketData; error to read data", "ERROR", err)
-			return nil, errors.New(ErrorRead)
+			return nil, ErrorRead
 		}
 
-		err = RedisConn.Del(ctx, os.Getenv(ServerName)).Err()
+		err = hub.RedisConn.Del(ctx, os.Getenv(ServerName)).Err()
 		if err != nil {
 			slog.Error("GetPacketData; error to delete file info", "ERROR", err)
-			return nil, errors.New(ErrorDeleteInfo)
+			return nil, ErrorDeleteInfo
 		}
 		return data, nil
 
 	}
-	return nil, errors.New(ErrorReadTimeout)
+	return nil, ErrorReadTimeout
 }
 
 type RedisReadTest struct {

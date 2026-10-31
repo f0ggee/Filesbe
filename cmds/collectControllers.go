@@ -53,7 +53,7 @@ func CollectControllers(c CollectorsController) Controllers {
 		Parser:   c.ParserCollector,
 	})
 	controllerUrlBuild := GetControllerUrlBuildBuilder()
-	controllerCheckUser := GetCheckUsers()
+	controllerCheckUser := GetControllerCheckUserBuilder()
 	return Controllers{
 		download:        controllerDownload,
 		encryptDownload: controllerEncryptDownload,

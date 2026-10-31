@@ -12,6 +12,20 @@ import (
 	_ "github.com/lib/pq"
 )
 
+type hub struct {
+	Db *pgxpool.Pool
+}
+
+var h hub
+
+func SetHub(D *pgxpool.Pool) {
+	h = hub{
+		Db: D,
+	}
+}
+func GetConnection() *pgxpool.Pool {
+	return h.Db
+}
 func config() *pgxpool.Config {
 
 	dbIp := os.Getenv("POSTGRESQL_HOST")
@@ -83,5 +97,4 @@ func Connect() (*pgxpool.Pool, error) {
 }
 
 type DatabaseConn struct {
-	Db *pgxpool.Pool
 }

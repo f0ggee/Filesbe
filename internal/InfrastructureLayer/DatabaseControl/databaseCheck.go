@@ -7,11 +7,10 @@ import (
 )
 
 type CheckerDb struct {
-	DatabaseConn
 }
 
-func NewCheckerDb(databaseConn DatabaseConn) *CheckerDb {
-	return &CheckerDb{DatabaseConn: databaseConn}
+func NewCheckerDb() *CheckerDb {
+	return &CheckerDb{}
 }
 
 var ErrorUserExist = errors.New("the user already exists")
@@ -19,7 +18,7 @@ var ErrorUserExist = errors.New("the user already exists")
 func (db *CheckerDb) CheckerUser(ctx context.Context, email string) error {
 	logger := slog.With("CheckUser")
 	var existingPerson bool
-	err := db.Db.QueryRow(ctx, "SELECT EXISTS (select 1 FROM person WHERE email=$1)", email).Scan(&existingPerson)
+	err := GetConnection().QueryRow(ctx, "SELECT EXISTS (select 1 FROM person WHERE email=$1)", email).Scan(&existingPerson)
 	switch {
 	case errors.Is(err, context.DeadlineExceeded):
 		logger.Error("The context is end", "ERROR", err)

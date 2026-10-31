@@ -27,10 +27,10 @@ func (d RedisDelete) DeleterFileInfoTest(s string, context context.Context) erro
 
 func (d RedisDelete) DeleteFileInfo(fileInfo string, ctx context.Context) error {
 
-	err := RedisConn.Del(ctx, fileInfo).Err()
+	err := hub.RedisConn.Del(ctx, fileInfo).Err()
 	if err != nil {
-		slog.Error("File info's already been deleted", err)
-		return errors.New(ErrorDeleteInfo)
+		slog.Error("File info's already been deleted", "ERROR", err)
+		return ErrorDeleteInfo
 	}
 	return nil
 }

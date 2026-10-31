@@ -11,11 +11,10 @@ import (
 )
 
 type Read struct {
-	db DatabaseConn
 }
 
-func NewRead(db DatabaseConn) *Read {
-	return &Read{db: db}
+func NewRead() *Read {
+	return &Read{}
 }
 
 var (
@@ -28,7 +27,7 @@ func (D Read) LoginData(ctx context.Context, s string) DomainLevel.OutComingLogi
 		password string
 	)
 
-	err := D.db.Db.QueryRow(ctx, `SELECT unic_id,password  FROM person WHERE email=$1`, s).Scan(&id, &password)
+	err := GetConnection().QueryRow(ctx, `SELECT unic_id,password  FROM person WHERE email=$1`, s).Scan(&id, &password)
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
 		slog.Error("LoginData; there isn't an user account", "ERROR", err)

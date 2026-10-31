@@ -231,7 +231,7 @@ func GetControllerUrlBuildBuilder() httpController.BuildUrlController {
 	}
 }
 
-func GetCheckUsers() httpController.CheckUserAuthController {
+func GetControllerCheckUserBuilder() httpController.CheckUserAuthController {
 	return httpController.CheckUserAuthController{
 		CheckUserAuthNetWork: httpController.CheckUserAuthNetWork{},
 	}

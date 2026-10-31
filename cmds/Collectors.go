@@ -15,6 +15,12 @@ import (
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/InfrastructureLayer/Tokens"
+
+	grpcHub "Kaban/internal/InfrastructureLayer/Grpc"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/redis/go-redis/v9"
+	"google.golang.org/grpc"
 )
 
 type CryptoCollector struct {
@@ -43,11 +49,12 @@ type DatabaseCollector struct {
 	Write *DatabaseControl.Writer
 }
 
-func GetDatabaseCollector(conn DatabaseControl.DatabaseConn) DatabaseCollector {
+func GetDatabaseCollector(conn *pgxpool.Pool) DatabaseCollector {
+	DatabaseControl.SetHub(conn)
 	return DatabaseCollector{
-		Check: DatabaseControl.NewCheckerDb(conn),
-		Read:  DatabaseControl.NewRead(conn),
-		Write: DatabaseControl.NewWriter(conn),
+		Check: DatabaseControl.NewCheckerDb(),
+		Read:  DatabaseControl.NewRead(),
+		Write: DatabaseControl.NewWriter(),
 	}
 }
 
@@ -81,7 +88,8 @@ type GrpcCollector struct {
 	Reqs grcRec.SetNewKeyRequest
 }
 
-func GetGrpcCollector() GrpcCollector {
+func GetGrpcCollector(g *grpc.ClientConn) GrpcCollector {
+	grpcHub.SetHub(g)
 	return GrpcCollector{
 		Reqs: grcRec.GetNewSetNewKeyRequest(),
 	}
@@ -104,7 +112,8 @@ type RedisCollector struct {
 	Delete RedisInteration.RedisDelete
 }
 
-func GetNewRedisCollector() RedisCollector {
+func GetNewRedisCollector(r *redis.Client) RedisCollector {
+	RedisInteration.SetHub(r)
 	return RedisCollector{
 		Read:   RedisInteration.NewRedisRead(),
 		Write:  RedisInteration.NewRedisWrite(),
