@@ -9,8 +9,8 @@ import (
 type RedisWrite struct {
 }
 
-func NewRedisWrite() RedisWrite {
-	return RedisWrite{}
+func NewRedisWrite() *RedisWrite {
+	return &RedisWrite{}
 }
 
 func (s *RedisWrite) EnableDownloadingParameter(nameOfFileInfo string, ctx context.Context) error {

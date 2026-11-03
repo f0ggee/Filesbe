@@ -3,113 +3,95 @@ package testFileTransfering
 import (
 	"Kaban/internal/DomainLevel"
 	"context"
-	"fmt"
 	"io"
 )
 
-var Hub []byte
-
-type FirstUploading struct {
+type hub struct {
+	data []byte
 }
 
-func GetFirstUploading() FirstUploading {
-	return FirstUploading{}
+type testUploader struct {
+	d *hub
 }
-func (f *FirstUploading) CloseSource() error {
-	return nil
 
-}
-func (f *FirstUploading) Upload(r io.Reader) error {
-	buf := make([]byte, 1024)
-	for {
-
-		n, err := r.Read(buf)
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return err
-		}
-		Hub = append(Hub, buf[:n]...)
+func (t testUploader) Upload(reader io.Reader) error {
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		return err
 	}
+	t.d.data = append(t.d.data, data...)
 	return nil
 }
 
-func (f FirstUploading) SetName(s string) DomainLevel.MakerUploader {
-	return f
-}
-
-func (f FirstUploading) SetSize(i int64) DomainLevel.MakerUploader {
-	return f
-}
-
-func (f FirstUploading) GetFileSize() int64 {
-	return 30
-}
-
-func (f FirstUploading) GetFileName() string {
-	return "er"
-}
-
-func (f FirstUploading) Make(ctx context.Context) (DomainLevel.Upload, error) {
-	Hub = []byte{}
-	return &f, nil
-}
-
-func (f FirstUploading) SetAdditionalWriter(writer io.Writer) DomainLevel.MakerUploader {
-	return f
-}
-
-type UploaderSecond struct {
-}
-
-func GetUploaderSecond() *UploaderSecond {
-	return &UploaderSecond{}
-}
-
-func (u *UploaderSecond) CloseSource() error {
-
+func (t testUploader) CloseSource() error {
 	return nil
-
 }
 
-func (u *UploaderSecond) Upload(r io.Reader) error {
+func (t testUploader) SetName(s string) DomainLevel.MakerUploader {
+	return t
+}
 
-	buf := make([]byte, 1024)
+func (t testUploader) SetSize(i int64) DomainLevel.MakerUploader {
+	return t
+}
 
-	for {
-		n, err := r.Read(buf)
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return err
-		}
+func (t testUploader) GetFileSize() int64 {
+	return 100
+}
 
-		fmt.Println("Test Uploader:", string(buf[:n]))
+func (t testUploader) GetFileName() string {
+	return "data"
+}
+
+func (t testUploader) Make(ctx context.Context) (DomainLevel.Upload, error) {
+	return t, nil
+}
+
+func (t testUploader) SetAdditionalWriter(writer io.Writer) DomainLevel.MakerUploader {
+	return t
+}
+
+type ErrorUpload struct {
+	err error
+	ctx context.Context
+}
+
+func NewErrorUpload(err error) ErrorUpload {
+	return ErrorUpload{err: err}
+}
+
+func (e ErrorUpload) Upload(reader io.Reader) error {
+	if e.ctx != nil && e.ctx.Err() != nil {
+		return e.ctx.Err()
 	}
+	return e.err
+}
+
+func (e ErrorUpload) CloseSource() error {
 	return nil
 }
 
-func (u *UploaderSecond) GetFileName() string {
-	return "Some"
-}
-func (u *UploaderSecond) GetFileSize() int64 {
-	return 1000
+func (e ErrorUpload) SetName(s string) DomainLevel.MakerUploader {
+	return e
 }
 
-func (u *UploaderSecond) Make(context.Context) (DomainLevel.Upload, error) {
-	return u, nil
+func (e ErrorUpload) SetSize(i int64) DomainLevel.MakerUploader {
+	return e
 }
 
-func (u *UploaderSecond) SetAdditionalWriter(io.Writer) DomainLevel.MakerUploader {
-	return u
+func (e ErrorUpload) GetFileSize() int64 {
+	return 100
 }
 
-func (u *UploaderSecond) SetName(string) DomainLevel.MakerUploader {
-	return u
+func (e ErrorUpload) GetFileName() string {
+	return "data"
 }
 
-func (u *UploaderSecond) SetSize(int64) DomainLevel.MakerUploader {
-	return u
+func (e ErrorUpload) Make(ctx context.Context) (DomainLevel.Upload, error) {
+	e.ctx = ctx
+	return e, nil
+}
+
+func (e ErrorUpload) SetAdditionalWriter(writer io.Writer) DomainLevel.MakerUploader {
+	return e
 }

@@ -10,9 +10,9 @@ import (
 )
 
 type Keys struct {
-	OldKey *memguard.LockedBuffer
-	NewKey *memguard.LockedBuffer
-	Rm     *sync.RWMutex
+	oldKey *memguard.LockedBuffer
+	newKey *memguard.LockedBuffer
+	rm     *sync.RWMutex
 }
 
 var KeysControl Keys
@@ -23,9 +23,9 @@ func init() {
 		panic(err)
 	}
 	KeysControl = Keys{
-		OldKey: &memguard.LockedBuffer{},
-		NewKey: &memguard.LockedBuffer{},
-		Rm:     &sync.RWMutex{},
+		oldKey: &memguard.LockedBuffer{},
+		newKey: &memguard.LockedBuffer{},
+		rm:     &sync.RWMutex{},
 	}
 	x := x509.MarshalPKCS1PrivateKey(keys)
 	KeysControl.UpdateNewKey(x)
@@ -35,42 +35,42 @@ func init() {
 func GetKeys() Keys {
 
 	var k Keys
-	k.NewKey, _ = memguard.NewBufferFromReader(rand.Reader, 32)
-	k.OldKey, _ = memguard.NewBufferFromReader(rand.Reader, 32)
+	k.newKey, _ = memguard.NewBufferFromReader(rand.Reader, 32)
+	k.oldKey, _ = memguard.NewBufferFromReader(rand.Reader, 32)
 	return k
 }
 
 func (s *Keys) GetKey() []byte {
-	s.Rm.RLock()
-	defer s.Rm.RUnlock()
-	return s.NewKey.Data()
+	s.rm.RLock()
+	defer s.rm.RUnlock()
+	return s.newKey.Data()
 }
 func (s *Keys) GetOldKey() []byte {
-	s.Rm.RLock()
-	defer s.Rm.RUnlock()
-	return s.OldKey.Bytes()
+	s.rm.RLock()
+	defer s.rm.RUnlock()
+	return s.oldKey.Bytes()
 }
 func (s *Keys) UpdateNewKey(key []byte) {
 
-	s.Rm.Lock()
-	if s.NewKey != nil {
-		s.NewKey.Destroy()
+	s.rm.Lock()
+	if s.newKey != nil {
+		s.newKey.Destroy()
 	}
-	s.NewKey = memguard.NewBuffer(len(key))
-	s.NewKey.Copy(key)
-	s.Rm.Unlock()
+	s.newKey = memguard.NewBuffer(len(key))
+	s.newKey.Copy(key)
+	s.rm.Unlock()
 	return
 }
 func (s *Keys) UpdateOldKey() {
-	s.Rm.Lock()
-	if s.OldKey != nil {
-		s.OldKey.Destroy()
+	s.rm.Lock()
+	if s.oldKey != nil {
+		s.oldKey.Destroy()
 	}
 
-	if s.NewKey != nil {
-		s.OldKey = memguard.NewBuffer(s.NewKey.Size())
-		s.OldKey.Copy(s.NewKey.Bytes())
+	if s.newKey != nil {
+		s.oldKey = memguard.NewBuffer(s.newKey.Size())
+		s.oldKey.Copy(s.newKey.Bytes())
 	}
 
-	s.Rm.Unlock()
+	s.rm.Unlock()
 }

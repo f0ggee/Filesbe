@@ -116,7 +116,7 @@ func GetNewRedisCollector(r *redis.Client) RedisCollector {
 	RedisInteration.SetHub(r)
 	return RedisCollector{
 		Read:   RedisInteration.NewRedisRead(),
-		Write:  RedisInteration.NewRedisWrite(),
+		Write:  *RedisInteration.NewRedisWrite(),
 		Check:  RedisInteration.NewRedisCheck(),
 		Delete: RedisInteration.NewRedisDelete(),
 	}

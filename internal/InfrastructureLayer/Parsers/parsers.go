@@ -2,6 +2,7 @@ package Parsers
 
 import (
 	"Kaban/internal/DomainLevel"
+	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"io"
@@ -50,4 +51,27 @@ func (p Parsing) Decode(a any, bytes []byte) error {
 		return errors.New(DomainLevel.ErrorParseInfo)
 	}
 	return nil
+}
+
+type ParseError struct {
+}
+
+func (p ParseError) DecodeFlow(dst any, src io.Reader) error {
+	return errors.New(rand.Text())
+}
+
+func (p ParseError) Decode(dst any, src []byte) error {
+	return errors.New(rand.Text())
+}
+
+func (p ParseError) EncodeFlow(dst any, src io.Writer) error {
+	return errors.New(rand.Text())
+}
+
+func (p ParseError) Encode(dst any) ([]byte, error) {
+	return nil, errors.New(rand.Text())
+}
+
+func GetParseError() *ParseError {
+	return &ParseError{}
 }

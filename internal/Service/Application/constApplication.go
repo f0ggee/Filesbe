@@ -6,6 +6,6 @@ var ErrorDecryptFile = errors.New("error to decrypt data")
 var ErrorFileSizeBig = errors.New("the File's size is bigger than the default size")
 
 const (
-	FileMaxSize = 500 * 1000 * 1000
+	FileMaxSize = 500 * 1024 * 1024
 	ChunkSize   = 30 * 1024 * 1024
 )

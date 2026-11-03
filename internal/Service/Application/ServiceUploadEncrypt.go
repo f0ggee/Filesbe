@@ -4,7 +4,6 @@ import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"bytes"
-
 	"context"
 	"crypto/rand"
 	"errors"
@@ -39,10 +38,6 @@ type UploadEncrypt struct {
 	NewUploadEncryptDelivery
 }
 
-func GetNewUploadEncrypt(newUploadEncryptDataManage NewUploadEncryptDataManage, newUploadEncryptCrypto NewUploadEncryptCrypto, newUploadEncryptDelivery NewUploadEncryptDelivery) *UploadEncrypt {
-	return &UploadEncrypt{NewUploadEncryptDataManage: newUploadEncryptDataManage, NewUploadEncryptCrypto: newUploadEncryptCrypto, NewUploadEncryptDelivery: newUploadEncryptDelivery}
-}
-
 type UploadEncryptIncomeData struct {
 	File io.Reader
 	Name string
@@ -54,23 +49,23 @@ func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) 
 	if data.Size >= FileMaxSize {
 		return "", ErrorFileSizeBig
 	}
-
 	g, ctx := errgroup.WithContext(data.Ctx)
 
 	x, err := sa.Uploader.SetName(data.Name).SetSize(data.Size).Make(ctx)
 	if err != nil {
 		return "", err
 	}
-
-	defer x.CloseSource()
-
+	cryptoData := memguard.NewBuffer(sa.Aes.GetRequiredOverheadSize() + 32)
+	defer func() {
+		ctx.Done()
+		_ = g.Wait()
+		_ = x.CloseSource()
+		cryptoData.Destroy()
+	}()
 	shortNameFile := sa.Generate.GenerateText(4)
-	allData := memguard.NewBuffer(sa.Aes.GetRequiredOverheadSize() + 32)
-	defer allData.Destroy()
-	fillOut(allData.Data())
-
+	fillOut(cryptoData.Data())
 	g.Go(func() error {
-		err := sa.encryptFile(data.File, x, allData.Data())
+		err := sa.encryptFile(data.File, x, cryptoData.Data(), ctx)
 		if err != nil {
 			return err
 		}
@@ -79,7 +74,7 @@ func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) 
 
 	FileInfoInBytes, err := sa.Encode.Encode(DomainLevel.FileLabelsBytes{
 		FileName: data.Name,
-		AesKey:   allData.Data()[sa.Aes.GetRequiredOverheadSize():],
+		AesKey:   cryptoData.Data()[sa.Aes.GetRequiredOverheadSize():],
 	})
 	if err != nil {
 		slog.Error("UploadEncrypt; error to encode data into Json", "ERROR", err)
@@ -118,14 +113,21 @@ func fillOut(allData []byte) {
 	return
 }
 
-func (sa *UploadEncrypt) encryptFile(src io.Reader, dst DomainLevel.Upload, data []byte) error {
+func (sa *UploadEncrypt) encryptFile(src io.Reader, dst DomainLevel.Upload, data []byte, ctx context.Context) error {
 	cryptoData, err := sa.Aes.MakeCrypto(data[sa.Aes.GetRequiredOverheadSize():], data[:sa.Aes.GetRequiredOverheadSize()])
 	if err != nil {
 		return err
 	}
 	buf := memguard.NewBuffer(ChunkSize)
+
 	defer buf.Destroy()
 	for {
+		select {
+		case <-ctx.Done():
+			return errors.New(ErrorUploadingEncrypt)
+		default:
+
+		}
 		n, err := src.Read(buf.Bytes())
 		if n > 0 {
 			outData, err := cryptoData.Encrypt(buf.Bytes()[:n])

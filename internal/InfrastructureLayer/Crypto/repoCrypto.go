@@ -12,6 +12,7 @@ import (
 	"errors"
 	"io"
 	"log/slog"
+	mrand "math/rand/v2"
 )
 
 type RsaEncryption struct {
@@ -135,6 +136,35 @@ func NewAesCtr() *AesCtrEncryption {
 	return &AesCtrEncryption{}
 }
 
+type NewAesCtrError struct {
+}
+
+var encryptErrors = []error{
+	ErrorCrypto,
+	ErrorCryptoInvalidData,
+	ErrorInvalidMode,
+	ErrorInvalidData,
+	ErrorAuthFail,
+	ErrorStartEncryption,
+	ErrorStrangeCrypto,
+}
+
+func (n NewAesCtrError) Encrypt(i []byte) ([]byte, error) {
+	return nil, encryptErrors[mrand.IntN(len(encryptErrors))]
+}
+
+func (n NewAesCtrError) Decrypt(i []byte) ([]byte, error) {
+	return nil, encryptErrors[mrand.IntN(len(encryptErrors))]
+}
+
+func (n NewAesCtrError) MakeCrypto(key []byte, ACD []byte) (DomainLevel.Crypto, error) {
+	return n, nil
+}
+
+func (n NewAesCtrError) GetRequiredOverheadSize() int {
+	return aes.BlockSize
+}
+
 func (a *AesCtrEncryption) Encrypt(bytes []byte) ([]byte, error) {
 	if !a.isStart {
 		cip := make([]byte, len(bytes)+aes.BlockSize)
@@ -171,4 +201,27 @@ func (a *AesCtrEncryption) MakeCrypto(key []byte, i []byte) (DomainLevel.Crypto,
 	a.block = ctrBlock
 	a.isStart = false
 	return a, nil
+}
+
+type RsaError struct {
+}
+
+func NewRsaError() *RsaError {
+	return &RsaError{}
+}
+
+func (r RsaError) Encrypt(i []byte) ([]byte, error) {
+	return nil, encryptErrors[mrand.IntN(len(encryptErrors))]
+}
+
+func (r RsaError) Decrypt(i []byte) ([]byte, error) {
+	return nil, encryptErrors[mrand.IntN(len(encryptErrors))]
+}
+
+func (r RsaError) MakeCrypto(key []byte, ACD []byte) (DomainLevel.Crypto, error) {
+	return r, nil
+}
+
+func (r RsaError) GetRequiredOverheadSize() int {
+	return 0
 }

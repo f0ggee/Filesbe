@@ -39,6 +39,5 @@ type Delete interface {
 type MakerDeleter interface {
 	SetName(string) MakerDeleter
 	SetSize(int64) MakerDeleter
-
 	Make(context.Context) (Delete, error)
 }
