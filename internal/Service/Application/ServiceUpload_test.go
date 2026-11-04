@@ -1,16 +1,24 @@
 package Application
 
 import (
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/Crypto"
 	"Kaban/internal/InfrastructureLayer/FileTransferring/testFileTransfering"
 	"Kaban/internal/InfrastructureLayer/Parsers"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
+	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"bytes"
 	"context"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
 	"testing"
 )
 
 func TestNewUpload_UploadApplication(t *testing.T) {
+	rsaK, _ := rsa.GenerateKey(rand.Reader, 2048)
+
+	DomainLevel.GetCryptoKeys = RepoEncrypterKeys.NewTestEncrypterKeys(x509.MarshalPKCS1PrivateKey(rsaK))
 	type fields struct {
 		NewFileUploaderCrypto    NewFileUploaderCrypto
 		NewFileUploaderDataMange NewFileUploaderDataMange

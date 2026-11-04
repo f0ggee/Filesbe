@@ -35,3 +35,36 @@ func (db *CheckerDb) CheckerUser(ctx context.Context, email string) error {
 
 	return nil
 }
+
+type Errors struct {
+}
+
+func (e Errors) Error() string {
+	return "error"
+}
+
+type CheckerError struct {
+	e Errors
+}
+
+func NewCheckerError() *CheckerError {
+	return &CheckerError{
+		e: Errors{},
+	}
+}
+
+func (c CheckerError) CheckerUser(ctx context.Context, s string) error {
+	return c.e
+}
+
+type CheckerTest struct {
+}
+
+func NewCheckerTest() *CheckerTest {
+	return &CheckerTest{}
+}
+
+func (c CheckerTest) CheckerUser(ctx context.Context, s string) error {
+
+	return nil
+}

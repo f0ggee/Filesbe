@@ -2,7 +2,6 @@ package DatabaseControl
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/Crypto"
 	"context"
 	"crypto/rand"
 	"database/sql"
@@ -53,41 +52,31 @@ func (D Read) LoginData(ctx context.Context, s string) DomainLevel.OutComingLogi
 type ReaderTest struct {
 }
 
+const testHash = "$2a$10$G2fbJJAq2DRNYSUUjPg9Cu9KBwi/AXraQf6oViu7sE6wuaA4j7Kxa"
+
 func NewReaderTest() *ReaderTest {
 	return &ReaderTest{}
 }
 
 func (r ReaderTest) LoginData(ctx context.Context, s string) DomainLevel.OutComingLoginData {
 
-	if ctx.Value("mode").(int) == 1 {
-		return DomainLevel.OutComingLoginData{
-			Id:           123,
-			HashPassword: "password",
-			Err:          nil,
-		}
-	}
-	if ctx.Value("mode").(int) == 2 {
-		hash, _ := Crypto.GetNewGenerating().GenerateHash([]byte(rand.Text()))
-		return DomainLevel.OutComingLoginData{
-			Id:           123,
-			HashPassword: string(hash),
-			Err:          nil,
-		}
-
-	}
-	if ctx.Value("mode").(int) == 3 {
-		hash, _ := Crypto.GetNewGenerating().GenerateHash([]byte("1234"))
-
-		return DomainLevel.OutComingLoginData{
-			Id:           1234,
-			HashPassword: string(hash),
-			Err:          nil,
-		}
-
-	}
 	return DomainLevel.OutComingLoginData{
 		Id:           123,
-		HashPassword: "password",
+		HashPassword: testHash,
 		Err:          nil,
+	}
+}
+
+type ReaderErrorTest struct {
+}
+
+func NewReaderErrorTest() *ReaderErrorTest {
+	return &ReaderErrorTest{}
+}
+
+func (r ReaderErrorTest) LoginData(ctx context.Context, s string) DomainLevel.OutComingLoginData {
+
+	return DomainLevel.OutComingLoginData{
+		Err: errors.New(rand.Text()),
 	}
 }

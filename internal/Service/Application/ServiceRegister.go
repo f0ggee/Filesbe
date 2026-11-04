@@ -63,11 +63,11 @@ func (sa *NewRegisterApplication) RegisterApplication(ctx context.Context, de *D
 	if err != nil {
 		return DomainLevel.RegisterApplicationOutComingData{Err: err}
 	}
-	HashPassword, err := sa.Generator.GenerateHash([]byte(de.Password))
+	HashPassword, err := sa.Generator.GenerateHash(de.Password)
 	if err != nil {
 		return DomainLevel.RegisterApplicationOutComingData{Err: err}
 	}
-	memguard.WipeBytes([]byte(de.Password))
+	memguard.WipeBytes(de.Password)
 	UnitIdUser, err := sa.WriterDb.CreateUser(DomainLevel.CreateUserIncomingData{
 		Name:         de.Name,
 		Email:        de.Email,

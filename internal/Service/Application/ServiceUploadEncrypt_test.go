@@ -1,16 +1,24 @@
 package Application
 
 import (
+	"Kaban/internal/DomainLevel"
 	"Kaban/internal/InfrastructureLayer/Crypto"
 	"Kaban/internal/InfrastructureLayer/FileTransferring/testFileTransfering"
 	"Kaban/internal/InfrastructureLayer/Parsers"
 	"Kaban/internal/InfrastructureLayer/RedisInteration"
+	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"bytes"
 	"context"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
 	"testing"
 )
 
 func TestUploadEncrypt_UploadEncryptApplication(t *testing.T) {
+	rsaK, _ := rsa.GenerateKey(rand.Reader, 2048)
+
+	DomainLevel.GetCryptoKeys = RepoEncrypterKeys.NewTestEncrypterKeys(x509.MarshalPKCS1PrivateKey(rsaK))
 	type fields struct {
 		NewUploadEncryptDataManage NewUploadEncryptDataManage
 		NewUploadEncryptCrypto     NewUploadEncryptCrypto
@@ -36,7 +44,7 @@ func TestUploadEncrypt_UploadEncryptApplication(t *testing.T) {
 	testArgs := args{
 		data: UploadEncryptIncomeData{
 			File: bytes.NewReader(fileContent),
-			Name: "test",
+			Name: []byte("test"),
 			Ctx:  context.Background(),
 			Size: 100,
 		},

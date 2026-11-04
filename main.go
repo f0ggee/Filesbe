@@ -2,6 +2,7 @@ package main
 
 import (
 	"Kaban/cmds"
+	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/Protocol/receive"
 	"context"
 	"errors"
@@ -26,6 +27,7 @@ func main() {
 	defer memguard.Purge()
 	connections := cmds.GetConnections()
 	defer connections.CloseConnections()
+	RepoEncrypterKeys.SetKeys()
 
 	grpcCollector := cmds.GetGrpcCollector(connections.GrpcConnect)
 	router := mux.NewRouter()

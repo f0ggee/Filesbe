@@ -25,7 +25,6 @@ type FirstExchange struct {
 // GetEncryptedPacket prepares and encrypts a packet to send it to a Master server
 func (f FirstExchange) GetEncryptedPacket() ([]byte, error) {
 	var serverName = os.Getenv("server_name")
-
 	singMaker, err := f.Sign.MakeSigner(DomainLevel.ServerKeys.GerOurPrivateKey())
 	if err != nil {
 		return nil, err
@@ -44,7 +43,6 @@ func (f FirstExchange) GetEncryptedPacket() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	var ACD = f.Aes.GetRequiredOverheadSize()
 	aesKey, err := memguard.NewBufferFromReader(rand.Reader, 32+ACD)
 	if err != nil {

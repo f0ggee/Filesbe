@@ -10,7 +10,7 @@ import (
 type UserDataRegister struct {
 	Name     string `validate:"required,min=2,max=20"`
 	Email    string `validate:"email,required,min=1,max=40"`
-	Password string `validate:"required,min=6,max=25"`
+	Password []byte `validate:"required,min=6,max=25"`
 }
 
 func (r *UserDataRegister) ValidateDate() error {

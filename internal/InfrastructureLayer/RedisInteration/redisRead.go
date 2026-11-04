@@ -110,3 +110,19 @@ func (r *RedisTestIO) GetKey(ctx context.Context) ([]byte, error) {
 func (r *RedisTestIO) GetFileInfo(s string, ctx context.Context) ([]byte, error) {
 	return r.d, nil
 }
+
+type RedisTestDownloadEncrypt struct {
+	d []byte
+}
+
+func NewRedisTestDownloadEncrypt(d []byte) *RedisTestDownloadEncrypt {
+	return &RedisTestDownloadEncrypt{d: d}
+}
+
+func (r *RedisTestDownloadEncrypt) GetKey(ctx context.Context) ([]byte, error) {
+	return nil, nil
+}
+
+func (r *RedisTestDownloadEncrypt) GetFileInfo(s string, ctx context.Context) ([]byte, error) {
+	return r.d, nil
+}

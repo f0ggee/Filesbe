@@ -2,9 +2,10 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"bytes"
 	"context"
+	"crypto/rsa"
+	"errors"
 	"io"
 	"log/slog"
 
@@ -48,37 +49,32 @@ func (s *DownloadEncrypt) DownloadEncryptApplication(data DownloadEncryptIncomeD
 		return err
 	}
 
-	safeFileData, err := s.getFileData(fileInfoInBytes)
+	key, fileName, err := s.getFileData(fileInfoInBytes)
 	if err != nil {
 		return err
 	}
-	defer safeFileData.Destroy()
-	aesKey, fileName, err := s.getFileInfoData(safeFileData.Data())
-	if err != nil {
-		return err
-	}
-	defer aesKey.Destroy()
-
-	downloadedObject, err := s.Downloader.SetName(fileName).Make(data.Ctx)
+	defer func() {
+		key.Destroy()
+		fileName.Destroy()
+	}()
+	downloadedObject, err := s.Downloader.SetName(data.EncryptedName).Make(data.Ctx)
 	if err != nil {
 		return err
 	}
 	defer downloadedObject.CloseSource()
-	defer aesKey.Destroy()
 
 	g.Go(func() error {
-		uploadedObject, err := s.Uploader.SetName(fileName).SetAdditionalWriter(data.dst).SetSize(s.Downloader.GetFileSize()).Make(data.Ctx)
+		uploadedObject, err := s.Uploader.SetName(fileName.String()).SetAdditionalWriter(data.dst).SetSize(s.Downloader.GetFileSize()).Make(data.Ctx)
 		if err != nil {
 			return err
 		}
 		defer uploadedObject.CloseSource()
-		err = s.decryptFile(aesKey.Bytes(), downloadedObject, uploadedObject)
+		err = s.decryptFile(key.Bytes(), downloadedObject, uploadedObject)
 		if err != nil {
 			return err
 		}
 		return nil
 	})
-
 	if err = g.Wait(); err != nil {
 		return err
 	}
@@ -94,18 +90,6 @@ func (s *DownloadEncrypt) DownloadEncryptApplication(data DownloadEncryptIncomeD
 	}
 
 	return deleteObject.Deleter()
-}
-
-func (s *DownloadEncrypt) getFileInfoData(safeFileData []byte) (*memguard.LockedBuffer, string, error) {
-	var outputData DomainLevel.FileLabelsBytes
-	err := s.Decoder.Decode(&outputData, safeFileData)
-	if err != nil {
-		return nil, "", err
-	}
-	key := memguard.NewBuffer(len(outputData.AesKey))
-	key.Copy(outputData.AesKey)
-	memguard.WipeBytes(outputData.AesKey)
-	return key, outputData.FileName, nil
 }
 
 func (s *DownloadEncrypt) decryptFile(AesKey []byte, src DomainLevel.Download, dst DomainLevel.Upload) error {
@@ -151,29 +135,43 @@ func (s *DownloadEncrypt) decryptFile(AesKey []byte, src DomainLevel.Download, d
 	}
 	return nil
 }
-func (s *DownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedBuffer, error) {
-	var data *memguard.LockedBuffer
-	cr, err := s.Rsa.MakeCrypto(RepoEncrypterKeys.KeysControl.GetKey(), []byte(""))
+func (s *DownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedBuffer, *memguard.LockedBuffer, error) {
+	outputData := &memguard.LockedBuffer{}
+	defer outputData.Destroy()
+
+	cr, errMakeCrypto := s.Rsa.MakeCrypto(DomainLevel.GetCryptoKeys.GetKey(), []byte(""))
+	if errMakeCrypto != nil {
+		return nil, nil, ErrorDecryptFile
+	}
+	outDataNewKey, err := cr.Decrypt(fileInfoInBytes)
+	outputData = memguard.NewBufferFromBytes(outDataNewKey)
+	switch {
+	case errors.Is(err, rsa.ErrDecryption):
+		cr, err = s.Rsa.MakeCrypto(DomainLevel.GetCryptoKeys.GetOldKey(), []byte(""))
+		if err != nil {
+			return nil, nil, ErrorDecryptFile
+		}
+		outDataOldKey, err := cr.Decrypt(fileInfoInBytes)
+		if err != nil {
+			return nil, nil, ErrorDecryptFile
+		}
+		outputData = memguard.NewBufferFromBytes(outDataOldKey)
+
+	case err != nil:
+		return nil, nil, ErrorDecryptFile
+	}
+
+	var fileData DomainLevel.FileLabelsBytes
+	err = s.Decoder.Decode(&fileData, outputData.Bytes())
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	OutData, err := cr.Decrypt(fileInfoInBytes)
-	if err == nil {
-		data = memguard.NewBuffer(len(OutData))
-		data.Copy(OutData)
-		memguard.WipeBytes(OutData)
-		return data, nil
-	}
-	cr, err = s.Rsa.MakeCrypto(RepoEncrypterKeys.KeysControl.GetOldKey(), []byte(""))
-	if err != nil {
-		return nil, ErrorDecryptFile
-	}
-	outData2, err := cr.Decrypt(fileInfoInBytes)
-	if err != nil {
-		return nil, ErrorDecryptFile
-	}
-	data = memguard.NewBuffer(len(outData2))
-	data.Copy(outData2)
-	memguard.WipeBytes(outData2)
-	return data, nil
+	defer func() {
+		memguard.WipeBytes(fileData.FileName)
+		memguard.WipeBytes(fileData.AesKey)
+	}()
+
+	key := memguard.NewBufferFromBytes(fileData.AesKey)
+	fileName := memguard.NewBufferFromBytes(fileData.FileName)
+	return key, fileName, nil
 }

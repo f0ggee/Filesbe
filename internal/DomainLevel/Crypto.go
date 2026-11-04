@@ -6,7 +6,7 @@ type IncomeData struct {
 }
 
 type FileLabelsBytes struct {
-	FileName string
+	FileName []byte
 	AesKey   []byte
 }
 
@@ -41,3 +41,13 @@ type CryptoMaker interface {
 	MakeCrypto(key []byte, ACD []byte) (Crypto, error)
 	GetRequiredOverheadSize() int
 }
+type (
+	CryptoKeys interface {
+		GetKey() []byte
+		GetOldKey() []byte
+		UpdateNewKey([]byte)
+		UpdateOldKey()
+	}
+)
+
+var GetCryptoKeys CryptoKeys

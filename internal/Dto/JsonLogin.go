@@ -9,7 +9,7 @@ import (
 
 type UserLoginData struct {
 	Email    string `validate:"email,required,min=1,max=40"`
-	Password string `validate:"required,min=6,max=25"`
+	Password []byte `validate:"required,min=6,max=25"`
 }
 
 func (s *UserLoginData) ValidateData() error {

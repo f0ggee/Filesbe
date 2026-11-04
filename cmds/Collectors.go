@@ -123,7 +123,7 @@ func GetNewRedisCollector(r *redis.Client) RedisCollector {
 }
 
 type SessionKeysCollector struct {
-	Keys RepoEncrypterKeys.Keys
+	Keys RepoEncrypterKeys.keys
 }
 
 func GetNewSessionKeysCollector() SessionKeysCollector {

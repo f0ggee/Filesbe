@@ -47,7 +47,7 @@ func (p Parsing) Decode(a any, bytes []byte) error {
 
 	err := json.Unmarshal(bytes, &a)
 	if err != nil {
-		slog.Error("Decoder; error to parse data", "ERROR", err)
+		slog.Error("Decode; error to parse data", "ERROR", err)
 		return errors.New(DomainLevel.ErrorParseInfo)
 	}
 	return nil

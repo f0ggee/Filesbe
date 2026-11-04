@@ -51,3 +51,28 @@ func (d *Writer) CreateUser(data DomainLevel.CreateUserIncomingData) (int32, err
 	return UnitId, nil
 
 }
+
+type WriterTest struct {
+}
+
+func NewWriterTest() *WriterTest {
+	return &WriterTest{}
+}
+
+func (w WriterTest) CreateUser(data DomainLevel.CreateUserIncomingData) (int32, error) {
+	return 123, nil
+}
+
+type WriterError struct {
+	e Errors
+}
+
+func NewWriterError() *WriterError {
+	return &WriterError{
+		e: Errors{},
+	}
+}
+
+func (w WriterError) CreateUser(data DomainLevel.CreateUserIncomingData) (int32, error) {
+	return 0, w.e
+}

@@ -2,7 +2,6 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"bytes"
 	"context"
 	"crypto/rand"
@@ -40,18 +39,21 @@ type UploadEncrypt struct {
 
 type UploadEncryptIncomeData struct {
 	File io.Reader
-	Name string
+	Name []byte
 	Ctx  context.Context
 	Size int64
 }
 
 func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) (string, error) {
+	defer memguard.WipeBytes(data.Name)
+
 	if data.Size >= FileMaxSize {
 		return "", ErrorFileSizeBig
 	}
 	g, ctx := errgroup.WithContext(data.Ctx)
+	shortNameFile := sa.Generate.GenerateText(4)
 
-	x, err := sa.Uploader.SetName(data.Name).SetSize(data.Size).Make(ctx)
+	x, err := sa.Uploader.SetName(shortNameFile).SetSize(data.Size).Make(ctx)
 	if err != nil {
 		return "", err
 	}
@@ -62,7 +64,6 @@ func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) 
 		_ = x.CloseSource()
 		cryptoData.Destroy()
 	}()
-	shortNameFile := sa.Generate.GenerateText(4)
 	fillOut(cryptoData.Data())
 	g.Go(func() error {
 		err := sa.encryptFile(data.File, x, cryptoData.Data(), ctx)
@@ -80,11 +81,11 @@ func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) 
 		slog.Error("UploadEncrypt; error to encode data into Json", "ERROR", err)
 		return "", errors.New(ErrorUploadingEncrypt)
 	}
-	encr, err := sa.Rsa.MakeCrypto(RepoEncrypterKeys.KeysControl.GetKey(), nil)
+	crypto, err := sa.Rsa.MakeCrypto(DomainLevel.GetCryptoKeys.GetKey(), nil)
 	if err != nil {
 		return "", err
 	}
-	encryptedFileInfo, err := encr.Encrypt(FileInfoInBytes)
+	encryptedFileInfo, err := crypto.Encrypt(FileInfoInBytes)
 	if err != nil {
 		return "", err
 	}
@@ -176,7 +177,7 @@ func (sa *UploadEncrypt) setDeleteFile(shortNameFile string) *time.Timer {
 			return s.Deleter()
 		})
 		if err := g2.Wait(); err != nil {
-			slog.Error("DeleterS3; error to delete a File", "ERROR", err)
+			slog.Error("Deleter S3; error to delete a File", "ERROR", err)
 			return
 		}
 		return

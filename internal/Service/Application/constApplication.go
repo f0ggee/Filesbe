@@ -1,6 +1,8 @@
 package Application
 
-import "errors"
+import (
+	"errors"
+)
 
 var ErrorDecryptFile = errors.New("error to decrypt data")
 var ErrorFileSizeBig = errors.New("the File's size is bigger than the default size")

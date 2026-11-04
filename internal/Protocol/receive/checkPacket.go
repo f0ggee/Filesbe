@@ -2,7 +2,6 @@ package receive
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
 	"Kaban/internal/Protocol"
 	"time"
 
@@ -66,7 +65,7 @@ func (f GetNewKey) GetPacketData(packet []byte) (time.Duration, error) {
 	if err != nil {
 		return 0, err
 	}
-	RepoEncrypterKeys.KeysControl.UpdateNewKey(PacketInfo.RsaKey)
-	RepoEncrypterKeys.KeysControl.UpdateOldKey()
+	DomainLevel.GetCryptoKeys.UpdateNewKey(PacketInfo.RsaKey)
+	DomainLevel.GetCryptoKeys.UpdateOldKey()
 	return PacketInfo.T1, nil
 }
