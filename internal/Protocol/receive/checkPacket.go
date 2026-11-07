@@ -66,6 +66,6 @@ func (f GetNewKey) GetPacketData(packet []byte) (time.Duration, error) {
 		return 0, err
 	}
 	DomainLevel.GetCryptoKeys.UpdateNewKey(PacketInfo.RsaKey)
-	DomainLevel.GetCryptoKeys.UpdateOldKey()
+	DomainLevel.GetCryptoKeys.UpdateOldKey(nil)
 	return PacketInfo.T1, nil
 }

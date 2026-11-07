@@ -97,8 +97,8 @@ func (s *DownloadEncrypt) decryptFile(AesKey []byte, src DomainLevel.Download, d
 	if err != nil {
 		return err
 	}
-	nonce := memguard.NewBuffer(s.Aes.GetRequiredOverheadSize())
-	_, err = io.ReadFull(download, nonce.Bytes())
+
+	nonce, err := memguard.NewBufferFromReader(download, s.Aes.GetRequiredOverheadSize())
 	if err != nil {
 		slog.Error("decryptFile; there is error to generate a nonce", "ERROR", err.Error())
 		return ErrorDecryptFile
@@ -144,7 +144,6 @@ func (s *DownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedB
 		return nil, nil, ErrorDecryptFile
 	}
 	outDataNewKey, err := cr.Decrypt(fileInfoInBytes)
-	outputData = memguard.NewBufferFromBytes(outDataNewKey)
 	switch {
 	case errors.Is(err, rsa.ErrDecryption):
 		cr, err = s.Rsa.MakeCrypto(DomainLevel.GetCryptoKeys.GetOldKey(), []byte(""))
@@ -156,9 +155,8 @@ func (s *DownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedB
 			return nil, nil, ErrorDecryptFile
 		}
 		outputData = memguard.NewBufferFromBytes(outDataOldKey)
-
-	case err != nil:
-		return nil, nil, ErrorDecryptFile
+	default:
+		outputData = memguard.NewBufferFromBytes(outDataNewKey)
 	}
 
 	var fileData DomainLevel.FileLabelsBytes
@@ -166,11 +164,6 @@ func (s *DownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedB
 	if err != nil {
 		return nil, nil, err
 	}
-	defer func() {
-		memguard.WipeBytes(fileData.FileName)
-		memguard.WipeBytes(fileData.AesKey)
-	}()
-
 	key := memguard.NewBufferFromBytes(fileData.AesKey)
 	fileName := memguard.NewBufferFromBytes(fileData.FileName)
 	return key, fileName, nil

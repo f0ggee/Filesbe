@@ -3,6 +3,7 @@ package testFileTransfering
 import (
 	"Kaban/internal/DomainLevel"
 	"context"
+	"fmt"
 	"io"
 )
 
@@ -19,6 +20,7 @@ func (t testUploader) Upload(reader io.Reader) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("1" + string(data))
 	t.d.data = append(t.d.data, data...)
 	return nil
 }

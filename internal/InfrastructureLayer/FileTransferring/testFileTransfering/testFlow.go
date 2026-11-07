@@ -9,13 +9,30 @@ type Flow struct {
 	U  DomainLevel.MakerUploader
 	D  DomainLevel.MakerDownloader
 	D_ DomainLevel.MakerDeleter
+	h  hub
 }
 
-func GetTestFlow() Flow {
+func (f *Flow) Reset() {
+
 	h := &hub{
 		data: []byte{},
 	}
-	return Flow{
+	f.U = testUploader{
+		d: h,
+	}
+	f.D = testDownload{
+		h: h,
+	}
+	f.D_ = testDelete{
+		h: h,
+	}
+}
+
+func GetTestFlow() *Flow {
+	h := &hub{
+		data: []byte{},
+	}
+	return &Flow{
 		U: testUploader{
 			d: h,
 		},
@@ -25,6 +42,7 @@ func GetTestFlow() Flow {
 		D_: testDelete{
 			h: h,
 		},
+		h: *h,
 	}
 }
 

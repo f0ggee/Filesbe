@@ -31,22 +31,26 @@ type SignatureMaker interface {
 	SetAdditionalData(data []byte) SignatureMaker
 	MakeSigner(key []byte) (Signer, error)
 }
-type Crypto interface {
-	Encrypt([]byte) ([]byte, error)
-	Decrypt([]byte) ([]byte, error)
-}
 
-type CryptoMaker interface {
-	// MakeCrypto ACD- additional crypto data
-	MakeCrypto(key []byte, ACD []byte) (Crypto, error)
-	GetRequiredOverheadSize() int
-}
+type (
+	CryptoMaker interface {
+		// MakeCrypto ACD- additional crypto data
+		MakeCrypto(key []byte, ACD []byte) (Crypto, error)
+		GetRequiredOverheadSize() int
+	}
+	Crypto interface {
+		Encrypt([]byte) ([]byte, error)
+		Decrypt([]byte) ([]byte, error)
+	}
+)
 type (
 	CryptoKeys interface {
 		GetKey() []byte
 		GetOldKey() []byte
-		UpdateNewKey([]byte)
-		UpdateOldKey()
+		UpdateNewKey(newKey []byte)
+		//UpdateOldKey uses a new key as an old key by default but if we have to pass another key then we can directly
+		//use it in a method parameter. However, if we want to do planning exchange, we don't need to pass anything.
+		UpdateOldKey(otherKey []byte)
 	}
 )
 

@@ -59,7 +59,7 @@ func TestUploadEncrypt_UploadEncryptApplication(t *testing.T) {
 		flow    testFileTransfering.Flow
 	}{
 		{
-			flow: testFileTransfering.GetTestFlow(),
+			flow: *testFileTransfering.GetTestFlow(),
 			name: "test1",
 			fields: fields{
 				NewUploadEncryptDataManage: NewUploadEncryptDataManage{
@@ -105,7 +105,7 @@ func TestUploadEncrypt_UploadEncryptApplication(t *testing.T) {
 			},
 			args:    testArgs,
 			wantErr: true,
-			flow:    testFileTransfering.GetTestFlow(),
+			flow:    *testFileTransfering.GetTestFlow(),
 		},
 		{
 			name: "test5",
@@ -120,7 +120,7 @@ func TestUploadEncrypt_UploadEncryptApplication(t *testing.T) {
 			},
 			args:    testArgs,
 			wantErr: true,
-			flow:    testFileTransfering.GetTestFlow(),
+			flow:    *testFileTransfering.GetTestFlow(),
 		},
 		{
 			name: "test6",

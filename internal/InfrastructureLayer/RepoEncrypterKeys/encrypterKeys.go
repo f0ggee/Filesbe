@@ -41,17 +41,17 @@ func (s *keys) GetOldKey() []byte {
 	defer s.rm.RUnlock()
 	return s.oldKey.Bytes()
 }
-func (s *keys) UpdateNewKey(key []byte) {
+func (s *keys) UpdateNewKey(newKey []byte) {
 
 	s.rm.Lock()
 	if s.newKey != nil {
 		s.newKey.Destroy()
 	}
-	s.newKey = memguard.NewBufferFromBytes(key)
+	s.newKey = memguard.NewBufferFromBytes(newKey)
 	s.rm.Unlock()
 	return
 }
-func (s *keys) UpdateOldKey() {
+func (s *keys) UpdateOldKey([]byte) {
 	s.rm.Lock()
 	if s.oldKey != nil {
 		s.oldKey.Destroy()
