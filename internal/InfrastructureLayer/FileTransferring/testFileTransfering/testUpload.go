@@ -3,7 +3,6 @@ package testFileTransfering
 import (
 	"Kaban/internal/DomainLevel"
 	"context"
-	"fmt"
 	"io"
 )
 
@@ -12,7 +11,7 @@ type hub struct {
 }
 
 type testUploader struct {
-	d *hub
+	d *[]byte
 }
 
 func (t testUploader) Upload(reader io.Reader) error {
@@ -20,8 +19,7 @@ func (t testUploader) Upload(reader io.Reader) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("1" + string(data))
-	t.d.data = append(t.d.data, data...)
+	*t.d = append(*t.d, data...)
 	return nil
 }
 

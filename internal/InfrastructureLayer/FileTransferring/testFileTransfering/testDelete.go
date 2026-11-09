@@ -6,7 +6,7 @@ import (
 )
 
 type testDelete struct {
-	h *hub
+	h *[]byte
 }
 
 func (t testDelete) Deleter() error {

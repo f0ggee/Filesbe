@@ -259,3 +259,107 @@ func TestDownloadEncrypt_getFileData(t *testing.T) {
 		})
 	}
 }
+
+func TestDownloadEncrypt_decryptFile(t *testing.T) {
+
+	prepareDataNormal := func(inputData []byte) ([]byte, []byte) {
+
+		key := make([]byte, 32)
+		io.ReadFull(rand.Reader, key)
+		_crypto, _ := Crypto.NewAesGcmEncryption().MakeCrypto(key, nil)
+		cipherText, _ := _crypto.Encrypt(key)
+
+		return cipherText, key
+	}
+	prepareDataError := func(inputData []byte) ([]byte, []byte) {
+		key := make([]byte, 32)
+		io.ReadFull(rand.Reader, key)
+		_crypto, _ := Crypto.NewAesGcmEncryption().MakeCrypto(key, nil)
+		cipherText, _ := _crypto.Encrypt(key)
+		return cipherText, make([]byte, 32)
+	}
+	type fields struct {
+		NewDownloadEncryptCrypto NewDownloadEncryptCrypto
+	}
+	type args struct {
+		AesKey []byte
+		src    DomainLevel.Download
+		dst    DomainLevel.Upload
+	}
+	defaultFields := fields{
+		NewDownloadEncryptCrypto: NewDownloadEncryptCrypto{
+			Aes: Crypto.NewAesGcmEncryption(),
+		},
+	}
+	tests := []struct {
+		name      string
+		fields    fields
+		args      args
+		inputData []byte
+		flow      testFileTransfering.TestDecryptFile
+		data      func(inputData []byte) ([]byte, []byte)
+		wantErr   bool
+	}{
+		{
+			name:      "test1",
+			fields:    defaultFields,
+			args:      args{},
+			inputData: []byte("Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!Hello!"),
+			flow:      testFileTransfering.GetNormalFlow(),
+			data:      prepareDataNormal,
+			wantErr:   false,
+		},
+		{
+			name:      "test2",
+			fields:    defaultFields,
+			args:      args{},
+			inputData: []byte("Hello!"),
+			flow:      testFileTransfering.GetNormalFlow(),
+			data:      prepareDataError,
+			wantErr:   true,
+		},
+		{
+			name:      "test3",
+			fields:    defaultFields,
+			args:      args{},
+			inputData: []byte("TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest"),
+			flow:      testFileTransfering.GetTestErrorFlowErrorDecryptFile(),
+			data:      prepareDataNormal,
+			wantErr:   true,
+		},
+		{
+			name: "test4",
+			fields: fields{
+				NewDownloadEncryptCrypto: NewDownloadEncryptCrypto{
+					Aes: Crypto.NewAesCtrError{},
+				},
+			},
+			args:      args{},
+			inputData: []byte("TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest"),
+			flow:      testFileTransfering.GetNormalFlow(),
+			data:      prepareDataNormal,
+			wantErr:   true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &DownloadEncrypt{
+				NewDownloadEncryptCrypto: tt.fields.NewDownloadEncryptCrypto,
+			}
+			cipherText, key := tt.data(tt.inputData)
+
+			tt.flow.SetCipherText(cipherText)
+			tt.args.AesKey = key
+			_u, _ := tt.flow.U.Make(nil)
+			tt.args.dst = _u
+			_d, _ := tt.flow.D.Make(nil)
+			tt.args.src = _d
+			if err := s.decryptFile(tt.args.AesKey, tt.args.src, tt.args.dst); (err != nil) != tt.wantErr {
+				t.Errorf("decryptFile() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			tt.flow.Reset()
+
+		})
+	}
+}

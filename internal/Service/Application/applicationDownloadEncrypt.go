@@ -94,6 +94,7 @@ func (s *DownloadEncrypt) DownloadEncryptApplication(data DownloadEncryptIncomeD
 
 func (s *DownloadEncrypt) decryptFile(AesKey []byte, src DomainLevel.Download, dst DomainLevel.Upload) error {
 	download, err := src.Downloader()
+
 	if err != nil {
 		return err
 	}
@@ -120,6 +121,7 @@ func (s *DownloadEncrypt) decryptFile(AesKey []byte, src DomainLevel.Download, d
 			err = dst.Upload(bytes.NewReader(decrData))
 			if err != nil {
 				slog.Error("decryptFile: error to write into a stream", "ERROR", err)
+				memguard.WipeBytes(decrData)
 				return ErrorDecryptFile
 			}
 			memguard.WipeBytes(decrData)
@@ -135,6 +137,7 @@ func (s *DownloadEncrypt) decryptFile(AesKey []byte, src DomainLevel.Download, d
 	}
 	return nil
 }
+
 func (s *DownloadEncrypt) getFileData(fileInfoInBytes []byte) (*memguard.LockedBuffer, *memguard.LockedBuffer, error) {
 	outputData := &memguard.LockedBuffer{}
 	defer outputData.Destroy()

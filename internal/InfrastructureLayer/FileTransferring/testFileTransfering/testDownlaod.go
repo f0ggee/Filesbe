@@ -8,11 +8,11 @@ import (
 )
 
 type testDownload struct {
-	h *hub
+	h *[]byte
 }
 
 func (t testDownload) Downloader() (io.Reader, error) {
-	return bytes.NewReader(t.h.data), nil
+	return bytes.NewReader(*t.h), nil
 }
 
 func (t testDownload) CloseSource() error {
