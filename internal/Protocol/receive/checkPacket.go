@@ -18,12 +18,11 @@ type GetNewKey struct {
 // GetPacketData decrypts and cheks a packet and then returns data.
 func (f GetNewKey) GetPacketData(packet []byte) (time.Duration, error) {
 	var IncomePacket Protocol.OutComePacket
+
 	err := f.Decoder.Decode(&IncomePacket, packet)
 	if err != nil {
 		return 0, err
 	}
-
-	var ACD = f.Aes.GetRequiredOverheadSize()
 
 	rsaDecrypter, err := f.Rsa.MakeCrypto(DomainLevel.ServerKeys.GerOurPrivateKey(), nil)
 	if err != nil {
@@ -35,11 +34,11 @@ func (f GetNewKey) GetPacketData(packet []byte) (time.Duration, error) {
 		return 0, err
 	}
 
-	aesCrypto, err := f.Aes.MakeCrypto(decryptedAesKey, IncomePacket.CipherData[:ACD])
+	aesCrypto, err := f.Aes.MakeCrypto(decryptedAesKey, nil)
 	if err != nil {
 		return 0, err
 	}
-	packetData, err := aesCrypto.Decrypt(IncomePacket.CipherData[:ACD])
+	packetData, err := aesCrypto.Decrypt(IncomePacket.CipherData)
 	if err != nil {
 		return 0, err
 	}
@@ -61,7 +60,7 @@ func (f GetNewKey) GetPacketData(packet []byte) (time.Duration, error) {
 	if err != nil {
 		return 0, err
 	}
-	err = signMaker.CheckSign(PacketInfo.Sign)
+	err = signMaker.CheckSign(PacketInfo.Sign, PacketInfo.RsaKey)
 	if err != nil {
 		return 0, err
 	}

@@ -24,8 +24,8 @@ type CryptoGenerating interface {
 	GenerateHash([]byte) ([]byte, error)
 }
 type Signer interface {
-	MakeSign(signData []byte) ([]byte, error)
-	CheckSign(signature []byte) error
+	MakeSign(payload []byte) ([]byte, error)
+	CheckSign(signature []byte, payload []byte) error
 }
 type SignatureMaker interface {
 	SetAdditionalData(data []byte) SignatureMaker
@@ -51,6 +51,9 @@ type (
 		//UpdateOldKey uses a new key as an old key by default but if we have to pass another key then we can directly
 		//use it in a method parameter. However, if we want to do planning exchange, we don't need to pass anything.
 		UpdateOldKey(otherKey []byte)
+
+		GetMasterKey() []byte
+		GetServerKey() []byte
 	}
 )
 

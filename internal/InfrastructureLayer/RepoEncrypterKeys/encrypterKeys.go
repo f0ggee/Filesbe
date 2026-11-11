@@ -3,34 +3,58 @@ package RepoEncrypterKeys
 import (
 	"Kaban/internal/DomainLevel"
 	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
+	"encoding/hex"
+	"os"
 	"sync"
 
 	"github.com/awnumar/memguard"
+	"github.com/joho/godotenv"
 )
 
 type (
 	keys struct {
-		oldKey *memguard.LockedBuffer
-		newKey *memguard.LockedBuffer
-		rm     *sync.RWMutex
+		oldKey    *memguard.LockedBuffer
+		newKey    *memguard.LockedBuffer
+		rm        *sync.RWMutex
+		masterKey []byte
+		serverKey []byte
 	}
 )
 
+func (s *keys) GetServerKey() []byte {
+
+	return s.serverKey
+}
+
+func (s *keys) GetMasterKey() []byte {
+	return s.masterKey
+}
+
 func SetKeys() {
-	r, err := rsa.GenerateKey(rand.Reader, 2048)
+
+	err := godotenv.Load()
+	if err != nil {
+		panic(err)
+	}
+	masterKey := os.Getenv("Public_Key_Master_Server")
+	ourKey := os.Getenv("Our_Private_Key")
+	k1, err := hex.DecodeString(masterKey)
+	if err != nil {
+		panic(err)
+	}
+	k2, err := hex.DecodeString(ourKey)
 	if err != nil {
 		panic(err)
 	}
 	DomainLevel.GetCryptoKeys = &keys{
-		oldKey: &memguard.LockedBuffer{},
-		newKey: &memguard.LockedBuffer{},
-		rm:     &sync.RWMutex{},
+		oldKey:    &memguard.LockedBuffer{},
+		newKey:    &memguard.LockedBuffer{},
+		rm:        &sync.RWMutex{},
+		masterKey: k1,
+		serverKey: k2,
 	}
-	DomainLevel.GetCryptoKeys.UpdateNewKey(x509.MarshalPKCS1PrivateKey(r))
+	DomainLevel.GetCryptoKeys.UpdateNewKey([]byte(rand.Text()))
 }
-
 func (s *keys) GetKey() []byte {
 	s.rm.RLock()
 	defer s.rm.RUnlock()

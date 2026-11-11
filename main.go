@@ -28,7 +28,6 @@ func main() {
 	connections := cmds.GetConnections()
 	defer connections.CloseConnections()
 	RepoEncrypterKeys.SetKeys()
-
 	grpcCollector := cmds.GetGrpcCollector(connections.GrpcConnect)
 	router := mux.NewRouter()
 	cryptoCollector := cmds.GetCryptoCollector()

@@ -25,7 +25,7 @@ type FirstExchange struct {
 // GetEncryptedPacket prepares and encrypts a packet to send it to a Master server
 func (f FirstExchange) GetEncryptedPacket() ([]byte, error) {
 	var serverName = os.Getenv("server_name")
-	singMaker, err := f.Sign.MakeSigner(DomainLevel.ServerKeys.GerOurPrivateKey())
+	singMaker, err := f.Sign.MakeSigner(DomainLevel.GetCryptoKeys.GetServerKey())
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (f FirstExchange) GetEncryptedPacket() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	rsaMaker, err := f.Rsa.MakeCrypto(DomainLevel.ServerKeys.GetMasterPublicKey(), nil)
+	rsaMaker, err := f.Rsa.MakeCrypto(DomainLevel.GetCryptoKeys.GetMasterKey(), nil)
 	if err != nil {
 		return nil, err
 	}

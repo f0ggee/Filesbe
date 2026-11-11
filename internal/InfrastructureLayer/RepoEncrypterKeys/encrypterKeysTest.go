@@ -4,6 +4,16 @@ type TestEncrypterKeys struct {
 	d []byte
 }
 
+func (t TestEncrypterKeys) GetServerKey() []byte {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t TestEncrypterKeys) GetMasterKey() []byte {
+	//TODO implement me
+	panic("implement me")
+}
+
 func NewTestEncrypterKeys(d []byte) *TestEncrypterKeys {
 	return &TestEncrypterKeys{d: d}
 }
@@ -29,6 +39,16 @@ type TestGetFileData struct {
 	_new []byte
 }
 
+func (t *TestGetFileData) GetServerKey() []byte {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t *TestGetFileData) GetMasterKey() []byte {
+	//TODO implement me
+	panic("implement me")
+}
+
 func NewTestGetFileData() *TestGetFileData {
 	return &TestGetFileData{}
 }
@@ -48,4 +68,48 @@ func (t *TestGetFileData) UpdateNewKey(newKey []byte) {
 
 func (t *TestGetFileData) UpdateOldKey(key []byte) {
 	t.old = key
+}
+
+type TestPrepareData struct {
+	masterKey  []byte
+	serverKeys []byte
+	newKey     []byte
+	oldKey     []byte
+}
+
+func NewTestPrepareData(masterKey []byte, serverKey []byte) *TestPrepareData {
+	return &TestPrepareData{
+		masterKey:  masterKey,
+		serverKeys: serverKey,
+		newKey:     nil,
+		oldKey:     nil,
+	}
+}
+
+func (t TestPrepareData) GetKey() []byte {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t TestPrepareData) GetOldKey() []byte {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t TestPrepareData) UpdateNewKey(newKey []byte) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t TestPrepareData) UpdateOldKey(otherKey []byte) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t *TestPrepareData) GetMasterKey() []byte {
+	return t.masterKey
+}
+
+func (t *TestPrepareData) GetServerKey() []byte {
+	return t.serverKeys
 }
