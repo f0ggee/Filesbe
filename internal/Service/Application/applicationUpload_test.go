@@ -2,11 +2,11 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/Crypto"
-	"Kaban/internal/InfrastructureLayer/FileTransferring/testFileTransfering"
-	"Kaban/internal/InfrastructureLayer/Parsers"
-	"Kaban/internal/InfrastructureLayer/RedisInteration"
-	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
+	"Kaban/internal/Drivers/Crypto"
+	"Kaban/internal/Drivers/FileTransferring/testFileTransfering"
+	"Kaban/internal/Drivers/Parsers"
+	"Kaban/internal/Drivers/RedisInteration"
+	"Kaban/internal/Drivers/RepoEncrypterKeys"
 	"bytes"
 	"context"
 	"crypto/rand"

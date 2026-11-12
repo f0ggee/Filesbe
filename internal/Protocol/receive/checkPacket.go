@@ -17,7 +17,7 @@ type GetNewKey struct {
 
 // GetPacketData decrypts and cheks a packet and then returns data.
 func (f GetNewKey) GetPacketData(packet []byte) (time.Duration, error) {
-	var IncomePacket Protocol.OutComePacket
+	var IncomePacket Protocol.OutPacket
 
 	err := f.Decoder.Decode(&IncomePacket, packet)
 	if err != nil {
@@ -44,7 +44,7 @@ func (f GetNewKey) GetPacketData(packet []byte) (time.Duration, error) {
 	}
 	defer memguard.WipeBytes(packetData)
 
-	var PacketInfo Protocol.IncomePacketDetails
+	var PacketInfo Protocol.InEnvelope
 	err = f.Decoder.Decode(&PacketInfo, packetData)
 	if err != nil {
 		return 0, err

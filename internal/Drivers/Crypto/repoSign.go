@@ -8,10 +8,12 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"log/slog"
+
+	"github.com/awnumar/memguard"
 )
 
 type RsaSign struct {
-	key []byte
+	key *memguard.LockedBuffer
 }
 
 func NewRsaSigner() *RsaSign {
@@ -19,7 +21,7 @@ func NewRsaSigner() *RsaSign {
 }
 
 func (r *RsaSign) MakeSign(signData []byte) ([]byte, error) {
-	KeyPrivate, err := x509.ParsePKCS1PrivateKey(r.key)
+	KeyPrivate, err := x509.ParsePKCS1PrivateKey(r.key.Bytes())
 	if err != nil {
 		slog.Error("RsaMake: error to convert a key", "ERROR", err)
 		return nil, ErrorStrangeCrypto
@@ -37,10 +39,10 @@ func (r *RsaSign) CheckSign(signature []byte, payload []byte) error {
 
 	var masterKey *rsa.PublicKey
 
-	if _masterKey, err := x509.ParsePKCS1PrivateKey(r.key); err == nil {
+	if _masterKey, err := x509.ParsePKCS1PrivateKey(r.key.Bytes()); err == nil {
 		masterKey = &_masterKey.PublicKey
 	} else {
-		_masterKeyP, _err := x509.ParsePKCS1PublicKey(r.key)
+		_masterKeyP, _err := x509.ParsePKCS1PublicKey(r.key.Bytes())
 		if _err != nil {
 			return ErrorInvalidData
 		}
@@ -62,6 +64,7 @@ func (r *RsaSign) SetAdditionalData(data []byte) DomainLevel.SignatureMaker {
 }
 
 func (r *RsaSign) MakeSigner(key []byte) (DomainLevel.Signer, error) {
-	r.key = key
+	r.key = memguard.NewBuffer(len(key))
+	r.key.Copy(key)
 	return r, nil
 }

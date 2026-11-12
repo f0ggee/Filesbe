@@ -2,8 +2,8 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
+	"Kaban/internal/Drivers/Tokens"
 	"Kaban/internal/Dto"
-	"Kaban/internal/InfrastructureLayer/Tokens"
 	"context"
 	"crypto/rand"
 	"encoding/binary"

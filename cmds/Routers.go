@@ -6,6 +6,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func SetRouters(r *mux.Router, controllers *Controllers) {
+	apiRouters(r, *controllers)
+	userRouters(r)
+
+}
 func apiRouters(r *mux.Router, c Controllers) {
 	postRouter := r.Methods(http.MethodPost).Subrouter()
 	getRouter := r.Methods(http.MethodGet).Subrouter()
@@ -48,12 +53,6 @@ func apiRouters(r *mux.Router, c Controllers) {
 		c.encryptDownload.Net.R = request
 		c.encryptDownload.DownloadWithEncrypt()
 	})
-}
-
-func SetRouters(r *mux.Router, controllers *Controllers) {
-	apiRouters(r, *controllers)
-	userRouters(r)
-
 }
 
 func userRouters(r *mux.Router) {

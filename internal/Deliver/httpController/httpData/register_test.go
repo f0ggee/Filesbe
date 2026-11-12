@@ -1,4 +1,4 @@
-package Dto
+package httpData
 
 import (
 	"Kaban/internal/DomainLevel"
@@ -115,10 +115,10 @@ func TestUserDataRegister_ValidateDate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &UserDataRegister{
+			r := &RegisterData{
 				Name:     tt.fields.Name,
 				Email:    tt.fields.Email,
-				Password: tt.fields.Password,
+				Password: []byte(tt.fields.Password),
 			}
 			err := r.ValidateDate()
 			if (err != nil) != tt.wantErr {
@@ -178,10 +178,10 @@ func TestUserDataRegister_getPasswordError(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &UserDataRegister{
+			r := &RegisterData{
 				Name:     tt.fields.Name,
 				Email:    tt.fields.Email,
-				Password: tt.fields.Password,
+				Password: []byte(tt.fields.Password),
 			}
 			if err := r.getPasswordError(tt.args.e); (err != nil) != tt.wantErr {
 				t.Errorf("getPasswordError() error = %v, wantErr %v", err, tt.wantErr)
@@ -242,10 +242,10 @@ func TestUserDataRegister_getEmailError(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &UserDataRegister{
+			r := &RegisterData{
 				Name:     tt.fields.Name,
 				Email:    tt.fields.Email,
-				Password: tt.fields.Password,
+				Password: []byte(tt.fields.Password),
 			}
 			if err := r.getEmailError(tt.args.e); (err != nil) != tt.wantErr {
 				t.Errorf("getEmailError() error = %v, wantErr %v", err, tt.wantErr)
@@ -291,10 +291,10 @@ func TestUserDataRegister_getNameError(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &UserDataRegister{
+			r := &RegisterData{
 				Name:     tt.fields.Name,
 				Email:    tt.fields.Email,
-				Password: tt.fields.Password,
+				Password: []byte(tt.fields.Password),
 			}
 			if err := r.getNameError(tt.args.e); err.Error() != tt.wantErr {
 				t.Errorf("the error isn't correc %v\n", err)

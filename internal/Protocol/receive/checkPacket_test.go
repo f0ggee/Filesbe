@@ -2,9 +2,9 @@ package receive
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/Crypto"
-	"Kaban/internal/InfrastructureLayer/Parsers"
-	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
+	"Kaban/internal/Drivers/Crypto"
+	"Kaban/internal/Drivers/Parsers"
+	"Kaban/internal/Drivers/RepoEncrypterKeys"
 	"Kaban/internal/Protocol"
 	"crypto/rand"
 	"crypto/rsa"
@@ -105,7 +105,7 @@ func TestGetNewKey_GetPacketData(t *testing.T) {
 }
 
 func badEncoding() []byte {
-	p := Protocol.IncomePacketDetails{
+	p := Protocol.InEnvelope{
 		Sign:    []byte("eqwewq"),
 		RsaKey:  []byte("ehsad"),
 		T1:      1000,
@@ -127,7 +127,7 @@ func badPayload() []byte {
 	if err != nil {
 		panic(err)
 	}
-	data, _ := Parsers.GetNewParsing().Encode(Protocol.IncomePacketDetails{
+	data, _ := Parsers.GetNewParsing().Encode(Protocol.InEnvelope{
 		Sign:    signature,
 		RsaKey:  []byte("DatataDatataDatataDatataDatataDatata"),
 		T1:      100,
@@ -152,7 +152,7 @@ func badPayload() []byte {
 		WorkerPrivateKey: x509.MarshalPKCS1PrivateKey(serverKey),
 	}
 
-	Packet := Protocol.OutComePacket{
+	Packet := Protocol.OutPacket{
 		AesKeyData: encryptedKey,
 		CipherData: encryptedPacket,
 	}
@@ -176,7 +176,7 @@ func badSignRsa() []byte {
 	if err != nil {
 		panic(err)
 	}
-	data, _ := Parsers.GetNewParsing().Encode(Protocol.IncomePacketDetails{
+	data, _ := Parsers.GetNewParsing().Encode(Protocol.InEnvelope{
 		Sign:    signature,
 		RsaKey:  playLoadBytes,
 		T1:      100,
@@ -201,7 +201,7 @@ func badSignRsa() []byte {
 		WorkerPrivateKey: x509.MarshalPKCS1PrivateKey(serverKey),
 	}
 
-	Packet := Protocol.OutComePacket{
+	Packet := Protocol.OutPacket{
 		AesKeyData: encryptedKey,
 		CipherData: encryptedPacket,
 	}
@@ -216,7 +216,7 @@ func badEncryptionRsa() []byte {
 	_rsa, _ := Crypto.NewRsaEncryption().MakeCrypto(x509.MarshalPKCS1PrivateKey(badKey), nil)
 	encryptedData, _ := _rsa.Encrypt(data)
 
-	outcomePacket := Protocol.OutComePacket{
+	outcomePacket := Protocol.OutPacket{
 		AesKeyData: encryptedData,
 		CipherData: data,
 	}
@@ -237,7 +237,7 @@ func badTime() []byte {
 	if err != nil {
 		panic(err)
 	}
-	data, _ := Parsers.GetNewParsing().Encode(Protocol.IncomePacketDetails{
+	data, _ := Parsers.GetNewParsing().Encode(Protocol.InEnvelope{
 		Sign:    signature,
 		RsaKey:  playLoadBytes,
 		T1:      100,
@@ -262,7 +262,7 @@ func badTime() []byte {
 		WorkerPrivateKey: x509.MarshalPKCS1PrivateKey(serverKey),
 	}
 
-	Packet := Protocol.OutComePacket{
+	Packet := Protocol.OutPacket{
 		AesKeyData: encryptedKey,
 		CipherData: encryptedPacket,
 	}
@@ -283,7 +283,7 @@ func masterServerTest() []byte {
 	if err != nil {
 		panic(err)
 	}
-	data, _ := Parsers.GetNewParsing().Encode(Protocol.IncomePacketDetails{
+	data, _ := Parsers.GetNewParsing().Encode(Protocol.InEnvelope{
 		Sign:    signature,
 		RsaKey:  playLoadBytes,
 		T1:      100,
@@ -308,7 +308,7 @@ func masterServerTest() []byte {
 		WorkerPrivateKey: x509.MarshalPKCS1PrivateKey(serverKey),
 	}
 
-	Packet := Protocol.OutComePacket{
+	Packet := Protocol.OutPacket{
 		AesKeyData: encryptedKey,
 		CipherData: encryptedPacket,
 	}

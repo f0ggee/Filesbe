@@ -47,6 +47,5 @@ func (n RedisDeleteTest) DeleteFileInfo(s string, ctx context.Context) error {
 }
 
 func (n RedisDeleteTest) DeleterFileInfoTest(s string, ctx context.Context) error {
-	//TODO implement me
-	panic("implement me")
+	return nil
 }

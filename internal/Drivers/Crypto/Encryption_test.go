@@ -2,7 +2,7 @@ package Crypto_test
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/Crypto"
+	"Kaban/internal/Drivers/Crypto"
 	"bytes"
 	"crypto/rand"
 	"crypto/rsa"
@@ -94,22 +94,27 @@ func TestCrypto(t *testing.T) {
 			encrypt, err := tt.Encryption.MakeCrypto(tt.D.Key, tt.D.nonce)
 			if err != nil {
 				t.Errorf("Error crypto %v", err)
+				return
 			}
 			cipherText, err := encrypt.Encrypt(tt.testData)
 			if err != nil {
 				t.Errorf("Error crypto %v", err)
+				return
 
 			}
 			decrypt, err := tt.Encryption.MakeCrypto(tt.D.Key, tt.D.nonce)
 			if err != nil {
 				t.Errorf("Error crypto %v", err)
+				return
 			}
 			text, err := decrypt.Decrypt(cipherText)
 			if err != nil {
 				t.Errorf("Error crypto %v", err)
+				return
 			}
 			if !bytes.Equal(text, tt.testData) {
 				t.Errorf("The input data %v and a decrypted text %v aren't alike", tt.testData, text)
+				return
 			}
 		})
 	}
@@ -125,7 +130,7 @@ func BenchmarkNewAesCtr(b *testing.B) {
 
 	cryptsText := []byte{}
 
-	for i := 0; i < 10000; i++ {
+	for range 10000 {
 		cryptsText = append(cryptsText, []byte(rand.Text())...)
 	}
 	aes := Crypto.NewAesGcmEncryption()

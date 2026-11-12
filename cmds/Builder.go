@@ -6,7 +6,7 @@ package cmds
 import (
 	"Kaban/internal/Deliver/httpController"
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/Parsers"
+	"Kaban/internal/Drivers/Parsers"
 	"Kaban/internal/Protocol/receive"
 	"Kaban/internal/Protocol/send"
 	"Kaban/internal/Service/Application"

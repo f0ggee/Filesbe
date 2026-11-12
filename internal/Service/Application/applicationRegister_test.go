@@ -2,10 +2,10 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
+	"Kaban/internal/Drivers/Crypto"
+	"Kaban/internal/Drivers/DatabaseControl"
+	"Kaban/internal/Drivers/Tokens"
 	"Kaban/internal/Dto"
-	"Kaban/internal/InfrastructureLayer/Crypto"
-	"Kaban/internal/InfrastructureLayer/DatabaseControl"
-	"Kaban/internal/InfrastructureLayer/Tokens"
 	"context"
 	"testing"
 )

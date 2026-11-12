@@ -1,9 +1,9 @@
 package cmds
 
 import (
-	"Kaban/internal/InfrastructureLayer/DatabaseControl"
-	"Kaban/internal/InfrastructureLayer/Grpc"
-	"Kaban/internal/InfrastructureLayer/RedisInteration"
+	"Kaban/internal/Drivers/DatabaseControl"
+	"Kaban/internal/Drivers/Grpc"
+	"Kaban/internal/Drivers/RedisInteration"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"

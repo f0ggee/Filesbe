@@ -1,4 +1,4 @@
-package Dto
+package httpData
 
 import (
 	"Kaban/internal/DomainLevel"
@@ -75,9 +75,9 @@ func TestUserLoginData_ValidateData(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &UserLoginData{
+			s := &LoginData{
 				Email:    tt.fields.Email,
-				Password: tt.fields.Password,
+				Password: []byte(tt.fields.Password),
 			}
 			if err := s.ValidateData(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateData() error = %v, wantErr %v", err, tt.wantErr)
@@ -127,9 +127,9 @@ func TestUserLoginData_getPasswordError(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &UserLoginData{
+			r := &LoginData{
 				Email:    tt.fields.Email,
-				Password: tt.fields.Password,
+				Password: []byte(tt.fields.Password),
 			}
 			if err := r.getPasswordError(tt.args.e); err.Error() != tt.wantErr {
 				t.Errorf("getPasswordError() error = %v, wantErr %v", err, tt.wantErr)

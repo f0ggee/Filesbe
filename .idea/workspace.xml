@@ -4,17 +4,77 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 9.11.26&#10;&#10;Tests for application have been finished&#10;&#10;Naming changes have been to application functions">
-      <change afterPath="$PROJECT_DIR$/internal/Protocol/receive/checkPacket_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go" afterDir="false" />
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 11.11.26&#10;&#10;&#10;Some changes are in Rsa Signer&#10;Tests have been finished for Protocol functions">
+      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/httpData/login.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/httpData/login_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/httpData/register.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/httpData/register_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/repoSign_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/DomainLevel/Crypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/DomainLevel/Crypto.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/repoSign.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/repoSign.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeysTest.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeysTest.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmds/Builder.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Builder.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmds/Collectors.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Collectors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmds/Routers.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Routers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmds/connections.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/connections.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/FileInfoIntoRedis.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/JsonLogin.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/JsonLogin_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/JsonRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/common.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Dto/JsonRegister_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Encryption_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/Encryption_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/cryptoErrors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/cryptoErrors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/repoCrypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/repoCrypto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/repoGenerating.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/repoGenerating.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/repoSign.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/repoSign.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/repoValidate.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/repoValidate.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/connect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/DatabaseControl/connect.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/databaseCheck.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/DatabaseControl/databaseCheck.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/databaseConst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/DatabaseControl/databaseConst.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/databaseRead.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/DatabaseControl/databaseRead.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/databaseWrite.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/DatabaseControl/databaseWrite.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo/constHttpTransf.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/TransferringHttpRepo/constHttpTransf.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo/httpUploader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/TransferringHttpRepo/httpUploader.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo/httpUploader_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/TransferringHttpRepo/httpUploader_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Consts.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/s3Repo/S3Consts.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Deleter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/s3Repo/S3Deleter.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Download.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/s3Repo/S3Download.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Variables.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/s3Repo/S3Variables.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/s3Credentials.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/s3Repo/s3Credentials.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/s3Upload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/s3Repo/s3Upload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testDecryptFile.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/testFileTransfering/testDecryptFile.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testDelete.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/testFileTransfering/testDelete.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testDownlaod.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/testFileTransfering/testDownlaod.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testFlow.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/testFileTransfering/testFlow.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/testFileTransfering/testUpload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/GrpcRequests/KeyConnect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Grpc/GrpcRequests/KeyConnect.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/GrpcRequests/requestsErrors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Grpc/GrpcRequests/requestsErrors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/grpcCredentials.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Grpc/grpcCredentials.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/protoFiles/GenerateProto.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Grpc/protoFiles/GenerateProto.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/protoFiles/GenerateProto.proto" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Grpc/protoFiles/GenerateProto.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/protoFiles/GenerateProto_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Grpc/protoFiles/GenerateProto_grpc.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Parsers/JsonParsers_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Parsers/JsonParsers_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Parsers/parsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Parsers/parsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisCheck.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisCheck.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisConn.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisConn.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisDelete.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisDelete.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisErrors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisErrors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisRead.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisRead.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisWrite.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisWrite.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RepoEncrypterKeys/encrypterKeys.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeysTest.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RepoEncrypterKeys/encrypterKeysTest.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/ConstTokens.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Tokens/ConstTokens.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/Jwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Tokens/Jwt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/Rf.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Tokens/Rf.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Protocol/ProtocolConst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/ProtocolConst.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Protocol/receive/checkPacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/receive/checkPacket.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Protocol/receive/timeCheck.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/receive/timeCheck.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Protocol/receive/checkPacket_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/receive/checkPacket_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Protocol/send/preparePacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/send/preparePacket.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationLogin_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationLogin_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationRegister.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationRegister_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationRegister_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationUpload_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationUpload_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -144,6 +204,7 @@
     "Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
     "Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
     "Go Test.TestCrypto in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
+    "Go Test.TestCrypto/test2 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
     "Go Test.TestCryptoFunctions in Kaban/internal/Service/Application.executor": "Run",
     "Go Test.TestDownloadEncrypt_DownloadEncryptApplication in Kaban/internal/Service/Application.executor": "Run",
     "Go Test.TestDownloadEncrypt_DownloadEncryptApplication/test1 in Kaban/internal/Service/Application.executor": "Run",
@@ -239,6 +300,7 @@
     "Go Test.TestRsaEncryption_MakeCrypto/test3 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
     "Go Test.TestRsaEncryption_MakeCrypto/test3#01 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
     "Go Test.TestSetAnswer/test1 in Kaban/internal/Deliver/httpController.executor": "Run",
+    "Go Test.TestSigners/test1 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
     "Go Test.TestUploadEncrypt_UploadEncryptApplication in Kaban/internal/Service/Application.executor": "Run",
     "Go Test.TestUploadEncrypt_UploadEncryptApplication/test1 in Kaban/internal/Service/Application.executor": "Run",
     "Go Test.TestUploadEncrypt_UploadEncryptApplication/test1#01 in Kaban/internal/Service/Application.executor": "Debug",
@@ -291,7 +353,7 @@
     "git-widget-placeholder": "RefactoringFilesbes",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/pasabaranov/GolandProjects/Kaban/internal/Protocol/send",
+    "last_opened_file_path": "/Users/pasabaranov/GolandProjects/Kaban/internal/InfrastructureLayer/Crypto",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -310,11 +372,11 @@
       <recent name="$PROJECT_DIR$/internal/Service/Application" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto" />
       <recent name="$PROJECT_DIR$/internal/Protocol/send" />
       <recent name="$PROJECT_DIR$/internal/Protocol/receive" />
       <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering" />
       <recent name="$PROJECT_DIR$/internal/Service/Application" />
-      <recent name="$PROJECT_DIR$/internal/DomainLevel" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/pcf" />
@@ -367,7 +429,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Go Test.TestFirstExchange_GetEncryptedPacket/test1 in Kaban/internal/Protocol/send">
+  <component name="RunManager" selected="Go Test.TestSigners/test1 in Kaban/internal/InfrastructureLayer/Crypto">
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
       <deployment type="dockerfile">
         <settings />
@@ -441,6 +503,18 @@
       <pattern value="^\QBenchmarkNewHttpUploader\E$" />
       <method v="2" />
     </configuration>
+    <configuration name="TestCrypto/test2 in Kaban/internal/InfrastructureLayer/Crypto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/InfrastructureLayer/Crypto" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestCrypto\E$/^\Qtest2\E$" />
+      <method v="2" />
+    </configuration>
     <configuration name="TestFirstExchange_GetEncryptedPacket/test1 in Kaban/internal/Protocol/send" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
       <working_directory value="$PROJECT_DIR$/internal/Protocol/send" />
@@ -451,30 +525,6 @@
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
       <pattern value="^\QTestFirstExchange_GetEncryptedPacket\E$/^\Qtest1\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestGetNewKey_GetPacketData/test3 in Kaban/internal/Protocol/receive" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/Protocol/receive" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="Kaban/internal/Protocol/receive" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestGetNewKey_GetPacketData\E$/^\Qtest3\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestGetNewKey_GetPacketData/test4 in Kaban/internal/Protocol/receive" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/Protocol/receive" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="Kaban/internal/Protocol/receive" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestGetNewKey_GetPacketData\E$/^\Qtest4\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestGetNewKey_GetPacketData/test5 in Kaban/internal/Protocol/receive" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -501,6 +551,18 @@
       <pattern value="^\QTestGetNewKey_GetPacketData\E$/^\Qtest6\E$" />
       <method v="2" />
     </configuration>
+    <configuration name="TestSigners/test1 in Kaban/internal/InfrastructureLayer/Crypto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Kaban" />
+      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="Kaban/internal/InfrastructureLayer/Crypto" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestSigners\E$/^\Qtest1\E$" />
+      <method v="2" />
+    </configuration>
     <configuration name="go test Kaban/internal/Service/Application" type="GoTestRunConfiguration" factoryName="Go Test" nameIsGenerated="true">
       <module name="Kaban" />
       <working_directory value="$PROJECT_DIR$/internal/Service/Application" />
@@ -521,11 +583,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestSigners/test1 in Kaban/internal/InfrastructureLayer/Crypto" />
+        <item itemvalue="Go Test.TestCrypto/test2 in Kaban/internal/InfrastructureLayer/Crypto" />
         <item itemvalue="Go Test.TestFirstExchange_GetEncryptedPacket/test1 in Kaban/internal/Protocol/send" />
         <item itemvalue="Go Test.TestGetNewKey_GetPacketData/test6 in Kaban/internal/Protocol/receive" />
         <item itemvalue="Go Test.TestGetNewKey_GetPacketData/test5 in Kaban/internal/Protocol/receive" />
-        <item itemvalue="Go Test.TestGetNewKey_GetPacketData/test4 in Kaban/internal/Protocol/receive" />
-        <item itemvalue="Go Test.TestGetNewKey_GetPacketData/test3 in Kaban/internal/Protocol/receive" />
       </list>
     </recent_temporary>
   </component>
@@ -562,7 +624,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="WP 16.07.26&#10;S3 concoctions has been moved to another folder" />
     <MESSAGE value="WP 03.09.26&#10;Many changes to a project structure" />
     <MESSAGE value="WP 08.09.26&#10;Many changes to a project structure" />
     <MESSAGE value="WP 19.09.26&#10;A new crypto system has beed added&#10;New download/upload/delete systems have been added" />
@@ -587,51 +648,22 @@
     <MESSAGE value="WP 4.11.26&#10;&#10;Tests for application are being written&#10;Encrypter keys are now in Domain level&#10;Some changes are in DownloadEncryptApplication" />
     <MESSAGE value="WP 7.11.26&#10;&#10;Tests for application are being written&#10;&#10;Some changes are in Crypto keys" />
     <MESSAGE value="WP 9.11.26&#10;&#10;Tests for application have been finished&#10;&#10;Naming changes have been to application functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="WP 9.11.26&#10;&#10;Tests for application have been finished&#10;&#10;Naming changes have been to application functions" />
+    <MESSAGE value="WP 11.11.26&#10;&#10;&#10;Some changes are in Rsa Signer&#10;Tests have been finished for Protocol functions" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 11.11.26&#10;&#10;&#10;Some changes are in Rsa Signer&#10;Tests have been finished for Protocol functions" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/Parsers/JsonParsers_test.go</url>
+          <url>file://$PROJECT_DIR$/internal/Drivers/Parsers/JsonParsers_test.go</url>
           <line>37</line>
           <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/Parsers/JsonParsers_test.go</url>
+          <url>file://$PROJECT_DIR$/internal/Drivers/Parsers/JsonParsers_test.go</url>
           <line>41</line>
           <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
-          <line>18</line>
-          <option name="timeStamp" value="18" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
-          <line>20</line>
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
-          <line>17</line>
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
-          <line>16</line>
-          <option name="timeStamp" value="22" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
-          <line>19</line>
-          <option name="timeStamp" value="23" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Dto/JsonRegister.go</url>
-          <line>22</line>
-          <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/DomainLevel/Crypto.go</url>
@@ -649,7 +681,7 @@
           <option name="timeStamp" value="35" />
         </line-breakpoint>
         <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/repoCrypto.go</url>
+          <url>file://$PROJECT_DIR$/internal/Drivers/Crypto/repoCrypto.go</url>
           <line>179</line>
           <option name="timeStamp" value="70" />
         </line-breakpoint>
@@ -657,11 +689,6 @@
           <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go</url>
           <line>63</line>
           <option name="timeStamp" value="100" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/response_test.go</url>
-          <line>18</line>
-          <option name="timeStamp" value="101" />
         </line-breakpoint>
         <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/DomainLevel/FileTransferring.go</url>
@@ -674,13 +701,13 @@
           <option name="timeStamp" value="103" />
         </line-breakpoint>
         <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go</url>
-          <line>66</line>
+          <url>file://$PROJECT_DIR$/internal/Drivers/RepoEncrypterKeys/encrypterKeys.go</url>
+          <line>67</line>
           <option name="timeStamp" value="104" />
         </line-breakpoint>
         <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go</url>
-          <line>76</line>
+          <url>file://$PROJECT_DIR$/internal/Drivers/RepoEncrypterKeys/encrypterKeys.go</url>
+          <line>77</line>
           <option name="timeStamp" value="106" />
         </line-breakpoint>
         <line-breakpoint type="DlvLineBreakpoint">
@@ -709,17 +736,17 @@
           <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo/httpUploader_test.go</url>
+          <url>file://$PROJECT_DIR$/internal/Drivers/FileTransferring/TransferringHttpRepo/httpUploader_test.go</url>
           <line>84</line>
           <option name="timeStamp" value="142" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo/httpUploader_test.go</url>
+          <url>file://$PROJECT_DIR$/internal/Drivers/FileTransferring/TransferringHttpRepo/httpUploader_test.go</url>
           <line>78</line>
           <option name="timeStamp" value="144" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo/httpUploader_test.go</url>
+          <url>file://$PROJECT_DIR$/internal/Drivers/FileTransferring/TransferringHttpRepo/httpUploader_test.go</url>
           <line>104</line>
           <option name="timeStamp" value="145" />
         </line-breakpoint>
@@ -784,7 +811,7 @@
           <option name="timeStamp" value="178" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go</url>
+          <url>file://$PROJECT_DIR$/internal/Drivers/RepoEncrypterKeys/encrypterKeys.go</url>
           <line>14</line>
           <option name="timeStamp" value="181" />
         </line-breakpoint>
@@ -877,6 +904,16 @@
           <url>file://$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go</url>
           <line>54</line>
           <option name="timeStamp" value="212" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Drivers/Crypto/Encryption_test.go</url>
+          <line>138</line>
+          <option name="timeStamp" value="213" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Drivers/Crypto/Encryption_test.go</url>
+          <line>93</line>
+          <option name="timeStamp" value="216" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

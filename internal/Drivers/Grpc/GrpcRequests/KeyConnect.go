@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"time"
 
-	pb "Kaban/internal/InfrastructureLayer/Grpc/protoFiles"
+	pb "Kaban/internal/Drivers/Grpc/protoFiles"
 
-	hub "Kaban/internal/InfrastructureLayer/Grpc"
+	hub "Kaban/internal/Drivers/Grpc"
 )
 
 type SetNewKeyRequest struct {

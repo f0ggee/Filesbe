@@ -33,7 +33,7 @@ func (f FirstExchange) GetEncryptedPacket() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	var GrpcStruct = Protocol.OutPacketDetails{
+	var GrpcStruct = Protocol.MasterServerEnvelope{
 		Time:             time.Now(),
 		ServerName:       []byte(serverName),
 		SignedServerName: signedServerName,
@@ -68,7 +68,7 @@ func (f FirstExchange) GetEncryptedPacket() ([]byte, error) {
 		return nil, err
 	}
 
-	var EncryptedOutData = Protocol.OutComePacket{
+	var EncryptedOutData = Protocol.OutPacket{
 		AesKeyData: encryptedFileInfo,
 		CipherData: encryptedPacket,
 	}

@@ -2,9 +2,9 @@ package send
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/InfrastructureLayer/Crypto"
-	"Kaban/internal/InfrastructureLayer/Parsers"
-	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
+	"Kaban/internal/Drivers/Crypto"
+	"Kaban/internal/Drivers/Parsers"
+	"Kaban/internal/Drivers/RepoEncrypterKeys"
 	"Kaban/internal/Protocol"
 	"crypto/rand"
 	"crypto/rsa"
@@ -64,7 +64,7 @@ func TestFirstExchange_GetEncryptedPacket(t *testing.T) {
 }
 
 func check(Packet []byte, masterKey *rsa.PrivateKey) error {
-	var IncomePacket Protocol.OutComePacket
+	var IncomePacket Protocol.OutPacket
 
 	f := struct {
 		Decoder Parsers.Parsing
@@ -99,7 +99,7 @@ func check(Packet []byte, masterKey *rsa.PrivateKey) error {
 		return err
 	}
 
-	GrpcStruct := Protocol.OutPacketDetails{
+	GrpcStruct := Protocol.MasterServerEnvelope{
 		Time:             time.Time{},
 		ServerName:       nil,
 		SignedServerName: nil,

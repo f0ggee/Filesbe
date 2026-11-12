@@ -6,17 +6,17 @@ package cmds
 
 import (
 	"Kaban/internal/Deliver/httpController"
-	"Kaban/internal/InfrastructureLayer/Crypto"
-	"Kaban/internal/InfrastructureLayer/DatabaseControl"
-	"Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo"
-	"Kaban/internal/InfrastructureLayer/FileTransferring/s3Repo"
-	grcRec "Kaban/internal/InfrastructureLayer/Grpc/GrpcRequests"
-	"Kaban/internal/InfrastructureLayer/Parsers"
-	"Kaban/internal/InfrastructureLayer/RedisInteration"
-	"Kaban/internal/InfrastructureLayer/RepoEncrypterKeys"
-	"Kaban/internal/InfrastructureLayer/Tokens"
+	"Kaban/internal/Drivers/Crypto"
+	"Kaban/internal/Drivers/DatabaseControl"
+	"Kaban/internal/Drivers/FileTransferring/TransferringHttpRepo"
+	"Kaban/internal/Drivers/FileTransferring/s3Repo"
+	grcRec "Kaban/internal/Drivers/Grpc/GrpcRequests"
+	"Kaban/internal/Drivers/Parsers"
+	"Kaban/internal/Drivers/RedisInteration"
+	"Kaban/internal/Drivers/RepoEncrypterKeys"
+	"Kaban/internal/Drivers/Tokens"
 
-	grpcHub "Kaban/internal/InfrastructureLayer/Grpc"
+	grpcHub "Kaban/internal/Drivers/Grpc"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"

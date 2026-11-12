@@ -1,4 +1,4 @@
-package Dto
+package httpData
 
 import (
 	"Kaban/internal/DomainLevel"
@@ -7,24 +7,27 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type UserLoginData struct {
+type RegisterData struct {
+	Name     string `validate:"required,min=2,max=20"`
 	Email    string `validate:"email,required,min=1,max=40"`
 	Password []byte `validate:"required,min=6,max=25"`
 }
 
-func (s *UserLoginData) ValidateData() error {
+func (r *RegisterData) ValidateDate() error {
 	validating := validator.New(validator.WithRequiredStructEnabled())
 
-	err := validating.Struct(s)
+	err := validating.Struct(r)
 	if err != nil {
 		var validateErrs validator.ValidationErrors
 		if errors.As(err, &validateErrs) {
 			for _, e := range validateErrs {
 				switch {
 				case e.Field() == "Password":
-					return s.getPasswordError(e.Field())
+					return r.getPasswordError(e.Tag())
 				case e.Field() == "Email":
-					return s.getEmailError(e.Field())
+					return r.getEmailError(e.Tag())
+				case e.Field() == "Name":
+					return r.getNameError(e.Tag())
 				}
 			}
 		}
@@ -32,7 +35,7 @@ func (s *UserLoginData) ValidateData() error {
 	return nil
 }
 
-func (r *UserLoginData) getPasswordError(e string) error {
+func (r *RegisterData) getPasswordError(e string) error {
 	if e == "min" {
 		return errors.New(DomainLevel.PasswordSizeSmall)
 	}
@@ -45,12 +48,28 @@ func (r *UserLoginData) getPasswordError(e string) error {
 	return errors.New(DomainLevel.NonIdentifyError)
 }
 
-func (r *UserLoginData) getEmailError(e string) error {
+func (r *RegisterData) getEmailError(e string) error {
 	if e == "email" {
+		return errors.New(DomainLevel.NotCorrectEmail)
+	}
+	if e == "min" {
 		return errors.New(DomainLevel.NotCorrectEmail)
 	}
 	if e == "required" {
 		return errors.New(DomainLevel.EmailEmpty)
+	}
+	if e == "max" {
+		return errors.New(DomainLevel.EmailMaxSize)
+	}
+	return errors.New(DomainLevel.NonIdentifyError)
+}
+
+func (r *RegisterData) getNameError(e string) error {
+	if e == "max" {
+		return errors.New(DomainLevel.NameMaxSize)
+	}
+	if e == "min" {
+		return errors.New(DomainLevel.NameMinSize)
 	}
 	return errors.New(DomainLevel.NonIdentifyError)
 }
