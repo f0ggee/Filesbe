@@ -99,7 +99,7 @@ func (S *UploadEncryptController) FileUploaderEncrypt() {
 	}
 	fileName, err := S.UploadEncryptApplication(Application.UploadEncryptIncomeData{
 		File: file,
-		Name: sizeAndName.Filename,
+		Name: []byte(sizeAndName.Filename),
 		Size: sizeAndName.Size,
 		Ctx:  S.R.Context(),
 	})

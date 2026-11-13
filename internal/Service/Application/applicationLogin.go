@@ -2,9 +2,9 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/Dto"
-	"context"
 	"encoding/binary"
+
+	"github.com/awnumar/memguard"
 )
 
 type NewLogin struct {
@@ -14,14 +14,16 @@ type NewLogin struct {
 	Jwt            DomainLevel.AuthMaker
 }
 
-func (sa *NewLogin) LoginApplication(ctx context.Context, s Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData {
-	usersData := sa.ReaderDatabase.LoginData(ctx, s.Email)
+func (sa *NewLogin) LoginApplication(input InputLogin) DomainLevel.LoginApplicationOutComingData {
+	defer memguard.WipeBytes(input.Password)
+
+	usersData := sa.ReaderDatabase.LoginData(input.Ctx, input.Email)
 	if usersData.Err != nil {
 		return DomainLevel.LoginApplicationOutComingData{
 			Err: usersData.Err,
 		}
 	}
-	err := sa.Validate.PasswordVerify([]byte(usersData.HashPassword), []byte(s.Password))
+	err := sa.Validate.PasswordVerify([]byte(usersData.HashPassword), input.Password)
 	if err != nil {
 		return DomainLevel.LoginApplicationOutComingData{
 			Err: err,

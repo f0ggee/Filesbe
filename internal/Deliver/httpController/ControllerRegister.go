@@ -1,8 +1,8 @@
 package httpController
 
 import (
+	"Kaban/internal/Deliver/httpController/httpData"
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/Dto"
 	"Kaban/internal/Service/Application"
 	"net/http"
 )
@@ -19,8 +19,9 @@ type RegisterController struct {
 }
 
 func (D RegisterController) Register() {
-	var userDataRegister Dto.UserDataRegister
-	err := D.Decoder.DecodeFlow(&userDataRegister, D.R.Body)
+	var dataRegister httpData.RegisterData
+
+	err := D.Decoder.DecodeFlow(&dataRegister, D.R.Body)
 	defer D.R.Body.Close()
 
 	if err != nil {
@@ -35,7 +36,7 @@ func (D RegisterController) Register() {
 		return
 	}
 
-	err = userDataRegister.ValidateDate()
+	err = dataRegister.ValidateDate()
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,
@@ -48,7 +49,12 @@ func (D RegisterController) Register() {
 		return
 	}
 
-	RegisterOutput := D.App.RegisterApplication(D.R.Context(), &userDataRegister)
+	RegisterOutput := D.App.RegisterApplication(Application.InputRegister{
+		Ctx:      D.R.Context(),
+		Name:     dataRegister.Name,
+		Email:    dataRegister.Email,
+		Password: dataRegister.Password,
+	})
 	if RegisterOutput.Err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,

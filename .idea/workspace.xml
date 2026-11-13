@@ -4,78 +4,18 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 11.11.26&#10;&#10;&#10;Some changes are in Rsa Signer&#10;Tests have been finished for Protocol functions">
-      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/httpData/login.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/httpData/login_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/httpData/register.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/httpData/register_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/repoSign_test.go" afterDir="false" />
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 12.11.26&#10;Infrastructure layer has been changed to Drivers&#10;The Dto folder has been deleted&#10;Tests have been written for Signer">
+      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Service/Application/testFunctions/testApplicationDownload.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Service/Application/testFunctions/testRegister.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Builder.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Builder.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Collectors.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Collectors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/Routers.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Routers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmds/connections.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/connections.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/FileInfoIntoRedis.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/JsonLogin.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/JsonLogin_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/JsonRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/common.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Dto/JsonRegister_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/Encryption_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/Encryption_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/cryptoErrors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/cryptoErrors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/repoCrypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/repoCrypto.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/repoGenerating.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/repoGenerating.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/repoSign.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/repoSign.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto/repoValidate.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/repoValidate.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/connect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/DatabaseControl/connect.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/databaseCheck.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/DatabaseControl/databaseCheck.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/databaseConst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/DatabaseControl/databaseConst.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/databaseRead.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/DatabaseControl/databaseRead.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/DatabaseControl/databaseWrite.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/DatabaseControl/databaseWrite.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo/constHttpTransf.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/TransferringHttpRepo/constHttpTransf.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo/httpUploader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/TransferringHttpRepo/httpUploader.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo/httpUploader_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/TransferringHttpRepo/httpUploader_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Consts.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/s3Repo/S3Consts.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Deleter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/s3Repo/S3Deleter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Download.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/s3Repo/S3Download.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/S3Variables.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/s3Repo/S3Variables.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/s3Credentials.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/s3Repo/s3Credentials.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/s3Repo/s3Upload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/s3Repo/s3Upload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testDecryptFile.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/testFileTransfering/testDecryptFile.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testDelete.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/testFileTransfering/testDelete.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testDownlaod.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/testFileTransfering/testDownlaod.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testFlow.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/testFileTransfering/testFlow.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering/testUpload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/FileTransferring/testFileTransfering/testUpload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/GrpcRequests/KeyConnect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Grpc/GrpcRequests/KeyConnect.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/GrpcRequests/requestsErrors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Grpc/GrpcRequests/requestsErrors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/grpcCredentials.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Grpc/grpcCredentials.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/protoFiles/GenerateProto.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Grpc/protoFiles/GenerateProto.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/protoFiles/GenerateProto.proto" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Grpc/protoFiles/GenerateProto.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Grpc/protoFiles/GenerateProto_grpc.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Grpc/protoFiles/GenerateProto_grpc.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Parsers/JsonParsers_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Parsers/JsonParsers_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Parsers/parsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Parsers/parsers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisCheck.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisCheck.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisConn.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisConn.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisDelete.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisDelete.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisErrors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisErrors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisRead.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisRead.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RedisInteration/redisWrite.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisWrite.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RepoEncrypterKeys/encrypterKeys.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/RepoEncrypterKeys/encrypterKeysTest.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RepoEncrypterKeys/encrypterKeysTest.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/ConstTokens.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Tokens/ConstTokens.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/Jwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Tokens/Jwt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/InfrastructureLayer/Tokens/Rf.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Tokens/Rf.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Protocol/ProtocolConst.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/ProtocolConst.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Protocol/receive/checkPacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/receive/checkPacket.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Protocol/receive/checkPacket_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/receive/checkPacket_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Protocol/send/preparePacket.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/send/preparePacket.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationLogin_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationLogin_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationAtd.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationAtd.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationLogin.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationRegister.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationRegister_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationRegister_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationUpload_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationUpload_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,236 +87,240 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Docker.Dockerfile.executor": "Run",
-    "Go Build.go build Kaban.executor": "Run",
-    "Go Build.go build RepoEncryption.go.executor": "Debug",
-    "Go Build.go build main.go.executor": "Run",
-    "Go Build.go build sa.go.executor": "Run",
-    "Go Build.go build scratch.go (1).executor": "Run",
-    "Go Build.go build scratch.go (2).executor": "Run",
-    "Go Build.go build scratch.go (3).executor": "Run",
-    "Go Build.go build scratch.go (4).executor": "Debug",
-    "Go Build.go build scratch.go (5).executor": "Run",
-    "Go Build.go build scratch.go.executor": "Run",
-    "Go Build.go build scratch_1.go.executor": "Run",
-    "Go Build.go build testData.go.executor": "Debug",
-    "Go Test.BenchmarkDecryptFileModify in Kaban/internal/Service/Application.executor": "Profiler#2",
-    "Go Test.BenchmarkDecryptFilesNormal in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.BenchmarkDownloadEncrypt_DownloadEncrypt in Kaban/internal/Service/Application.executor": "Profiler#2",
-    "Go Test.BenchmarkDownloadEncrypt_decryptFile in Kaban/internal/Service/Application.executor": "Profiler#1",
-    "Go Test.BenchmarkEncryptFile in Kaban/internal/Service/Application.executor": "Profiler#2",
-    "Go Test.BenchmarkEncryptFile/Decrypt in Kaban/internal/Service/Application.executor": "Profiler#2",
-    "Go Test.BenchmarkEncryptFile/Encrypt in Kaban/internal/Service/Application.executor": "Profiler#2",
-    "Go Test.BenchmarkIoCrypto in Kaban/internal/Service/Application.executor": "Profiler#2",
-    "Go Test.BenchmarkNewAesCtr in Kaban/internal/InfrastructureLayer/Crypto.executor": "Profiler#2",
-    "Go Test.BenchmarkNewHttpUploader in Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo.executor": "Profiler#2",
-    "Go Test.TestAesCtrEncryption in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestAesCtr_Encrypter in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestAesCtr_MakeCrypto in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestAesCtr_MakeCrypto/test1 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestAesCtr_MakeCrypto1 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Debug",
-    "Go Test.TestAesCtr_MakeCrypto1/test1 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Debug",
-    "Go Test.TestAesCtr_MakeCrypto1/test2 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Debug",
-    "Go Test.TestAesEncryption_MakeCrypto/test1 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestAesEncryption_MakeCrypto/test2 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestAesEncryption_MakeCrypto/test3 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestAesEncryption_MakeCrypto/test4 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Debug",
-    "Go Test.TestAesStreamCTR_MakeCrypto in Kaban/internal/InfrastructureLayer/Crypto.executor": "Debug",
-    "Go Test.TestAesStreamCTR_MakeCrypto/test_1 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Debug",
-    "Go Test.TestApplicationIO in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestApplicationIO/test1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestApplicationIO/test1#01 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestApplicationIOCrypto in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestApplicationIOCrypto/test1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestApplicationIOCrypto/test1#01 in Kaban/internal/Service/Application.executor": "Debug",
-    "Go Test.TestApplicationLayer in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestApplicationUploaders in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestApplicationUploaders/test1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestApplicationUploaders/test1#01 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestChecking_CheckJwt in Kaban/internal/InfrastructureLayer/AuthTokensManage.executor": "Run",
-    "Go Test.TestChecking_CheckJwt/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckJwt/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckJwt/Test_3 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor": "Run",
-    "Go Test.TestCrypto in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestCrypto/test2 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestCryptoFunctions in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestDownloadEncrypt_DownloadEncryptApplication in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestDownloadEncrypt_DownloadEncryptApplication/test1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestDownloadEncrypt_DownloadEncryptApplication/test2 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestDownloadEncrypt_DownloadEncryptApplication/test3 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestDownloadEncrypt_DownloadEncryptdecryptFile in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestDownloadEncrypt_decryptFile in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestDownloadEncrypt_decryptFile/test1 in Kaban/internal/Service/Application.executor": "Debug",
-    "Go Test.TestDownloadEncrypt_decryptFile/test2 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestDownloadEncrypt_decryptFile/test3 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestDownloadEncrypt_decryptFile/test4 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestDownloadEncrypt_getFileData/test1 in Kaban/internal/Service/Application.executor": "Debug",
-    "Go Test.TestDownloadEncrypt_getFileData/test2 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestDownloadEncrypt_getFileData/test3 in Kaban/internal/Service/Application.executor": "Debug",
-    "Go Test.TestDownloadEncrypt_getFileData/test4 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestEe2 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestEe2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor": "Run",
-    "Go Test.TestEncryptFile in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestEncryptFile/test1 in Kaban/internal/Service/Application.executor": "Debug",
-    "Go Test.TestEncryptFile/test2 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestEncryption in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestEncryption/test2 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestEncryption/test3 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestFirstExchange_GetEncryptedPacket/test1 in Kaban/internal/Protocol/send.executor": "Run",
-    "Go Test.TestGetNewKey_GetPacketData in Kaban/internal/Protocol/receive.executor": "Run",
-    "Go Test.TestGetNewKey_GetPacketData/test1 in Kaban/internal/Protocol/receive.executor": "Run",
-    "Go Test.TestGetNewKey_GetPacketData/test2 in Kaban/internal/Protocol/receive.executor": "Debug",
-    "Go Test.TestGetNewKey_GetPacketData/test3 in Kaban/internal/Protocol/receive.executor": "Run",
-    "Go Test.TestGetNewKey_GetPacketData/test4 in Kaban/internal/Protocol/receive.executor": "Run",
-    "Go Test.TestGetNewKey_GetPacketData/test5 in Kaban/internal/Protocol/receive.executor": "Run",
-    "Go Test.TestGetNewKey_GetPacketData/test6 in Kaban/internal/Protocol/receive.executor": "Run",
-    "Go Test.TestGetTestFlow in Kaban/internal/InfrastructureLayer/FileTransferring/testFileTransfering.executor": "Debug",
-    "Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestHttpUploader_Uploader in Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo.executor": "Run",
-    "Go Test.TestHttpUploader_Uploader/test1 in Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo.executor": "Run",
-    "Go Test.TestHttpUploader_Uploader/test2 in Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo.executor": "Run",
-    "Go Test.TestHttpUploader_Uploader/test3 in Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo.executor": "Run",
-    "Go Test.TestHttpUploader_Uploader/test4 in Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo.executor": "Run",
-    "Go Test.TestIo in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestIoCrypto in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestIoCrypto/test1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestIoCrypto/test2 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestIoCrypto/test3 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestIoCrypto/test4 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestKeys_UpdateNewKey in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Run",
-    "Go Test.TestKeys_UpdateNewKey/#00 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Debug",
-    "Go Test.TestKeys_UpdateNewKey/test1 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Run",
-    "Go Test.TestKeys_UpdateNewKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Debug",
-    "Go Test.TestKeys_UpdateOldKey/test1 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Debug",
-    "Go Test.TestKeys_UpdateOldKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Debug",
-    "Go Test.TestKeys_UpdateOldKey/test3 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Debug",
-    "Go Test.TestNewAesGcmEncryption in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestNewDownloadEncrypt_decryptFile in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewDownloadEncrypt_decryptFile/test_1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewDownload_Download/test1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewLoginController_Login in Kaban/internal/Deliver/http.executor": "Run",
-    "Go Test.TestNewLogin_LoginApplication in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewLogin_LoginApplication/test1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewLogin_LoginApplication/test2 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewLogin_LoginApplication/test3 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewLogin_LoginApplication/test4 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewRegisterApplication_RegisterApplication in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewRegisterApplication_RegisterApplication/test1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewRegisterApplication_RegisterApplication/test2 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewRegisterApplication_RegisterApplication/test3 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewRegister_Register in Kaban/internal/Deliver/httpController.executor": "Run",
-    "Go Test.TestNewRegister_Register/test1 in Kaban/internal/Deliver/httpController.executor": "Run",
-    "Go Test.TestNewRegister_Register/test2 in Kaban/internal/Deliver/httpController.executor": "Run",
-    "Go Test.TestNewRegister_Register/test3 in Kaban/internal/Deliver/httpController.executor": "Run",
-    "Go Test.TestNewUploadEncrypt_EncryptFile in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewUploadEncrypt_EncryptFile/test1 in Kaban/internal/Service/Application.executor": "Debug",
-    "Go Test.TestNewUploadEncrypt_EncryptFile/test_1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewUploadEncrypt_EncryptFile1 in Kaban/internal/Service/Application.executor": "Debug",
-    "Go Test.TestNewUploadEncrypt_EncryptFile1/test_1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewUploadEncrypt_UploadEncrypt/test1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewUpload_UploadApplication in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewUpload_UploadApplication/test1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewUpload_UploadApplication/test2 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestNewUpload_UploadApplication/test3 in Kaban/internal/Service/Application.executor": "Debug",
-    "Go Test.TestNewUpload_UploadApplication/test4 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestParsing_JsonDecode/test1 in Kaban/internal/InfrastructureLayer/RepoParsers.executor": "Run",
-    "Go Test.TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers.executor": "Run",
-    "Go Test.TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/RepoParsers.executor": "Run",
-    "Go Test.TestParsing_JsonParseNotThread/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers.executor": "Run",
-    "Go Test.TestParsing_JsonParsers in Kaban/internal/InfrastructureLayer/DeliverHandlers/Parsers.executor": "Run",
-    "Go Test.TestParsing_JsonParsers/test1 in Kaban/internal/InfrastructureLayer/DeliverHandlers/Parsers.executor": "Run",
-    "Go Test.TestParsing_JsonParsers/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/Parsers.executor": "Run",
-    "Go Test.TestProcess in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestProtectFile_protectFile/test1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestRsaEncryption_MakeCrypto in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestRsaEncryption_MakeCrypto/test1 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestRsaEncryption_MakeCrypto/test2 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestRsaEncryption_MakeCrypto/test3 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestRsaEncryption_MakeCrypto/test3#01 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestSetAnswer/test1 in Kaban/internal/Deliver/httpController.executor": "Run",
-    "Go Test.TestSigners/test1 in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
-    "Go Test.TestUploadEncrypt_UploadEncryptApplication in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestUploadEncrypt_UploadEncryptApplication/test1 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestUploadEncrypt_UploadEncryptApplication/test1#01 in Kaban/internal/Service/Application.executor": "Debug",
-    "Go Test.TestUploadEncrypt_UploadEncryptApplication/test2 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestUploadEncrypt_UploadEncryptApplication/test3 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestUploadEncrypt_UploadEncryptApplication/test4 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestUploadEncrypt_UploadEncryptApplication/test5 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestUploadEncrypt_UploadEncryptApplication/test6 in Kaban/internal/Service/Application.executor": "Debug",
-    "Go Test.TestUploader in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test1 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test10 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test2 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test3 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test4 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test5 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test6 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test7 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test8 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test9 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_ValidateDate/test9#01 in Kaban/internal/Dto.executor": "Debug",
-    "Go Test.TestUserDataRegister_getEmailError/test1 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getEmailError/test2 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getEmailError/test3 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getEmailError/test4 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getNameError in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getPasswordError in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getPasswordError/test3 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserDataRegister_getPasswordError/test4 in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserLoginData_ValidateData in Kaban/internal/Dto.executor": "Run",
-    "Go Test.TestUserLoginData_getPasswordError in Kaban/internal/Dto.executor": "Run",
-    "Go Test.Test_funcName in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.go test Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.gobench Kaban/internal/Dto.executor": "Profiler#1",
-    "Go Test.gobench Kaban/internal/Service/Application.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.GoLinterPluginOnboarding": "true",
-    "RunOnceActivity.GoLinterPluginOnboardingV2": "true",
-    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
-    "RunOnceActivity.GoOptimizationToolWindowEnableInLayout.v333333": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.go.analysis.ui.options.defaults": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "RefactoringFilesbes",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/pasabaranov/GolandProjects/Kaban/internal/InfrastructureLayer/Crypto",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Docker.Dockerfile.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build Kaban.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build RepoEncryption.go.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Build.go build main.go.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build sa.go.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build scratch.go (1).executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build scratch.go (2).executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build scratch.go (3).executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build scratch.go (4).executor&quot;: &quot;Debug&quot;,
+    &quot;Go Build.go build scratch.go (5).executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build scratch.go.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build scratch_1.go.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build testData.go.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.BenchmarkDecryptFileModify in Kaban/internal/Service/Application.executor&quot;: &quot;Profiler#2&quot;,
+    &quot;Go Test.BenchmarkDecryptFilesNormal in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.BenchmarkDownloadEncrypt_DownloadEncrypt in Kaban/internal/Service/Application.executor&quot;: &quot;Profiler#2&quot;,
+    &quot;Go Test.BenchmarkDownloadEncrypt_decryptFile in Kaban/internal/Service/Application.executor&quot;: &quot;Profiler#1&quot;,
+    &quot;Go Test.BenchmarkEncryptFile in Kaban/internal/Service/Application.executor&quot;: &quot;Profiler#2&quot;,
+    &quot;Go Test.BenchmarkEncryptFile/Decrypt in Kaban/internal/Service/Application.executor&quot;: &quot;Profiler#2&quot;,
+    &quot;Go Test.BenchmarkEncryptFile/Encrypt in Kaban/internal/Service/Application.executor&quot;: &quot;Profiler#2&quot;,
+    &quot;Go Test.BenchmarkIoCrypto in Kaban/internal/Service/Application.executor&quot;: &quot;Profiler#2&quot;,
+    &quot;Go Test.BenchmarkNewAesCtr in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Profiler#2&quot;,
+    &quot;Go Test.BenchmarkNewHttpUploader in Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo.executor&quot;: &quot;Profiler#2&quot;,
+    &quot;Go Test.TestAesCtrEncryption in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestAesCtr_Encrypter in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestAesCtr_MakeCrypto in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestAesCtr_MakeCrypto/test1 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestAesCtr_MakeCrypto1 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestAesCtr_MakeCrypto1/test1 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestAesCtr_MakeCrypto1/test2 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestAesEncryption_MakeCrypto/test1 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestAesEncryption_MakeCrypto/test2 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestAesEncryption_MakeCrypto/test3 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestAesEncryption_MakeCrypto/test4 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestAesStreamCTR_MakeCrypto in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestAesStreamCTR_MakeCrypto/test_1 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestApplicationIO in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestApplicationIO/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestApplicationIO/test1#01 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestApplicationIOCrypto in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestApplicationIOCrypto/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestApplicationIOCrypto/test1#01 in Kaban/internal/Service/Application.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestApplicationLayer in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestApplicationUploaders in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestApplicationUploaders/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestApplicationUploaders/test1#01 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt in Kaban/internal/InfrastructureLayer/AuthTokensManage.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt/Test_3 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckJwt/Test_4 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckingDenyList/Test_1 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestChecking_CheckingDenyList/Test_2 in Kaban/internal/InfrastructureLayer/AuthTokensManage/ValidatingTokens.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestCrypto in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestCrypto/test2 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestCryptoFunctions in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadController_DownloadWithNotEncrypt/test1 in Kaban/internal/Deliver/httpController.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadEncrypt_DownloadEncryptApplication in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadEncrypt_DownloadEncryptApplication/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadEncrypt_DownloadEncryptApplication/test2 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadEncrypt_DownloadEncryptApplication/test3 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadEncrypt_DownloadEncryptdecryptFile in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadEncrypt_decryptFile in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadEncrypt_decryptFile/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestDownloadEncrypt_decryptFile/test2 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadEncrypt_decryptFile/test3 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadEncrypt_decryptFile/test4 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadEncrypt_getFileData/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestDownloadEncrypt_getFileData/test2 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestDownloadEncrypt_getFileData/test3 in Kaban/internal/Service/Application.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestDownloadEncrypt_getFileData/test4 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestEe2 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestEe2 in Kaban/internal/InfrastructureLayer/GrpcManage/HandlingRequests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestEncryptFile in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestEncryptFile/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestEncryptFile/test2 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestEncryption in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestEncryption/test2 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestEncryption/test3 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestFirstExchange_GetEncryptedPacket/test1 in Kaban/internal/Protocol/send.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestGetNewKey_GetPacketData in Kaban/internal/Protocol/receive.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestGetNewKey_GetPacketData/test1 in Kaban/internal/Protocol/receive.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestGetNewKey_GetPacketData/test2 in Kaban/internal/Protocol/receive.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestGetNewKey_GetPacketData/test3 in Kaban/internal/Protocol/receive.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestGetNewKey_GetPacketData/test4 in Kaban/internal/Protocol/receive.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestGetNewKey_GetPacketData/test5 in Kaban/internal/Protocol/receive.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestGetNewKey_GetPacketData/test6 in Kaban/internal/Protocol/receive.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestGetTestFlow in Kaban/internal/InfrastructureLayer/FileTransferring/testFileTransfering.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestHandlerPackAuthTokens_AuthTest in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestHttpUploader_Uploader in Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestHttpUploader_Uploader/test1 in Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestHttpUploader_Uploader/test2 in Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestHttpUploader_Uploader/test3 in Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestHttpUploader_Uploader/test4 in Kaban/internal/InfrastructureLayer/FileTransferring/TransferringHttpRepo.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestIo in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestIoCrypto in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestIoCrypto/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestIoCrypto/test2 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestIoCrypto/test3 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestIoCrypto/test4 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestKeys_UpdateNewKey in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestKeys_UpdateNewKey/#00 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestKeys_UpdateNewKey/test1 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestKeys_UpdateNewKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestKeys_UpdateOldKey/test1 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestKeys_UpdateOldKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestKeys_UpdateOldKey/test3 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestNewAesGcmEncryption in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewDownloadEncrypt_decryptFile in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewDownloadEncrypt_decryptFile/test_1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewDownload_Download/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewLoginController_Login in Kaban/internal/Deliver/http.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewLogin_LoginApplication in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewLogin_LoginApplication/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewLogin_LoginApplication/test2 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewLogin_LoginApplication/test3 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewLogin_LoginApplication/test4 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewRegisterApplication_RegisterApplication in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewRegisterApplication_RegisterApplication/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewRegisterApplication_RegisterApplication/test2 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewRegisterApplication_RegisterApplication/test3 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewRegister_Register in Kaban/internal/Deliver/httpController.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewRegister_Register/test1 in Kaban/internal/Deliver/httpController.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewRegister_Register/test2 in Kaban/internal/Deliver/httpController.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewRegister_Register/test3 in Kaban/internal/Deliver/httpController.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewUploadEncrypt_EncryptFile in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewUploadEncrypt_EncryptFile/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestNewUploadEncrypt_EncryptFile/test_1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewUploadEncrypt_EncryptFile1 in Kaban/internal/Service/Application.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestNewUploadEncrypt_EncryptFile1/test_1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewUploadEncrypt_UploadEncrypt/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewUpload_UploadApplication in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewUpload_UploadApplication/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewUpload_UploadApplication/test2 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestNewUpload_UploadApplication/test3 in Kaban/internal/Service/Application.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestNewUpload_UploadApplication/test4 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonDecode/test1 in Kaban/internal/InfrastructureLayer/RepoParsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonParseNotThread in Kaban/internal/InfrastructureLayer/RepoParsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonParseNotThread/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/RepoParsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonParsers in Kaban/internal/InfrastructureLayer/DeliverHandlers/Parsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonParsers/test1 in Kaban/internal/InfrastructureLayer/DeliverHandlers/Parsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestParsing_JsonParsers/test1 in Kaban/internal/InfrastructureLayer/DeliverPackages/Parsers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestProcess in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestProtectFile_protectFile/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRegisterController_Register/#00 in Kaban/internal/Deliver/httpController.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRegisterController_Register/test1 in Kaban/internal/Deliver/httpController.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRegisterController_Register/test2 in Kaban/internal/Deliver/httpController.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRsaEncryption_MakeCrypto in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRsaEncryption_MakeCrypto/test1 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRsaEncryption_MakeCrypto/test2 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRsaEncryption_MakeCrypto/test3 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRsaEncryption_MakeCrypto/test3#01 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestSetAnswer/test1 in Kaban/internal/Deliver/httpController.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestSigners/test1 in Kaban/internal/InfrastructureLayer/Crypto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUploadEncrypt_UploadEncryptApplication in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUploadEncrypt_UploadEncryptApplication/test1 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUploadEncrypt_UploadEncryptApplication/test1#01 in Kaban/internal/Service/Application.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestUploadEncrypt_UploadEncryptApplication/test2 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUploadEncrypt_UploadEncryptApplication/test3 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUploadEncrypt_UploadEncryptApplication/test4 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUploadEncrypt_UploadEncryptApplication/test5 in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUploadEncrypt_UploadEncryptApplication/test6 in Kaban/internal/Service/Application.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestUploader in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test1 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test10 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test2 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test3 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test4 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test5 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test6 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test7 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test8 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test9 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_ValidateDate/test9#01 in Kaban/internal/Dto.executor&quot;: &quot;Debug&quot;,
+    &quot;Go Test.TestUserDataRegister_getEmailError/test1 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getEmailError/test2 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getEmailError/test3 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getEmailError/test4 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getNameError in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getPasswordError in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getPasswordError/test3 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserDataRegister_getPasswordError/test4 in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserLoginData_ValidateData in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUserLoginData_getPasswordError in Kaban/internal/Dto.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.Test_funcName in Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.go test Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.gobench Kaban/internal/Dto.executor&quot;: &quot;Profiler#1&quot;,
+    &quot;Go Test.gobench Kaban/internal/Service/Application.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginOnboardingV2&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoOptimizationToolWindowEnableInLayout.v333333&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.analysis.ui.options.defaults&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;RefactoringFilesbes&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/pasabaranov/GolandProjects/Kaban/internal/Deliver/httpController&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
-      "vgo",
-      "go"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;vgo&quot;,
+      &quot;go&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="GoExtractInterfaceDialog.RECENT_KEY">
       <recent name="$PROJECT_DIR$/internal/Service/Application" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/internal/Deliver/httpController" />
       <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto" />
       <recent name="$PROJECT_DIR$/internal/Protocol/send" />
       <recent name="$PROJECT_DIR$/internal/Protocol/receive" />
       <recent name="$PROJECT_DIR$/internal/InfrastructureLayer/FileTransferring/testFileTransfering" />
-      <recent name="$PROJECT_DIR$/internal/Service/Application" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/pcf" />
@@ -429,7 +373,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Go Test.TestSigners/test1 in Kaban/internal/InfrastructureLayer/Crypto">
+  <component name="RunManager" selected="Go Test.TestRegisterController_Register/test2 in Kaban/internal/Deliver/httpController">
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
       <deployment type="dockerfile">
         <settings />
@@ -503,52 +447,52 @@
       <pattern value="^\QBenchmarkNewHttpUploader\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestCrypto/test2 in Kaban/internal/InfrastructureLayer/Crypto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestDownloadController_DownloadWithNotEncrypt/test1 in Kaban/internal/Deliver/httpController" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/InfrastructureLayer/Crypto" />
+      <working_directory value="$PROJECT_DIR$/internal/Deliver/httpController" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="Kaban/internal/InfrastructureLayer/Crypto" />
+      <package value="Kaban/internal/Deliver/httpController" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestCrypto\E$/^\Qtest2\E$" />
+      <pattern value="^\QTestDownloadController_DownloadWithNotEncrypt\E$/^\Qtest1\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestFirstExchange_GetEncryptedPacket/test1 in Kaban/internal/Protocol/send" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestRegisterController_Register/#00 in Kaban/internal/Deliver/httpController" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/Protocol/send" />
+      <working_directory value="$PROJECT_DIR$/internal/Deliver/httpController" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="Kaban/internal/Protocol/send" />
+      <package value="Kaban/internal/Deliver/httpController" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestFirstExchange_GetEncryptedPacket\E$/^\Qtest1\E$" />
+      <pattern value="^\QTestRegisterController_Register\E$/^\Q#00\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestGetNewKey_GetPacketData/test5 in Kaban/internal/Protocol/receive" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestRegisterController_Register/test1 in Kaban/internal/Deliver/httpController" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/Protocol/receive" />
+      <working_directory value="$PROJECT_DIR$/internal/Deliver/httpController" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="Kaban/internal/Protocol/receive" />
+      <package value="Kaban/internal/Deliver/httpController" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestGetNewKey_GetPacketData\E$/^\Qtest5\E$" />
+      <pattern value="^\QTestRegisterController_Register\E$/^\Qtest1\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestGetNewKey_GetPacketData/test6 in Kaban/internal/Protocol/receive" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestRegisterController_Register/test2 in Kaban/internal/Deliver/httpController" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/Protocol/receive" />
+      <working_directory value="$PROJECT_DIR$/internal/Deliver/httpController" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="Kaban/internal/Protocol/receive" />
+      <package value="Kaban/internal/Deliver/httpController" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestGetNewKey_GetPacketData\E$/^\Qtest6\E$" />
+      <pattern value="^\QTestRegisterController_Register\E$/^\Qtest2\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestSigners/test1 in Kaban/internal/InfrastructureLayer/Crypto" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -583,11 +527,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestRegisterController_Register/test2 in Kaban/internal/Deliver/httpController" />
+        <item itemvalue="Go Test.TestRegisterController_Register/test1 in Kaban/internal/Deliver/httpController" />
+        <item itemvalue="Go Test.TestRegisterController_Register/#00 in Kaban/internal/Deliver/httpController" />
+        <item itemvalue="Go Test.TestDownloadController_DownloadWithNotEncrypt/test1 in Kaban/internal/Deliver/httpController" />
         <item itemvalue="Go Test.TestSigners/test1 in Kaban/internal/InfrastructureLayer/Crypto" />
-        <item itemvalue="Go Test.TestCrypto/test2 in Kaban/internal/InfrastructureLayer/Crypto" />
-        <item itemvalue="Go Test.TestFirstExchange_GetEncryptedPacket/test1 in Kaban/internal/Protocol/send" />
-        <item itemvalue="Go Test.TestGetNewKey_GetPacketData/test6 in Kaban/internal/Protocol/receive" />
-        <item itemvalue="Go Test.TestGetNewKey_GetPacketData/test5 in Kaban/internal/Protocol/receive" />
       </list>
     </recent_temporary>
   </component>
@@ -624,7 +568,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="WP 03.09.26&#10;Many changes to a project structure" />
     <MESSAGE value="WP 08.09.26&#10;Many changes to a project structure" />
     <MESSAGE value="WP 19.09.26&#10;A new crypto system has beed added&#10;New download/upload/delete systems have been added" />
     <MESSAGE value="WP 23.09.26&#10;The crypto interface has been changed" />
@@ -649,7 +592,8 @@
     <MESSAGE value="WP 7.11.26&#10;&#10;Tests for application are being written&#10;&#10;Some changes are in Crypto keys" />
     <MESSAGE value="WP 9.11.26&#10;&#10;Tests for application have been finished&#10;&#10;Naming changes have been to application functions" />
     <MESSAGE value="WP 11.11.26&#10;&#10;&#10;Some changes are in Rsa Signer&#10;Tests have been finished for Protocol functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="WP 11.11.26&#10;&#10;&#10;Some changes are in Rsa Signer&#10;Tests have been finished for Protocol functions" />
+    <MESSAGE value="WP 12.11.26&#10;Infrastructure layer has been changed to Drivers&#10;The Dto folder has been deleted&#10;Tests have been written for Signer" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 12.11.26&#10;Infrastructure layer has been changed to Drivers&#10;The Dto folder has been deleted&#10;Tests have been written for Signer" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -687,7 +631,7 @@
         </line-breakpoint>
         <line-breakpoint type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go</url>
-          <line>63</line>
+          <line>69</line>
           <option name="timeStamp" value="100" />
         </line-breakpoint>
         <line-breakpoint type="DlvLineBreakpoint">

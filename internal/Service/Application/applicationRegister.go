@@ -3,8 +3,6 @@ package Application
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Drivers/Tokens"
-	"Kaban/internal/Dto"
-	"context"
 	"crypto/rand"
 	"encoding/binary"
 
@@ -17,7 +15,7 @@ func GetNewRegisterTest() *RegisterTest {
 	return &RegisterTest{}
 }
 
-func (r RegisterTest) RegisterApplication(ctx context.Context, register *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
+func (r RegisterTest) RegisterApplication(input InputRegister) DomainLevel.RegisterApplicationOutComingData {
 	JwtToken := Tokens.NewJwtToken()
 	RfToken := Tokens.NewRfToken()
 
@@ -58,21 +56,22 @@ type NewRegisterApplication struct {
 	Jwt DomainLevel.AuthMaker
 }
 
-func (sa *NewRegisterApplication) RegisterApplication(ctx context.Context, de *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData {
-	err := sa.CheckingDb.CheckerUser(ctx, de.Email)
+func (sa *NewRegisterApplication) RegisterApplication(input InputRegister) DomainLevel.RegisterApplicationOutComingData {
+	defer memguard.WipeBytes(input.Password)
+	err := sa.CheckingDb.CheckerUser(input.Ctx, input.Email)
 	if err != nil {
 		return DomainLevel.RegisterApplicationOutComingData{Err: err}
 	}
-	HashPassword, err := sa.Generator.GenerateHash(de.Password)
+	HashPassword, err := sa.Generator.GenerateHash(input.Password)
 	if err != nil {
 		return DomainLevel.RegisterApplicationOutComingData{Err: err}
 	}
-	memguard.WipeBytes(de.Password)
+	memguard.WipeBytes(input.Password)
 	UnitIdUser, err := sa.WriterDb.CreateUser(DomainLevel.CreateUserIncomingData{
-		Name:         de.Name,
-		Email:        de.Email,
+		Name:         input.Name,
+		Email:        input.Email,
 		HashPassword: string(HashPassword),
-		Ctx:          ctx,
+		Ctx:          input.Ctx,
 	})
 	if err != nil {
 		return DomainLevel.RegisterApplicationOutComingData{

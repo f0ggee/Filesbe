@@ -21,7 +21,7 @@ func GetNewDownload(downloadNetwork DownloadNetwork, downloadApplication Applica
 	return &DownloadController{DownloadNetwork: downloadNetwork, DownloadApplication: downloadApplication}
 }
 
-func (d *DownloadController) DownloadWithNotEncrypt() {
+func (d DownloadController) DownloadWithNotEncrypt() {
 	name := d.getData(d.R)
 	if name == "" {
 		SetAnswer(InputAnswerData{
@@ -48,7 +48,7 @@ func (d *DownloadController) DownloadWithNotEncrypt() {
 		return
 	}
 }
-func (n *DownloadController) getData(request *http.Request) string {
+func (d *DownloadController) getData(request *http.Request) string {
 	vars := mux.Vars(request)
 	name := vars["name"]
 	return name

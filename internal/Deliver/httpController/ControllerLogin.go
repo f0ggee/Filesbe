@@ -1,8 +1,8 @@
 package httpController
 
 import (
+	"Kaban/internal/Deliver/httpController/httpData"
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/Dto"
 	"Kaban/internal/Service/Application"
 	"net/http"
 )
@@ -16,7 +16,7 @@ type LoginController struct {
 }
 
 func (D *LoginController) LoginController() {
-	DataUserLogin := &Dto.UserLoginData{}
+	var DataUserLogin httpData.LoginData
 	err := D.Parses.DecodeFlow(DataUserLogin, D.R.Body)
 	if err != nil {
 		SetAnswer(InputAnswerData{
@@ -43,7 +43,11 @@ func (D *LoginController) LoginController() {
 		return
 	}
 
-	loginDataOutput := D.App.LoginApplication(D.R.Context(), *DataUserLogin)
+	loginDataOutput := D.App.LoginApplication(Application.InputLogin{
+		Ctx:      D.R.Context(),
+		Email:    DataUserLogin.Email,
+		Password: DataUserLogin.Password,
+	})
 	if loginDataOutput.Err != nil {
 		SetAnswer(InputAnswerData{
 			W:    D.W,

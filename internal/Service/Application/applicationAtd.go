@@ -2,7 +2,6 @@ package Application
 
 import (
 	"Kaban/internal/DomainLevel"
-	"Kaban/internal/Dto"
 	"context"
 )
 
@@ -13,13 +12,22 @@ type DownloadApplication interface {
 type DownloadEncryptApplication interface {
 	DownloadEncryptApplication(DownloadEncryptIncomeData) error
 }
-
-type LoginApplication interface {
-	LoginApplication(context.Context, Dto.UserLoginData) DomainLevel.LoginApplicationOutComingData
+type InputLogin struct {
+	Ctx      context.Context
+	Email    string
+	Password []byte
 }
-
+type LoginApplication interface {
+	LoginApplication(InputLogin) DomainLevel.LoginApplicationOutComingData
+}
+type InputRegister struct {
+	Ctx      context.Context
+	Name     string
+	Email    string
+	Password []byte
+}
 type RegisterApplication interface {
-	RegisterApplication(context.Context, *Dto.UserDataRegister) DomainLevel.RegisterApplicationOutComingData
+	RegisterApplication(InputRegister) DomainLevel.RegisterApplicationOutComingData
 }
 type UploadApplication interface {
 	UploadApplication(UploadIncomeData) (string, error)
