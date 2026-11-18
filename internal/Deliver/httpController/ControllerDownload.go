@@ -21,8 +21,8 @@ func GetNewDownload(downloadNetwork DownloadNetwork, downloadApplication Applica
 	return &DownloadController{DownloadNetwork: downloadNetwork, DownloadApplication: downloadApplication}
 }
 
-func (d DownloadController) DownloadWithNotEncrypt() {
-	name := d.getData(d.R)
+func (d DownloadController) Download() {
+	name := mux.Vars(d.R)["name"]
 	if name == "" {
 		SetAnswer(InputAnswerData{
 			W:    d.W,
@@ -35,7 +35,7 @@ func (d DownloadController) DownloadWithNotEncrypt() {
 		return
 	}
 
-	err := d.DownloadApplication.DownloadApplication(d.R.Context(), name)
+	err := d.DownloadApplication.DownloadApplication(d.R.Context(), name, d.W)
 	if err != nil {
 		SetAnswer(InputAnswerData{
 			W:    d.W,
@@ -47,9 +47,4 @@ func (d DownloadController) DownloadWithNotEncrypt() {
 		})
 		return
 	}
-}
-func (d *DownloadController) getData(request *http.Request) string {
-	vars := mux.Vars(request)
-	name := vars["name"]
-	return name
 }

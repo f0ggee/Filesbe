@@ -16,8 +16,8 @@ type HttpUploader struct {
 	source   io.Writer
 }
 
-func NewHttpUploader() HttpUploader {
-	return HttpUploader{}
+func NewHttpUploader() *HttpUploader {
+	return &HttpUploader{}
 }
 
 func (h *HttpUploader) SetName(s string) DomainLevel.MakerUploader {

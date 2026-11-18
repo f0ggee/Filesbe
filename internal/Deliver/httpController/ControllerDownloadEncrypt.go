@@ -14,12 +14,10 @@ type NetworkDownloadEncrypt struct {
 type DownloadEncryptController struct {
 	Net NetworkDownloadEncrypt
 	Application.DownloadEncryptApplication
-	GetDataRequest func(r *http.Request) string
 }
 
-func (d DownloadEncryptController) DownloadWithEncrypt() {
-
-	fileName := d.GetDataRequest(d.Net.R)
+func (d DownloadEncryptController) DownloadEncrypt() {
+	fileName := mux.Vars(d.Net.R)["name"]
 	if fileName == "" {
 		SetAnswer(InputAnswerData{
 			W:    d.Net.W,
@@ -47,9 +45,4 @@ func (d DownloadEncryptController) DownloadWithEncrypt() {
 		return
 	}
 	return
-}
-
-func GetDataRequest(r *http.Request) string {
-	vars := mux.Vars(r)
-	return vars["name"]
 }

@@ -3,10 +3,11 @@ package Application
 import (
 	"Kaban/internal/DomainLevel"
 	"context"
+	"io"
 )
 
 type DownloadApplication interface {
-	DownloadApplication(context.Context, string) error
+	DownloadApplication(ctx context.Context, fileName string, dst io.Writer) error
 }
 
 type DownloadEncryptApplication interface {

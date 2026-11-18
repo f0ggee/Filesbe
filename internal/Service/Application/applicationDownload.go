@@ -18,10 +18,9 @@ type DownloadFileControl struct {
 type NewDownload struct {
 	DownloadFileControl
 	Reader DomainLevel.ReadingRedis
-	W      io.Writer
 }
 
-func (sa *NewDownload) DownloadApplication(IncomeContext context.Context, name string) error {
+func (sa *NewDownload) DownloadApplication(IncomeContext context.Context, name string, dst io.Writer) error {
 	fileNameInBytes, err := sa.Reader.GetFileInfo(name, IncomeContext)
 	if err != nil {
 		return err
@@ -37,7 +36,7 @@ func (sa *NewDownload) DownloadApplication(IncomeContext context.Context, name s
 	if err != nil {
 		return err
 	}
-	uploaded, err := sa.Uploader.SetName(name).SetSize(sa.Downloader.GetFileSize()).SetAdditionalWriter(sa.W).Make(IncomeContext)
+	uploaded, err := sa.Uploader.SetName(name).SetSize(sa.Downloader.GetFileSize()).SetAdditionalWriter(dst).Make(IncomeContext)
 	if err != nil {
 		return err
 	}
@@ -48,6 +47,9 @@ func (sa *NewDownload) DownloadApplication(IncomeContext context.Context, name s
 			return err
 		}
 		err = uploaded.Upload(dow)
+		if err != nil {
+			return err
+		}
 		deletedObj, err := sa.Deleter.SetName(trueFileName).Make(IncomeContext)
 		if err != nil {
 			return err

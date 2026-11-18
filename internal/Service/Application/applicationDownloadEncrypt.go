@@ -64,6 +64,11 @@ func (s *DownloadEncrypt) DownloadEncryptApplication(data DownloadEncryptIncomeD
 	defer downloadedObject.CloseSource()
 
 	g.Go(func() error {
+		select {
+		case <-data.Ctx.Done():
+			return ErrorDecryptFile
+		default:
+		}
 		uploadedObject, err := s.Uploader.SetName(fileName.String()).SetAdditionalWriter(data.dst).SetSize(s.Downloader.GetFileSize()).Make(data.Ctx)
 		if err != nil {
 			return err

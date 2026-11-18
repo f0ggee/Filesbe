@@ -74,6 +74,28 @@ func TestRegisterController_Register(t *testing.T) {
 			},
 			wantError: true,
 		},
+		{
+			name: "test3",
+			fields: fields{
+				net: registerNet{
+					w: httptest.NewRecorder(),
+					r: httptest.NewRequest(http.MethodPost, "/test", bytes.NewReader(func() []byte {
+						data := httpData.RegisterData{
+							Name:     "1234132131",
+							Email:    "12332131231@gmail.com",
+							Password: []byte("12345512331"),
+						}
+						d, _ := json.Marshal(data)
+						return d
+
+					}())),
+				},
+				Session: GetNewMocks(),
+				Decoder: Parsers.GetNewParsing(),
+				App:     testFunctions.GetRegisterError(),
+			},
+			wantError: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

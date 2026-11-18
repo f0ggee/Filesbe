@@ -45,13 +45,13 @@ func apiRouters(r *mux.Router, c Controllers) {
 	getRouter.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
 		c.download.W = writer
 		c.download.R = request
-		c.download.DownloadWithNotEncrypt()
+		c.download.Download()
 	})
 
 	getRouter.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {
 		c.encryptDownload.Net.W = writer
 		c.encryptDownload.Net.R = request
-		c.encryptDownload.DownloadWithEncrypt()
+		c.encryptDownload.DownloadEncrypt()
 	})
 }
 
