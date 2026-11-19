@@ -44,12 +44,10 @@ func (j *RfToken) IsTokenCorrect(Token []byte) error {
 	}
 
 	claims := jwt.Claims{}
-
 	if err := parsedToken.Claims(Key, &claims); err != nil {
 		slog.Error("JwtToken IsTokenCorrect: an error happened")
 		return ErrorTokenAuthFail
 	}
-
 	if err := claims.Validate(jwt.Expected{
 		Time: time.Now(),
 	}); err != nil {

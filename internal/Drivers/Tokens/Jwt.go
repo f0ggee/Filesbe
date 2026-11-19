@@ -49,7 +49,6 @@ func (j *JwtToken) IsTokenCorrect(Token []byte) error {
 		slog.Error("JwtToken IsTokenCorrect: an error happened")
 		return ErrorTokenAuthFail
 	}
-
 	if err := claims.Validate(jwt.Expected{
 		Time: time.Now(),
 	}); err != nil {
@@ -68,7 +67,7 @@ func (j *JwtToken) Make() (DomainLevel.Auth, error) {
 	}, nil)
 
 	if err != nil {
-		slog.Error("Make JwtKey: error to produce a new sginer", "ERROR", err)
+		slog.Error("Make JwtKey: error to produce a new signer", "ERROR", err)
 		return nil, ErrorTokenKey
 	}
 

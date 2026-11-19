@@ -3,17 +3,8 @@ package httpController
 import (
 	"Kaban/internal/DomainLevel"
 	"Kaban/internal/Service/Application"
-	"log/slog"
-	"mime/multipart"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
-
-type NewFileUploaderEncryptNetwork struct {
-	W http.ResponseWriter
-	R *http.Request
-}
 
 type NewFileUploaderEncryptSession struct {
 	ReadSession Session
@@ -22,24 +13,18 @@ type NewFileUploaderEncryptSession struct {
 }
 
 type UploadEncryptController struct {
-	NewFileUploaderEncryptNetwork
 	NewFileUploaderEncryptSession
 	Application.UploaderEncryptApplication
-	Rout *mux.Router
-
-	UrlUploadData func(r *mux.Router, fileName string) (string, error)
 }
 
-func (S *UploadEncryptController) FileUploaderEncrypt() {
-
+func (S *UploadEncryptController) FileUploaderEncrypt(W http.ResponseWriter, R *http.Request) {
 	returnedSession := S.ReadSession.GetSessionData(IncomingSessionData{
-		Writer:  S.W,
-		Request: S.R,
+		Writer:  W,
+		Request: R,
 	})
 	if returnedSession.Error != nil {
-
 		SetAnswer(InputAnswerData{
-			W:    S.W,
+			W:    W,
 			Code: http.StatusBadRequest,
 			Data: AnswerUploadEncrypt{
 				StatusOperation: Break,
@@ -51,11 +36,10 @@ func (S *UploadEncryptController) FileUploaderEncrypt() {
 	jwtMaker, err := S.Jwt.Make()
 	if err != nil {
 		SetAnswer(InputAnswerData{
-			W:    S.W,
+			W:    W,
 			Code: http.StatusUnauthorized,
 			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
-				UrlToRedirect:   "",
 				Error:           ErrorStrangeError.Error(),
 			},
 		})
@@ -64,11 +48,10 @@ func (S *UploadEncryptController) FileUploaderEncrypt() {
 	rfMaker, err := S.Rf.Make()
 	if err != nil {
 		SetAnswer(InputAnswerData{
-			W:    S.W,
+			W:    W,
 			Code: http.StatusUnauthorized,
 			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
-				UrlToRedirect:   "",
 				Error:           ErrorStrangeError.Error(),
 			},
 		})
@@ -78,20 +61,19 @@ func (S *UploadEncryptController) FileUploaderEncrypt() {
 	rfError := rfMaker.IsTokenCorrect([]byte(returnedSession.Rft))
 	if rfError != nil && jwtError != nil {
 		SetAnswer(InputAnswerData{
-			W:    S.W,
+			W:    W,
 			Code: http.StatusUnauthorized,
 			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
-				UrlToRedirect:   "/login",
 				Error:           ErrorAuthExpired.Error(),
 			},
 		})
-
+		return
 	}
-	file, sizeAndName, err := S.getFile()
+	file, sizeAndName, err := R.FormFile("File")
 	if err != nil {
 		SetAnswer(InputAnswerData{
-			W:    S.W,
+			W:    W,
 			Code: http.StatusBadRequest,
 			Data: ErrorFile,
 		})
@@ -101,11 +83,11 @@ func (S *UploadEncryptController) FileUploaderEncrypt() {
 		File: file,
 		Name: []byte(sizeAndName.Filename),
 		Size: sizeAndName.Size,
-		Ctx:  S.R.Context(),
+		Ctx:  R.Context(),
 	})
 	if err != nil {
 		SetAnswer(InputAnswerData{
-			W:    S.W,
+			W:    W,
 			Code: http.StatusBadRequest,
 			Data: AnswerUploadEncrypt{
 				StatusOperation: NotStart,
@@ -115,43 +97,16 @@ func (S *UploadEncryptController) FileUploaderEncrypt() {
 		return
 	}
 
-	urlPath, err := S.UrlUploadData(S.Rout, fileName)
-	if err != nil {
-		SetAnswer(InputAnswerData{
-			W:    S.W,
-			Code: http.StatusBadRequest,
-			Data: AnswerUploadEncrypt{
-				StatusOperation: NotStart,
-				Error:           err.Error(),
-			},
-		})
-		return
-	}
 	SetAnswer(InputAnswerData{
-		W:    S.W,
+		W:    W,
 		Code: http.StatusOK,
 		Data: AnswerUploadEncrypt{
 			StatusOperation: Success,
-			UrlToRedirect:   urlPath,
+			Params: ParametersUploading{
+				IsEncrypt: true,
+				FileName:  fileName,
+			},
 		},
 	})
 	return
-}
-
-func (S *UploadEncryptController) getFile() (multipart.File, *multipart.FileHeader, error) {
-	file, sizeAndName, err := S.R.FormFile("file")
-	if err != nil {
-		slog.Error("UploadEncrypt; error to get a file", "ERROR", err)
-		return nil, nil, err
-	}
-	return file, sizeAndName, nil
-}
-
-func GetUploadEncryptData(r *mux.Router, fileName string) (string, error) {
-	url, err := r.Get("fileName").URL("name", fileName, "bool", "true")
-	if err != nil {
-		slog.Error("UrlBuilderUploadEncrypt; error to get a file name from the url", "ERROR", err)
-		return "", ErrorCantGetFileName
-	}
-	return url.Path, nil
 }

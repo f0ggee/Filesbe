@@ -1,8 +1,9 @@
-//This file contains functions that can work with users' sessions(save it or modify it)
+//This file contains functions that can work with users' sessions (save or modify it)
 
 package httpController
 
 import (
+	"Kaban/internal/Drivers/Tokens"
 	"encoding/hex"
 	"log/slog"
 	"net/http"
@@ -18,7 +19,7 @@ const TokenName = "token6"
 var store *sessions.CookieStore
 
 func init() {
-	key := os.Getenv("KEY_FOR_JWT")
+	key := os.Getenv("session_key")
 	keyIntoBytes, err := hex.DecodeString(key)
 	if err != nil {
 		panic(err)
@@ -26,7 +27,7 @@ func init() {
 	store = sessions.NewCookieStore(keyIntoBytes)
 	store.Options = &sessions.Options{
 		Path:     "",
-		MaxAge:   1000 * 3600,
+		MaxAge:   86400 * 14,
 		Secure:   os.Getenv("app_product") == "product",
 		HttpOnly: true,
 		SameSite: http.SameSiteDefaultMode,
@@ -49,10 +50,6 @@ func GetNewSessionConnect() SessionConnect {
 	return SessionConnect{}
 }
 
-func (s SessionConnect) getUserConnect(r *http.Request) (*sessions.Session, error) {
-	return store.Get(r, TokenName)
-}
-
 type IncomingSessionData struct {
 	Writer  http.ResponseWriter
 	Request *http.Request
@@ -61,7 +58,7 @@ type IncomingSessionData struct {
 }
 
 func (s SessionConnect) GetSessionData(data IncomingSessionData) ReturnedSessionKey {
-	connect, err := s.getUserConnect(data.Request)
+	connect, err := store.Get(data.Request, TokenName)
 	if err != nil {
 		slog.Error("GetSessionData: error to get an active connect", "error", err)
 		return ReturnedSessionKey{
@@ -85,7 +82,7 @@ func (s SessionConnect) GetSessionData(data IncomingSessionData) ReturnedSession
 	}
 }
 func (s SessionConnect) SetNewSession(data IncomingSessionData) ReturnedSessionKey {
-	connect, err := s.getUserConnect(data.Request)
+	connect, err := store.Get(data.Request, TokenName)
 	if err != nil {
 		return ReturnedSessionKey{Error: ErrorGetCookie}
 	}
@@ -110,18 +107,52 @@ func (s SessionConnect) SetNewSession(data IncomingSessionData) ReturnedSessionK
 	}
 }
 
-type Mocks struct {
+type testSession struct {
 }
 
-func GetNewMocks() *Mocks {
-	return &Mocks{}
+func newTestSession() *testSession {
+	return &testSession{}
 }
 
-func (m Mocks) GetSessionData(data IncomingSessionData) ReturnedSessionKey {
+func (t testSession) GetSessionData(data IncomingSessionData) ReturnedSessionKey {
 
+	rf, _ := Tokens.NewRfToken().Make()
+	jwt, _ := Tokens.NewJwtToken().Make()
+	jwtToken, _ := jwt.GetAuthToken(nil)
+	rfToken, _ := rf.GetAuthToken(nil)
+
+	return ReturnedSessionKey{
+		Rft:   string(rfToken),
+		Jwt:   string(jwtToken),
+		Error: nil,
+	}
+
+}
+
+func (t testSession) SetNewSession(data IncomingSessionData) ReturnedSessionKey {
 	return ReturnedSessionKey{}
 }
 
-func (m Mocks) SetNewSession(data IncomingSessionData) ReturnedSessionKey {
+type testBadSession struct {
+}
+
+func newTestBadSession() *testBadSession {
+	return &testBadSession{}
+}
+
+func (t testBadSession) GetSessionData(data IncomingSessionData) ReturnedSessionKey {
+	rf, _ := Tokens.NewTestTokensBadTime().Make()
+	jwt, _ := Tokens.NewTestTokensBadTime().Make()
+
+	rfToken, _ := rf.GetAuthToken(nil)
+	jwtToken, _ := jwt.GetAuthToken(nil)
+	return ReturnedSessionKey{
+		Rft:   string(rfToken),
+		Jwt:   string(jwtToken),
+		Error: nil,
+	}
+}
+
+func (t testBadSession) SetNewSession(data IncomingSessionData) ReturnedSessionKey {
 	return ReturnedSessionKey{}
 }

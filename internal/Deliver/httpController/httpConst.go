@@ -36,10 +36,15 @@ type AnswerUrlBuilder struct {
 	Url             string `json:"Url"`
 	ErrorMessage    string `json:"ErrorMessage"`
 }
+
+type ParametersUploading struct {
+	IsEncrypt bool   `json:"is_encrypt"`
+	FileName  string `json:"file_name"`
+}
 type AnswerUploaderFileNoEncrypt struct {
-	StatusOperation string `json:"StatusOperation"`
-	UrlToRedirect   string `json:"UrlRedict"`
-	Error           string `json:"Error"`
+	StatusOperation string              `json:"StatusOperation"`
+	Params          ParametersUploading `json:"Params"`
+	Error           string              `json:"Error"`
 }
 type AnswerDownloadNoEncrypt struct {
 	StatusOperation string `json:"status_operation"`
@@ -52,9 +57,9 @@ type AnswerFileDownloadEncrypt struct {
 }
 
 type AnswerUploadEncrypt struct {
-	StatusOperation string `json:"status_operation"`
-	Error           string `json:"error"`
-	UrlToRedirect   string `json:"url_to_redirect"`
+	StatusOperation string              `json:"status_operation"`
+	Error           string              `json:"error"`
+	Params          ParametersUploading `json:"Params"`
 }
 type OutComingUrlData struct {
 	NameFile string

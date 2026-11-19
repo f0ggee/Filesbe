@@ -364,7 +364,8 @@
     terminalText.textContent = translations[currentLang].loading;
 
     const fd = new FormData();
-    selectedFiles.forEach(f => fd.append('file', f));
+    // The server reads a single file from the "File" field
+    fd.append('File', selectedFiles[0]);
 
     try {
       const response = await fetch('/uploadEncrypt/api', {
@@ -372,15 +373,18 @@
         body: fd
       });
 
-      const data = await response.json();
-      // Ответ бэкенда приходит в двух форматах: { url_to_redirect, error } или { UrlRedict, Error }
-      const redirectUrl = data.url_to_redirect || data.UrlRedict;
-
+      // 401 — сессия истекла: отправляем на логин, не читая тело ответа
       if (response.status === 401) {
-        if (redirectUrl) window.location.href = redirectUrl;
-        else window.location.href = "/login";
+        window.location.href = "/login";
         return;
       }
+
+      const data = await response.json().catch(() => ({}));
+      // Ответ бэкенда: { status_operation, error, Params: { is_encrypt, file_name } }, ссылку строим здесь
+      const params = data.Params;
+      const redirectUrl = params && params.file_name
+        ? `/URL/${encodeURIComponent(params.file_name)}/${Boolean(params.is_encrypt)}`
+        : '';
 
       if (response.status === 400) {
         overlay.classList.remove('show');

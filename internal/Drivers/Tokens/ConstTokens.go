@@ -16,6 +16,7 @@ var ErrorMakeToken = errors.New("the token can't be created")
 var ErrorParseToken = errors.New("can't parse a token")
 var ErrorTokenAuthFail = errors.New("token's auth is failed")
 var ErrorTokenFail = errors.New("a token isn't correct")
+var ErrorTokenExpired = errors.New("the token is expired")
 
 func init() {
 	if err := godotenv.Load(); err != nil {

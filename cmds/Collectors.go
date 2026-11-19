@@ -13,7 +13,6 @@ import (
 	grcRec "Kaban/internal/Drivers/Grpc/GrpcRequests"
 	"Kaban/internal/Drivers/Parsers"
 	"Kaban/internal/Drivers/RedisInteration"
-	"Kaban/internal/Drivers/RepoEncrypterKeys"
 	"Kaban/internal/Drivers/Tokens"
 
 	grpcHub "Kaban/internal/Drivers/Grpc"
@@ -79,7 +78,7 @@ func GetFileTransferringCollector() FileTransferringCollector {
 			Delete:   s3Repo.NewS3Deleter(),
 		},
 		HttpFileTransferringCollector: HttpFileTransferringCollector{
-			Upload: TransferringHttpRepo.NewHttpUploader(),
+			Upload: *TransferringHttpRepo.NewHttpUploader(),
 		},
 	}
 }
@@ -119,16 +118,6 @@ func GetNewRedisCollector(r *redis.Client) RedisCollector {
 		Write:  *RedisInteration.NewRedisWrite(),
 		Check:  RedisInteration.NewRedisCheck(),
 		Delete: RedisInteration.NewRedisDelete(),
-	}
-}
-
-type SessionKeysCollector struct {
-	Keys RepoEncrypterKeys.keys
-}
-
-func GetNewSessionKeysCollector() SessionKeysCollector {
-	return SessionKeysCollector{
-		Keys: RepoEncrypterKeys.GetKeys(),
 	}
 }
 

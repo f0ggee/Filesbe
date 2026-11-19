@@ -218,14 +218,14 @@
             <p class="sub" data-i18n="uploadSub">Choose files and get an instant share link</p>
 
             <div class="dropzone" id="dropzone">
-                <div style="margin-bottom: 15px;" data-i18n="dropText">Drag & Drop files here</div>
+                <div style="margin-bottom: 15px;" data-i18n="dropText">Drag & Drop a file here</div>
                 <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-                    <button class="btn-primary" id="chooseBtn" type="button" data-i18n="chooseBtn">Choose files</button>
+                    <button class="btn-primary" id="chooseBtn" type="button" data-i18n="chooseBtn">Choose file</button>
                     <button class="btn-outline" id="uploadBtn" type="button" disabled data-i18n="uploadBtn">Upload</button>
                 </div>
-                <div class="sub" style="font-size:13px; margin-top:12px;" data-i18n="multipleSupport">Multiple selection supported</div>
+                <div class="sub" style="font-size:13px; margin-top:12px;" data-i18n="singleFile">One file per upload</div>
                 <div style="color:var(--danger); font-size:14px;"><span data-i18n="maxSize">Max file size</span>: 500 MB</div>
-                <input type="file" id="fileInput" multiple hidden>
+                <input type="file" id="fileInput" hidden>
             </div>
 
             <div id="errorBox" class="error-box">
@@ -275,8 +275,8 @@
         en: {
             langBtn: "Language: EN ▾", contactBtn: "Developer Contact ▾", contactTitle: "Contact Info",
             copy: "Copy", copied: "Copied!", uploadTitle: "File Upload",
-            uploadSub: "Choose files and get an instant share link", dropText: "Drag & Drop files here",
-            chooseBtn: "Choose files", uploadBtn: "Upload", maxSize: "Max file size",
+            uploadSub: "Choose a file and get an instant share link", dropText: "Drag & Drop a file here",
+            chooseBtn: "Choose file", uploadBtn: "Upload", maxSize: "Max file size", singleFile: "One file per upload",
             whyTitle: "Why Filesb", why1: "No messengers needed", why2: "Minimalistic interface", why3: "Instant file links",
             advTitle: "Advanced Protection", adv1: "Modern file encryption", adv2: "Short server storage time",
             protectBtn: "Go to protection", status: "Status", loading: "Loading...",
@@ -286,8 +286,8 @@
         ru: {
             langBtn: "Язык: RU ▾", contactBtn: "Связь с разработчиком ▾", contactTitle: "Контакты",
             copy: "Копировать", copied: "Готово!", uploadTitle: "Загрузка файлов",
-            uploadSub: "Выберите файлы и получите мгновенную ссылку", dropText: "Перетащите файлы сюда",
-            chooseBtn: "Выбрать файлы", uploadBtn: "Загрузить", maxSize: "Макс. размер файла",
+            uploadSub: "Выберите файл и получите мгновенную ссылку", dropText: "Перетащите файл сюда",
+            chooseBtn: "Выбрать файл", uploadBtn: "Загрузить", maxSize: "Макс. размер файла", singleFile: "Один файл за загрузку",
             whyTitle: "Почему Filesb", why1: "Мессенджеры не нужны", why2: "Минималистичный интерфейс", why3: "Мгновенные ссылки",
             advTitle: "Продвинутая защита", adv1: "Современное шифрование", adv2: "Короткое время хранения",
             protectBtn: "Перейти к защите", status: "Status", loading: "Загрузка...",
@@ -378,7 +378,7 @@
     });
     dropzone.addEventListener('drop', e => {
         e.preventDefault();
-        selectedFiles = Array.from(e.dataTransfer.files);
+        selectedFiles = Array.from(e.dataTransfer.files).slice(0, 1);
         renderList();
     });
 
@@ -398,6 +398,15 @@
         return serverMsg;
     }
 
+    // The server returns the file name and upload type in Params, the link is built here
+    function buildLinkUrl(data) {
+        const params = data.Params;
+        if (params && params.file_name) {
+            return `/URL/${encodeURIComponent(params.file_name)}/${Boolean(params.is_encrypt)}`;
+        }
+        return '';
+    }
+
     uploadBtn.onclick = async () => {
         hideError();
         overlay.classList.add('show');
@@ -405,17 +414,19 @@
         terminalText.style.color = '#0f0';
 
         const fd = new FormData();
-        selectedFiles.forEach(f => fd.append('file', f));
+        // The server reads a single file from the "File" field
+        fd.append('File', selectedFiles[0]);
 
         try {
             const response = await fetch('/upload/api', { method: 'POST', body: fd });
-            const data = await response.json().catch(() => ({}));
 
+            // 401 means the session is gone: send the user to login whatever the body is
             if (response.status === 401) {
-                if (data.UrlRedict) window.location.href = data.UrlRedict;
-                else window.location.href = "/login";
+                window.location.href = "/login";
                 return;
             }
+
+            const data = await response.json().catch(() => ({}));
 
             if (response.status === 400) {
                 overlay.classList.remove('show');
@@ -424,11 +435,16 @@
                 return;
             }
 
-            if (response.status === 200) {
+            if (response.ok && data.StatusOperation === 'Success') {
                 terminalText.textContent = translations[currentLang].completed;
+                const target = buildLinkUrl(data);
                 setTimeout(() => {
-                    if (data.UrlRedict) window.location.href = data.UrlRedict;
-                    else overlay.classList.remove('show');
+                    if (target) {
+                        window.location.href = target;
+                        return;
+                    }
+                    overlay.classList.remove('show');
+                    showError(translations[currentLang].defaultError);
                 }, 1000);
                 return;
             }

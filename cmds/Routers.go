@@ -27,14 +27,10 @@ func apiRouters(r *mux.Router, c Controllers) {
 		c.register.Register()
 	})
 	postRouter.HandleFunc("/upload/api", func(writer http.ResponseWriter, request *http.Request) {
-		c.uploader.W = writer
-		c.uploader.R = request
-		c.uploader.FileUploader(postRouter)
+		c.uploader.FileUploader(writer, request)
 	})
 	postRouter.HandleFunc("/uploadEncrypt/api", func(writer http.ResponseWriter, request *http.Request) {
-		c.encryptUpload.W = writer
-		c.encryptUpload.R = request
-		c.encryptUpload.FileUploaderEncrypt()
+		c.encryptUpload.FileUploaderEncrypt(writer, request)
 	})
 	getRouter.HandleFunc("/doUrl/api", func(writer http.ResponseWriter, request *http.Request) {
 		c.urlBuild.Net.W = writer

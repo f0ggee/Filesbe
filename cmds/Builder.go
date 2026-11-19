@@ -153,7 +153,6 @@ func GetControllerDownloadBuilder(app Application.NewDownload) httpController.Do
 func GetControllerDownloadEncryptBuilder(app Application.DownloadEncryptApplication) httpController.DownloadEncryptController {
 	return httpController.DownloadEncryptController{
 		DownloadEncryptApplication: app,
-		GetDataRequest:             httpController.GetDataRequest,
 	}
 }
 
@@ -172,7 +171,6 @@ func GetControllerFileUploadBuilder(C ControllerFileUploadBuilder) httpControlle
 			Sessions: C.Sessions,
 		},
 		UploadApplication: C.App,
-		UrlData:           httpController.GetUploadData,
 	}
 }
 

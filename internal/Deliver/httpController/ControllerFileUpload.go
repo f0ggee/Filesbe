@@ -4,17 +4,8 @@ import (
 	"Kaban/internal/DomainLevel"
 
 	"Kaban/internal/Service/Application"
-	"log/slog"
-	"mime/multipart"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
-
-type FileUploaderNet struct {
-	W http.ResponseWriter
-	R *http.Request
-}
 
 type FileUploaderSessions struct {
 	Rf       DomainLevel.AuthMaker
@@ -22,22 +13,20 @@ type FileUploaderSessions struct {
 	Sessions Session
 }
 type UploadController struct {
-	FileUploaderNet
 	FileUploaderSessions
 	Application.UploadApplication
-	UrlData func(r *mux.Router, fileName string) (string, error)
 }
 
-func GetNewFileUploader(fileUploaderNoEncryptNet FileUploaderNet, uploadNotEncryptSessions FileUploaderSessions) *UploadController {
-	return &UploadController{FileUploaderNet: fileUploaderNoEncryptNet, FileUploaderSessions: uploadNotEncryptSessions}
+func GetNewFileUploader(uploadNotEncryptSessions FileUploaderSessions, uploadApplication Application.UploadApplication) *UploadController {
+	return &UploadController{FileUploaderSessions: uploadNotEncryptSessions, UploadApplication: uploadApplication}
 }
 
-func (d *UploadController) FileUploader(router *mux.Router) {
+func (d *UploadController) FileUploader(W http.ResponseWriter, R *http.Request) {
 
-	returnedData := d.Sessions.GetSessionData(IncomingSessionData{Writer: d.W, Request: d.R})
+	returnedData := d.Sessions.GetSessionData(IncomingSessionData{Writer: W, Request: R})
 	if returnedData.Error != nil {
 		SetAnswer(InputAnswerData{
-			W:    d.W,
+			W:    W,
 			Code: http.StatusUnauthorized,
 			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
@@ -50,11 +39,10 @@ func (d *UploadController) FileUploader(router *mux.Router) {
 	jwtMaker, err := d.Jwt.Make()
 	if err != nil {
 		SetAnswer(InputAnswerData{
-			W:    d.W,
+			W:    W,
 			Code: http.StatusUnauthorized,
 			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
-				UrlToRedirect:   "",
 				Error:           ErrorStrangeError.Error(),
 			},
 		})
@@ -63,11 +51,10 @@ func (d *UploadController) FileUploader(router *mux.Router) {
 	rfMaker, err := d.Rf.Make()
 	if err != nil {
 		SetAnswer(InputAnswerData{
-			W:    d.W,
+			W:    W,
 			Code: http.StatusUnauthorized,
 			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
-				UrlToRedirect:   "",
 				Error:           ErrorStrangeError.Error(),
 			},
 		})
@@ -78,25 +65,23 @@ func (d *UploadController) FileUploader(router *mux.Router) {
 	rfError := rfMaker.IsTokenCorrect([]byte(returnedData.Rft))
 	if rfError != nil && jwtError != nil {
 		SetAnswer(InputAnswerData{
-			W:    d.W,
+			W:    W,
 			Code: http.StatusUnauthorized,
 			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
-				UrlToRedirect:   "/login",
 				Error:           ErrorAuthExpired.Error(),
 			},
 		})
-
+		return
 	}
-
-	file, fileDetails, err := d.getFileData()
+	file, fileDetails, err := R.FormFile("File")
 	if err != nil {
 		SetAnswer(InputAnswerData{
-			W:    d.W,
+			W:    W,
 			Code: http.StatusBadRequest,
 			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
-				Error:           ErrorCantGetFileName.Error(),
+				Error:           ErrorFile.Error(),
 			},
 		})
 		return
@@ -106,24 +91,11 @@ func (d *UploadController) FileUploader(router *mux.Router) {
 		File: file,
 		Name: fileDetails.Filename,
 		Size: fileDetails.Size,
-		Ctx:  d.R.Context(),
+		Ctx:  R.Context(),
 	})
 	if err != nil {
 		SetAnswer(InputAnswerData{
-			W:    d.W,
-			Code: http.StatusBadRequest,
-			Data: AnswerUploaderFileNoEncrypt{
-				StatusOperation: Break,
-				Error:           err.Error(),
-			},
-		})
-		return
-	}
-
-	urlPath, err := d.UrlData(router, fileName)
-	if err != nil {
-		SetAnswer(InputAnswerData{
-			W:    d.W,
+			W:    W,
 			Code: http.StatusBadRequest,
 			Data: AnswerUploaderFileNoEncrypt{
 				StatusOperation: Break,
@@ -133,30 +105,14 @@ func (d *UploadController) FileUploader(router *mux.Router) {
 		return
 	}
 	SetAnswer(InputAnswerData{
-		W:    d.W,
+		W:    W,
 		Code: http.StatusCreated,
 		Data: AnswerUploaderFileNoEncrypt{
 			StatusOperation: Success,
-			UrlToRedirect:   urlPath,
+			Params: ParametersUploading{
+				IsEncrypt: false,
+				FileName:  fileName,
+			},
 		},
 	})
-	return
-}
-
-func (d *UploadController) getFileData() (multipart.File, *multipart.FileHeader, error) {
-	file, fileDetails, err := d.R.FormFile("File")
-	if err != nil {
-		slog.Error("Upload; error to get a File", "ERROR", err)
-		return nil, nil, ErrorCantGetFileName
-	}
-	return file, fileDetails, nil
-}
-
-func GetUploadData(r *mux.Router, fileName string) (string, error) {
-	url, err := r.Get("fileName").URL("name", fileName, "bool", "true")
-	if err != nil {
-		slog.Error("UrlBuilderUploadEncrypt; error to get a file name from the url", "ERROR", err)
-		return "", ErrorCantGetFileName
-	}
-	return url.Path, nil
 }

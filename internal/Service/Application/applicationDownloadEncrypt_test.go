@@ -228,9 +228,12 @@ func TestDownloadEncrypt_getFileData(t *testing.T) {
 		{
 			name: "test4",
 			fields: fields{
+				NewDownloadEncryptDelivery: NewDownloadEncryptDelivery{},
 				NewDownloadEncryptCrypto: NewDownloadEncryptCrypto{
 					Rsa: Crypto.NewRsaError(),
 				},
+				NewDownloadEncryptFileControl: NewDownloadEncryptFileControl{},
+				Decoder:                       Parsers.GetNewParsing(),
 			},
 			args:    args{},
 			wantErr: true,
