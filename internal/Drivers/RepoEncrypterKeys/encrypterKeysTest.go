@@ -1,5 +1,11 @@
 package RepoEncrypterKeys
 
+import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+)
+
 type TestEncrypterKeys struct {
 	d []byte
 }
@@ -108,4 +114,52 @@ func (t *TestPrepareData) GetMasterKey() []byte {
 
 func (t *TestPrepareData) GetServerKey() []byte {
 	return t.serverKeys
+}
+
+type NormalKeyTest struct {
+	k    []byte
+	oldK []byte
+}
+
+func NewNormalKeyTest() *NormalKeyTest {
+	key, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		panic(err)
+	}
+	oldKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		panic(err)
+	}
+	return &NormalKeyTest{
+		k:    x509.MarshalPKCS1PrivateKey(key),
+		oldK: x509.MarshalPKCS1PrivateKey(oldKey),
+	}
+}
+
+func (n *NormalKeyTest) GetKey() []byte {
+	return n.k
+}
+
+func (n *NormalKeyTest) GetOldKey() []byte {
+	return n.oldK
+}
+
+func (n *NormalKeyTest) UpdateNewKey(newKey []byte) {
+	n.k = newKey
+}
+
+func (n *NormalKeyTest) UpdateOldKey(otherKey []byte) {
+	if otherKey != nil {
+		n.oldK = otherKey
+		return
+	}
+	n.oldK = n.k
+}
+
+func (n *NormalKeyTest) GetMasterKey() []byte {
+	return nil
+}
+
+func (n *NormalKeyTest) GetServerKey() []byte {
+	return nil
 }

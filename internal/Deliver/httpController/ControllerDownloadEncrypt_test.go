@@ -48,7 +48,7 @@ func TestDownloadEncryptController_DownloadEncrypt(t *testing.T) {
 					W: httptest.NewRecorder(),
 					R: setTestRequest(),
 				},
-				DownloadEncryptApplication: testFunctions.DownloadEncryptError1,
+				DownloadEncryptApplication: testFunctions.DownloadEncryptBadRsa,
 			},
 			wantError: true,
 			inputData: []byte("data"),
@@ -64,6 +64,18 @@ func TestDownloadEncryptController_DownloadEncrypt(t *testing.T) {
 			},
 			wantError: true,
 			inputData: []byte("data"),
+		},
+		{
+			name: "test4",
+			fields: fields{
+				Net: net{
+					W: httptest.NewRecorder(),
+					R: setContextRequest(),
+				},
+				DownloadEncryptApplication: testFunctions.DownloadEncryptBadAesKey,
+			},
+			wantError: true,
+			inputData: []byte("Data"),
 		},
 	}
 	for _, tt := range tests {

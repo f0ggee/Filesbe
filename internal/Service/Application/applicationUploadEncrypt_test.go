@@ -10,142 +10,236 @@ import (
 	"bytes"
 	"context"
 	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
+	"io"
 	"testing"
 )
 
-func TestUploadEncrypt_UploadEncryptApplication(t *testing.T) {
-	rsaK, _ := rsa.GenerateKey(rand.Reader, 2048)
-
-	DomainLevel.GetCryptoKeys = RepoEncrypterKeys.NewTestEncrypterKeys(x509.MarshalPKCS1PrivateKey(rsaK))
+func TestUploadEncrypt_encryptFile(t *testing.T) {
 	type fields struct {
 		NewUploadEncryptDataManage NewUploadEncryptDataManage
 		NewUploadEncryptCrypto     NewUploadEncryptCrypto
 		NewUploadEncryptDelivery   NewUploadEncryptDelivery
 	}
-	newUpload := NewUploadEncryptDelivery{
-		Uploader:     nil,
-		RedisWriter:  RedisInteration.NewRedisWriteTest(),
-		RedisChecker: RedisInteration.NewRedisCheckTest(),
-		RedisDeleter: RedisInteration.NewRedisDeleteTest(),
-		Deleter:      nil,
-	}
-	crypto := NewUploadEncryptCrypto{
-		Generate: Crypto.GetNewGenerating(),
-		Aes:      Crypto.NewAesCtr(),
-		Rsa:      Crypto.NewRsaEncryption(),
-	}
-	parser := NewUploadEncryptDataManage{Parsers.GetNewParsing()}
 	type args struct {
-		data UploadEncryptIncomeData
+		src  io.Reader
+		dst  DomainLevel.Upload
+		data []byte
+		ctx  context.Context
 	}
-	fileContent := []byte("Hello!")
-	testArgs := args{
-		data: UploadEncryptIncomeData{
-			File: bytes.NewReader(fileContent),
-			Name: []byte("test"),
-			Ctx:  context.Background(),
-			Size: 100,
+
+	defaultFields := fields{
+		NewUploadEncryptDataManage: NewUploadEncryptDataManage{
+			Encode: Parsers.GetNewParsing(),
 		},
+		NewUploadEncryptCrypto: NewUploadEncryptCrypto{
+			Generate: Crypto.GetNewGenerating(),
+			Aes:      Crypto.NewAesGcmEncryption(),
+			Rsa:      Crypto.NewRsaEncryption(),
+		},
+		NewUploadEncryptDelivery: func() NewUploadEncryptDelivery {
+			flow := testFileTransfering.GetTestFlow()
+			d := NewUploadEncryptDelivery{
+				Uploader: flow.U,
+				Deleter:  flow.D_,
+			}
+			return d
+		}(),
 	}
-	bigFileArgs := testArgs
-	bigFileArgs.data.Size = 600 * 1024 * 1024
+	defaultArgs := args{
+		src: bytes.NewReader([]byte("Example data!")),
+		dst: func() DomainLevel.Upload {
+			u, _ := defaultFields.NewUploadEncryptDelivery.Uploader.Make(nil)
+			return u
+		}(),
+		data: func() []byte {
+			data := make([]byte, defaultFields.NewUploadEncryptCrypto.Aes.GetRequiredOverheadSize()+32)
+			io.ReadFull(rand.Reader, data)
+			return data
+		}(),
+		ctx: context.Background(),
+	}
 	tests := []struct {
 		name    string
 		fields  fields
 		args    args
 		wantErr bool
-		flow    testFileTransfering.Flow
 	}{
 		{
-			flow: *testFileTransfering.GetTestFlow(),
-			name: "test1",
-			fields: fields{
-				NewUploadEncryptDataManage: NewUploadEncryptDataManage{
-					Encode: Parsers.GetNewParsing(),
-				},
-				NewUploadEncryptCrypto:   crypto,
-				NewUploadEncryptDelivery: newUpload,
-			},
-			args:    testArgs,
+			name:    "test1",
+			fields:  defaultFields,
+			args:    defaultArgs,
 			wantErr: false,
 		},
 		{
-			name: "test2",
-			fields: fields{
-				NewUploadEncryptDataManage: parser,
-				NewUploadEncryptCrypto:     crypto,
-				NewUploadEncryptDelivery:   newUpload,
+			name:   "test2",
+			fields: defaultFields,
+			args: args{
+				src: defaultArgs.src,
+				dst: defaultArgs.dst,
+				data: func() []byte {
+					data := make([]byte, 32+16)
+					io.ReadFull(rand.Reader, data)
+					return data
+				}(),
+				ctx: nil,
 			},
-			args:    bigFileArgs,
 			wantErr: true,
 		},
 		{
 			name: "test3",
 			fields: fields{
-				NewUploadEncryptDataManage: parser,
-				NewUploadEncryptCrypto:     crypto,
-				NewUploadEncryptDelivery:   newUpload,
+				NewUploadEncryptDataManage: defaultFields.NewUploadEncryptDataManage,
+				NewUploadEncryptCrypto: NewUploadEncryptCrypto{
+					Aes: Crypto.NewAesCtr(),
+				},
+				NewUploadEncryptDelivery: defaultFields.NewUploadEncryptDelivery,
 			},
-			args:    testArgs,
+			args: args{
+				src: defaultArgs.src,
+				dst: defaultArgs.dst,
+				data: func() []byte {
+					data := make([]byte, 32+12)
+					io.ReadFull(rand.Reader, data)
+					return data
+				}(),
+				ctx: nil,
+			},
 			wantErr: true,
-			flow:    testFileTransfering.GetTestErrorFlow(),
 		},
 		{
-			name: "test4",
-			fields: fields{
-				NewUploadEncryptDataManage: parser,
-				NewUploadEncryptCrypto: NewUploadEncryptCrypto{
-					Generate: crypto.Generate,
-					Aes:      crypto.Aes,
-					Rsa:      Crypto.NewRsaError(),
-				},
-				NewUploadEncryptDelivery: newUpload,
+			name:   "test4",
+			fields: defaultFields,
+			args: args{
+				src:  defaultArgs.src,
+				dst:  defaultArgs.dst,
+				data: nil,
+				ctx:  context.Background(),
 			},
-			args:    testArgs,
 			wantErr: true,
-			flow:    *testFileTransfering.GetTestFlow(),
 		},
 		{
 			name: "test5",
 			fields: fields{
-				NewUploadEncryptDataManage: parser,
+				NewUploadEncryptDataManage: defaultFields.NewUploadEncryptDataManage,
 				NewUploadEncryptCrypto: NewUploadEncryptCrypto{
-					Generate: crypto.Generate,
-					Aes:      Crypto.NewAesCtrError{},
-					Rsa:      crypto.Rsa,
+					Generate: Crypto.GetNewGenerating(),
+					Aes:      Crypto.NewAesCtr(),
+					Rsa:      defaultFields.NewUploadEncryptCrypto.Rsa,
 				},
-				NewUploadEncryptDelivery: newUpload,
+				NewUploadEncryptDelivery: defaultFields.NewUploadEncryptDelivery,
 			},
-			args:    testArgs,
+			args: args{
+				src:  defaultArgs.src,
+				dst:  defaultArgs.dst,
+				data: nil,
+				ctx:  defaultArgs.ctx,
+			},
 			wantErr: true,
-			flow:    *testFileTransfering.GetTestFlow(),
 		},
 		{
 			name: "test6",
 			fields: fields{
-				NewUploadEncryptDataManage: parser,
-				NewUploadEncryptCrypto:     crypto,
-				NewUploadEncryptDelivery:   newUpload,
+				NewUploadEncryptDataManage: defaultFields.NewUploadEncryptDataManage,
+				NewUploadEncryptCrypto: NewUploadEncryptCrypto{
+					Generate: defaultFields.NewUploadEncryptCrypto.Generate,
+					Aes:      Crypto.NewAesGcmError(),
+				},
+				NewUploadEncryptDelivery: defaultFields.NewUploadEncryptDelivery,
 			},
-			args:    testArgs,
+			args: args{
+				src: defaultArgs.src,
+				dst: defaultArgs.dst,
+				data: func() []byte {
+					key := make([]byte, 32+defaultFields.NewUploadEncryptCrypto.Aes.GetRequiredOverheadSize())
+					io.ReadFull(rand.Reader, key)
+					return key
+				}(),
+				ctx: defaultArgs.ctx,
+			},
 			wantErr: true,
-			flow:    testFileTransfering.GetTestErrorFlow(),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// every case shares testArgs, so give each run its own unread reader
-			tt.args.data.File = bytes.NewReader(fileContent)
-			tt.fields.NewUploadEncryptDelivery.Uploader = tt.flow.U
-			tt.fields.NewUploadEncryptDelivery.Deleter = tt.flow.D_
 			sa := &UploadEncrypt{
 				NewUploadEncryptDataManage: tt.fields.NewUploadEncryptDataManage,
 				NewUploadEncryptCrypto:     tt.fields.NewUploadEncryptCrypto,
 				NewUploadEncryptDelivery:   tt.fields.NewUploadEncryptDelivery,
 			}
-			_, err := sa.UploadEncryptApplication(tt.args.data)
+			if err := sa.encryptFile(tt.args.src, tt.args.dst, tt.args.data, tt.args.ctx); (err != nil) != tt.wantErr {
+				t.Errorf("encryptFile() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestUploadEncrypt_UploadEncryptApplication(t *testing.T) {
+	type fields struct {
+		NewUploadEncryptDataManage NewUploadEncryptDataManage
+		NewUploadEncryptCrypto     NewUploadEncryptCrypto
+		Keys                       DomainLevel.CryptoKeys
+		NewUploadEncryptDelivery   NewUploadEncryptDelivery
+	}
+	type args struct {
+		data UploadEncryptIncomeData
+	}
+
+	defaultFields := fields{
+		NewUploadEncryptDataManage: NewUploadEncryptDataManage{
+			Encode: Parsers.GetNewParsing(),
+		},
+		NewUploadEncryptCrypto: NewUploadEncryptCrypto{
+			Generate: Crypto.GetNewGenerating(),
+			Aes:      Crypto.NewAesGcmEncryption(),
+			Rsa:      Crypto.NewRsaEncryption(),
+		},
+		Keys: func() DomainLevel.CryptoKeys {
+			DomainLevel.GetCryptoKeys = RepoEncrypterKeys.NewNormalKeyTest()
+			return DomainLevel.GetCryptoKeys
+		}(),
+		NewUploadEncryptDelivery: func() NewUploadEncryptDelivery {
+			flow := testFileTransfering.GetTestFlow()
+			d := NewUploadEncryptDelivery{
+				Uploader:     flow.U,
+				RedisWriter:  RedisInteration.NewRedisWriteTest(),
+				RedisChecker: RedisInteration.NewRedisCheckTest(),
+				RedisDeleter: RedisInteration.NewRedisDeleteTest(),
+				Deleter:      flow.D_,
+			}
+			return d
+		}(),
+	}
+
+	defaultArgs := args{
+		data: UploadEncryptIncomeData{
+			File: bytes.NewReader([]byte("ExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExample")),
+			Name: []byte("Test.txt"),
+			Ctx:  context.Background(),
+			Size: 1000,
+		},
+	}
+
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name:    "test1",
+			fields:  defaultFields,
+			args:    defaultArgs,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := &UploadEncrypt{
+				NewUploadEncryptDataManage: tt.fields.NewUploadEncryptDataManage,
+				NewUploadEncryptCrypto:     tt.fields.NewUploadEncryptCrypto,
+				NewUploadEncryptDelivery:   tt.fields.NewUploadEncryptDelivery,
+			}
+			_, err := u.UploadEncryptApplication(tt.args.data)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UploadEncryptApplication() error = %v, wantErr %v", err, tt.wantErr)
 				return

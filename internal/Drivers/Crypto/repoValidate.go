@@ -21,26 +21,3 @@ func (c *Checking) PasswordVerify(hashOfPassword []byte, password []byte) error 
 	}
 	return nil
 }
-
-type CheckingTest struct {
-}
-
-func NewCheckingTest() *CheckingTest {
-	return &CheckingTest{}
-}
-
-func (c CheckingTest) PasswordVerify(bytes []byte, bytes2 []byte) error {
-	return nil
-}
-
-type CheckingTestError struct {
-}
-
-func NewCheckingTestError() *CheckingTestError {
-	return &CheckingTestError{}
-}
-
-func (c CheckingTestError) PasswordVerify(bytes []byte, bytes2 []byte) error {
-
-	return ErrorPassword
-}

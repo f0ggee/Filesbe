@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"context"
 	"crypto/rand"
-	"errors"
 	"io"
 	"log/slog"
 	"time"
@@ -13,8 +12,6 @@ import (
 	"github.com/awnumar/memguard"
 	"golang.org/x/sync/errgroup"
 )
-
-const ErrorUploadingEncrypt = "an unexpected error occurred while loading encryption"
 
 type NewUploadEncryptCrypto struct {
 	Generate DomainLevel.CryptoGenerating
@@ -44,20 +41,20 @@ type UploadEncryptIncomeData struct {
 	Size int64
 }
 
-func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) (string, error) {
+func (u *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) (string, error) {
 	defer memguard.WipeBytes(data.Name)
 
 	if data.Size >= FileMaxSize {
 		return "", ErrorFileSizeBig
 	}
 	g, ctx := errgroup.WithContext(data.Ctx)
-	shortNameFile := sa.Generate.GenerateText(4)
+	shortNameFile := u.Generate.GenerateText(4)
 
-	x, err := sa.Uploader.SetName(shortNameFile).SetSize(data.Size).Make(ctx)
+	x, err := u.Uploader.SetName(shortNameFile).SetSize(data.Size).Make(ctx)
 	if err != nil {
 		return "", err
 	}
-	cryptoData := memguard.NewBuffer(sa.Aes.GetRequiredOverheadSize() + 32)
+	cryptoData := memguard.NewBuffer(u.Aes.GetRequiredOverheadSize() + 32)
 	defer func() {
 		ctx.Done()
 		_ = g.Wait()
@@ -66,22 +63,22 @@ func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) 
 	}()
 	fillOut(cryptoData.Data())
 	g.Go(func() error {
-		err := sa.encryptFile(data.File, x, cryptoData.Data(), ctx)
+		err := u.encryptFile(data.File, x, cryptoData.Data(), ctx)
 		if err != nil {
 			return err
 		}
 		return nil
 	})
 
-	FileInfoInBytes, err := sa.Encode.Encode(DomainLevel.FileLabelsBytes{
+	FileInfoInBytes, err := u.Encode.Encode(DomainLevel.FileLabelsBytes{
 		FileName: data.Name,
-		AesKey:   cryptoData.Data()[sa.Aes.GetRequiredOverheadSize():],
+		AesKey:   cryptoData.Data()[u.Aes.GetRequiredOverheadSize():],
 	})
 	if err != nil {
 		slog.Error("UploadEncrypt; error to encode data into Json", "ERROR", err)
-		return "", errors.New(ErrorUploadingEncrypt)
+		return "", ErrorUploadingEncrypt
 	}
-	crypto, err := sa.Rsa.MakeCrypto(DomainLevel.GetCryptoKeys.GetKey(), nil)
+	crypto, err := u.Rsa.MakeCrypto(DomainLevel.GetCryptoKeys.GetKey(), nil)
 	if err != nil {
 		return "", err
 	}
@@ -93,7 +90,7 @@ func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) 
 		return "", err
 	}
 
-	err = sa.RedisWriter.WriteData(DomainLevel.WriteDataIncomeData{
+	err = u.RedisWriter.WriteData(DomainLevel.WriteDataIncomeData{
 		FileName: shortNameFile,
 		Info:     encryptedFileInfo,
 		Ctx:      data.Ctx,
@@ -101,7 +98,7 @@ func (sa *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) 
 	if err != nil {
 		return "", err
 	}
-	sa.setDeleteFile(shortNameFile)
+	u.setDeleteFile(shortNameFile)
 	return shortNameFile, nil
 
 }
@@ -114,8 +111,11 @@ func fillOut(allData []byte) {
 	return
 }
 
-func (sa *UploadEncrypt) encryptFile(src io.Reader, dst DomainLevel.Upload, data []byte, ctx context.Context) error {
-	cryptoData, err := sa.Aes.MakeCrypto(data[sa.Aes.GetRequiredOverheadSize():], data[:sa.Aes.GetRequiredOverheadSize()])
+func (u *UploadEncrypt) encryptFile(src io.Reader, dst DomainLevel.Upload, cryptoData []byte, ctx context.Context) error {
+	if len(cryptoData) < u.Aes.GetRequiredOverheadSize() {
+		return ErrorWrongCryptoData
+	}
+	_crypto, err := u.Aes.MakeCrypto(cryptoData[u.Aes.GetRequiredOverheadSize():], cryptoData[:u.Aes.GetRequiredOverheadSize()])
 	if err != nil {
 		return err
 	}
@@ -125,13 +125,13 @@ func (sa *UploadEncrypt) encryptFile(src io.Reader, dst DomainLevel.Upload, data
 	for {
 		select {
 		case <-ctx.Done():
-			return errors.New(ErrorUploadingEncrypt)
+			return ErrorUploadingEncrypt
 		default:
 
 		}
 		n, err := src.Read(buf.Bytes())
 		if n > 0 {
-			outData, err := cryptoData.Encrypt(buf.Bytes()[:n])
+			outData, err := _crypto.Encrypt(buf.Bytes()[:n])
 			if err != nil {
 				return err
 			}
@@ -146,31 +146,31 @@ func (sa *UploadEncrypt) encryptFile(src io.Reader, dst DomainLevel.Upload, data
 		}
 		if err != nil {
 			slog.Error("EncryptFile; error to download a File", "ERROR", err.Error())
-			return errors.New(ErrorUploadingEncrypt)
+			return ErrorUploadingEncrypt
 		}
 	}
 	return nil
 }
 
-func (sa *UploadEncrypt) setDeleteFile(shortNameFile string) *time.Timer {
+func (u *UploadEncrypt) setDeleteFile(shortNameFile string) *time.Timer {
 	return time.AfterFunc(5*time.Minute, func() {
 		g2, Ctx := errgroup.WithContext(context.Background())
 		Ctx, cancel := context.WithTimeout(Ctx, 25*time.Second)
 		defer cancel()
-		DownloadingHaveStarted := sa.RedisChecker.ChekIsStartDownload(shortNameFile, Ctx)
+		DownloadingHaveStarted := u.RedisChecker.ChekIsStartDownload(shortNameFile, Ctx)
 		if DownloadingHaveStarted {
 			return
 		}
 		g2.Go(func() error {
 
-			err := sa.RedisDeleter.DeleteFileInfo(shortNameFile, Ctx)
+			err := u.RedisDeleter.DeleteFileInfo(shortNameFile, Ctx)
 			if err != nil {
 				return err
 			}
 			return nil
 		})
 		g2.Go(func() error {
-			s, err := sa.Deleter.SetName(shortNameFile).Make(Ctx)
+			s, err := u.Deleter.SetName(shortNameFile).Make(Ctx)
 			if err != nil {
 				return err
 			}

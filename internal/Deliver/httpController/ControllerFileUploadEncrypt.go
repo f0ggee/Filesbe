@@ -38,7 +38,7 @@ func (S *UploadEncryptController) FileUploaderEncrypt(W http.ResponseWriter, R *
 		SetAnswer(InputAnswerData{
 			W:    W,
 			Code: http.StatusUnauthorized,
-			Data: AnswerUploaderFileNoEncrypt{
+			Data: AnswerUploadEncrypt{
 				StatusOperation: Break,
 				Error:           ErrorStrangeError.Error(),
 			},
@@ -50,7 +50,7 @@ func (S *UploadEncryptController) FileUploaderEncrypt(W http.ResponseWriter, R *
 		SetAnswer(InputAnswerData{
 			W:    W,
 			Code: http.StatusUnauthorized,
-			Data: AnswerUploaderFileNoEncrypt{
+			Data: AnswerUploadEncrypt{
 				StatusOperation: Break,
 				Error:           ErrorStrangeError.Error(),
 			},
@@ -63,7 +63,7 @@ func (S *UploadEncryptController) FileUploaderEncrypt(W http.ResponseWriter, R *
 		SetAnswer(InputAnswerData{
 			W:    W,
 			Code: http.StatusUnauthorized,
-			Data: AnswerUploaderFileNoEncrypt{
+			Data: AnswerUploadEncrypt{
 				StatusOperation: Break,
 				Error:           ErrorAuthExpired.Error(),
 			},
@@ -75,7 +75,10 @@ func (S *UploadEncryptController) FileUploaderEncrypt(W http.ResponseWriter, R *
 		SetAnswer(InputAnswerData{
 			W:    W,
 			Code: http.StatusBadRequest,
-			Data: ErrorFile,
+			Data: AnswerUploadEncrypt{
+				StatusOperation: Break,
+				Error:           ErrorFile.Error(),
+			},
 		})
 		return
 	}
