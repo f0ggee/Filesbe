@@ -4,22 +4,12 @@ import (
 	"net/http"
 )
 
-type CheckUserAuthNetWork struct {
-	writer  http.ResponseWriter
-	Request *http.Request
-}
-
-func GetNewCheckUserAuthNetWork(w http.ResponseWriter, r *http.Request) *CheckUserAuthNetWork {
-	return &CheckUserAuthNetWork{writer: w, Request: r}
-}
-
 type CheckUserAuthController struct {
-	CheckUserAuthNetWork
 }
 
-func (s *CheckUserAuthController) CheckUserAuth() {
+func (s *CheckUserAuthController) CheckUserAuth(W http.ResponseWriter, R *http.Request) {
 	SetAnswer(InputAnswerData{
-		W:    s.writer,
+		W:    W,
 		Code: http.StatusUnauthorized,
 		Data: AnswerUserCheck{
 			UrlToRedirect: "/main",

@@ -57,13 +57,9 @@ func TestDownloadController_Download(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d := DownloadController{
-				DownloadNetwork: DownloadNetwork{
-					W: tt.fields.DownloadNetwork.w.(http.ResponseWriter),
-					R: tt.fields.DownloadNetwork.r,
-				},
 				DownloadApplication: tt.fields.DownloadApplication,
 			}
-			d.Download()
+			d.Download(tt.fields.DownloadNetwork.w.(http.ResponseWriter), tt.fields.DownloadNetwork.r)
 			if tt.wantError {
 				var answer AnswerDownloadNoEncrypt
 				recorder := tt.fields.DownloadNetwork.w.(*httptest.ResponseRecorder)

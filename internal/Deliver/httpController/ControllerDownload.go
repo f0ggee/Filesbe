@@ -7,25 +7,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type DownloadNetwork struct {
-	W http.ResponseWriter
-	R *http.Request
-}
-
 type DownloadController struct {
-	DownloadNetwork
 	Application.DownloadApplication
 }
 
-func GetNewDownload(downloadNetwork DownloadNetwork, downloadApplication Application.DownloadApplication) *DownloadController {
-	return &DownloadController{DownloadNetwork: downloadNetwork, DownloadApplication: downloadApplication}
+func GetNewDownload(downloadApplication Application.DownloadApplication) *DownloadController {
+	return &DownloadController{DownloadApplication: downloadApplication}
 }
 
-func (d DownloadController) Download() {
-	name := mux.Vars(d.R)["name"]
+func (d DownloadController) Download(W http.ResponseWriter, R *http.Request) {
+	name := mux.Vars(R)["name"]
 	if name == "" {
 		SetAnswer(InputAnswerData{
-			W:    d.W,
+			W:    W,
 			Code: http.StatusBadRequest,
 			Data: AnswerDownloadNoEncrypt{
 				StatusOperation: Break,
@@ -35,10 +29,10 @@ func (d DownloadController) Download() {
 		return
 	}
 
-	err := d.DownloadApplication.DownloadApplication(d.R.Context(), name, d.W)
+	err := d.DownloadApplication.DownloadApplication(R.Context(), name, W)
 	if err != nil {
 		SetAnswer(InputAnswerData{
-			W:    d.W,
+			W:    W,
 			Code: http.StatusBadRequest,
 			Data: AnswerDownloadNoEncrypt{
 				StatusOperation: Break,

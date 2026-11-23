@@ -19,6 +19,19 @@ func TestUploadEncryptController_FileUploaderEncrypt(t *testing.T) {
 		W http.ResponseWriter
 		R *http.Request
 	}
+
+	defualtFields := fields{
+		NewFileUploaderEncryptSession: NewFileUploaderEncryptSession{
+			ReadSession: newTestSession(),
+			Jwt:         Tokens.NewJwtToken(),
+			Rf:          Tokens.NewRfToken(),
+		},
+		UploaderEncryptApplication: testFunctions.TestEncryptUploading(),
+	}
+	defaultArgs := args{
+		W: httptest.NewRecorder(),
+		R: newFileUploadRequest("/data", "File", "fileName.txt", []byte("DatatDatatDatatDatatDatatDatatDatatDatatDatatDatatDatatDatatDatatDatatDatatDatatDatatDatatDatatDatat")),
+	}
 	tests := []struct {
 		name      string
 		fields    fields
@@ -26,19 +39,9 @@ func TestUploadEncryptController_FileUploaderEncrypt(t *testing.T) {
 		wantError bool
 	}{
 		{
-			name: "test1",
-			fields: fields{
-				NewFileUploaderEncryptSession: NewFileUploaderEncryptSession{
-					ReadSession: newTestSession(),
-					Jwt:         Tokens.NewJwtToken(),
-					Rf:          Tokens.NewRfToken(),
-				},
-				UploaderEncryptApplication: testFunctions.TestEncryptUploading(),
-			},
-			args: args{
-				W: httptest.NewRecorder(),
-				R: newFileUploadRequest("/data", "File", "example.txt", []byte("Hello!")),
-			},
+			name:      "test1",
+			fields:    defualtFields,
+			args:      defaultArgs,
 			wantError: false,
 		},
 		{
@@ -46,14 +49,27 @@ func TestUploadEncryptController_FileUploaderEncrypt(t *testing.T) {
 			fields: fields{
 				NewFileUploaderEncryptSession: NewFileUploaderEncryptSession{
 					ReadSession: newTestBadSession(),
-					Jwt:         Tokens.NewJwtToken(),
-					Rf:          Tokens.NewRfToken(),
+					Jwt:         defualtFields.NewFileUploaderEncryptSession.Jwt,
+					Rf:          defualtFields.NewFileUploaderEncryptSession.Rf,
 				},
-				UploaderEncryptApplication: testFunctions.TestEncryptUploading(),
+				UploaderEncryptApplication: defualtFields.UploaderEncryptApplication,
+			},
+			args:      defaultArgs,
+			wantError: true,
+		},
+		{
+			name: "test3",
+			fields: fields{
+				NewFileUploaderEncryptSession: NewFileUploaderEncryptSession{
+					ReadSession: defualtFields.NewFileUploaderEncryptSession.ReadSession,
+					Jwt:         defualtFields.NewFileUploaderEncryptSession.Jwt,
+					Rf:          defualtFields.NewFileUploaderEncryptSession.Rf,
+				},
+				UploaderEncryptApplication: defualtFields.UploaderEncryptApplication,
 			},
 			args: args{
-				W: httptest.NewRecorder(),
-				R: newFileUploadRequest("/data", "File", "example.txt", []byte("Hello!")),
+				W: defaultArgs.W,
+				R: newFileUploadRequest("/data", "file", "f", []byte("data")),
 			},
 			wantError: true,
 		},

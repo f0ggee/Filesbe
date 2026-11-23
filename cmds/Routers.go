@@ -16,15 +16,11 @@ func apiRouters(r *mux.Router, c Controllers) {
 	getRouter := r.Methods(http.MethodGet).Subrouter()
 
 	postRouter.HandleFunc("/login/api", func(writer http.ResponseWriter, request *http.Request) {
-		c.login.W = writer
-		c.login.R = request
-		c.login.LoginController()
+		c.login.LoginController(writer, request)
 	})
 
 	postRouter.HandleFunc("/register/api", func(writer http.ResponseWriter, request *http.Request) {
-		c.register.W = writer
-		c.register.R = request
-		c.register.Register()
+		c.register.Register(writer, request)
 	})
 	postRouter.HandleFunc("/upload/api", func(writer http.ResponseWriter, request *http.Request) {
 		c.uploader.FileUploader(writer, request)
@@ -33,21 +29,15 @@ func apiRouters(r *mux.Router, c Controllers) {
 		c.encryptUpload.FileUploaderEncrypt(writer, request)
 	})
 	getRouter.HandleFunc("/doUrl/api", func(writer http.ResponseWriter, request *http.Request) {
-		c.urlBuild.Net.W = writer
-		c.urlBuild.Net.R = request
-		c.urlBuild.SetUrl()
+		c.urlBuild.SetUrl(writer, request)
 	})
 
 	getRouter.HandleFunc("/d/{name}", func(writer http.ResponseWriter, request *http.Request) {
-		c.download.W = writer
-		c.download.R = request
-		c.download.Download()
+		c.download.Download(writer, request)
 	})
 
 	getRouter.HandleFunc("/d2/{name}", func(writer http.ResponseWriter, request *http.Request) {
-		c.encryptDownload.Net.W = writer
-		c.encryptDownload.Net.R = request
-		c.encryptDownload.DownloadEncrypt()
+		c.encryptDownload.DownloadEncrypt(writer, request)
 	})
 }
 

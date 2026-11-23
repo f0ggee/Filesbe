@@ -12,6 +12,7 @@ import (
 	"crypto/rand"
 	"io"
 	"testing"
+	"time"
 )
 
 func TestUploadEncrypt_encryptFile(t *testing.T) {
@@ -172,7 +173,6 @@ func TestUploadEncrypt_encryptFile(t *testing.T) {
 		})
 	}
 }
-
 func TestUploadEncrypt_UploadEncryptApplication(t *testing.T) {
 	type fields struct {
 		NewUploadEncryptDataManage NewUploadEncryptDataManage
@@ -181,7 +181,8 @@ func TestUploadEncrypt_UploadEncryptApplication(t *testing.T) {
 		NewUploadEncryptDelivery   NewUploadEncryptDelivery
 	}
 	type args struct {
-		data UploadEncryptIncomeData
+		makeArgs func() args
+		data     UploadEncryptIncomeData
 	}
 
 	defaultFields := fields{
@@ -211,11 +212,16 @@ func TestUploadEncrypt_UploadEncryptApplication(t *testing.T) {
 	}
 
 	defaultArgs := args{
-		data: UploadEncryptIncomeData{
-			File: bytes.NewReader([]byte("ExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExampleExample")),
-			Name: []byte("Test.txt"),
-			Ctx:  context.Background(),
-			Size: 1000,
+		makeArgs: func() args {
+			d := UploadEncryptIncomeData{
+				File: bytes.NewReader([]byte("Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!Hello!!")),
+				Name: []byte("Hello"),
+				Ctx:  context.Background(),
+				Size: 100,
+			}
+			return args{
+				data: d,
+			}
 		},
 	}
 
@@ -228,10 +234,71 @@ func TestUploadEncrypt_UploadEncryptApplication(t *testing.T) {
 		{
 			name:    "test1",
 			fields:  defaultFields,
-			args:    defaultArgs,
+			args:    defaultArgs.makeArgs(),
 			wantErr: false,
 		},
+		{
+			name:   "test2",
+			fields: defaultFields,
+			args: args{
+				data: UploadEncryptIncomeData{
+					File: defaultArgs.data.File,
+					Name: defaultArgs.data.Name,
+					Ctx:  defaultArgs.data.Ctx,
+					Size: 1000 * 1024 * 1024,
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "test3",
+			fields: fields{
+				NewUploadEncryptDataManage: defaultFields.NewUploadEncryptDataManage,
+				NewUploadEncryptCrypto: NewUploadEncryptCrypto{
+					Generate: defaultFields.NewUploadEncryptCrypto.Generate,
+					Aes:      Crypto.NewAesGcmError(),
+					Rsa:      defaultFields.NewUploadEncryptCrypto.Rsa,
+				},
+				Keys:                     defaultFields.Keys,
+				NewUploadEncryptDelivery: defaultFields.NewUploadEncryptDelivery,
+			},
+			args:    defaultArgs.makeArgs(),
+			wantErr: true,
+		},
+		{
+			name: "test4",
+			fields: fields{
+				NewUploadEncryptDataManage: defaultFields.NewUploadEncryptDataManage,
+				NewUploadEncryptCrypto: NewUploadEncryptCrypto{
+					Generate: defaultFields.NewUploadEncryptCrypto.Generate,
+					Aes:      defaultFields.NewUploadEncryptCrypto.Aes,
+					Rsa:      Crypto.NewRsaError(),
+				},
+				Keys:                     defaultFields.Keys,
+				NewUploadEncryptDelivery: defaultFields.NewUploadEncryptDelivery,
+			},
+			args:    defaultArgs.makeArgs(),
+			wantErr: true,
+		},
+		{
+			name: "test5",
+			fields: fields{
+				NewUploadEncryptDataManage: defaultFields.NewUploadEncryptDataManage,
+				NewUploadEncryptCrypto:     defaultFields.NewUploadEncryptCrypto,
+				Keys:                       defaultFields.Keys,
+				NewUploadEncryptDelivery: NewUploadEncryptDelivery{
+					Uploader:     defaultFields.NewUploadEncryptDelivery.Uploader,
+					RedisWriter:  RedisInteration.NewRedisWriteErrorTest(),
+					RedisChecker: defaultFields.NewUploadEncryptDelivery.RedisChecker,
+					RedisDeleter: defaultFields.NewUploadEncryptDelivery.RedisDeleter,
+					Deleter:      defaultFields.NewUploadEncryptDelivery.Deleter,
+				},
+			},
+			args:    defaultArgs.makeArgs(),
+			wantErr: true,
+		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := &UploadEncrypt{
@@ -245,6 +312,7 @@ func TestUploadEncrypt_UploadEncryptApplication(t *testing.T) {
 				return
 			}
 
+			time.Sleep(10 * time.Millisecond)
 		})
 	}
 }

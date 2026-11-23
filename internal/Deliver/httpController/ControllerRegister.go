@@ -7,26 +7,21 @@ import (
 	"net/http"
 )
 
-type RegisterNet struct {
-	W http.ResponseWriter
-	R *http.Request
-}
 type RegisterController struct {
-	RegisterNet
 	Session Session
 	Decoder DomainLevel.Decoder
 	App     Application.RegisterApplication
 }
 
-func (D RegisterController) Register() {
+func (D RegisterController) Register(W http.ResponseWriter, R *http.Request) {
 	var dataRegister httpData.RegisterData
 
-	err := D.Decoder.DecodeFlow(&dataRegister, D.R.Body)
-	defer D.R.Body.Close()
+	err := D.Decoder.DecodeFlow(&dataRegister, R.Body)
+	defer R.Body.Close()
 
 	if err != nil {
 		SetAnswer(InputAnswerData{
-			W:    D.W,
+			W:    W,
 			Code: http.StatusNotFound,
 			Data: AnswerRegister{
 				StatusOfOperation: DomainName,
@@ -39,7 +34,7 @@ func (D RegisterController) Register() {
 	err = dataRegister.ValidateDate()
 	if err != nil {
 		SetAnswer(InputAnswerData{
-			W:    D.W,
+			W:    W,
 			Code: http.StatusNotFound,
 			Data: AnswerRegister{
 				StatusOfOperation: NotStart,
@@ -50,14 +45,14 @@ func (D RegisterController) Register() {
 	}
 
 	RegisterOutput := D.App.RegisterApplication(Application.InputRegister{
-		Ctx:      D.R.Context(),
+		Ctx:      R.Context(),
 		Name:     dataRegister.Name,
 		Email:    dataRegister.Email,
 		Password: dataRegister.Password,
 	})
 	if RegisterOutput.Err != nil {
 		SetAnswer(InputAnswerData{
-			W:    D.W,
+			W:    W,
 			Code: http.StatusAlreadyReported,
 			Data: AnswerRegister{
 				StatusOfOperation: Break,
@@ -67,13 +62,13 @@ func (D RegisterController) Register() {
 		return
 	}
 	returnedData := D.Session.SetNewSession(IncomingSessionData{
-		Writer:  D.W,
-		Request: D.R,
+		Writer:  W,
+		Request: R,
 		Jwt:     RegisterOutput.Jwt,
 		Rt:      RegisterOutput.Rft})
 	if returnedData.Error != nil {
 		SetAnswer(InputAnswerData{
-			W:    D.W,
+			W:    W,
 			Code: http.StatusConflict,
 			Data: AnswerRegister{
 				StatusOfOperation: Break,
@@ -85,7 +80,7 @@ func (D RegisterController) Register() {
 	}
 
 	SetAnswer(InputAnswerData{
-		W:    D.W,
+		W:    W,
 		Code: http.StatusOK,
 		Data: AnswerRegister{
 			StatusOfOperation: Success,

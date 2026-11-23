@@ -54,14 +54,18 @@ func (u *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) (
 	if err != nil {
 		return "", err
 	}
-	cryptoData := memguard.NewBuffer(u.Aes.GetRequiredOverheadSize() + 32)
+	cryptoData, err := memguard.NewBufferFromReader(rand.Reader, u.Aes.GetRequiredOverheadSize()+32)
+	if err != nil {
+		slog.Error("UploadEncrypt: error to make safe store", "ERROR", err)
+		return "", ErrorUploadingEncrypt
+	}
 	defer func() {
 		ctx.Done()
 		_ = g.Wait()
 		_ = x.CloseSource()
 		cryptoData.Destroy()
 	}()
-	fillOut(cryptoData.Data())
+
 	g.Go(func() error {
 		err := u.encryptFile(data.File, x, cryptoData.Data(), ctx)
 		if err != nil {
@@ -75,17 +79,18 @@ func (u *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) (
 		AesKey:   cryptoData.Data()[u.Aes.GetRequiredOverheadSize():],
 	})
 	if err != nil {
-		slog.Error("UploadEncrypt; error to encode data into Json", "ERROR", err)
 		return "", ErrorUploadingEncrypt
 	}
 	crypto, err := u.Rsa.MakeCrypto(DomainLevel.GetCryptoKeys.GetKey(), nil)
 	if err != nil {
 		return "", err
 	}
+
 	encryptedFileInfo, err := crypto.Encrypt(FileInfoInBytes)
 	if err != nil {
 		return "", err
 	}
+
 	if err = g.Wait(); err != nil {
 		return "", err
 	}
@@ -101,14 +106,6 @@ func (u *UploadEncrypt) UploadEncryptApplication(data UploadEncryptIncomeData) (
 	u.setDeleteFile(shortNameFile)
 	return shortNameFile, nil
 
-}
-
-func fillOut(allData []byte) {
-	if _, err := io.ReadFull(rand.Reader, allData); err != nil {
-		slog.Error("EncryptFile: error to generate a aesKey", "ERROR", err)
-		return
-	}
-	return
 }
 
 func (u *UploadEncrypt) encryptFile(src io.Reader, dst DomainLevel.Upload, cryptoData []byte, ctx context.Context) error {

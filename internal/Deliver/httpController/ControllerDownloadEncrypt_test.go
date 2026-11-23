@@ -82,14 +82,10 @@ func TestDownloadEncryptController_DownloadEncrypt(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			app := tt.fields.DownloadEncryptApplication(tt.inputData)
 			d := DownloadEncryptController{
-				Net: NetworkDownloadEncrypt{
-					W: tt.fields.Net.W.(http.ResponseWriter),
-					R: tt.fields.Net.R,
-				},
 				DownloadEncryptApplication: app,
 			}
 
-			d.DownloadEncrypt()
+			d.DownloadEncrypt(tt.fields.Net.W.(http.ResponseWriter), tt.fields.Net.R)
 			if tt.wantError {
 				var answer AnswerFileDownloadEncrypt
 				recorder := tt.fields.Net.W.(*httptest.ResponseRecorder)

@@ -17,7 +17,6 @@ type CollectorsApp struct {
 	RedisCollector            RedisCollector
 	ParserCollector           ParsersCollector
 	CryptoCollector           CryptoCollector
-	SessionKeys               SessionKeysCollector
 	DatabaseCollector         DatabaseCollector
 	AuthTokensCollector       TokensAuthCollector
 }
@@ -31,7 +30,6 @@ func CollectApplicationBuilders(c CollectorsApp) AppBuilders {
 	downloadEncryptApplication := GetDownloadEncryptApplicationBuilder(DownloadEncryptApplication{
 		Red:          c.RedisCollector,
 		Crypt:        c.CryptoCollector,
-		Keys:         c.SessionKeys,
 		Transferring: c.FileTransferringCollector,
 		Parser:       c.ParserCollector.Parser,
 	})

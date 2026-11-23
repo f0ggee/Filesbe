@@ -7,20 +7,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type NetworkDownloadEncrypt struct {
-	W http.ResponseWriter
-	R *http.Request
-}
 type DownloadEncryptController struct {
-	Net NetworkDownloadEncrypt
 	Application.DownloadEncryptApplication
 }
 
-func (d DownloadEncryptController) DownloadEncrypt() {
-	fileName := mux.Vars(d.Net.R)["name"]
+func (d DownloadEncryptController) DownloadEncrypt(W http.ResponseWriter, R *http.Request) {
+	fileName := mux.Vars(R)["name"]
 	if fileName == "" {
 		SetAnswer(InputAnswerData{
-			W:    d.Net.W,
+			W:    W,
 			Code: http.StatusCreated,
 			Data: AnswerFileDownloadEncrypt{
 				StatusOperation: Break,
@@ -30,12 +25,12 @@ func (d DownloadEncryptController) DownloadEncrypt() {
 		return
 	}
 	err := d.DownloadEncryptApplication.DownloadEncryptApplication(Application.DownloadEncryptIncomeData{
-		Ctx:           d.Net.R.Context(),
+		Ctx:           R.Context(),
 		EncryptedName: fileName,
 	})
 	if err != nil {
 		SetAnswer(InputAnswerData{
-			W:    d.Net.W,
+			W:    W,
 			Code: http.StatusNotFound,
 			Data: AnswerFileDownloadEncrypt{
 				StatusOperation: NotStart,

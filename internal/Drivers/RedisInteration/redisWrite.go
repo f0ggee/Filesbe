@@ -3,6 +3,7 @@ package RedisInteration
 import (
 	"Kaban/internal/DomainLevel"
 	"context"
+	"errors"
 	"log/slog"
 )
 
@@ -51,5 +52,21 @@ func (r *RedisWriteTest) WriteData(data DomainLevel.WriteDataIncomeData) error {
 }
 
 func (r *RedisWriteTest) EnableDownloadingParameter(s string, ctx context.Context) error {
+	return nil
+}
+
+type RedisWriteErrorTest struct {
+}
+
+func NewRedisWriteErrorTest() *RedisWriteErrorTest {
+	return &RedisWriteErrorTest{}
+}
+
+func (r RedisWriteErrorTest) WriteData(data DomainLevel.WriteDataIncomeData) error {
+
+	return errors.New("error")
+}
+
+func (r RedisWriteErrorTest) EnableDownloadingParameter(s string, ctx context.Context) error {
 	return nil
 }

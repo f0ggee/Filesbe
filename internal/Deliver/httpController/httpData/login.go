@@ -46,11 +46,12 @@ func (r *LoginData) getPasswordError(e string) error {
 }
 
 func (r *LoginData) getEmailError(e string) error {
-	if e == "email" {
+	if e == "Email" {
 		return errors.New(DomainLevel.NotCorrectEmail)
 	}
 	if e == "required" {
 		return errors.New(DomainLevel.EmailEmpty)
 	}
+
 	return errors.New(DomainLevel.NonIdentifyError)
 }

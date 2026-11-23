@@ -6,25 +6,20 @@ import (
 	"net/http"
 )
 
-type UrlNetwork struct {
-	W http.ResponseWriter
-	R *http.Request
-}
 type BuildUrlController struct {
 	Url func(r *http.Request) OutComingUrlData
-	Net UrlNetwork
 }
 
-func GetNewBuildUrl(net UrlNetwork) *BuildUrlController {
-	return &BuildUrlController{Net: net}
+func GetNewBuildUrl() *BuildUrlController {
+	return &BuildUrlController{Url: UrlBuilder}
 }
 
-func (d *BuildUrlController) SetUrl() {
-	urlData := d.Url(d.Net.R)
+func (d *BuildUrlController) SetUrl(W http.ResponseWriter, R *http.Request) {
+	urlData := d.Url(R)
 	if urlData.NameFile == "" {
-		slog.Error("UrlUploader name file empty", slog.Group("Request details", slog.String("URL", d.Net.R.RequestURI)))
+		slog.Error("UrlUploader name file empty", slog.Group("Request details", slog.String("URL", R.RequestURI)))
 		SetAnswer(InputAnswerData{
-			W: d.Net.W,
+			W: W,
 			Data: AnswerUrlBuilder{
 				StatusOperation: NotStart,
 				ErrorMessage:    ErrorFileNameEmpty.Error(),
@@ -35,7 +30,7 @@ func (d *BuildUrlController) SetUrl() {
 	switch {
 	case urlData.FileType == "true":
 		SetAnswer(InputAnswerData{
-			W:    d.Net.W,
+			W:    W,
 			Code: http.StatusOK,
 			Data: AnswerUrlBuilder{
 
@@ -49,7 +44,7 @@ func (d *BuildUrlController) SetUrl() {
 
 	case urlData.FileType == "false":
 		SetAnswer(InputAnswerData{
-			W:    d.Net.W,
+			W:    W,
 			Code: http.StatusOK,
 
 			Data: AnswerUrlBuilder{
@@ -61,7 +56,7 @@ func (d *BuildUrlController) SetUrl() {
 	}
 
 	SetAnswer(InputAnswerData{
-		W:    d.Net.W,
+		W:    W,
 		Code: http.StatusBadRequest,
 		Data: AnswerUrlBuilder{
 			ErrorMessage: DomainLevel.NonIdentifyError,

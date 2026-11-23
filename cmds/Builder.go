@@ -38,7 +38,6 @@ func GetDownloadApplicationBuilder(Transferring DownloadBuilderApplication) Appl
 type DownloadEncryptApplication struct {
 	Red          RedisCollector
 	Crypt        CryptoCollector
-	Keys         SessionKeysCollector
 	Transferring FileTransferringCollector
 	Parser       Parsers.Parsing
 }
@@ -188,8 +187,6 @@ func GetControllerFileUploadEncryptBuilder(C ControllerFileUploadEncrypt, r *mux
 			Rf:          C.Token,
 		},
 		UploaderEncryptApplication: &C.App,
-		Rout:                       r,
-		UrlUploadData:              httpController.GetUploadEncryptData,
 	}
 }
 
@@ -216,10 +213,9 @@ type RegisterController struct {
 func GetControllerRegisterBuilder(c RegisterController) httpController.RegisterController {
 
 	return httpController.RegisterController{
-		RegisterNet: httpController.RegisterNet{},
-		Session:     c.Sessions,
-		Decoder:     c.Parser.Parser,
-		App:         &c.App,
+		Session: c.Sessions,
+		Decoder: c.Parser.Parser,
+		App:     &c.App,
 	}
 }
 
@@ -230,9 +226,7 @@ func GetControllerUrlBuildBuilder() httpController.BuildUrlController {
 }
 
 func GetControllerCheckUserBuilder() httpController.CheckUserAuthController {
-	return httpController.CheckUserAuthController{
-		CheckUserAuthNetWork: httpController.CheckUserAuthNetWork{},
-	}
+	return httpController.CheckUserAuthController{}
 }
 
 //protocol functions

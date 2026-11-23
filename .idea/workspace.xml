@@ -4,20 +4,26 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 19.11.26&#10;&#10;&#10;Tests for controllers are being developed&#10;Some changes have been made in Uploaders">
-      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/testFunctions.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Service/Application/testFunctions/testUploadEncrypt.go" afterDir="false" />
+    <list default="true" id="49760499-503e-43ce-b7ac-72d37fa96e13" name="Changes" comment="WP 21.11.26&#10;Tests for controllers are being developed&#10;Some changes have been in Application tests">
+      <change afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Service/Application/testFunctions/testLogin.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmds/Builder.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Builder.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmds/Routers.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/Routers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmds/collectApps.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmds/collectApps.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerCheckUsers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerCheckUsers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownloadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownloadEncrypt.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownloadEncrypt_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownloadEncrypt_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Drivers/Crypto/repoCrypto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/repoCrypto.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Drivers/Crypto/repoValidate.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/Crypto/repoValidate.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Drivers/RepoEncrypterKeys/encrypterKeysTest.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RepoEncrypterKeys/encrypterKeysTest.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationConsts.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationConsts.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownload_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownload_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerUrlUploader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/ControllerUrlUploader.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Deliver/httpController/httpData/login.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Deliver/httpController/httpData/login.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisWrite.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Drivers/RedisInteration/redisWrite.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Service/Application/testFunctions/testDownloadEncrypt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/Application/testFunctions/testDownloadEncrypt.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,12 +66,12 @@
 }</component>
   <component name="GoLinterSelectedExecutable" path="/opt/homebrew/bin/golangci-lint" />
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/internal/Service/Application/ServiceUploadEncrypt.go" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/main.go" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/go/go1.26.4/src/io/io.go" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/go/go1.26.4/src/runtime/panic.go" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/go/pkg/mod/github.com/go-playground/validator/v10@v10.28.0/errors.go" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.5.darwin-arm64/src/bytes/reader.go" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.5.darwin-arm64/src/net/http/httptest/httptest.go" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.5.darwin-arm64/src/runtime/panic.go" root0="SKIP_INSPECTION" />
     <setting file="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.5.darwin-arm64/src/testing/testing.go" root0="SKIP_INSPECTION" />
   </component>
@@ -206,6 +212,12 @@
     "Go Test.TestKeys_UpdateOldKey/test1 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Debug",
     "Go Test.TestKeys_UpdateOldKey/test2 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Debug",
     "Go Test.TestKeys_UpdateOldKey/test3 in Kaban/internal/InfrastructureLayer/RepoEncrypterKeys.executor": "Debug",
+    "Go Test.TestLoginController_LoginController/test in Kaban/internal/Deliver/httpController.executor": "Run",
+    "Go Test.TestLoginController_LoginController/test1 in Kaban/internal/Deliver/httpController.executor": "Run",
+    "Go Test.TestLoginController_LoginController/test2 in Kaban/internal/Deliver/httpController.executor": "Debug",
+    "Go Test.TestLoginController_LoginController/test3 in Kaban/internal/Deliver/httpController.executor": "Run",
+    "Go Test.TestLoginController_LoginController/test5 in Kaban/internal/Deliver/httpController.executor": "Run",
+    "Go Test.TestLoginController_LoginController/test5#01 in Kaban/internal/Deliver/httpController.executor": "Debug",
     "Go Test.TestNewAesGcmEncryption in Kaban/internal/InfrastructureLayer/Crypto.executor": "Run",
     "Go Test.TestNewDownloadEncrypt_decryptFile in Kaban/internal/Service/Application.executor": "Run",
     "Go Test.TestNewDownloadEncrypt_decryptFile/test_1 in Kaban/internal/Service/Application.executor": "Run",
@@ -266,13 +278,15 @@
     "Go Test.TestTokens/test8 in Kaban/internal/Drivers/Tokens.executor": "Run",
     "Go Test.TestUploadController_FileUploader/test1 in Kaban/internal/Deliver/httpController.executor": "Debug",
     "Go Test.TestUploadController_FileUploader/test2 in Kaban/internal/Deliver/httpController.executor": "Run",
+    "Go Test.TestUploadEncryptController_FileUploaderEncrypt/test1 in Kaban/internal/Deliver/httpController.executor": "Run",
     "Go Test.TestUploadEncryptController_FileUploaderEncrypt/test2 in Kaban/internal/Deliver/httpController.executor": "Run",
+    "Go Test.TestUploadEncryptController_FileUploaderEncrypt/test3 in Kaban/internal/Deliver/httpController.executor": "Run",
     "Go Test.TestUploadEncrypt_UploadEncryptApplication in Kaban/internal/Service/Application.executor": "Run",
     "Go Test.TestUploadEncrypt_UploadEncryptApplication/test1 in Kaban/internal/Service/Application.executor": "Run",
     "Go Test.TestUploadEncrypt_UploadEncryptApplication/test1#01 in Kaban/internal/Service/Application.executor": "Debug",
     "Go Test.TestUploadEncrypt_UploadEncryptApplication/test2 in Kaban/internal/Service/Application.executor": "Run",
     "Go Test.TestUploadEncrypt_UploadEncryptApplication/test3 in Kaban/internal/Service/Application.executor": "Run",
-    "Go Test.TestUploadEncrypt_UploadEncryptApplication/test4 in Kaban/internal/Service/Application.executor": "Run",
+    "Go Test.TestUploadEncrypt_UploadEncryptApplication/test4 in Kaban/internal/Service/Application.executor": "Debug",
     "Go Test.TestUploadEncrypt_UploadEncryptApplication/test5 in Kaban/internal/Service/Application.executor": "Run",
     "Go Test.TestUploadEncrypt_UploadEncryptApplication/test6 in Kaban/internal/Service/Application.executor": "Debug",
     "Go Test.TestUploadEncrypt_UploadEncryptApplication1/test1 in Kaban/internal/Service/Application.executor": "Run",
@@ -403,7 +417,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Go Test.TestUploadEncrypt_UploadEncryptApplication/test1 in Kaban/internal/Service/Application">
+  <component name="RunManager" selected="Go Test.TestLoginController_LoginController/test5#01 in Kaban/internal/Deliver/httpController">
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
       <deployment type="dockerfile">
         <settings />
@@ -477,65 +491,64 @@
       <pattern value="^\QBenchmarkNewHttpUploader\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestUploadEncrypt_UploadEncryptApplication1/test1 in Kaban/internal/Service/Application" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestLoginController_LoginController/test1 in Kaban/internal/Deliver/httpController" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/Service/Application" />
+      <working_directory value="$PROJECT_DIR$/internal/Deliver/httpController" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="Kaban/internal/Service/Application" />
+      <package value="Kaban/internal/Deliver/httpController" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestUploadEncrypt_UploadEncryptApplication1\E$/^\Qtest1\E$" />
+      <pattern value="^\QTestLoginController_LoginController\E$/^\Qtest1\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestUploadEncrypt_UploadEncryptApplication/test1 in Kaban/internal/Service/Application" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestLoginController_LoginController/test2 in Kaban/internal/Deliver/httpController" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/Service/Application" />
+      <working_directory value="$PROJECT_DIR$/internal/Deliver/httpController" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="Kaban/internal/Service/Application" />
+      <package value="Kaban/internal/Deliver/httpController" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestUploadEncrypt_UploadEncryptApplication\E$/^\Qtest1\E$" />
+      <pattern value="^\QTestLoginController_LoginController\E$/^\Qtest2\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestUploadEncrypt_encryptFile in Kaban/internal/Service/Application" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestLoginController_LoginController/test3 in Kaban/internal/Deliver/httpController" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/Service/Application" />
+      <working_directory value="$PROJECT_DIR$/internal/Deliver/httpController" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="Kaban/internal/Service/Application" />
+      <package value="Kaban/internal/Deliver/httpController" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestUploadEncrypt_encryptFile\E$" />
+      <pattern value="^\QTestLoginController_LoginController\E$/^\Qtest3\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestUploadEncrypt_encryptFile/test1 in Kaban/internal/Service/Application" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestLoginController_LoginController/test5 in Kaban/internal/Deliver/httpController" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/Service/Application" />
-      <parameters value="-test.benchmem" />
+      <working_directory value="$PROJECT_DIR$/internal/Deliver/httpController" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="Kaban/internal/Service/Application" />
+      <package value="Kaban/internal/Deliver/httpController" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestUploadEncrypt_encryptFile\E$/^\Qtest1\E$" />
+      <pattern value="^\QTestLoginController_LoginController\E$/^\Qtest5\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestUploadEncrypt_encryptFile/test6 in Kaban/internal/Service/Application" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestLoginController_LoginController/test5#01 in Kaban/internal/Deliver/httpController" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Kaban" />
-      <working_directory value="$PROJECT_DIR$/internal/Service/Application" />
+      <working_directory value="$PROJECT_DIR$/internal/Deliver/httpController" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="Kaban/internal/Service/Application" />
+      <package value="Kaban/internal/Deliver/httpController" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestUploadEncrypt_encryptFile\E$/^\Qtest6\E$" />
+      <pattern value="^\QTestLoginController_LoginController\E$/^\Qtest5#01\E$" />
       <method v="2" />
     </configuration>
     <configuration name="go test Kaban/internal/Service/Application" type="GoTestRunConfiguration" factoryName="Go Test" nameIsGenerated="true">
@@ -558,11 +571,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.TestUploadEncrypt_UploadEncryptApplication/test1 in Kaban/internal/Service/Application" />
-        <item itemvalue="Go Test.TestUploadEncrypt_UploadEncryptApplication1/test1 in Kaban/internal/Service/Application" />
-        <item itemvalue="Go Test.TestUploadEncrypt_encryptFile/test6 in Kaban/internal/Service/Application" />
-        <item itemvalue="Go Test.TestUploadEncrypt_encryptFile in Kaban/internal/Service/Application" />
-        <item itemvalue="Go Test.TestUploadEncrypt_encryptFile/test1 in Kaban/internal/Service/Application" />
+        <item itemvalue="Go Test.TestLoginController_LoginController/test5#01 in Kaban/internal/Deliver/httpController" />
+        <item itemvalue="Go Test.TestLoginController_LoginController/test5 in Kaban/internal/Deliver/httpController" />
+        <item itemvalue="Go Test.TestLoginController_LoginController/test3 in Kaban/internal/Deliver/httpController" />
+        <item itemvalue="Go Test.TestLoginController_LoginController/test2 in Kaban/internal/Deliver/httpController" />
+        <item itemvalue="Go Test.TestLoginController_LoginController/test1 in Kaban/internal/Deliver/httpController" />
       </list>
     </recent_temporary>
   </component>
@@ -599,8 +612,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="WP 02.10.26&#10;Token interfaces have been finished" />
-    <MESSAGE value="WP 02.10.26&#10;Some changes were on a global scope" />
     <MESSAGE value="WP 02.10.26&#10;A collector is being developed.&#10;Some functions that are parts of a protocol were moved to a special directory." />
     <MESSAGE value="WP 04.10.26&#10;A main is being developed" />
     <MESSAGE value="WP 05.10.26&#10;collectors and builders have been finished&#10;Routers system is being developed" />
@@ -624,456 +635,63 @@
     <MESSAGE value="WP 17.11.26&#10;&#10;&#10;Tests for controllers are being developed" />
     <MESSAGE value="WP 18.11.26&#10;&#10;&#10;Tests for controllers are being developed" />
     <MESSAGE value="WP 19.11.26&#10;&#10;&#10;Tests for controllers are being developed&#10;Some changes have been made in Uploaders" />
-    <option name="LAST_COMMIT_MESSAGE" value="WP 19.11.26&#10;&#10;&#10;Tests for controllers are being developed&#10;Some changes have been made in Uploaders" />
+    <MESSAGE value="WP 20.11.26&#10;Tests for controllers are being developed&#10;Some changes have been in Application tests" />
+    <MESSAGE value="WP 21.11.26&#10;Tests for controllers are being developed&#10;Some changes have been in Application tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="WP 21.11.26&#10;Tests for controllers are being developed&#10;Some changes have been in Application tests" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/Parsers/JsonParsers_test.go</url>
-          <line>37</line>
-          <option name="timeStamp" value="10" />
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt_test.go</url>
+          <line>303</line>
+          <option name="timeStamp" value="291" />
         </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/Parsers/JsonParsers_test.go</url>
-          <line>41</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/DomainLevel/Crypto.go</url>
-          <line>14</line>
-          <option name="timeStamp" value="26" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/DeliverPackages/RepourlBuilder/repoUrlBuilder.go</url>
-          <line>20</line>
-          <option name="timeStamp" value="30" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$APPLICATION_CONFIG_DIR$/scratches/scratch.go</url>
-          <line>7</line>
-          <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/Crypto/repoCrypto.go</url>
-          <line>149</line>
-          <option name="timeStamp" value="70" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerRegister.go</url>
-          <line>69</line>
-          <option name="timeStamp" value="100" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/DomainLevel/FileTransferring.go</url>
-          <line>22</line>
-          <option name="timeStamp" value="102" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/DomainLevel/RepoGrpc.go</url>
-          <line>4</line>
-          <option name="timeStamp" value="103" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/RepoEncrypterKeys/encrypterKeys.go</url>
-          <line>67</line>
-          <option name="timeStamp" value="104" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/RepoEncrypterKeys/encrypterKeys.go</url>
-          <line>77</line>
-          <option name="timeStamp" value="106" />
-        </line-breakpoint>
-        <line-breakpoint type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/DomainLevel/Redis.go</url>
-          <line>37</line>
-          <option name="timeStamp" value="109" />
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt_test.go</url>
+          <line>304</line>
+          <option name="timeStamp" value="292" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go</url>
           <line>43</line>
-          <option name="timeStamp" value="124" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt.go</url>
-          <line>42</line>
-          <option name="timeStamp" value="125" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/DomainLevel/Redis.go</url>
-          <line>11</line>
-          <option name="timeStamp" value="128" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownload.go</url>
-          <line>22</line>
-          <option name="timeStamp" value="131" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/FileTransferring/TransferringHttpRepo/httpUploader_test.go</url>
-          <line>84</line>
-          <option name="timeStamp" value="142" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/FileTransferring/TransferringHttpRepo/httpUploader_test.go</url>
-          <line>78</line>
-          <option name="timeStamp" value="144" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/FileTransferring/TransferringHttpRepo/httpUploader_test.go</url>
-          <line>104</line>
-          <option name="timeStamp" value="145" />
+          <option name="timeStamp" value="293" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go</url>
-          <line>66</line>
-          <option name="timeStamp" value="149" />
+          <line>61</line>
+          <option name="timeStamp" value="294" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go</url>
-          <line>113</line>
-          <option name="timeStamp" value="156" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go</url>
-          <line>117</line>
-          <option name="timeStamp" value="157" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go</url>
-          <line>118</line>
-          <option name="timeStamp" value="158" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go</url>
-          <line>121</line>
-          <option name="timeStamp" value="159" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go</url>
-          <line>124</line>
-          <option name="timeStamp" value="163" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go</url>
-          <line>126</line>
-          <option name="timeStamp" value="164" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go</url>
-          <line>125</line>
-          <option name="timeStamp" value="165" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUpload_test.go</url>
-          <line>63</line>
-          <option name="timeStamp" value="176" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUpload.go</url>
-          <line>39</line>
-          <option name="timeStamp" value="177" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUpload.go</url>
-          <line>47</line>
-          <option name="timeStamp" value="178" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/RepoEncrypterKeys/encrypterKeys.go</url>
-          <line>14</line>
-          <option name="timeStamp" value="181" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt.go</url>
-          <line>65</line>
-          <option name="timeStamp" value="183" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt.go</url>
-          <line>104</line>
-          <option name="timeStamp" value="186" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt_test.go</url>
-          <line>43</line>
-          <option name="timeStamp" value="191" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt.go</url>
-          <line>145</line>
-          <option name="timeStamp" value="192" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt.go</url>
-          <line>99</line>
-          <option name="timeStamp" value="193" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Protocol/receive/checkPacket.go</url>
-          <line>18</line>
-          <option name="timeStamp" value="196" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Protocol/receive/checkPacket_test.go</url>
-          <line>272</line>
-          <option name="timeStamp" value="197" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Protocol/receive/checkPacket_test.go</url>
-          <line>97</line>
-          <option name="timeStamp" value="199" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/DomainLevel/Crypto.go</url>
-          <line>26</line>
-          <option name="timeStamp" value="200" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Protocol/receive/checkPacket_test.go</url>
-          <line>42</line>
-          <option name="timeStamp" value="201" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Protocol/receive/checkPacket_test.go</url>
-          <line>80</line>
-          <option name="timeStamp" value="203" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go</url>
-          <line>58</line>
-          <option name="timeStamp" value="204" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go</url>
-          <line>65</line>
-          <option name="timeStamp" value="205" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go</url>
-          <line>66</line>
-          <option name="timeStamp" value="207" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go</url>
           <line>68</line>
-          <option name="timeStamp" value="208" />
+          <option name="timeStamp" value="295" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go</url>
-          <line>52</line>
-          <option name="timeStamp" value="210" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go</url>
-          <line>53</line>
-          <option name="timeStamp" value="211" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Protocol/send/preparePacket_test.go</url>
-          <line>54</line>
-          <option name="timeStamp" value="212" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/Crypto/Encryption_test.go</url>
-          <line>138</line>
-          <option name="timeStamp" value="213" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/Crypto/Encryption_test.go</url>
-          <line>93</line>
-          <option name="timeStamp" value="216" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownload.go</url>
-          <line>43</line>
-          <option name="timeStamp" value="223" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownload.go</url>
-          <line>44</line>
-          <option name="timeStamp" value="224" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownload.go</url>
-          <line>45</line>
-          <option name="timeStamp" value="225" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownload.go</url>
-          <line>46</line>
-          <option name="timeStamp" value="226" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownload.go</url>
-          <line>47</line>
-          <option name="timeStamp" value="227" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownload.go</url>
-          <line>52</line>
-          <option name="timeStamp" value="228" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownload.go</url>
-          <line>48</line>
-          <option name="timeStamp" value="229" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownload_test.go</url>
-          <line>65</line>
-          <option name="timeStamp" value="231" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownloadEncrypt_test.go</url>
-          <line>91</line>
-          <option name="timeStamp" value="233" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationAtd.go</url>
-          <line>13</line>
-          <option name="timeStamp" value="234" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt.go</url>
-          <line>71</line>
-          <option name="timeStamp" value="235" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt.go</url>
-          <line>75</line>
-          <option name="timeStamp" value="237" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt.go</url>
-          <line>72</line>
-          <option name="timeStamp" value="238" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt.go</url>
-          <line>76</line>
-          <option name="timeStamp" value="239" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationDownloadEncrypt.go</url>
-          <line>77</line>
-          <option name="timeStamp" value="240" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/Tokens/Tokens_test.go</url>
-          <line>104</line>
-          <option name="timeStamp" value="247" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/Tokens/Tokens_test.go</url>
-          <line>105</line>
-          <option name="timeStamp" value="248" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/Tokens/Tokens_test.go</url>
-          <line>99</line>
-          <option name="timeStamp" value="249" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/Tokens/Tokens_test.go</url>
-          <line>100</line>
-          <option name="timeStamp" value="250" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/Tokens/testTokens.go</url>
-          <line>160</line>
-          <option name="timeStamp" value="251" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/Tokens/testTokens.go</url>
-          <line>161</line>
-          <option name="timeStamp" value="252" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Drivers/Tokens/testTokens.go</url>
-          <line>162</line>
-          <option name="timeStamp" value="253" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUpload_test.go</url>
-          <line>68</line>
-          <option name="timeStamp" value="254" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUpload.go</url>
-          <line>23</line>
-          <option name="timeStamp" value="255" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownloadEncrypt_test.go</url>
-          <line>68</line>
-          <option name="timeStamp" value="256" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerDownloadEncrypt_test.go</url>
-          <line>67</line>
-          <option name="timeStamp" value="257" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go</url>
-          <line>66</line>
-          <option name="timeStamp" value="258" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go</url>
-          <line>68</line>
-          <option name="timeStamp" value="259" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go</url>
-          <line>69</line>
-          <option name="timeStamp" value="260" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go</url>
-          <line>71</line>
-          <option name="timeStamp" value="261" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go</url>
+          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go</url>
           <line>70</line>
-          <option name="timeStamp" value="262" />
+          <option name="timeStamp" value="296" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go</url>
-          <line>73</line>
-          <option name="timeStamp" value="263" />
+          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt.go</url>
+          <line>69</line>
+          <option name="timeStamp" value="297" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go</url>
-          <line>74</line>
-          <option name="timeStamp" value="264" />
+          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin_test.go</url>
+          <line>148</line>
+          <option name="timeStamp" value="299" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go</url>
-          <line>75</line>
-          <option name="timeStamp" value="265" />
+          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin.go</url>
+          <line>15</line>
+          <option name="timeStamp" value="300" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go</url>
-          <line>76</line>
-          <option name="timeStamp" value="266" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerFileUploadEncrypt_test.go</url>
-          <line>77</line>
-          <option name="timeStamp" value="267" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt_test.go</url>
-          <line>72</line>
-          <option name="timeStamp" value="268" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/Service/Application/applicationUploadEncrypt_test.go</url>
-          <line>138</line>
-          <option name="timeStamp" value="270" />
+          <url>file://$PROJECT_DIR$/internal/Deliver/httpController/ControllerLogin.go</url>
+          <line>30</line>
+          <option name="timeStamp" value="301" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -1084,6 +702,7 @@
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Kaban$TestUploadEncrypt_UploadEncryptApplication_test2_in_Kaban_internal_Service_Application.out" NAME="TestUploadEncrypt_UploadEncryptApplication/test2 in Kaban/internal/Service/Application Coverage Results" MODIFIED="1795249755327" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
     <SUITE FILE_PATH="coverage/Kaban$TestUserDataRegister_ValidateDate_in_Kaban_internal_Dto.out" NAME="TestUserDataRegister_ValidateDate in Kaban/internal/Dto Coverage Results" MODIFIED="1782797612206" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
     <SUITE FILE_PATH="coverage/Kaban$TestUploadEncrypt_UploadEncryptApplication_test4_in_Kaban_internal_Service_Application.out" NAME="TestUploadEncrypt_UploadEncryptApplication/test4 in Kaban/internal/Service/Application Coverage Results" MODIFIED="1793647487237" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
     <SUITE FILE_PATH="coverage/Kaban$TestUploadEncrypt_encryptFile_test1_in_Kaban_internal_Service_Application.out" NAME="TestUploadEncrypt_encryptFile/test1 in Kaban/internal/Service/Application Coverage Results" MODIFIED="1795200258682" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
